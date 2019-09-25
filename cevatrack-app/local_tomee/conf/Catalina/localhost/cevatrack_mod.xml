@@ -3,7 +3,7 @@
 <properties>
 	<!-- Replace user in the next line with your user -->
 	<entry key ="some.property" >some.value </entry>
-	<entry key ="shiroConfigLocations">file:/home/local/WIN/adolfo.cano/git/CEVAtrack-responsive/CEVAtrack-responsive-app/local_tomee/properties/LOCAL/shiro.ini</entry>
+	<entry key ="shiroConfigLocations">file:/home/local/WIN/adolfo.cano/git/cevatrack/cevatrack-app/local_tomee/properties/LOCAL/shiro.ini</entry>
 	<entry key = "WatchedResource">WEB-INF/web.xml</entry>
 	<entry key ="google.apikey" >AIzaSyBG_nHwW92gG04j98TxXZUR9X8ygHJYHKI</entry>
 	<entry key ="microlise.userpassword.direct.uat">CEVACRMUATWEBSVC:W3Q8BgpXwM  </entry>
