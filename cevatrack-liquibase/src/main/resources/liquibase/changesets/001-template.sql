@@ -1,0 +1,736 @@
+--liquibase formatted sql
+--DO NOT DELETE ABOVE LINE. IT IS NEEDED BY LIQUIBASE.
+
+--changeset mahendran.mookkiah:001-aaf-db-001 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE aaf_user
+(
+  user_id SERIAL,
+  user_principal character varying(64) NOT NULL,
+  first_name character varying(64) NOT NULL,
+  last_name character varying(64) NOT NULL,
+  email character varying(255) NOT NULL,
+  password character varying(255),
+  user_type character varying(1) NOT NULL,
+  is_active boolean default true,
+  incorrect_login_attempts smallint default 0,
+  is_locked boolean default false,
+  last_password_change_time timestamp(6) with time zone,
+  is_password_change_required boolean default false,
+  last_successful_login timestamp(6) with time zone,
+  account_expiration_date timestamp(6) with time zone,
+  created_on timestamp(6) with time zone NOT NULL,
+  created_by character varying(64) NOT NULL,
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(64),
+  version smallint NOT NULL,
+  CONSTRAINT aaf_user_pkey PRIMARY KEY (user_id),
+  CONSTRAINT aaf_user_ukey UNIQUE (user_principal)
+)
+WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE aaf_role
+(
+  role_id SERIAL,
+  role_name character varying(255) NOT NULL,
+  description character varying(255) NOT NULL,
+  created_on timestamp(6) with time zone NOT NULL,
+  created_by character varying(64) NOT NULL,
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(64),
+  version smallint NOT NULL,
+  CONSTRAINT aaf_role_pkey PRIMARY KEY (role_id),
+  CONSTRAINT aaf_role_ukey UNIQUE (role_name)
+)
+WITH (
+  OIDS=FALSE
+);
+
+
+CREATE TABLE aaf_permission
+(
+  permission_id SERIAL,
+  domain character varying(50) NOT NULL,
+  action character varying(50) NOT NULL,
+  instance character varying(50) NOT NULL,
+  description character varying(255) NOT NULL,
+-- type -- EntityPermission, MethodPermission, FuntionalPermission, ResourcePermission, ShiroPermission(Default)
+  created_on timestamp(6) with time zone NOT NULL,
+  created_by character varying(64) NOT NULL,
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(64),
+  version smallint NOT NULL,
+  CONSTRAINT aaf_permission_pkey PRIMARY KEY (permission_id)
+)
+WITH (
+  OIDS=FALSE
+);
+
+
+CREATE TABLE aaf_user_role
+(
+  user_role_id SERIAL,
+  user_id bigint NOT NULL,
+  role_id bigint NOT NULL,
+  created_on timestamp(6) with time zone NOT NULL,
+  created_by character varying(64) NOT NULL,
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(64),
+  version smallint NOT NULL,
+  CONSTRAINT aaf_user_role_pkey PRIMARY KEY (user_role_id),
+  CONSTRAINT aaf_user_role_role_id_fk FOREIGN KEY (role_id)
+      REFERENCES aaf_role (role_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT aaf_user_role_user_id_fk FOREIGN KEY (user_id)
+      REFERENCES aaf_user (user_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+
+  
+CREATE TABLE aaf_role_permission
+(
+  role_permission_id SERIAL,
+  role_id bigint NOT NULL,
+  permission_id bigint NOT NULL,
+  created_on timestamp(6) with time zone NOT NULL,
+  created_by character varying(64) NOT NULL,
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(64),
+  version smallint NOT NULL,
+  CONSTRAINT aaf_role_permission_pkey PRIMARY KEY (role_permission_id),
+   CONSTRAINT aaf_role_permission_role_id_fk FOREIGN KEY (role_id)
+      REFERENCES aaf_role (role_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT aaf_role_permission_permission_id_fk FOREIGN KEY (permission_id)
+      REFERENCES aaf_permission (permission_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+  
+
+CREATE TABLE aaf_domain_lookup
+(
+  aaf_domain_code character varying(64) NOT NULL,
+  description character varying(255) NOT NULL,
+  display_order smallint NOT NULL,
+  display_label character varying(64),
+  created_on timestamp(6) with time zone,
+  created_by character varying(15),
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(15),
+  version smallint,
+  CONSTRAINT aaf_domain_lookup_pk PRIMARY KEY (aaf_domain_code)
+);
+
+CREATE TABLE aaf_domain_action_lookup
+(
+  aaf_domain_code character varying(64) NOT NULL,
+  aaf_domain_action_code character varying(64) NOT NULL,
+  description character varying(255) NOT NULL,
+  display_order smallint NOT NULL,
+  display_label character varying(64),
+  created_on timestamp(6) with time zone,
+  created_by character varying(15),
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(15),
+  version smallint,
+  CONSTRAINT aaf_domain_action_lookup_pk PRIMARY KEY (aaf_domain_code, aaf_domain_action_code),
+  CONSTRAINT aaf_domain_action_lookup_domain_code_fk FOREIGN KEY (aaf_domain_code)
+      REFERENCES aaf_domain_lookup (aaf_domain_code) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- Create new AAF functions add_aaf_domain_lookup:
+CREATE FUNCTION add_aaf_domain_lookup(aaf_domain_code text, description text, display_order integer, display_label text) RETURNS text AS $$
+DECLARE
+      count_domain_codes integer;
+result text;
+BEGIN 
+      -- Check if the domain action lookup already exists.     
+      EXECUTE 'SELECT Count(aaf_domain_code) FROM aaf_domain_lookup where aaf_domain_code=$1' INTO count_domain_codes USING aaf_domain_code;   
+      IF (count_domain_codes = 0) THEN
+                  
+          result := 'OK';
+          INSERT INTO aaf_domain_lookup(
+            aaf_domain_code, description, display_order, display_label, created_on, 
+            created_by, updated_on, updated_by, version)
+		    VALUES ($1, $2, $3, $4, now(), 'SYSTEM', null, null, 1); 
+                  
+      ELSE
+            result := 'KO: the domain code [aaf_domain_code="' || aaf_domain_code || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;
+END
+$$ LANGUAGE plpgsql;
+
+-- Create new AAF functions add_aaf_domain_action_lookup:
+CREATE FUNCTION add_aaf_domain_action_lookup(aaf_domain_code text, aaf_domain_action_code text, description text, display_order integer, display_label text) RETURNS text AS $$
+DECLARE
+      count_domain_codes integer;
+      count_aaf_domain_code integer;
+result text;
+BEGIN 
+      -- Check if the domain action lookup already exists.     
+      EXECUTE 'SELECT Count(aaf_domain_code) FROM aaf_domain_action_lookup where aaf_domain_code=$1 and aaf_domain_action_code=$2' INTO count_domain_codes USING aaf_domain_code,aaf_domain_action_code;   
+      IF (count_domain_codes = 0) THEN
+                  -- Check if the aaf_domain_code exists in the table aaf_domain_lookup.
+                  EXECUTE 'SELECT Count(aaf_domain_code) FROM aaf_domain_lookup where aaf_domain_code=$1' INTO count_aaf_domain_code USING aaf_domain_code;
+                  IF (count_aaf_domain_code != 0) THEN
+                  result := 'OK';
+                  INSERT INTO aaf_domain_action_lookup(
+                                   aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, 
+                                   created_on, created_by, updated_on, updated_by, version)
+                             VALUES (aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, 
+                                   now(), 'SYSTEM', null, null, 1);
+                  ELSE
+                        result := 'KO: the aaf_domain_code=' || aaf_domain_code || '" does not exist in the target DB';  
+                  END IF;
+      ELSE
+            result := 'KO: the domain action lookup [aaf_domain_code="' || aaf_domain_code || '", aaf_domain_action_code="' || aaf_domain_action_code || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;
+END
+$$ LANGUAGE  PLPGSQL;
+
+
+-- Create new AAF functions add_aaf_permission:
+CREATE FUNCTION add_aaf_permission(domain text, action text, instance text, description text) RETURNS text AS $$
+DECLARE
+count_permissions integer;
+result text;
+BEGIN 
+      -- Check if the permission already exists.     
+      EXECUTE 'SELECT Count(domain) FROM aaf_permission where domain=$1 and action=$2 and instance=$3' INTO count_permissions USING domain, action, instance;   
+      IF (count_permissions = 0) THEN
+            result := 'OK';
+            INSERT INTO aaf_permission ( domain, action, instance, description, created_on, created_by, updated_on, updated_by, version) 
+                  VALUES (domain, action, instance, description, now(), 'SYSTEM', NULL, NULL, 1);
+      ELSE
+            result := 'KO: the permission [domain="' || domain || '", action="' || action || '", instance="' || instance || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;          
+END
+$$ LANGUAGE plpgsql;
+
+-- Create new AAF functions add_aaf_role:
+CREATE FUNCTION add_aaf_role(role_name text, description text) RETURNS text AS $$
+DECLARE
+count_roles integer;
+result text;
+BEGIN 
+      -- Check if the permission already exists.     
+      EXECUTE 'SELECT Count(role_name) FROM aaf_role where role_name=$1' INTO count_roles USING role_name;   
+      IF (count_roles = 0) THEN
+            result := 'OK';
+            INSERT INTO aaf_role ( role_name, description, created_on, created_by, updated_on, updated_by, version) 
+			VALUES ($1, $2, now(), 'SYSTEM', NULL, NULL, 0);
+      ELSE
+            result := 'KO: the role [role_name="' || role_name || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;          
+END
+$$ LANGUAGE plpgsql;
+
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+CREATE FUNCTION add_aaf_role_permission(text, text, text, text) RETURNS void AS $$
+	INSERT INTO aaf_role_permission (role_id, permission_id, created_on, created_by, updated_on, updated_by, version) 
+	VALUES (
+	(SELECT role_id from aaf_role where role_name = $1), 
+	(SELECT permission_id from aaf_permission where domain = $2 and action = $3 and instance=$4),
+	now(), 'SYSTEM', NULL, NULL, 0);
+$$ LANGUAGE SQL;
+
+-- Create new AAF functions add_aaf_user:
+CREATE FUNCTION add_aaf_user(user_principal text, password text, fname text, lname text, email text) RETURNS text AS $$
+DECLARE
+count_users integer;
+result text;
+BEGIN 
+      -- Check if the permission already exists.     
+      EXECUTE 'SELECT Count(user_principal) FROM aaf_user where user_principal=$1' INTO count_users USING user_principal;   
+      IF (count_users = 0) THEN
+            result := 'OK';
+            INSERT INTO aaf_user (user_principal, password, first_name, last_name, email, user_type, is_locked, is_password_change_required, created_on, created_by, version)
+    			VALUES ($1, $2, $3, $4, $5, 'E', false, false, now(), 'initial_load', 0);            
+      ELSE
+            result := 'KO: the user [user_principal="' || user_principal || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;          
+END    
+$$ LANGUAGE plpgsql;
+
+-- Parameters: user_principal, role_name
+CREATE FUNCTION add_aaf_user_role(text, text) RETURNS void AS $$
+	INSERT INTO aaf_user_role (user_id, role_id, created_on, created_by, version)
+	VALUES ( 
+	(SELECT user_id FROM aaf_user where user_principal=$1),
+	(SELECT role_id FROM aaf_role where role_name=$2), 
+	now(), 'initial_load', 0);
+$$ LANGUAGE SQL;
+
+
+
+-- Parameters: aaf_domain_code, description, display_order, display_label
+SELECT add_aaf_domain_lookup('aaf_user', 'user management', 1, 'User');
+SELECT add_aaf_domain_lookup('aaf_role', 'role management', 2, 'Role');
+SELECT add_aaf_domain_lookup('aaf_permission', 'permisssion management', 3, 'Permission');
+     
+
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('aaf_user', 'view', 'view action', 1, 'View User');     
+select add_aaf_domain_action_lookup('aaf_user', 'create', 'create action', 2, 'Create User');
+select add_aaf_domain_action_lookup('aaf_user', 'edit', 'edit action', 3, 'Edit User');
+select add_aaf_domain_action_lookup('aaf_user', 'delete', 'delete action', 4, 'Delete User');
+select add_aaf_domain_action_lookup('aaf_user', '*', 'manage action', 5, 'Manage User');
+
+select add_aaf_domain_action_lookup('aaf_role', 'view', 'view action', 1, 'View Role');     
+select add_aaf_domain_action_lookup('aaf_role', 'create', 'create action', 2, 'Create Role');
+select add_aaf_domain_action_lookup('aaf_role', 'edit', 'edit action', 3, 'Edit Role');
+select add_aaf_domain_action_lookup('aaf_role', 'delete', 'delete action', 4, 'Delete Role');
+select add_aaf_domain_action_lookup('aaf_role', 'assign', 'assign action', 5, 'Assign Role');
+select add_aaf_domain_action_lookup('aaf_role', '*', 'manage action', 6, 'Manage Role');
+
+select add_aaf_domain_action_lookup('aaf_permission', 'view', 'view action', 1, 'View Permission');     
+select add_aaf_domain_action_lookup('aaf_permission', 'create', 'create action', 2, 'Create Permission');
+select add_aaf_domain_action_lookup('aaf_permission', 'edit', 'edit action', 3, 'Edit Permission');
+select add_aaf_domain_action_lookup('aaf_permission', 'delete', 'delete action', 4, 'Delete Permission');
+select add_aaf_domain_action_lookup('aaf_permission', 'assign', 'assign action', 5, 'Assign Permission');
+select add_aaf_domain_action_lookup('aaf_permission', '*', 'manage action', 6, 'Manage Permission');
+
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('aaf_user', '*', '*', 'Manage User');
+SELECT add_aaf_permission ('aaf_user', 'create', '*', 'Create User');
+SELECT add_aaf_permission ('aaf_user', 'view', '*', 'View User');
+SELECT add_aaf_permission ('aaf_user', 'edit', '*', 'Edit User');
+SELECT add_aaf_permission ('aaf_user', 'delete', '*', 'Delete User');
+
+SELECT add_aaf_permission ('aaf_role', '*', '*', 'Manage Role');
+SELECT add_aaf_permission ('aaf_role', 'create', '*', 'Create Role');
+SELECT add_aaf_permission ('aaf_role', 'view', '*', 'View Role');
+SELECT add_aaf_permission ('aaf_role', 'edit', '*', 'Edit Role');
+SELECT add_aaf_permission ('aaf_role', 'delete', '*', 'Delete Role');
+SELECT add_aaf_permission ('aaf_role', 'assign', '*', 'Assign Role');
+
+SELECT add_aaf_permission ('aaf_permission', '*', '*', 'Manage Permission');
+SELECT add_aaf_permission ('aaf_permission', 'create', '*', 'Create Permission');
+SELECT add_aaf_permission ('aaf_permission', 'view', '*', 'View Permission');
+SELECT add_aaf_permission ('aaf_permission', 'edit', '*', 'Edit Permission');
+SELECT add_aaf_permission ('aaf_permission', 'delete', '*', 'Delete Permission');
+SELECT add_aaf_permission ('aaf_permission', 'assign', '*', 'Assign Permission');
+
+-- Parameters: role_name, description
+SELECT add_aaf_role ('AAF Admin', 'AAF Admin');
+
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('AAF Admin', 'aaf_user', '*', '*');
+SELECT add_aaf_role_permission ('AAF Admin', 'aaf_role', '*', '*');
+SELECT add_aaf_role_permission ('AAF Admin', 'aaf_permission', '*', '*');
+
+--encrypted password is AAFAdmin1$
+SELECT add_aaf_user('aaf.admin', '$shiro1$SHA-256$500000$NloEOMDwdx69paycM+bKTQ==$vPfNio0VSVPbSW504PfksqMFLfooI5vvKUY5av8reWo=', 'aaf', 'admin', 'noreply@cevalogistics.com');
+SELECT add_aaf_user_role('aaf.admin', 'AAF Admin');
+
+
+
+CREATE TABLE aaf_user_password_hist
+(
+  password_id SERIAL PRIMARY KEY,
+  user_id int,
+  password character varying(255),
+  start_time timestamp(6) with time zone NOT NULL,
+  end_time timestamp(6) with time zone,
+  created_on timestamp(6) with time zone NOT NULL,
+  created_by character varying(64) NOT NULL,
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(64),
+  version smallint NOT NULL,
+  CONSTRAINT aaf_user_password_hist_user_id_fk FOREIGN KEY (user_id)
+      REFERENCES aaf_user (user_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+
+SELECT add_aaf_permission ('aaf_user', 'change_roles', '*', 'Change Roles User');
+select add_aaf_domain_action_lookup('aaf_user', 'change_roles', 'change roles action', 7, 'Change Roles User');
+
+ALTER TABLE aaf_permission ADD CONSTRAINT aaf_permission_ukey UNIQUE (domain, action, instance);
+
+SELECT add_aaf_permission ('aaf_role', 'change_permission', '*', 'Change Permission Role');
+select add_aaf_domain_action_lookup('aaf_role', 'change_permission', 'change permissions action', 8, 'Change Permission Role');
+SELECT add_aaf_permission ('aaf_permission', 'assign', '*', 'Assign Permission');
+select add_aaf_domain_action_lookup('aaf_permission', 'assign', 'Assign Permission Action', 9, 'Assign Permission');
+
+select add_aaf_domain_action_lookup('aaf_user', 'change_roles', 'change roles action', 6, 'Change Roles User');
+select add_aaf_domain_action_lookup('aaf_role', 'change_permission', 'change permissions action', 7, 'Change Permission Role');
+select add_aaf_domain_action_lookup('aaf_permission', 'assign', 'Assign Permission Action', 7, 'Assign Permission');
+
+
+--changeset venkateswarlu:001-cjf-template-db-001 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
+CREATE TABLE todo
+(
+     id            SERIAL,
+     title         CHARACTER VARYING (255),
+     description   CHARACTER VARYING (255),
+     duedate       timestamp (6) WITHOUT TIME ZONE,
+     priority      integer,
+     owner   CHARACTER VARYING (100),
+     created_on timestamp(6) with time zone NOT NULL,
+	 created_by character varying(64) NOT NULL,
+	 updated_on timestamp(6) with time zone,
+	 updated_by character varying(64),
+	 version smallint NOT NULL
+	);
+
+CREATE TABLE cjf_user
+(
+	id SERIAL,
+	login CHARACTER VARYING(255),
+	created_on timestamp(6) with time zone NOT NULL,
+ 	created_by character varying(64) NOT NULL,
+ 	updated_on timestamp(6) with time zone,
+ 	updated_by character varying(64),
+ 	version smallint NOT NULL
+);
+
+--changeset srinivas.lyagala:001-cjf-template-db-002 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
+ SELECT add_aaf_domain_lookup('todo', 'Todo management', 4, 'Todo');
+ 
+ select add_aaf_domain_action_lookup('todo', 'view', 'view action', 1, 'View Todo');     
+ select add_aaf_domain_action_lookup('todo', 'create', 'create action', 2, 'Create Todo');
+ select add_aaf_domain_action_lookup('todo', 'edit', 'edit action', 3, 'Edit Todo');
+ select add_aaf_domain_action_lookup('todo', 'delete', 'delete action', 4, 'Delete Todo');
+ select add_aaf_domain_action_lookup('todo', '*', 'manage action', 5, 'Manage Todo');
+ 
+--changeset venkateswarlu:001-cjf-template-db-003 failOnError:true splitStatements:false logicalFilePath:001-template.sql  
+ --encrypted password is CJFAdmin1$
+SELECT add_aaf_user('cjf.admin', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'cjf', 'admin', 'noreply@cevalogistics.com');
+
+-- Parameters: role_name, description
+SELECT add_aaf_role ('Todo Management', 'Todo Management');
+
+SELECT add_aaf_user_role('cjf.admin', 'Todo Management');
+SELECT add_aaf_user_role('cjf.admin', 'AAF Admin');
+
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('todo', '*', '*', 'Manage Todo');
+SELECT add_aaf_permission ('todo', 'create', '*', 'Create Todo');
+SELECT add_aaf_permission ('todo', 'view', '*', 'View Todo');
+SELECT add_aaf_permission ('todo', 'edit', '*', 'Edit Todo');
+SELECT add_aaf_permission ('todo', 'delete', '*', 'Delete Todo');
+
+-- Parameters: role_name, permission_domain, permission_action, permission_instance
+SELECT add_aaf_role_permission ('Todo Management', 'todo', '*', '*');
+
+--changeset venkateswarlu:001-cjf-template-db-004 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- This change is part of release 1.4 
+update aaf_user set account_expiration_date=(now() + interval '100 years') where account_expiration_date is null and user_type='E';
+
+--changeset mahendran.mookkiah:001-cjf-template-db-005 failOnError:true splitStatements:false context:DEV logicalFilePath:001-template.sql
+SELECT add_aaf_role ('Demo Time', 'Demo Time operator');
+
+--changeset mohammad.weshah:001-cjf-template-db-006 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, description, display_order, display_label 
+SELECT add_aaf_domain_lookup('cjf-admin', 'CJF Administration', 5, 'CJF Admin');
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+SELECT add_aaf_domain_action_lookup('cjf-admin', 'generate', 'Generate', 8, 'Generate');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('CJF Admin', 'CJF Admin');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('cjf-admin', '*', '*','Administration');
+-- Parameters: role_name, permission_domain, permission_action, permission_action_instance
+SELECT add_aaf_role_permission ('CJF Admin', 'cjf-admin', '*', '*');
+
+--changeset pruthvi.janapareddy:001-cjf-template-db-007 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--To drop the tables if exists
+drop table if exists user_profile;
+drop table if exists user_profile_options;
+
+--Create User Profile Options
+CREATE TABLE user_profile_options
+(
+  option_id SERIAL,
+  key character varying(255) NOT NULL,
+  value character varying(64) NOT NUll,
+  app_default boolean default false,
+  created_on timestamp(6) with time zone,
+  created_by character varying(15),
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(15),
+  version smallint,
+  CONSTRAINT user_profile_options_pk PRIMARY KEY (option_id)
+);
+
+--Create User Profile 
+CREATE TABLE user_profile
+(
+  user_profile_id SERIAL,
+  user_principal character varying(64) NOT NULL,
+  language character varying(255),
+  date_format character varying(64),
+  warehouse_code character varying(10),
+  client_code character varying(50),
+  time_format character varying(64),
+  currency character varying(64),
+  time_zone character varying(10),
+  created_on timestamp(6) with time zone,
+  created_by character varying(15),
+  updated_on timestamp(6) with time zone,
+  updated_by character varying(15),
+  version smallint,
+  CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id)
+);
+
+--Dummy Data for options
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (1, 'dateFormat', 'mm/dd/yyyy', true, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (2, 'dateFormat', 'dd/mm/yyyy', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (3, 'timeFormat', '24HR', true, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (4, 'timeFormat', '12HR', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (5, 'currency', 'EUR', true, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (6, 'currency', 'USD', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (7, 'timeZone', 'CST', true, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (8, 'timeZone', 'EST', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (9, 'language', 'English', true, now(), 'CJF', now(), 'CJF', 0);
+
+--changeset murthy.koppaka:001-cjf-template-db-008 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--alter table for todo
+ALTER TABLE todo ADD CONSTRAINT todo_pk PRIMARY KEY (id);
+
+-- create table for File Uploader
+CREATE TABLE file_uploader (
+	id SERIAL,
+	todo_id int4 NOT NULL,
+	file_name varchar(255) NOT NULL,
+	content_type varchar(10) NULL,
+	created_on timestamptz NOT NULL,
+	created_by varchar(64) NOT NULL,
+	updated_on timestamptz NULL,
+	updated_by varchar(64) NULL,
+	"version" int2 NOT NULL,
+	CONSTRAINT file_uploader_pk PRIMARY KEY (id),
+	CONSTRAINT file_uploader_id_fk FOREIGN KEY (todo_id) REFERENCES todo(id) ON DELETE CASCADE
+)
+WITH (
+	OIDS=FALSE
+) ;
+
+
+			
+--changeset pruthvi.janapareddy:001-cjf-template-db-009 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--alter table for User Profile to add new column
+ALTER TABLE user_profile ADD COLUMN one_id varchar(12);
+
+-- The below inserts are used to restrict an edit on the OneId
+-- Parameters: aaf_domain_code, description, display_order, display_label 
+SELECT add_aaf_domain_lookup('user_profile_one_id', 'User Profile One Id', 6, 'User Profile One Id');
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+SELECT add_aaf_domain_action_lookup('user_profile_one_id', 'edit', 'Edit', 9, 'Edit');
+
+
+--changeset leonardo.oliveira:001-cjf-template-db-011 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--Change cjf-admin domain, change actions
+UPDATE aaf_domain_lookup SET description = 'System Administration', display_label = 'System Administration' WHERE aaf_domain_code = 'cjf-admin';
+UPDATE aaf_domain_action_lookup SET aaf_domain_action_code = 'manage', description = 'Allowed to perform all actions', display_label = 'Manage' WHERE aaf_domain_action_code = 'generate';
+
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('cjf-admin', 'manage', 'heap', 'Create Heap Dump');
+SELECT add_aaf_permission ('cjf-admin', 'manage', 'serving', 'Enable/Disable Serving Application');
+
+--changeset leonardo.oliveira:001-cjf-template-db-012 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- adding this record to match the permission Created
+SELECT add_aaf_domain_action_lookup('cjf-admin', '*', 'All', 1, 'All');
+
+--changeset pruthvi.janapareddy:001-cjf-template-db-013 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--alter the length of created by and updated by fields for user profile and user profile options
+ALTER TABLE user_profile ALTER COLUMN created_by TYPE varchar(64);
+ALTER TABLE user_profile ALTER COLUMN updated_by TYPE varchar(64);
+
+ALTER TABLE user_profile_options ALTER COLUMN created_by TYPE varchar(64);
+ALTER TABLE user_profile_options ALTER COLUMN updated_by TYPE varchar(64);
+
+--Add foreign constraint on aaf permission table
+ALTER TABLE aaf_permission DROP CONSTRAINT IF EXISTS aaf_permission_domain_action_fk;
+ALTER TABLE aaf_permission
+   ADD CONSTRAINT aaf_permission_domain_action_fk FOREIGN KEY (domain, action)
+          REFERENCES aaf_domain_action_lookup (aaf_domain_code,aaf_domain_action_code)
+             ON UPDATE CASCADE;
+   
+--Add unique key constraint on role permission table
+ALTER TABLE aaf_role_permission DROP CONSTRAINT IF EXISTS aaf_role_permission_ukey;			 
+ALTER TABLE aaf_role_permission ADD CONSTRAINT aaf_role_permission_ukey UNIQUE (role_id,permission_id);
+
+--Add unique key constraint on user role table
+ALTER TABLE aaf_user_role DROP CONSTRAINT IF EXISTS aaf_user_role_ukey;	   
+ALTER TABLE aaf_user_role ADD CONSTRAINT aaf_user_role_ukey UNIQUE (user_id,role_id);
+
+--Add unique key constraint on user profile table
+ALTER TABLE user_profile DROP CONSTRAINT IF EXISTS user_profile_ukey;
+ALTER TABLE user_profile ADD CONSTRAINT user_profile_ukey UNIQUE (user_principal);
+
+--Add unique key constraint on user profile options table
+ALTER TABLE user_profile_options DROP CONSTRAINT IF EXISTS user_profile_options_ukey;
+ALTER TABLE user_profile_options ADD CONSTRAINT user_profile_options_ukey UNIQUE (key,value);
+
+--changeset varsha.anumolu:001-cjf-template-db-014 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE aaf_user SET email ='mahendran.mookkiah@Cevalogistics.com' 
+where user_principal = 'cjf.admin';
+
+--changeset varsha.chowdary:001-cjf-template-db-015 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE user_profile ADD COLUMN menu_mode varchar(25);
+ALTER TABLE user_profile ADD COLUMN theme varchar(50);
+
+--Default values for menu mode and theme
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (10, 'menuMode', 'layout-menu-static', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (11, 'menuMode', 'layout-menu-overlay', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (12, 'menuMode', 'layout-menu-slim', false, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (13, 'menuMode', 'layout-menu-horizontal', true, now(), 'CJF', now(), 'CJF', 0);
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (14, 'theme', 'cjf', true, now(), 'CJF', now(), 'CJF', 0);
+
+--changeset varsha.chowdary:001-cjf-template-db-016 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO user_profile (user_principal, language, date_format, time_format, currency, time_zone, created_on, created_by, version, menu_mode, theme ) 
+SELECT 'aaf.admin', 'English', 'mm/dd/yyyy', '24HR', 'EUR', 'CST', now(), 'Anonymous', '1', 'layout-menu-horizontal', 'cjf' 
+WHERE
+    NOT EXISTS (
+        SELECT user_principal FROM user_profile WHERE user_principal = 'aaf.admin'
+    );
+
+INSERT INTO user_profile (user_principal, language, date_format, time_format, currency, time_zone, created_on, created_by, version, menu_mode, theme ) 
+SELECT 'cjf.admin', 'English', 'mm/dd/yyyy', '24HR', 'EUR', 'CST', now(), 'Anonymous', '1', 'layout-menu-horizontal', 'cjf' 
+WHERE
+    NOT EXISTS (
+        SELECT user_principal FROM user_profile WHERE user_principal = 'cjf.admin'
+    );
+    
+--changeset leonardo.oliveira:001-cjf-template-db-017 failOnError:true splitStatements:false logicalFilePath:001-template.sql  
+ --encrypted password is CJFAdmin1$
+SELECT add_aaf_user('three.automation', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'Three', 'Automation', 'three.automation@mailinator.com');
+SELECT add_aaf_user_role('three.automation', 'Todo Management');
+SELECT add_aaf_user_role('three.automation', 'AAF Admin');
+SELECT add_aaf_user_role('three.automation', 'CJF Admin');
+
+--changeset varsha.chowdary:001-cjf-template-db-018-1 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE user_profile_options SET value = 'MM/dd/yyyy' 
+where key = 'dateFormat' AND value = 'mm/dd/yyyy';
+
+UPDATE user_profile_options SET value = 'dd/MM/yyyy' 
+where key = 'dateFormat' AND value = 'dd/mm/yyy';
+
+UPDATE user_profile SET date_format = 'MM/dd/yyyy' 
+where date_format = 'mm/dd/yyyy';
+
+UPDATE user_profile SET date_format = 'dd/MM/yyyy' 
+where date_format = 'dd/mm/yyyy';
+
+--changeset mahendran.mookkiah:001-cjf-template-db-019 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE aaf_user SET email ='_SH_-GL-US-CJF@Cevalogistics.com' where user_principal = 'cjf.admin';
+
+--changeset pruthvi.janapareddy:001-cjf-template-db-020 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE app_user_profile
+(
+	app_user_profile_id SERIAL,
+	user_profile_id int,
+	enable_todo_notification boolean default false,
+	created_on timestamp(6) with time zone NOT NULL,
+ 	created_by character varying(64) NOT NULL,
+ 	updated_on timestamp(6) with time zone,
+ 	updated_by character varying(64),
+ 	version smallint NOT NULL,
+ 	CONSTRAINT app_user_profile_pk PRIMARY KEY (app_user_profile_id),
+ 	CONSTRAINT user_profile_id_fk FOREIGN KEY (user_profile_id)
+          REFERENCES user_profile (user_profile_id)
+             ON UPDATE CASCADE
+);
+
+--changeset varsha.chowdary:001-cjf-template-db-021 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE user_profile_options SET value = 'dd/MM/yyyy' 
+where key = 'dateFormat' AND value = 'dd/mm/yyyy';
+
+--changeset shanmuk.pragada:001-cjf-template-db-022 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE user_profile_options SET value = 'HH:mm:ss', updated_on = now()
+where key = 'timeFormat' AND value = '24HR';
+
+UPDATE user_profile_options SET value = 'hh:mm:ss a', updated_on = now()
+where key = 'timeFormat' AND value = '12HR';
+
+UPDATE user_profile SET time_format = 'HH:mm:ss', updated_on = now()
+where time_format = '24HR';
+
+UPDATE user_profile SET time_format = 'hh:mm:ss a', updated_on = now()
+where time_format = '12HR';
+			
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (15, 'timeFormat', 'HH:mm:ss.s', false, now(), 'CJF', now(), 'CJF', 0);
+			
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (16, 'timeFormat', 'hh:mm:ss.s a', false, now(), 'CJF', now(), 'CJF', 0);
+			
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (17, 'timeFormat', 'HH:mm', false, now(), 'CJF', now(), 'CJF', 0);
+			
+INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
+			VALUES (18, 'timeFormat', 'hh:mm a', false, now(), 'CJF', now(), 'CJF', 0);
+
+--changeset arun.kumar:001-cjf-template-db-023 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+alter table user_profile alter column time_zone TYPE varchar(30);
+
+UPDATE user_profile SET time_zone = 'America/Cancun'
+where time_zone = 'EST';
+
+UPDATE user_profile SET time_zone = 'America/Managua'
+where time_zone = 'CST';
+
+UPDATE user_profile_options SET value = 'America/Cancun' 
+where key = 'timeZone' AND value = 'EST';
+
+UPDATE user_profile_options SET value = 'America/Managua' 
+where key = 'timeZone' AND value = 'CST';
+
+--changeset varsha.chowdary:001-cjf-template-db-024 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+SELECT add_aaf_domain_action_lookup('cjf-admin', 'manage', 'Manage', 11, 'Manage');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('cjf-admin','manage','log-config','Manage Logs');
+
+--changeset varsha.anumolu:001-cjf-template-db-025 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+SELECT add_aaf_domain_action_lookup('cjf-admin', 'view', 'View', 10, 'View');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('cjf-admin','view','log','View Logs');
+
+--changeset pruthvi.janapareddy:001-cjf-template-db-026 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Below is to grop the columns warehouse code, client code and one id was they are removed from the user profile
+ALTER TABLE user_profile DROP COLUMN warehouse_code, DROP COLUMN client_code, DROP COLUMN one_id;
+
+DELETE FROM aaf_role_permission where permission_id IN (select permission_id from aaf_permission where domain = 'user_profile_one_id');
+DELETE FROM aaf_permission where domain = 'user_profile_one_id';
+
+-- Since the one id is removed we need to remove the domain and the domina action
+DELETE FROM aaf_domain_action_lookup where aaf_domain_code = 'user_profile_one_id';
+DELETE FROM aaf_domain_lookup where aaf_domain_code = 'user_profile_one_id';
+
+-- Below is to add a new permission and domain action to edit the User Profile
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+SELECT add_aaf_domain_action_lookup('aaf_user', 'user_profile_edit', 'To Edit User Profile', 8, 'Edit User Profile');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('aaf_user','user_profile_edit','*','Edit User Profile');

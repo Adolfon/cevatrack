@@ -1,0 +1,251 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:cjf="http://xmlns.jcp.org/jsf/composite/cjf"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="app-template.xhtml">
+
+	<f:metadata>
+		<f:event listener="#{aAFSecurityBean.checkPermissions}"
+			type="preRenderView"></f:event>
+		<f:attribute name="permission"
+			value="#{CJFPermissionConstants.TODO_VIEW}" />
+	</f:metadata>
+
+	<ui:define name="title">
+		<h:outputText value="#{lbl['listTodo.title']}" />
+	</ui:define>
+
+	<ui:define name="content">
+		<p:growl id="growl" showDetail="false" sticky="false" globalOnly="true">
+			<p:autoUpdate />
+		</p:growl>
+		<div class="ui-fluid ">
+			<h:form id="frm_searchToDo">
+				<p:fieldset id="pnl_todo_srch"
+					legend="#{lbl['listTodo.title.search']}" toggleable="true"
+					toggleSpeed="500">
+					<div class="ui-g ui-g-nopad" id="searchTodo_fields">
+						<div class="ui-sm-12 ui-md-6 ui-lg-4 ui-xl-4">
+							<p:panelGrid layout="grid" id="pg_todo_search_title" columns="2"
+								columnClasses="ui-lg-4 ui-md-4 ui-sm-12, ui-lg-8  ui-md-8 ui-sm-12">
+								<h:panelGroup id="pg_todo_search_grid_title_label_tltp">
+									<p:outputLabel for="txt_todo_title" id="lbl_todo_title"
+										value="#{lbl['todo.title']}" />
+									<p:outputLabel id="lbl_todo_title_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_title_tltp" id="tltp_todo_title"
+										value="#{lbl['todo.tltp.title']}" />
+								</h:panelGroup>
+								<h:panelGroup id="pg_todo_search_title_txt">
+									<p:inputText id="txt_todo_title"
+										value="#{todoController.todo.title}" />
+									<p:message id="msg_todo_title" for="txt_todo_title" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</div>
+						<div class="ui-sm-12 ui-md-6 ui-lg-4 ui-xl-4">
+							<p:panelGrid layout="grid" id="pg_todo_search_description"
+								columns="2"
+								columnClasses="ui-lg-4 ui-md-4 ui-sm-12, ui-lg-8  ui-md-8 ui-sm-12">
+								<h:panelGroup id="pg_todo_search_grid_description_label_tltp">
+									<p:outputLabel for="txt_todo_description"
+										id="lbl_todo_description" value="#{lbl['todo.desc']}" />
+									<p:outputLabel id="lbl_todo_description_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_description_tltp"
+										id="tltp_todo_description" value="#{lbl['todo.tltp.desc']}" />
+								</h:panelGroup>
+								<h:panelGroup id="pg_todo_search_description_txt">
+									<p:inputText id="txt_todo_description"
+										value="#{todoController.todo.description}" />
+									<p:message id="msg_todo_description" for="txt_todo_description" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</div>
+						<div class="ui-sm-12 ui-md-6 ui-lg-4 ui-xl-4">
+							<p:panelGrid layout="grid" id="pg_todo_search_priority"
+								columns="2"
+								columnClasses="ui-lg-4 ui-md-4 ui-sm-12, ui-lg-8  ui-md-8 ui-sm-12">
+								<h:panelGroup id="pg_todo_search_grid_priority_label_tltp">
+									<p:outputLabel for="som_todo_priority" id="lbl_todo_priority"
+										value="#{lbl['todo.priority']}" />
+									<p:outputLabel id="lbl_todo_priority_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_priority_tltp" id="tltp_todo_priority"
+										value="#{lbl['todo.tltp.priority']}" />
+								</h:panelGroup>
+								<h:panelGroup id="pg_todo_search_priority_txt">
+									<p:selectOneMenu id="som_todo_priority"
+										value="#{todoController.todo.priority}">
+										<f:selectItem itemLabel="#{lbl['todo.selectPriority']}" itemValue=""
+											noSelectionOption="true" />
+										<f:selectItems value="#{todoController.priorities}" />
+									</p:selectOneMenu>
+									<p:message id="msg_todo_priority" for="lbl_todo_priority" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</div>
+						<div class="ui-sm-12 ui-md-6 ui-lg-4 ui-xl-4">
+							<p:panelGrid layout="grid" id="pg_todo_search_startdate"
+								columns="2"
+								columnClasses="ui-lg-4 ui-md-4 ui-sm-12, ui-lg-8  ui-md-8 ui-sm-12">
+								<h:panelGroup id="pg_todo_search_grid_startdate_label_tltp">
+									<p:outputLabel for="txt_todo_startdate" id="lbl_todo_startdate"
+										value="#{lbl['todo.startDate']}" />
+									<p:outputLabel id="lbl_todo_startdate_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_startdate_tltp"
+										id="tltp_todo_startdate" value="#{lbl['todo.tltp.startDate']}" />
+								</h:panelGroup>
+								<h:panelGroup id="pg_todo_search_startdate_txt">
+									<p:calendar id="txt_todo_startdate" pattern="#{todoController.userProfileDateFormat}"
+										value="#{todoController.todo.startdate}" showOn="button" />
+									<p:message id="msg_todo_startdate" for="txt_todo_startdate" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</div>
+						<div class="ui-sm-12 ui-md-6 ui-lg-4 ui-xl-4">
+							<p:panelGrid layout="grid" id="pg_todo_search_enddate"
+								columns="2"
+								columnClasses="ui-lg-4 ui-md-4 ui-sm-12, ui-lg-8  ui-md-8 ui-sm-12">
+								<h:panelGroup id="pg_todo_search_grid_enddate_label_tltp">
+									<p:outputLabel for="txt_todo_enddate" id="lbl_todo_enddate"
+										value="#{lbl['todo.endDate']}" />
+									<p:outputLabel id="lbl_todo_enddate_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_enddate_tltp" id="tltp_todo_enddate"
+										value="#{lbl['todo.tltp.endDate']}" />
+								</h:panelGroup>
+								<h:panelGroup id="pg_todo_search_enddate_txt">
+									<p:calendar id="txt_todo_enddate" pattern="#{todoController.userProfileDateFormat}"
+										value="#{todoController.todo.enddate}" showOn="button" />
+									<p:message id="msg_todo_enddate" for="txt_todo_enddate" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</div>
+						<div class="ui-sm-12 ui-md-6 ui-lg-4 ui-xl-4 ui-g-nopad">
+							<p:panelGrid layout="grid" id="pg_todo_search_owner" columns="2"
+								columnClasses="ui-lg-4 ui-md-4 ui-sm-12, ui-lg-8  ui-md-8 ui-sm-12">
+								<h:panelGroup layout="block"
+									id="pg_todo_search_grid_owner_label_tltp">
+									<p:outputLabel for="txt_todo_owner" id="lbl_todo_owner"
+										value="#{lbl['todo.owner']}" />
+									<p:outputLabel id="lbl_todo_owner_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_owner_tltp" id="tltp_todo_owner"
+										value="#{lbl['todo.tltp.owner']}" />
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="ui-g">
+									<div class="ui-lg-11 ui-md-11 ui-sm-11 ui-g-nopad">
+										<p:inputText id="txt_todo_owner"
+											value="#{todoController.todo.owner}" />
+									</div>
+									<div class="ui-lg-1 ui-md-1 ui-sm-1 ui-g-nopad">
+										<cjf:ldapSearch id="cjf_todo_ownerSearch"
+											selectionAction="#{todoController.selectUser}"
+											value="#{todoController.ldapuserVO}" />
+									</div>
+									<p:message id="msg_todo_owner" for="txt_todo_owner" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</div>
+					</div>
+					<p:panelGrid layout="grid" columns="5"
+						columnClasses="ui-xl-5 ui-lg-4 ui-md-2 ui-sm-12 ,ui-xl-1 ui-lg-2 ui-md-2 ui-sm-12 ,ui-xl-1 ui-lg-2 ui-md-2 ui-sm-12 ,ui-xl-4 ui-lg-2 ui-md-4 ui-sm-12,ui-xl-1 ui-lg-2 ui-md-2 ui-sm-12">
+						<p:spacer />
+						<p:commandButton value="Search" id="btn_todo_search_submit"
+							icon="fa fa-search" process="pnl_todo_srch" title="#{lbl['gen.btn.search']}"
+							update="frm_listToDo:tbl_list,msg_todo_startdate,msg_todo_enddate"
+							action="#{todoController.searchTodos}">
+						</p:commandButton>
+						<p:commandButton value="Reset" id="btn_todo_search_reset" title="#{lbl['gen.btn.reset']}"
+							icon="fa fa-times" process="pnl_todo_srch" update="pnl_todo_srch"
+							action="#{todoController.resetAdd}" immediate="true" ajax="true">
+							<p:resetInput target="pnl_todo_srch" />
+						</p:commandButton>
+						<p:spacer />
+						<p:commandButton id="btn_addToDo" icon="fa fa-plus"
+							value="#{lbl['listTodo.btn.add']}" title="#{lbl['listTodo.btn.add']}"
+							action="add-todo?faces-redirect=true" ajax="false" immediate="true"/>
+
+					</p:panelGrid>
+				</p:fieldset>
+			</h:form>
+			<p:spacer height="0px" />
+			<h:form id="frm_listToDo">
+				<p:fieldset id="pnl_todo_list" legend="List Todos">
+
+					<p:dataTable id="tbl_list"
+						value="#{todoController.todoLazyDataModel}" var="todo"
+						rows="#{todoController.initialPageSize}" lazy="true"
+						paginator="true"
+						rowsPerPageTemplate="#{todoController.pageSizeValues}"
+						pageLinks="3" paginatorAlwaysVisible="false"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						paginatorPosition="#{todoController.paginatorPosition}"
+						sortBy="#{todo.id}" sortOrder="ascending" align="center"
+						styleClass="todo-table" headerClass="todo-table-header"
+						emptyMessage="#{lbl['listTodo.tbl.empty']}" reflow="true">
+
+						<p:column id="clm_id" headerText="#{lbl['todo.clm.id']}"
+							sortBy="#{todo.id}" width="60">
+							<h:outputText id="out_id" value="#{todo.id}" />
+						</p:column>
+						<p:column id="clm_title" headerText="#{lbl['todo.title']}"
+							sortBy="#{todo.title}">
+							<h:outputText id="out_title" value="#{todo.title}" />
+						</p:column>
+						<p:column id="clm_description" headerText="#{lbl['todo.desc']}">
+							<h:outputText id="out_description" value="#{todo.description}" />
+						</p:column>
+						<p:column id="clm_priorit" headerText="#{lbl['todo.priority']}"
+							sortBy="#{todo.priority}">
+							<h:outputText id="out_priority" value="#{todo.priority}" />
+						</p:column>
+						<p:column id="clm_duedate" headerText="#{lbl['todo.dueDate']}"
+							sortBy="#{todo.duedate}">
+							<h:outputText id="out_duedate" value="#{todo.duedate}">
+								<f:convertDateTime pattern="#{todoController.userDateTimeFormat}" />
+								<f:converter converterId = "timeZoneConverter" />
+							</h:outputText>
+						</p:column>
+						<p:column id="clm_owner" headerText="#{lbl['todo.owner']}"
+							sortBy="#{todo.owner}">
+							<h:outputText id="out_owner" value="#{todo.owner}" />
+						</p:column>
+						<p:column headerText="Actions">
+							<p:commandLink  id="btn_edit" icon="fa fa-pencil"
+								action="#{todoController.editLstTodos(todo)}" process="@this"
+								update="growl,tbl_list" title="#{lbl['gen.btn.edit']}" ><span class="fa fa-pencil"></span></p:commandLink>
+							<p:spacer width="10" />
+							<p:commandLink id="btn_delete" icon="fa fa-trash"
+								actionListener="#{todoController.delete(todo)}" process="@this"
+								update="growl,frm_listToDo:tbl_list" ajax="true"
+								title="#{lbl['gen.btn.delete']}">
+								<span class="fa fa-trash"></span>
+								<p:confirm header="#{lbl['listTodo.dialog.header']}"
+									message="#{lbl['listTodo.dialog.message']}" icon="fa fa-exclamation-triangle"/>
+							</p:commandLink>
+							<cjf:confirmationDialog id="cd_delete"
+								width="200" 
+								height="50"
+								yes="#{lbl['listTodo.dialog.delete']}"
+								no="#{lbl['listTodo.dialog.cancel']}" />
+						</p:column>
+					</p:dataTable>
+
+				</p:fieldset>
+
+			</h:form>
+
+		</div>
+	</ui:define>
+
+</ui:composition>

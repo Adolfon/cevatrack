@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.ceva.cevatrack</groupId>
+	<artifactId>cevatrack</artifactId>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.ceva</groupId>
+		<artifactId>cjf-base</artifactId>
+		<version>3.3.0</version>
+	</parent>
+	<modules>
+		<!-- <module>cjf-template-liquibase</module> -->
+		<module>cevatrack-app</module>
+		<!-- <module>cjf-template-selenium-framework</module> -->
+		<!-- <module>cjf-template-selenium-tests</module> 
+		<module>cjf-template-api-tests</module>
+		<module>cjf-template-jmeter</module> -->
+		<module>deploy_cevatrack</module>
+	</modules>
+</project>

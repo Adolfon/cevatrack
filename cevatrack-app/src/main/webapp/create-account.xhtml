@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:cjf="http://xmlns.jcp.org/jsf/composite/cjf"
+	xmlns:p="http://primefaces.org/ui" template="app-template.xhtml">
+
+    <script type="text/javascript">
+      var onloadCallback = function() {
+        grecaptcha.render('html_element', {
+          'sitekey' : '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+        });
+      };
+    </script>
+    
+	<ui:define name="title">
+		<title><h:outputText value="#{lbl['cjfTemplate.title']}" /></title>
+	</ui:define>
+
+	<ui:define name="content">
+		<p:growl />
+
+		<div class="ceva-welcome-page">
+			<div class="ceva-panel-welcome-page"></div>
+			<div id="welcomePage" class="ceva-text-welcome-page ui-fluid">
+
+				<h:form id="frm_create_acct" style="margin-top: 5%; display: grid"
+					styleClass="center">
+
+					<p:panel id="pnl_acct_fields" styleClass="center">
+						<p:panelGrid display="grid" id="pgd_acct_fields" columns="1"
+							style="width: 300px">
+							<h2>
+							<h:outputText value="#{lbl['createAccount.out.title']}" />
+							</h2>
+
+							<p:inputText id="txt_acct_first_name" placeholder="#{lbl['createAccount.txt.firstName']}"
+								class="cjf-required" />
+							<h:outputText />
+
+							<p:inputText id="txt_acct_last_name" placeholder="#{lbl['createAccount.txt.lastName']}"
+								class="cjf-required" />
+							<h:outputText />
+
+							<p:inputText id="txt_acct_email" placeholder="#{lbl['createAccount.txt.email']}"
+								class="cjf-required" />
+							<h:outputText />
+
+							<p:password id="pwd_acct_initial" placeholder="#{lbl['createAccount.pwd.password']}"
+								class="cjf-required" />
+							<h:outputText />
+
+							<p:password id="pwd_acct_verify" placeholder="#{lbl['createAccount.pwd.confirmPassword']}"
+								class="cjf-required" />
+							<h:outputText />
+							
+							<h:form>
+							<div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+							</h:form>
+							<script src='https://www.google.com/recaptcha/api.js'></script>
+							<h:outputText />
+
+							<p:commandButton id="btn_create_acct" value="#{lbl['createAccount.btn.title']}"
+								disabled="true" />
+
+						</p:panelGrid>
+					</p:panel>
+
+				</h:form>
+
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

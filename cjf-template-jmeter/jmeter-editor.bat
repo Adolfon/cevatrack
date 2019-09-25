@@ -1,0 +1,2 @@
+set HEAP=-Xms1g -Xmx2g -XX:MaxMetaspaceSize=256m
+start "" /d"s:\Program Files\JMeter\apache-jmeter-4.0\bin" jmeter -Jproject.home=H:\git\cjf-template\cjf-template-jmeter -Jincludecontroller.prefix=H:\git\cjf-template\cjf-template-jmeter\src\main\test\resources\fragments\

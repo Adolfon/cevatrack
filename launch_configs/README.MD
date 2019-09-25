@@ -1,0 +1,1 @@
+Here goes all eclipse launch configs.

@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+       xmlns:h="http://xmlns.jcp.org/jsf/html"
+       xmlns:p="http://primefaces.org/ui"
+       xmlns:aaf="http://xmlns.jcp.org/jsf/composite/aaf"
+       xmlns:f="http://xmlns.jcp.org/jsf/core" template="app-template.xhtml">
+       <f:metadata>
+              <f:event listener="#{aAFSecurityBean.checkPermissions}" type="preRenderView"></f:event>
+              <f:attribute name="permission" value="#{AAFPermissionConstants.USER_VIEW}" />
+       </f:metadata>
+       <ui:define name="title">
+		<h:outputText value="#{lbl['userMaintenance.title']}" />
+	   </ui:define>
+       <ui:define name="content">
+             <aaf:user userManagementBean="#{cjfUserController}" userProfileBean="#{appUserProfileBean}" id="aaf_user"/>
+       </ui:define>
+</ui:composition>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomee>
+	<!-- 
+	Refer the default values from http://tomee.apache.org/datasource-config.html for configuring datasource. 
+	We configured only minimum needed change for development.
+	For higher environment, please review with Architecture team if you think we need to change.
+	
+	Configuration Note :
+	initialSize 3 : (Just for development purposes ) Limit number of connection on developer machine  
+    maxActive 6 : (Just for development purposes ) Limit number of connection on developer machine
+    
+	
+	<Resource id="templateDS" type="javax.sql.DataSource">
+	    jdbcDriver org.postgresql.Driver
+		jdbcUrl    jdbc:postgresql://postgres-two.ceva.cloud:5432/${cjf-template.db.database}?currentSchema=${cjf-template.db.schema}
+		userName   ${cjf-template.db.username}
+		password   ${cjf-template.db.password}
+		jtaManaged true
+		validationQuery SELECT 1
+		initialSize 3
+        maxActive 6
+	</Resource> -->
+	 <Resource id="cevatrackDS" type="javax.sql.DataSource">
+        jdbcDriver org.postgresql.Driver
+        jdbcUrl
+        jdbc:postgresql://localhost:5432/cevatrack_v6?currentSchema=cevatrack
+        userName postgres
+        password holahola
+        jtaManaged true
+    </Resource>
+</tomee>
+
+		

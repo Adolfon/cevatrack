@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+
+	<application>
+	
+		<action-listener>org.primefaces.application.DialogActionListener</action-listener>
+		<navigation-handler>
+			org.primefaces.application.DialogNavigationHandler
+		</navigation-handler>
+		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>hi</supported-locale>
+			<supported-locale>zh</supported-locale>
+			<supported-locale>de</supported-locale>
+		</locale-config> 
+		
+		<!-- cjf-template i18n messages -->
+		<resource-bundle>
+			<base-name>labels</base-name>
+			<var>lbl</var>
+		</resource-bundle>
+		  	
+		<resource-bundle>
+			<base-name>messages</base-name>
+			<var>msg</var>
+		</resource-bundle>
+		
+	</application>
+</faces-config>

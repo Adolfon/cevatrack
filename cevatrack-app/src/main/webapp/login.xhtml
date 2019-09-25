@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://xmlns.jcp.org/jsf/composite/aaf"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:aaff="http://security.ceva.com/jsf/aaf/tags">
+	<aaff:notAuthenticated>
+		<ui:decorate template="cjf-base/login-template/login-template.xhtml">
+			<f:metadata>
+				<f:event listener="#{loginBean.preRender()}" type="preRenderView"></f:event>
+			</f:metadata>
+			<ui:define name="content">
+				<aaf:login loginBean="#{loginController}" id="aaf_login" title="#{lbl['gen.application.title']}"/>
+			</ui:define>
+		</ui:decorate>
+	</aaff:notAuthenticated>
+	<aaff:authenticated>
+		<ui:include src="index.xhtml" />
+	</aaff:authenticated>
+
+</ui:composition>

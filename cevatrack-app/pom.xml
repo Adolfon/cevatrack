@@ -1,0 +1,125 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- Rename the application artifact id - ex. petstore/wmsportal -->
+	<artifactId>cevatrack-app</artifactId>
+	<name>cevatrack-app</name>
+	<packaging>war</packaging>
+
+	<parent>
+		<groupId>com.ceva</groupId>
+		<artifactId>cjf-base-app</artifactId>
+		<version>3.3.0</version>
+		<relativePath></relativePath>
+	</parent>
+
+	<properties>
+		<!-- change to application name - petstore -->
+		<warName>cevatrack</warName>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>harmony-theme</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.15</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-extension-search</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomee.maven</groupId>
+				<artifactId>tomee-maven-plugin</artifactId>
+				<version>7.0.4</version>
+				<configuration>
+					<tomeeVersion>7.0.4</tomeeVersion>
+					<tomeeClassifier>plus</tomeeClassifier>
+				</configuration>
+			</plugin>
+			<plugin>
+		        <artifactId>maven-checkstyle-plugin</artifactId>
+		        <version>3.0.0</version>
+		        <executions>
+		          <execution>
+		            <id>validate</id>
+		            <phase>validate</phase>
+		            <goals>
+		              <goal>check</goal>
+		            </goals>
+		            <configuration>
+		              <configLocation>checkstyle.xml</configLocation>
+		              <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+		              <encoding>UTF-8</encoding>
+		              <consoleOutput>true</consoleOutput>
+		              <skip>true</skip>
+		              <linkXRef>false</linkXRef>
+		            </configuration>
+		          </execution>
+		        </executions>
+	      </plugin>
+	      <plugin>
+	        <groupId>net.revelc.code.formatter</groupId>
+	        <artifactId>formatter-maven-plugin</artifactId>
+	        <version>2.10.0</version>
+	        <executions>
+	          <execution>
+	            <goals>
+	              <goal>format</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>     
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>cjf-integration-test</id>
+			<build>
+				<plugins>
+					<!-- Run SoapUI Mock at port 8010 for rest tests -->
+					<plugin>
+						<groupId>com.smartbear.soapui</groupId>
+						<artifactId>soapui-maven-plugin</artifactId>
+						<version>5.2.1</version>
+						<executions>
+							<execution>
+								<id>soapui-test</id>
+								<configuration>
+									<projectFile>${project.basedir}/src/test/resources/soapui/TodoRestMocks-soapui-project.xml</projectFile>
+									<noBlock>true</noBlock>
+									<mockService>TodoRestMockService</mockService>
+								</configuration>
+								<phase>process-test-classes</phase>
+								<goals>
+									<goal>mock</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

@@ -1,0 +1,24 @@
+{"users":[
+  {
+    "user": {
+      "internal": "true",
+      "emailId": "Mahendran.mookkiah@cevalogistics.com"
+    },
+    "expectedResult": "SUCCESS"
+  },
+  {
+    "user": {
+      "internal": "true",
+      "emailId": "Mohammad.Weshah@Cevalogistics.com"
+    },
+    "expectedResult": "SUCCESS"
+  },
+  {
+    "user": {
+      "internal": "true",
+      "emailId": "Subanitha.Kulasekaran@Cevalogistics.com"
+    },
+    "expectedResult": "SUCCESS"
+  }
+]
+}

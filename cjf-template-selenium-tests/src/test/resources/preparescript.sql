@@ -1,0 +1,1 @@
+INSERT INTO todo VALUES (random(),'test db','todo',null,1,'varsha anumolu',current_date,'cjf.admin',null,null,1);

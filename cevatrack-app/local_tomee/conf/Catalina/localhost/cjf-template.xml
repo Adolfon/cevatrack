@@ -1,0 +1,6 @@
+<Context>
+<!--  Replace username in the next line with your username  -->
+<Parameter name="some.property" value="some.value" />
+<Parameter name="shiroConfigLocations" value="file:/home/local/WIN/${user.name}/git/virtualTomEE/virtualTomEE/tomee/LOCAL/shiro.ini" override="false"/>
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+</Context>

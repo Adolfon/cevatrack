@@ -1,0 +1,84 @@
+@import "color-theme.scss";
+@import "../sass/_variables";
+/* To override harmony css*/
+@import "color-theme.scss";
+
+/* To override harmony css*/
+.layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons {
+      float: right;
+      top: 0;
+      padding: 35px 15px 0px 1px; }
+      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons img {
+        width: 36px;
+        height: 36px;
+        vertical-align: middle;
+        border: 0 none; }
+      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons span {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 14px;
+        text-align: left;
+        margin-left: 4px;
+        color: #ffffff; }
+      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons:hover {
+        background-color: rgba(244, 244, 244, 0.24); }
+        
+       input,textarea,button[type="submit"] {
+        	width:100%;
+        }
+        
+@media (max-width: 1024px) {
+	.layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons {
+      display: none; }
+      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons img {
+        display: none; }
+      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons span {
+        display: none; }
+      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons:hover {
+        display: none; }
+}
+
+@media (min-width: 1025px) {
+	.layout-wrapper .layout-sidebar .layout-menu .hideMenuInLargeResolution {
+		display: none; } }
+        
+.required-indicator{
+	color:red;
+}
+ 
+ label{
+ 	font-weight:bold;
+ 	font-size:$fontSize;
+ }
+ 
+.layout-wrapper .layout-footer .version {
+  color: #ffffff; }
+  
+.setTextBold {
+	font-weight: bold;
+}
+#snackbar {
+	visibility: hidden;
+	min-width: 250px;
+	margin-left: -125px;
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	border-radius: 2px;
+	padding: 16px;
+	position: fixed;
+	z-index: 1;
+	left: 50%;
+	bottom: 30px;
+	font-size: 17px;
+}
+
+#snackbar.show {
+	visibility: visible;
+	-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.log-table {
+	width: 45%;
+}

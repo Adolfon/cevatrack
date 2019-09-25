@@ -1,0 +1,1 @@
+Any changed file under bin directory should be committed here.

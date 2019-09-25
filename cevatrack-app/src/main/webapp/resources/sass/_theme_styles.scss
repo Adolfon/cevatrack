@@ -1,0 +1,27 @@
+/* Add your customizations of theme here */
+
+body .ui-panel .ui-panel-content{
+border-radius: $borderRadius;
+}
+
+body .ui-button.ui-state-focus{
+	outline: 0px  white;
+}
+
+.ui-datatable-data {
+	text-align: center;
+}
+
+ body .ui-datatable .ui-datatable-data > tr {
+    border-width:1px 0px 0px 0px;    
+ }
+  
+.ui-datatable-odd{
+  box-shadow: 0px 0px 18px #cac3c3;
+}
+
+body .ui-fieldset .ui-fieldset-legend{
+    color: inherit;
+    background-color: inherit;
+}
+

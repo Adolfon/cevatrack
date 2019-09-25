@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "22d74d0a-139c-49fb-8b15-31632aec100d",
+		"name": "Todo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST",
+			"item": [
+				{
+					"name": "CreateTodo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "78974c58-7fe9-4697-ac86-36e107f84de6",
+								"exec": [
+									"pm.variables.set(\"location\",postman.getResponseHeader(\"location\"));\r",
+									"let loc = pm.variables.get(\"location\");\r",
+									"pm.globals.set(\"id\",loc.substr(loc.lastIndexOf(\"/\")+1));\r",
+									" console.log(pm.variables.get(\"id\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "CJFAdmin1$",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "cjf.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"API Test Title\",\r\n  \"description\": \"API Todo description\",\r\n  \"priority\":3,\r\n  \"duedate\": \"2019-05-18T12:08:56.235-0700\",\r\n  \"owner\": \"Support\"\r\n}"
+						},
+						"url": {
+							"raw": "{{basicUrl}}",
+							"host": [
+								"{{basicUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GET",
+			"item": [
+				{
+					"name": "GetAllTodo",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "CJFAdmin1$",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "cjf.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{basicUrl}}",
+							"host": [
+								"{{basicUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTodoWithParameter",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "CJFAdmin1$",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "cjf.admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{basicUrl}}/{{id}}",
+							"host": [
+								"{{basicUrl}}"
+							],
+							"path": [
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3d0b3e7e-6609-4f3c-aeb6-9a72ab32f92b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "316a5861-444c-49e5-ac91-cb4bf3a4957e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "PUT",
+			"item": [
+				{
+					"name": "PutTodo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8198663d-286f-4c1e-92ab-c955c8f9cc04",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"API Test Title\",\n  \"description\": \"API Todo description\",\n  \"priority\": \"1\",\n  \"duedate\": \"2019-07-30T12:08:56.235-0700\",\n  \"owner\": \"Manager\"\n}"
+						},
+						"url": {
+							"raw": "{{basicUrl}}/{{id}}",
+							"host": [
+								"{{basicUrl}}"
+							],
+							"path": [
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DELETE",
+			"item": [
+				{
+					"name": "DeleteTodo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{basicUrl}}/{{id}}",
+							"host": [
+								"{{basicUrl}}"
+							],
+							"path": [
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "CJFAdmin1$",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "cjf.admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "41b2c424-753b-4a93-a82a-5e4be892a258",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "c693318e-8306-4529-988e-fa5f367f48e9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "736021ba-2570-4790-ac69-6f309a54b4cd",
+			"key": "basicUrl",
+			"value": "https://ceva-snapshot.mydevcloud.io/cjf-template/rest/api/v1/todo",
+			"type": "string"
+		}
+	]
+}

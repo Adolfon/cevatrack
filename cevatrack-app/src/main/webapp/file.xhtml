@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" lang="en">
+<f:view locale="#{localeController.locale}">
+
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta name="viewport"
+				content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+			<meta name="apple-mobile-web-app-capable" content="yes" />
+		</f:facet>
+		<title><h:outputText value="#{lbl['cjfTemplate.title']}" /></title>
+		<h:outputStylesheet library="cjf-base"
+			name="css/style.css?#{buildInfoBean.buildTime}" />
+		<ui:insert name="stylesheets" />
+	</h:head>
+
+	<h:body>
+		<h:inputHidden id="inh_filePath" value="#{param['filePath']}" />
+		<h:inputHidden id="inh_fileWebSocketUrl"
+			value="#{environmentInfoBean.webSocketUrl}" />
+		<div id="msg-box"></div>
+		<div id="spin" style="display: none">
+			<p:panelGrid layout="grid" columns="3"
+				columnClasses="ui-xl-5 ui-lg-4 ui-md-5 ui-sm-5, ui-xl-6 ui-lg-2 ui-md-4 ui-sm-3, ui-xl-1 ui-lg-2 ui-md-2 ui-sm-4">
+
+				<i class="fa fa-1x fa fa-spinner fa-spin ajax-status-icon"
+					aria-hidden="true"></i>
+
+				<p:spacer />
+				<p:commandButton id="btn_clearLogButton" value="#{lbl['log.btn.clear']}"
+					oncomplete="clearLog();" styleClass="ui-priority-primary" />
+			</p:panelGrid>
+		</div>
+
+		<h:outputScript name="js/filewebsocket.js" />
+	</h:body>
+</f:view>
+</html>

@@ -1,0 +1,185 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:cjf="http://xmlns.jcp.org/jsf/composite/cjf"
+	xmlns:p="http://primefaces.org/ui" template="app-template.xhtml">
+
+	<f:metadata>
+		<f:event listener="#{aAFSecurityBean.checkPermissions}"
+			type="preRenderView"></f:event>
+		<f:attribute name="permission"
+			value="#{CJFPermissionConstants.TODO_VIEW}" />
+	</f:metadata>
+
+	<ui:define name="title">
+		<h:panelGroup rendered="#{todoController.todo.id == null}">
+			<h:outputText value="#{lbl['addTodo.out.title']}" />
+		</h:panelGroup>
+		<h:panelGroup rendered="#{todoController.todo.id != null}">
+			<h:outputText value="#{lbl['editTodo.out.title']}" />
+		</h:panelGroup>
+	</ui:define>
+
+	<ui:define name="content">
+		<div class="ui-fluid">
+			<h:form id="frm_addToDo">
+				<p:growl id="growl" showDetail="false" sticky="false" >
+					<p:autoUpdate />
+				</p:growl>
+				<div class="ui-g ui-g-nopad">
+					<div class="ui-xl-4 ui-lg-4 ui-md-2 ui-sm-12 defaultGridBackgroundColor"></div>
+					<div class="ui-xl-5 ui-lg-5 ui-md-9 ui-sm-12 ui-g-nopad ">
+						<p:panel id="basic" styleClass="">
+							<f:facet name="header">
+								<center>
+									<h:panelGroup layout="block"
+										rendered="#{todoController.todo.id == null}">
+										<h:outputText value="#{lbl['addTodo.out.title']}" />
+									</h:panelGroup>
+									<h:panelGroup layout="block"
+										rendered="#{todoController.todo.id != null}">
+										<h:outputText value="#{lbl['editTodo.out.title']}" />
+									</h:panelGroup>
+									<cjf:overlay id="tltp_help">
+												<h:outputText value="This form helps you to add a todo for you or other person.Define the clear titile and description of the task.Set due date if you have one."></h:outputText>
+											    <h:outputText value="you can choose the owner who are already a user in the system. if you dont find,request them to signup You can also upload files relevant to this todo."></h:outputText>
+									</cjf:overlay>
+								</center>
+							</f:facet>
+							<p:panelGrid id="pgd_add_todo_panel" layout="grid" columns="2"
+								columnClasses="ui-xl-4 ui-lg-4 ui-md-4 ui-sm-12 ui-g-nopad,ui-xl-8 ui-lg-8 ui-md-8 ui-sm-12 ui-g-nopad">
+								<h:panelGroup id="pg_todo_search_grid_title_label_tltp">
+									<p:outputLabel for="txt_title" id="lbl_todo_title"
+										value="#{lbl['todo.title']}" />
+									<p:outputLabel id="lbl_todo_title_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_title_tltp" id="tltp_todo_title"
+										value="#{lbl['todo.tltp.title']}" />
+								</h:panelGroup>
+
+								<p:inputText id="txt_title" styleClass="cjf-required"
+									value="#{todoController.todo.title}" />
+
+								<h:panelGroup id="pg_todo_search_grid_desc_label_tltp">
+									<p:outputLabel id="lbl_description" value="#{lbl['todo.desc']}" />
+									<p:outputLabel id="lbl_todo_desc_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_desc_tltp" id="tltp_todo_desc"
+										value="#{lbl['todo.tltp.desc']}" />
+								</h:panelGroup>
+								<p:inputText id="txt_description"
+									value="#{todoController.todo.description}" />
+
+								<h:panelGroup id="pg_todo_search_grid_priority_label_tltp">
+									<h:outputLabel id="lbl_priority" for="txt_priority"
+										value="#{lbl['todo.priority']}" />
+									<p:outputLabel id="lbl_todo_priority_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_priority_tltp" id="tltp_priority_desc"
+										value="#{lbl['todo.tltp.priority']}" />
+								</h:panelGroup>
+								<p:inputText id="txt_priority"
+									value="#{todoController.todo.priority}" />
+
+								<h:panelGroup id="pg_todo_search_grid_duedate_label_tltp">
+									<p:outputLabel id="lbl_dueDate" for="dte_dueDate"
+										value="#{lbl['todo.dueDate']}" />
+									<p:outputLabel id="lbl_todo_duedate_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_duedate_tltp" id="tltp_duedate_desc"
+										value="#{lbl['todo.tltp.dueDate']}" />
+								</h:panelGroup>
+								<p:calendar id="dte_dueDate" pattern="#{todoController.userDateTimeFormat}"
+									value="#{todoController.todo.duedate}" showOn="button" 
+									validator="#{todoController.validateDate}"/>
+
+								<h:panelGroup id="pg_todo_search_grid_owner_label_tltp">
+									<p:outputLabel id="lbl_owner" value="#{lbl['todo.owner']}" />
+									<p:outputLabel id="lbl_todo_owner_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_owner_tltp" id="tltp_owner_desc"
+										value="#{lbl['todo.tltp.owner']}" />
+								</h:panelGroup>
+								<h:panelGroup layout="block" styleClass="ui-g">
+									<div class="ui-lg-11 ui-md-11 ui-sm-11 ui-g-nopad">
+										<p:inputText id="txt__owner"
+											value="#{todoController.todo.owner}" />
+									</div>
+									<div class="ui-lg-1 ui-md-1 ui-sm-1 ui-g-nopad">
+										<cjf:ldapSearch id="cjf_todo_ownerSearch"
+											selectionAction="#{todoController.selectUser}"
+											value="#{todoController.ldapuserVO}" />
+									</div>
+									<p:message id="msg_todo_owner" for="txt__owner" />
+								</h:panelGroup>
+							</p:panelGrid>
+							<h:panelGroup layout="block">
+								<p:spacer width="100%" height="10px" />
+							</h:panelGroup>
+							<h:panelGroup layout="block">
+								<h:panelGroup id="pg_todo_search_grid_upload_label_tltp">
+									<p:outputLabel id="lbl_upload" value="#{lbl['todo.upload']}" />
+									<p:outputLabel id="lbl_todo_upload_tltp">
+										<i class="fa fa-question-circle"></i>
+									</p:outputLabel>
+									<p:tooltip for="lbl_todo_upload_tltp" id="tltp_upload_desc"
+										value="#{lbl['todo.tltp.upload']}" />
+								</h:panelGroup>
+								<p:fileUpload id="fu_todo_fileupload"
+									fileUploadListener="#{todoController.handleFileUpload}"
+									mode="advanced" dragDropSupport="true" multiple="true"
+									update="growl" sizeLimit="#{todoController.maxFileUploadSize}" />
+							</h:panelGroup>
+							<h:panelGroup layout="block">
+								<p:spacer width="100%" height="10px" />
+							</h:panelGroup>
+							<h:panelGroup layout="block"
+								rendered="#{todoController.todo.id == null}">
+								<p:panelGrid layout="grid" id="pgd_save_reset_button"
+									columns="4" columnClasses="ui-g-3">
+									<p:spacer />
+									<p:commandButton id="btn_add" icon="fa fa-floppy-o"
+										title="#{lbl['addTodo.btn.save']}" style="width:100%;"
+										value="#{lbl['addTodo.btn.add']}"
+										oncomplete="sendMsg('#{todoController.ldapuserVO.principalName}');"
+										action="#{todoController.add}" process="@form" ajax="true" />
+									<p:commandButton id="btn_reset" icon="fa fa-times"
+										title="#{lbl['addTodo.btn.cancel']}" style="width:100%;"
+										value="#{lbl['addTodo.btn.reset']}"
+										action="#{todoController.resetAdd}" ajax="false" immediate="true">
+										<p:resetInput target="basic" />
+									</p:commandButton>
+									<p:spacer />
+								</p:panelGrid>
+							</h:panelGroup>
+							<h:panelGroup layout="block"
+								rendered="#{todoController.todo.id != null}">
+								<p:panelGrid layout="grid" id="pgd_save_cancel_button"
+									columns="4" columnClasses="ui-g-3">
+									<p:spacer />
+									<p:commandButton id="btn_save" icon="fa fa-floppy-o"
+										title="#{lbl['addTodo.btn.update']}" style="width:100%;"
+										value="#{lbl['addTodo.btn.save']}"
+										action="#{todoController.saveEdit}" process="@form" />
+									<p:commandButton id="btn_cancel" icon="fa fa-times"
+										title="#{lbl['addTodo.btn.cancel']}" style="width:100%;"
+										value="#{lbl['addTodo.btn.cancel']}"
+										action="#{todoController.cancelEdit}" process="@this" />
+									<p:spacer />
+								</p:panelGrid>
+							</h:panelGroup>
+						</p:panel>
+					</div>
+					<div class="ui-xl-3 ui-lg-3 ui-md-1 ui-sm-12 defaultGridBackgroundColor"></div>
+				</div>
+			</h:form>
+		</div>
+	</ui:define>
+
+</ui:composition>

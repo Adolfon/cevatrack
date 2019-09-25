@@ -1,0 +1,166 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:ph="http://primefaces.org/harmony"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ph:menu widgetVar="me">
+		<aaf:authenticated>
+
+			<p:submenu label="#{lbl['menu.mitm.administration']}"
+				icon="fa fa-tasks"
+				rendered="#{aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.ADMIN_MANAGE_HEAP,CJFPermissionConstants.ADMIN_MANAGE_SERVING) or aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.ADMIN_MANAGE_LOG_LEVELS)}" >
+				<p:menuitem value="#{lbl['menu.mitm.configuration']}" url="/admin.xhtml"
+					icon="fa fa-tasks"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.ADMIN_MANAGE_HEAP,CJFPermissionConstants.ADMIN_MANAGE_SERVING)}" />
+			</p:submenu>
+
+			<p:menuitem value="#{lbl['menu.mitm.todo']}" url="/list-todo.xhtml"
+				icon="fa fa-tasks"
+				rendered="#{aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.TODO)}" />
+			<p:submenu label="#{lbl['menu.subm.user']}" icon="fa fa-user"
+				rendered="#{(aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.ROLE_VIEW,AAFPermissionConstants.PERMISSION_VIEW, AAFPermissionConstants.USER_VIEW )) or
+							(!aAFSecurityBean.internal)	}">
+				<p:menuitem value="#{lbl['menu.mitm.userRole']}" url="/role.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.ROLE_VIEW)}" />
+				<p:menuitem rendered="#{!aAFSecurityBean.internal}"
+					value="#{lbl['menu.mitm.changePassword']}" icon="fa fa-unlock"
+					url="/change-password.xhtml" />
+				<p:menuitem value="#{lbl['menu.mitm.userPermission']}"
+					url="/permission.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.PERMISSION_VIEW)}" />
+				<p:menuitem value="#{lbl['menu.mitm.rolePermission']}"
+					url="/role-permission.xhtml"
+					rendered="#{aAFSecurityBean.hasAllPermissions(AAFPermissionConstants.ROLE_VIEW,AAFPermissionConstants.PERMISSION_VIEW)}" />
+				<p:menuitem value="#{lbl['menu.mitm.userMaintenance']}"
+					url="/users-maintenance.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.USER_VIEW)}" />
+			</p:submenu>
+			<p:menuitem value="Demo"
+				url="/demo/tabView.xhtml" icon="fa fa-desktop" />
+			<p:submenu label="#{lbl['menu.subm.file']}" icon="fa fa-file">
+				<p:submenu label="#{lbl['menu.subm.newFile']}">
+					<p:menuitem value="#{lbl['menu.mitm.newExcel']}" url="#####" />
+					<p:menuitem value="#{lbl['menu.mitm.newWord']}" url="#####" />
+					<p:menuitem value="#{lbl['menu.mitm.newPowerpoint']}" url="#####" />
+				</p:submenu>
+				<p:submenu label="#{lbl['menu.subm.import']}" icon="fa fa-upload">
+					<p:menuitem value="#{lbl['menu.mitm.importExcel']}"
+						icon="fa fa-file-excel-o" url="#####" />
+					<p:menuitem value="#{lbl['menu.mitm.importWord']}"
+						icon="fa fa-file-word-o" url="#####" />
+					<p:menuitem value="#{lbl['menu.mitm.importPowerpoint']}"
+						icon="fa fa-file-powerpoint-o" url="#####" />
+				</p:submenu>
+				<p:menuitem value="#{lbl['menu.mitm.build']}"
+					icon="fa fa-building-o" url="####" />
+			</p:submenu>
+			<p:submenu label="#{lbl['menu.subm.edit']}" icon="fa fa-edit">
+				<p:menuitem value="#{lbl['menu.mitm.editCut']}" icon="fa fa-cut"
+					url="#####" />
+				<p:menuitem value="#{lbl['menu.mitm.editCopy']}" icon="fa fa-copy"
+					url="#####" />
+				<p:menuitem value="#{lbl['menu.mitm.editPaste']}" icon="fa fa-paste"
+					url="####" />
+			</p:submenu>
+			<p:submenu label="#{lbl['menu.subm.view']}" icon="fa fa-eye">
+				<p:menuitem value="#{lbl['menu.mitm.viewGrid']}" url="#####" />
+				<p:menuitem value="#{lbl['menu.mitm.viewMargin']}" url="####" />
+			</p:submenu>
+			<p:submenu label="#{lbl['menu.subm.insert']}" icon="fa fa-plus">
+				<p:submenu label="#{lbl['menu.subm.insertDate']}">
+					<p:menuitem value="#{lbl['menu.mitm.dateValue1']}" url="####" />
+					<p:menuitem value="#{lbl['menu.mitm.dateValue2']}" url="####" />
+					<p:menuitem value="#{lbl['menu.mitm.dateValue3']}" url="####" />
+				</p:submenu>
+				<p:menuitem value="#{lbl['menu.mitm.insertNewPage']}" url="#####" />
+				<p:submenu label="#{lbl['menu.subm.insertDocs']}" icon="fa fa-file">
+					<p:menuitem value="#{lbl['menu.mitm.insertExcel']}"
+						icon="fa fa-file-excel-o" url="####" />
+					<p:menuitem value="#{lbl['menu.mitm.insertWord']}"
+						icon="fa fa-file-word-o" url="####" />
+					<p:menuitem value="#{lbl['menu.mitm.insertPdf']}"
+						icon="fa fa-file-pdf-o" url="####" />
+				</p:submenu>
+			</p:submenu>
+
+
+			<p:submenu id="om_components" label="Components"
+				icon="fa fa-fw fa-bars" rendered="false">
+				<p:menuitem id="om_sample" value="Sample Page"
+					icon="fa fa-fw fa-columns" outcome="/harmony/sample" />
+				<p:menuitem id="om_forms" value="Forms" icon="fa fa-fw fa-code"
+					outcome="/harmony/forms" />
+				<p:menuitem id="om_data" value="Data" icon="fa fa-fw fa-table"
+					outcome="/harmony/data" />
+				<p:menuitem id="om_panels" value="Panels"
+					icon="fa fa-fw fa-list-alt" outcome="/harmony/panel" />
+				<p:menuitem id="om_overlays" value="Overlays"
+					icon="fa fa-fw fa-square" outcome="/harmony/overlay" />
+				<p:menuitem id="om_menus" value="Menus"
+					icon="fa fa-fw fa-minus-square-o" outcome="/harmony/menu" />
+				<p:menuitem id="om_messages" value="Messages"
+					icon="fa fa-fw fa-circle-o-notch" outcome="/harmony/messages" />
+				<p:menuitem id="om_charts" value="Charts"
+					icon="fa fa-fw fa-area-chart" outcome="/harmony/charts" />
+				<p:menuitem id="om_file" value="File"
+					icon="fa fa-fw fa-arrow-circle-o-up" outcome="/harmony/file" />
+				<p:menuitem id="om_misc" value="Misc" icon="fa fa-fw fa-user-secret"
+					outcome="/harmony/misc" />
+			</p:submenu>
+
+			<p:submenu label="#{lbl['menu.subm.support']}"
+				icon="fa fa-question-circle"
+				rendered="#{aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.ADMIN_VIEW_LOG)}">
+				<p:menuitem value="#{lbl['menu.mitm.fileNavigator']}"
+					url="/fileNavigator.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.ADMIN_VIEW_LOG)}" />
+				<p:menuitem value="#{lbl['menu.mitm.logger']}" url="/logger.xhtml" 
+					icon="fa fa-file"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(CJFPermissionConstants.ADMIN_MANAGE_LOG_LEVELS)}" />
+			</p:submenu>
+		</aaf:authenticated>
+
+		<p:submenu class="hideMenuInLargeResolution"
+			label="Language : #{localeController.getLanguage()}"
+			icon="fa fa-language">
+			<c:forEach items="#{localeController.supportedLocales}"
+				var="languageVar">
+				<p:menuitem class="hideMenuInLargeResolution"
+					value="#{languageVar.language} - #{lbl['language.'.concat(languageVar.language)]}"
+					action="#{localeController.changeLanguage(languageVar.language)}"
+					icon="fa fa-flag-checkered">
+				</p:menuitem>
+			</c:forEach>
+		</p:submenu>
+
+		<p:menuitem class="hideMenuInLargeResolution"
+			value="#{lbl['user.mitm.feedback']}"
+			action="error-report.xhtml?faces-redirect=true&amp;title=feedback"
+			icon="fa fa-comment" />
+		
+		<aaf:notAuthenticated>
+			<p:menuitem class="hideMenuInLargeResolution"
+				value=" #{lbl['user.mitm.signUp']}"
+				action="signup.xhtml?faces-redirect=true" icon="fa fa-user-plus" />
+		</aaf:notAuthenticated>
+
+		<aaf:authenticated>
+			<p:menuitem class="hideMenuInLargeResolution"
+				value="#{appUserBean.appUser.AAFUser.firstName} #{appUserBean.appUser.AAFUser.lastName}"
+				action="userProfile.xhtml?faces-redirect=true" icon="fa fa-user" />
+			<p:menuitem class="hideMenuInLargeResolution"
+				value="#{lbl['user.logout']}" action="#{logoutBean.logout()}"
+				icon="fa fa-sign-out" />
+		</aaf:authenticated>
+
+		<aaf:notAuthenticated>
+			<p:menuitem class="hideMenuInLargeResolution"
+				value=" #{lbl['user.mitm.login']}"
+				url="login.xhtml?faces-redirect=true" icon="fa fa-sign-in" />
+		</aaf:notAuthenticated>
+
+	</ph:menu>
+</ui:composition>

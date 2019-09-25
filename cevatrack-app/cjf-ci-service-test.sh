@@ -1,0 +1,1 @@
+mvn help:active-profiles clean test -Pcjf-ci-service-test -Dtest=TodoServiceTest

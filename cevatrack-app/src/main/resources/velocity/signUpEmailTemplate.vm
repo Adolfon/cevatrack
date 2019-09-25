@@ -1,0 +1,43 @@
+<html>
+
+<head>
+<!--[if gte mso 9]>
+<style type="text/css">
+img{ 
+ width: 200;
+}
+</style>
+<![endif]-->
+</head>
+
+<body style="background-color: #cccccc; font-size: 20px; font-family: Calibri;">
+	<table cellspacing="0" cellpadding="0" border="0" >
+		<tr>
+			<td align="right" valign="top" colspan="5" style="padding-right:25px" >
+				<img src="https://www.logosurfer.com/wp-content/uploads/2018/03/ceva-logo_0.png" alt="Ceva logo" width=100 />	
+			</td>
+		</tr>
+		<tr>
+			<td width="500" style="padding-left:100px;" >
+				<img src="cid:$data.create_user_image" alt="Ceva Logistics" width=400 />
+			</td>
+			<td>
+				<h2 style="margin-left:18%; font-size: 32px; font-family: Arial;">WELCOME TO CEV<span style="color:#cc0044">A</span></h2>
+				<p>Hi <span style="color:#cc0044">$data.user.firstName $data.user.lastName, </span> </p>
+				<p style="margin-left:5%; font-size:23px"><b>Your account has been successfully registered!</b></p>
+				<p>Your <b>username </b> is: <span style="color:#cc0044">$data.user.email</span>
+				<p style="height:5px;">&nbsp</p>
+				<p>Kind regards,</p>
+				<p style="color:#cc0044"><b>CJF Team</b></p>
+				<p><i>Please do not reply to this email as the address is unattended.</i></p>
+				<p style="color:#cc0044">NVOCC Services are provided by CEVA as agents for and on behalf of Pyramid Lines Limited trading as Pyramid Lines.</p>
+				<p style="text-align:justify; font-size:13px; margin-right:15px"><i>This e-mail message is intended for the above named recipient(s) only. It may contain confidential information 
+				that is privileged. If you are not the intended recipient, you are hereby notified that any dissemination, distribution or copying of this e-mail and any attachment(s) is strictly 
+				prohibited. If you have received this e-mail by error, please immediately notify the sender by replying to this e-mail and deleting the message including any attachment(s) from 
+				your system. Thank you in advance for your cooperation and assistance. Although the company has taken reasonable precautions to ensure no viruses are present in this email, the 
+				company cannot accept responsibility for any loss or damage arising from the use of this email or attachments.</i></p>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

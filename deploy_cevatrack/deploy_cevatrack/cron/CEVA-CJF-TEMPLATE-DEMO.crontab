@@ -1,0 +1,4 @@
+#delete old log files
+0 0 * * * find /tomee/logs/ -mtime +30 -exec rm {} \;
+
+#Do not remove the last blank(next) line as crontab needs that

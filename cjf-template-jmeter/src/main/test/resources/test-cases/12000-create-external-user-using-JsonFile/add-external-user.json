@@ -1,0 +1,58 @@
+{"users":[
+    {
+        "user": {
+            "internal": false,
+            "emailId": "Bryce.Millar@abcdef.com",
+            "firstName": "Millar",
+            "lastName": "Bryce",
+            "loginId": "Bryce123",
+            "password": "Bryce123!@#"
+        },
+        "expectedResult": "SUCCESS"
+  },
+    {
+        "user": {
+            "internal": "false",
+            "emailId": "John.Dilliard@bcdef.com",
+            "firstName": "johny", 
+            "lastName": "Dilliard",
+            "loginId": "John123",
+            "password": "Jhon123!@#"
+        },
+        "expectedResult": "SUCCESS"
+  },
+  {
+        "user": {
+            "internal":"false",
+            "emailId": "Graciela.Ruta@abcdef.com",
+            "firstName": "Graciela",
+            "lastName": "Ruta",
+            "loginId": "Graciela123",
+            "password": "Graciela123!@#"
+        },
+        "expectedResult": "SUCCESS"
+  },
+    {
+        "user": {
+            "internal": false,
+            "emailId": "Willard.Kolmetz@sys.com",
+            "firstName": "Willard",
+            "lastName": "Kolmetz",
+            "loginId": "Willard123",
+            "password": "Willard123!@#"
+        },
+        "expectedResult": "SUCCESS"
+  },
+    {
+        "user": {
+            "internal": false,
+            "emailId": "Lorrie.Nestle@info.com",
+            "firstName": "Lorrie",
+            "lastName": "Nestle",
+            "loginId": "Lorrie123",
+            "password": "Lorrie123!@#"
+        },
+        "expectedResult": "SUCCESS"
+  }
+ ]
+}

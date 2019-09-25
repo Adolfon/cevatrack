@@ -1,0 +1,37 @@
+{
+	"info": {
+		"_postman_id": "c729fb10-08ee-437a-847f-9f764c9b3b98",
+		"name": "BuildInfo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetBuildInfo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://ceva-snapshot.mydevcloud.io/cjf-template/rest/api/v1/buildInfo",
+					"protocol": "https",
+					"host": [
+						"ceva-snapshot",
+						"mydevcloud",
+						"io"
+					],
+					"path": [
+						"cjf-template",
+						"rest",
+						"api",
+						"v1",
+						"buildInfo"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

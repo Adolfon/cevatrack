@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.14">
+<file name="H:\git\cjf-template\cjf-template-api-tests\src\test\java\com\ceva\template\api\v1\AllTests.java">
+</file>
+<file name="H:\git\cjf-template\cjf-template-api-tests\src\test\java\com\ceva\template\api\v1\health\HealthApiTest.java">
+</file>
+<file name="H:\git\cjf-template\cjf-template-api-tests\src\test\java\com\ceva\template\api\v1\todo\TodoApiTest.java">
+</file>
+</checkstyle>

@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://java.sun.com/jsf/composite/aaf"
+	xmlns:aaft="http://security.ceva.com/jsf/aaf/tags"
+	template="app-template.xhtml"
+	xmlns:shiro="http://shiro.apache.org/tags">
+	<f:metadata>
+	    <f:event type="preRenderView" listener="#{dtHomeView.init}"/>
+	</f:metadata>
+	
+	<ui:define name="content">
+		<p:growl />
+			<shiro:authenticated>
+				<div class="ceva-welcome-page">
+					<div class="ceva-panel-welcome-page"></div>					
+					<div id="welcomePage" class="ceva-text-welcome-page">
+						<h2 style="text-align: center">Welcome to CEVAtrack</h2>
+		
+						<div class="imagegrid">
+							<div class="imagelink">
+								<h:link outcome="AftermarketView.xhtml" value="">
+									<p:graphicImage library="images" name="circle_dial_big.png" styleClass="centerimage"/>
+								</h:link>
+								<div class="centered">Aftermarket</div>
+							</div>
+							<div class="imagelink">
+								<h:link outcome="smartNet.xhtml" value="">
+									<p:graphicImage library="images" name="circle_dial_big.png"
+										styleClass="centerimage" />
+								</h:link>
+								<div class="centered">SmartNet</div>
+							</div>
+						</div>
+					</div>			
+				</div>	
+		</shiro:authenticated>	   		  
+	</ui:define>
+	<ui:define name="footer">
+		<shiro:authenticated>
+			<!-- <ui:fragment rendered="#{!neverExpires}">
+				<aaf:sessionmonitor id="sessionMonitor" />
+			</ui:fragment>   	
+			<ui:include src="cjf-extension/footer.xhtml" />  -->
+			<h:outputScript library="js" name="app-script-1.js" />
+			<h:outputScript library="js" name="sn-initial.js" />
+		</shiro:authenticated>
+	</ui:define>
+	
+</ui:composition>

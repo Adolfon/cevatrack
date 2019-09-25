@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:cjf="http://xmlns.jcp.org/jsf/composite/cjf"
+	xmlns:p="http://primefaces.org/ui">
+
+		<h:form  id="frm_time">
+			<h:panelGroup>
+				<div class="ui-fluid">
+					<p:panel header="#{lbl['timezone.currenttime.title']}" style="text-align:center" id="pnl_timeheader">
+						<p:panelGrid columns="3" id="pgd_stativalues"
+							columnClasses="ui-grid-col-4,ui-grid-col-5,,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+							<h:panelGrid/>
+
+							<h:panelGrid columns="2" layout="grid" id="pgd_statictimezone" 
+								columnClasses="ui-grid-col-6,ui-grid-col-6">
+
+								<p:outputLabel for="txt_newyorktime" value="#{lbl['timezone.newyork']}" id="lbl_newyork"/>
+								<p:inputText id="txt_newyorktime" value="#{timeZoneBean.date}" size="25">
+									<f:converter converterId="timeZoneConverter"/>
+									<f:attribute name="timeZone" value="America/New_York" />
+								</p:inputText>
+
+								<p:outputLabel for="txt_india" value="#{lbl['timezone.india']}" id="lbl_india"/>
+								<p:inputText id="txt_india" value="#{timeZoneBean.date}" size="25">
+									<f:converter converterId="timeZoneConverter"/>
+									<f:attribute name="timeZone" value="Asia/Calcutta" />
+								</p:inputText>
+
+								<p:outputLabel for="txt_shengai" value="#{lbl['timezone.shengai']}" id="lbl_shengai"/>
+								<p:inputText id="txt_shengai" value="#{timeZoneBean.date}" size="25">
+									<f:converter converterId="timeZoneConverter"/>
+									<f:attribute name="timeZone" value="GMT+8" />
+								</p:inputText>
+
+								<p:outputLabel for="txt_sanfrancisco" value="#{lbl['timezone.sanfranciso']}" id="lbl_sanfrancisco"/>
+								<p:inputText id="txt_sanfrancisco" value="#{timeZoneBean.date}" size="25">
+									<f:converter converterId="timeZoneConverter"/>
+									<f:attribute name="timeZone" value="GMT-7" />
+								</p:inputText>
+
+							</h:panelGrid>
+							<p:panelGrid/>
+						</p:panelGrid>
+					</p:panel>
+				</div>
+			</h:panelGroup>
+			<h:panelGroup>
+
+				<div class="ui-fluid">
+					<p:panel id="pnl_time">
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-7,ui-grid-col-4" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid" id="pgd_dynamictime">
+
+							<h:panelGrid columns="2" layout="grid" id="pgd_dynamictimezone">
+
+								<p:growl id="msgs" showDetail="true" />
+
+								<p:panel header="#{lbl['timezone.dynamicchange.timezone.title']}" id="pnl_dynamictimezone">
+									<h:outputLabel value="#{lbl['timezone.dynamicchange.info']}" id="lbl_dynamictimezoneinfo"/> 
+									<h:panelGrid columns="4" cellpadding="5" id="pgd_dynamictimezoneselection">
+										<p:outputLabel id="lal_timezone" value="#{lbl['timezone.timezone']}" for="som_timezone"/>
+										<p:selectOneMenu id="som_timezone" value="#{timeZoneBean.zoneId}"
+											style="width:250px">
+											<p:ajax listener="#{timeZoneBean.selectedTimeZone}"
+												update="pnl_time" />
+											<f:selectItem itemLabel="Select TimeZone" itemValue=""
+												noSelectionOption="true" />
+											<f:selectItems value="#{timeZoneBean.timeZones}" />
+										</p:selectOneMenu>
+
+										<p:outputLabel for="txt_currentdate" value="#{lbl['timezone.currrenttime']}" id="out_currenttime"/>
+										<p:inputText id="txt_currentdate" value="#{timeZoneBean.date}" size="25">
+											<f:converter converterId="timeZoneConverter"/>
+											<f:attribute name="timeZone" value="#{timeZoneBean.zoneId}" />
+										</p:inputText>
+
+									</h:panelGrid>
+								</p:panel>
+
+							</h:panelGrid>
+
+							<p:panel header="#{lbl['timezone.userprofile.title']}" id="pnl_userprofileTimezone">
+								<h:panelGrid layout="grid" id="pgd_userprofileinfo">
+								<h:outputLabel value="#{lbl['timezone.userprofile.info']}" id="out_userprofileinfo"/>
+								</h:panelGrid>
+								<h:panelGrid columns="2" layout="grid" id="pgd_userprofile"
+									columnClasses="ui-grid-col-6,ui-grid-col-6">
+									<p:outputLabel for="txt_userprofiletimezone"
+										value="#{timeZoneBean.userProfileTimeZone}" id="out_userprofiletimezone"/>
+									<p:inputText id="txt_userprofiletimezone"
+										value="#{timeZoneBean.date}"
+										size="25">
+										<f:converter converterId="timeZoneConverter"/>
+									</p:inputText>
+
+								</h:panelGrid>
+							</p:panel>
+						</p:panelGrid>
+					</p:panel>
+				</div>
+			</h:panelGroup>
+		</h:form>
+</ui:composition>

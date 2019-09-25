@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:cjf="http://xmlns.jcp.org/jsf/composite/cjf"
+	xmlns:p="http://primefaces.org/ui" template="app-template.xhtml">
+
+	<f:metadata>
+		<f:event listener="#{aAFSecurityBean.checkPermissions}"
+			type="preRenderView"></f:event>
+		<f:attribute name="permission"
+			value="#{CJFPermissionConstants.ADMIN_VIEW_LOG}" />
+	</f:metadata>
+
+	<ui:define name="content">
+
+		<div class="ui-fluid">
+			<h:form id="frm_fileNavigator">
+				<h:commandLink id="cml_fileTailDisplay" style="display:none"
+					target="_blank"
+					action="#{fileNavigatorBean.getFilePath(fileNavigatorBean.selectedFile.data.filePath)}" />
+				<h:commandLink id="cml_fileViewDisplay" style="display:none"
+					target="_blank"
+					action="#{fileNavigatorBean.displayFileContent(fileNavigatorBean.selectedFile.data.filePath)}" />
+				<p:treeTable id="tt_treeTable" value="#{fileNavigatorBean.root}"
+					selection="#{fileNavigatorBean.selectedFile}" var="file"
+					selectionMode="single">
+					<f:facet name="header">
+            			#{lbl['file.navigator.title']}
+        			</f:facet>
+					<p:column id="clm_name" headerText="#{lbl['file.navigator.name']}">
+						<i class="fa fa-folder"></i>
+						<p:spacer height="3px" />
+						<h:outputText id="out_name" value="#{file.name}" />
+
+						<p:contextMenu id="ctx_contextMenu" for="tt_treeTable">
+						    <p:menuitem value="#{lbl['context.menu.view']}"
+								onclick="document.getElementById('frm_fileNavigator:cml_fileViewDisplay').click();"
+								icon="pi pi-refresh" />
+							<p:menuitem value="#{lbl['context.menu.tail']}"
+								onclick="document.getElementById('frm_fileNavigator:cml_fileTailDisplay').click();"
+								icon="pi pi-refresh" />
+						</p:contextMenu>
+					</p:column>
+					<p:column id="clm_lastModified"
+						headerText="#{lbl['file.navigator.lastModified']}">
+						<h:outputText id="out_lastModified" value="#{file.lastModified}" />
+					</p:column>
+					<p:column id="clm_size" headerText="#{lbl['file.navigator.size']}">
+						<h:outputText id="out_size" value="#{file.size}" />
+					</p:column>
+
+				</p:treeTable>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

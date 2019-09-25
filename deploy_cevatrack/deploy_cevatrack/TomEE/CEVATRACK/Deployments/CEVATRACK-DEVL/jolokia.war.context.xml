@@ -1,0 +1,5 @@
+<!-- 
+	Try not to add more parameters here if you can use application.properties or environment.properties
+	Exceptions, please have a discussion with Architecture team
+-->
+<Parameter name="placeholder" value="sample" />

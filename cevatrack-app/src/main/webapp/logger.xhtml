@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:cjf="http://xmlns.jcp.org/jsf/composite/cjf"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="app-template.xhtml">
+	
+	<f:metadata>
+		<f:event listener="#{aAFSecurityBean.checkPermissions}"
+			type="preRenderView"></f:event>
+		<f:attribute name="permission"
+			value="#{CJFPermissionConstants.ADMIN_MANAGE_LOG_LEVELS}" />
+	</f:metadata>
+	
+	<ui:define name="title">
+		<h:outputText value="#{lbl['logger.title']}" />
+	</ui:define>
+
+	<ui:define name="content">
+		<div class="ui-fluid">
+			<h:form id="frm_logger">
+				<p:growl id="msg_growl" showDetail="false" sticky="false"
+					globalOnly="true" life="10000">
+					<p:autoUpdate />
+				</p:growl>
+				<center>
+					<h2>
+						<h:outputText value="#{lbl['logger.header']}" />
+					</h2>
+				</center>
+				<div class="ui-g ui-g-nopad">
+
+					<ui:fragment rendered="#{cc.attrs.isDialog ne 'true'}">
+						<div class="ui-xl-3 ui-lg-3 ui-md-0 ui-sm-0" />
+					</ui:fragment>
+
+					<div
+						class="#{cc.attrs.isDialog ne 'true' ? 'ui-xl-6 ui-lg-6 ui-md-12 ui-sm-12 ui-g-nopad' 
+								: 'ui-xl-12 ui-lg-12 ui-md-12 ui-sm-12 ui-g-nopad'}">
+						<p:dataTable id="tbl_logger" value="#{loggerBean.logs}" var="row"
+							filteredValue="#{loggerBean.filteredLogs}" paginator="true"
+							rows="#{loggerBean.initialPageSize}" pageLinks="5"
+							rowsPerPageTemplate="#{loggerBean.pageSizeValues}"
+							paginatorPosition="#{loggerBean.paginatorPosition}"
+							paginatorAlwaysVisible="false"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							emptyMessage="#{lbl['logger.tbl.empty']}"
+							sortBy="#{row.className}" sortOrder="ascending">
+							<p:column headerText="#{lbl['logger.formClassName']}"
+								sortBy="#{row.className}" filterBy="#{row.className}"
+								filterMatchMode="contains" width="60">
+								<h:outputText value="#{row.className}" />
+							</p:column>
+							<p:column headerText="#{lbl['logger.formActions']}" width="40">
+								<p:panelGrid layout="grid" columns="2"
+									columnClasses="ui-xl-8 ui-lg-6 ui-md-6 ui-sm-12, ui-xl-4 ui-lg-4 ui-md-4 ui-sm-12">
+									<p:selectOneMenu value="#{row.logLevel}"
+										converter="logLevelConverter">
+										<f:selectItem itemLabel="#{lbl['logger.selectLevel']}"
+											itemValue="" noSelectionOption="true" />
+										<f:selectItems value="#{loggerBean.logLevels}" />
+									</p:selectOneMenu>
+									<p:commandButton value="#{lbl['logger.btn.set']}"
+										action="#{loggerBean.onChangeLogLevel(row.className, row.logLevel)}" />
+								</p:panelGrid>
+							</p:column>
+						</p:dataTable>
+					</div>
+
+					<ui:fragment rendered="#{cc.attrs.isDialog ne 'true'}">
+						<div class="ui-xl-3 ui-lg-3 ui-md-0 ui-sm-0" />
+					</ui:fragment>
+
+				</div>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>
