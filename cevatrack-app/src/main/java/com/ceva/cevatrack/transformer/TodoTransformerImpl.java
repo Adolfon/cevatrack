@@ -19,7 +19,7 @@ public class TodoTransformerImpl extends AbstractEntityTransformerImpl<Todo> imp
     /**
      * transformToVO.
      * 
-     * @see com.ceva.template.transformer.TodoTransformer#transformToVO (com.ceva.template.domain.Todo).
+     * @see com.ceva.cevatrack.transformer.TodoTransformer#transformToVO (com.ceva.cevatrack.domain.Todo).
      */
     public TodoVO transformToVO(Todo todo) {
 
@@ -53,7 +53,7 @@ public class TodoTransformerImpl extends AbstractEntityTransformerImpl<Todo> imp
     /**
      * (non-Javadoc).
      * 
-     * @see com.ceva.template.transformer.TodoTransformer#transformToTodo(com.ceva.template.vo.TodoVO)
+     * @see com.ceva.cevatrack.transformer.TodoTransformer#transformToTodo(com.ceva.cevatrack.vo.TodoVO)
      */
     public Todo transformToTodo(TodoVO vo) {
 

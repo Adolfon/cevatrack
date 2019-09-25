@@ -42,7 +42,7 @@
         <init-param>
             <param-name>jaxrs.serviceClasses</param-name>
             <param-value>
-                com.ceva.template.rest.v1.impl.TodoRestServiceImpl,
+                com.ceva.cevatrack.rest.v1.impl.TodoRestServiceImpl,
                 com.ceva.cjf.base.rest.v1.impl.BuildInfoImpl
             </param-value>
         </init-param>

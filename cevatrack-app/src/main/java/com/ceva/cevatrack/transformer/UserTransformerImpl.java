@@ -13,7 +13,7 @@ import com.ceva.cevatrack.vo.AppUserVO;
  * @author mohammad.rasheed
  *
  */
-@Singleton(name = "com.ceva.template.transformer.UserTransformerImpl")
+@Singleton(name = "com.ceva.cevatrack.transformer.UserTransformerImpl")
 public class UserTransformerImpl extends AbstractEntityTransformerImpl<User> implements UserTransformer {
 
     @Override
