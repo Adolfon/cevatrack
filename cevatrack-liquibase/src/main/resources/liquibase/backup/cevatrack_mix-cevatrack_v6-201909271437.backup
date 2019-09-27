@@ -1,0 +1,1803 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.14
+-- Dumped by pg_dump version 9.5.14
+
+-- Started on 2019-09-27 14:37:06
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 9 (class 2615 OID 66441)
+-- Name: cevatrack_mix; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA cevatrack_mix;
+
+
+ALTER SCHEMA cevatrack_mix OWNER TO postgres;
+
+--
+-- TOC entry 268 (class 1255 OID 66442)
+-- Name: add_aaf_domain_action_lookup(text, text, text, integer, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_domain_action_lookup(aaf_domain_code text, aaf_domain_action_code text, description text, display_order integer, display_label text) RETURNS text
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+      count_domain_codes integer;
+      count_aaf_domain_code integer;
+result text;
+BEGIN
+      EXECUTE 'SELECT Count(aaf_domain_code) FROM aaf_domain_action_lookup where aaf_domain_code=$1 and aaf_domain_action_code=$2' INTO count_domain_codes USING aaf_domain_code,aaf_domain_action_code;   
+      IF (count_domain_codes = 0) THEN
+                  EXECUTE 'SELECT Count(aaf_domain_code) FROM aaf_domain_lookup where aaf_domain_code=$1' INTO count_aaf_domain_code USING aaf_domain_code;
+                  IF (count_aaf_domain_code != 0) THEN
+                  result := 'OK';
+                  INSERT INTO aaf_domain_action_lookup(
+                                   aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, 
+                                   created_on, created_by, updated_on, updated_by, version)
+                             VALUES (aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, 
+                                   now(), 'SYSTEM', null, null, 1);
+                  ELSE
+                        result := 'KO: the aaf_domain_code=' || aaf_domain_code || '" does not exist in the target DB';  
+                  END IF;
+      ELSE
+            result := 'KO: the domain action lookup [aaf_domain_code="' || aaf_domain_code || '", aaf_domain_action_code="' || aaf_domain_action_code || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;
+END
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_domain_action_lookup(aaf_domain_code text, aaf_domain_action_code text, description text, display_order integer, display_label text) OWNER TO postgres;
+
+--
+-- TOC entry 256 (class 1255 OID 66443)
+-- Name: add_aaf_domain_lookup(text, text, integer, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_domain_lookup(aaf_domain_code text, description text, display_order integer, display_label text) RETURNS text
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+      count_domain_codes integer;
+result text;
+BEGIN
+      EXECUTE 'SELECT Count(aaf_domain_code) FROM aaf_domain_lookup where aaf_domain_code=$1' INTO count_domain_codes USING aaf_domain_code;   
+      IF (count_domain_codes = 0) THEN
+                  
+          result := 'OK';
+          INSERT INTO aaf_domain_lookup(
+            aaf_domain_code, description, display_order, display_label, created_on, 
+            created_by, updated_on, updated_by, version)
+		    VALUES ($1, $2, $3, $4, now(), 'SYSTEM', null, null, 1); 
+                  
+      ELSE
+            result := 'KO: the domain code [aaf_domain_code="' || aaf_domain_code || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;
+END
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_domain_lookup(aaf_domain_code text, description text, display_order integer, display_label text) OWNER TO postgres;
+
+--
+-- TOC entry 257 (class 1255 OID 66444)
+-- Name: add_aaf_permission(text, text, text, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_permission(domain text, action text, instance text, description text) RETURNS text
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+count_permissions integer;
+result text;
+BEGIN
+      EXECUTE 'SELECT Count(domain) FROM aaf_permission where domain=$1 and action=$2 and instance=$3' INTO count_permissions USING domain, action, instance;   
+      IF (count_permissions = 0) THEN
+            result := 'OK';
+            INSERT INTO aaf_permission ( domain, action, instance, description, created_on, created_by, updated_on, updated_by, version) 
+                  VALUES (domain, action, instance, description, now(), 'SYSTEM', NULL, NULL, 1);
+      ELSE
+            result := 'KO: the permission [domain="' || domain || '", action="' || action || '", instance="' || instance || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;          
+END
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_permission(domain text, action text, instance text, description text) OWNER TO postgres;
+
+--
+-- TOC entry 258 (class 1255 OID 66445)
+-- Name: add_aaf_role(text, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_role(role_name text, description text) RETURNS text
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+count_roles integer;
+result text;
+BEGIN
+      EXECUTE 'SELECT Count(role_name) FROM aaf_role where role_name=$1' INTO count_roles USING role_name;   
+      IF (count_roles = 0) THEN
+            result := 'OK';
+            INSERT INTO aaf_role ( role_name, description, created_on, created_by, updated_on, updated_by, version) 
+			VALUES ($1, $2, now(), 'SYSTEM', NULL, NULL, 0);
+      ELSE
+            result := 'KO: the role [role_name="' || role_name || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;          
+END
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_role(role_name text, description text) OWNER TO postgres;
+
+--
+-- TOC entry 259 (class 1255 OID 66446)
+-- Name: add_aaf_role_permission(text, text, text, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_role_permission(text, text, text, text) RETURNS void
+    LANGUAGE sql
+    AS $_$
+	INSERT INTO aaf_role_permission (role_id, permission_id, created_on, created_by, updated_on, updated_by, version) 
+	VALUES (
+	(SELECT role_id from aaf_role where role_name = $1), 
+	(SELECT permission_id from aaf_permission where domain = $2 and action = $3 and instance=$4),
+	now(), 'SYSTEM', NULL, NULL, 0);
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_role_permission(text, text, text, text) OWNER TO postgres;
+
+--
+-- TOC entry 260 (class 1255 OID 66447)
+-- Name: add_aaf_user(text, text, text, text, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_user(user_principal text, password text, fname text, lname text, email text) RETURNS text
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+count_users integer;
+result text;
+BEGIN
+      EXECUTE 'SELECT Count(user_principal) FROM aaf_user where user_principal=$1' INTO count_users USING user_principal;   
+      IF (count_users = 0) THEN
+            result := 'OK';
+            INSERT INTO aaf_user (user_principal, password, first_name, last_name, email, user_type, is_locked, is_password_change_required, created_on, created_by, version)
+    			VALUES ($1, $2, $3, $4, $5, 'E', false, false, now(), 'initial_load', 0);            
+      ELSE
+            result := 'KO: the user [user_principal="' || user_principal || '" ] already exists in the target DB';
+      END IF;
+      RETURN result;          
+END    
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_user(user_principal text, password text, fname text, lname text, email text) OWNER TO postgres;
+
+--
+-- TOC entry 261 (class 1255 OID 66448)
+-- Name: add_aaf_user_role(text, text); Type: FUNCTION; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE FUNCTION cevatrack_mix.add_aaf_user_role(text, text) RETURNS void
+    LANGUAGE sql
+    AS $_$
+	INSERT INTO aaf_user_role (user_id, role_id, created_on, created_by, version)
+	VALUES ( 
+	(SELECT user_id FROM aaf_user where user_principal=$1),
+	(SELECT role_id FROM aaf_role where role_name=$2), 
+	now(), 'initial_load', 0);
+$_$;
+
+
+ALTER FUNCTION cevatrack_mix.add_aaf_user_role(text, text) OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 212 (class 1259 OID 66449)
+-- Name: aaf_domain_action_lookup; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_domain_action_lookup (
+    aaf_domain_code character varying(64) NOT NULL,
+    aaf_domain_action_code character varying(64) NOT NULL,
+    description character varying(255) NOT NULL,
+    display_order smallint NOT NULL,
+    display_label character varying(64),
+    created_on timestamp(6) with time zone,
+    created_by character varying(15),
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(15),
+    version smallint
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_domain_action_lookup OWNER TO postgres;
+
+--
+-- TOC entry 213 (class 1259 OID 66452)
+-- Name: aaf_domain_lookup; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_domain_lookup (
+    aaf_domain_code character varying(64) NOT NULL,
+    description character varying(255) NOT NULL,
+    display_order smallint NOT NULL,
+    display_label character varying(64),
+    created_on timestamp(6) with time zone,
+    created_by character varying(15),
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(15),
+    version smallint
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_domain_lookup OWNER TO postgres;
+
+--
+-- TOC entry 214 (class 1259 OID 66455)
+-- Name: aaf_permission; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_permission (
+    permission_id integer NOT NULL,
+    domain character varying(50) NOT NULL,
+    action character varying(50) NOT NULL,
+    instance character varying(50) NOT NULL,
+    description character varying(255) NOT NULL,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_permission OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 66461)
+-- Name: aaf_permission_permission_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.aaf_permission_permission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.aaf_permission_permission_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2393 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: aaf_permission_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.aaf_permission_permission_id_seq OWNED BY cevatrack_mix.aaf_permission.permission_id;
+
+
+--
+-- TOC entry 216 (class 1259 OID 66463)
+-- Name: aaf_role; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_role (
+    role_id integer NOT NULL,
+    role_name character varying(255) NOT NULL,
+    description character varying(255) NOT NULL,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_role OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 66469)
+-- Name: aaf_role_permission; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_role_permission (
+    role_permission_id integer NOT NULL,
+    role_id bigint NOT NULL,
+    permission_id bigint NOT NULL,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_role_permission OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 66472)
+-- Name: aaf_role_permission_role_permission_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.aaf_role_permission_role_permission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.aaf_role_permission_role_permission_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2394 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: aaf_role_permission_role_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.aaf_role_permission_role_permission_id_seq OWNED BY cevatrack_mix.aaf_role_permission.role_permission_id;
+
+
+--
+-- TOC entry 219 (class 1259 OID 66474)
+-- Name: aaf_role_role_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.aaf_role_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.aaf_role_role_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2395 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: aaf_role_role_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.aaf_role_role_id_seq OWNED BY cevatrack_mix.aaf_role.role_id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 66476)
+-- Name: aaf_user; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_user (
+    user_id integer NOT NULL,
+    user_principal character varying(64) NOT NULL,
+    first_name character varying(64) NOT NULL,
+    last_name character varying(64) NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255),
+    user_type character varying(1) NOT NULL,
+    is_active boolean DEFAULT true,
+    incorrect_login_attempts smallint DEFAULT 0,
+    is_locked boolean DEFAULT false,
+    last_password_change_time timestamp(6) with time zone,
+    is_password_change_required boolean DEFAULT false,
+    last_successful_login timestamp(6) with time zone,
+    account_expiration_date timestamp(6) with time zone,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_user OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 66486)
+-- Name: aaf_user_password_hist; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_user_password_hist (
+    password_id integer NOT NULL,
+    user_id integer,
+    password character varying(255),
+    start_time timestamp(6) with time zone NOT NULL,
+    end_time timestamp(6) with time zone,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_user_password_hist OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 66489)
+-- Name: aaf_user_password_hist_password_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.aaf_user_password_hist_password_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.aaf_user_password_hist_password_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2396 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: aaf_user_password_hist_password_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.aaf_user_password_hist_password_id_seq OWNED BY cevatrack_mix.aaf_user_password_hist.password_id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 66491)
+-- Name: aaf_user_role; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.aaf_user_role (
+    user_role_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    role_id bigint NOT NULL,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.aaf_user_role OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 66494)
+-- Name: aaf_user_role_user_role_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.aaf_user_role_user_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.aaf_user_role_user_role_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2397 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: aaf_user_role_user_role_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.aaf_user_role_user_role_id_seq OWNED BY cevatrack_mix.aaf_user_role.user_role_id;
+
+
+--
+-- TOC entry 225 (class 1259 OID 66496)
+-- Name: aaf_user_user_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.aaf_user_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.aaf_user_user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2398 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: aaf_user_user_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.aaf_user_user_id_seq OWNED BY cevatrack_mix.aaf_user.user_id;
+
+
+--
+-- TOC entry 235 (class 1259 OID 66682)
+-- Name: app_user_profile; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.app_user_profile (
+    app_user_profile_id integer NOT NULL,
+    user_profile_id integer,
+    enable_todo_notification boolean DEFAULT false,
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.app_user_profile OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 66686)
+-- Name: app_user_profile_app_user_profile_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.app_user_profile_app_user_profile_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.app_user_profile_app_user_profile_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2399 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: app_user_profile_app_user_profile_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.app_user_profile_app_user_profile_id_seq OWNED BY cevatrack_mix.app_user_profile.app_user_profile_id;
+
+
+--
+-- TOC entry 226 (class 1259 OID 66498)
+-- Name: cjf_user; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.cjf_user (
+    id integer NOT NULL,
+    login character varying(255),
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.cjf_user OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 66501)
+-- Name: cjf_user_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.cjf_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.cjf_user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2400 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: cjf_user_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.cjf_user_id_seq OWNED BY cevatrack_mix.cjf_user.id;
+
+
+--
+-- TOC entry 228 (class 1259 OID 66503)
+-- Name: databasechangelog; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.databasechangelog (
+    id character varying(63) NOT NULL,
+    author character varying(63) NOT NULL,
+    filename character varying(200) NOT NULL,
+    dateexecuted timestamp with time zone NOT NULL,
+    orderexecuted integer NOT NULL,
+    exectype character varying(10) NOT NULL,
+    md5sum character varying(35),
+    description character varying(255),
+    comments character varying(255),
+    tag character varying(255),
+    liquibase character varying(20),
+    contexts character varying(255),
+    labels character varying(255)
+);
+
+
+ALTER TABLE cevatrack_mix.databasechangelog OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 66509)
+-- Name: databasechangeloglock; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.databasechangeloglock (
+    id integer NOT NULL,
+    locked boolean NOT NULL,
+    lockgranted timestamp with time zone,
+    lockedby character varying(255)
+);
+
+
+ALTER TABLE cevatrack_mix.databasechangeloglock OWNER TO postgres;
+
+--
+-- TOC entry 237 (class 1259 OID 66688)
+-- Name: file_uploader; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.file_uploader (
+    id integer NOT NULL,
+    todo_id integer NOT NULL,
+    file_name character varying(255) NOT NULL,
+    content_type character varying(10),
+    created_on timestamp with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.file_uploader OWNER TO postgres;
+
+--
+-- TOC entry 238 (class 1259 OID 66691)
+-- Name: file_uploader_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.file_uploader_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.file_uploader_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2401 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: file_uploader_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.file_uploader_id_seq OWNED BY cevatrack_mix.file_uploader.id;
+
+
+--
+-- TOC entry 230 (class 1259 OID 66512)
+-- Name: smartnet_client; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.smartnet_client (
+    id integer NOT NULL,
+    name character varying(50),
+    prefixes character varying(255),
+    image character varying(255),
+    aaf_instance character varying(20),
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.smartnet_client OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 66518)
+-- Name: smartnet_client_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.smartnet_client_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.smartnet_client_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2402 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: smartnet_client_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.smartnet_client_id_seq OWNED BY cevatrack_mix.smartnet_client.id;
+
+
+--
+-- TOC entry 232 (class 1259 OID 66520)
+-- Name: technet_client; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.technet_client (
+    id integer NOT NULL,
+    name character varying(50),
+    prefixes character varying(255),
+    image character varying(255),
+    aaf_instance character varying(20),
+    created_on timestamp with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.technet_client OWNER TO postgres;
+
+--
+-- TOC entry 233 (class 1259 OID 66526)
+-- Name: todo; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.todo (
+    id integer NOT NULL,
+    title character varying(255),
+    description character varying(255),
+    duedate timestamp(6) without time zone,
+    priority integer,
+    owner character varying(100),
+    created_on timestamp(6) with time zone NOT NULL,
+    created_by character varying(64) NOT NULL,
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint NOT NULL
+);
+
+
+ALTER TABLE cevatrack_mix.todo OWNER TO postgres;
+
+--
+-- TOC entry 234 (class 1259 OID 66532)
+-- Name: todo_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.todo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.todo_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2403 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: todo_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.todo_id_seq OWNED BY cevatrack_mix.todo.id;
+
+
+--
+-- TOC entry 239 (class 1259 OID 66693)
+-- Name: user_profile; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.user_profile (
+    user_profile_id integer NOT NULL,
+    user_principal character varying(64) NOT NULL,
+    language character varying(255),
+    date_format character varying(64),
+    time_format character varying(64),
+    currency character varying(64),
+    time_zone character varying(30),
+    created_on timestamp(6) with time zone,
+    created_by character varying(64),
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint,
+    menu_mode character varying(25),
+    theme character varying(50)
+);
+
+
+ALTER TABLE cevatrack_mix.user_profile OWNER TO postgres;
+
+--
+-- TOC entry 240 (class 1259 OID 66699)
+-- Name: user_profile_options; Type: TABLE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE TABLE cevatrack_mix.user_profile_options (
+    option_id integer NOT NULL,
+    key character varying(255) NOT NULL,
+    value character varying(64) NOT NULL,
+    app_default boolean DEFAULT false,
+    created_on timestamp(6) with time zone,
+    created_by character varying(64),
+    updated_on timestamp(6) with time zone,
+    updated_by character varying(64),
+    version smallint
+);
+
+
+ALTER TABLE cevatrack_mix.user_profile_options OWNER TO postgres;
+
+--
+-- TOC entry 241 (class 1259 OID 66703)
+-- Name: user_profile_options_option_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.user_profile_options_option_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.user_profile_options_option_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2404 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: user_profile_options_option_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.user_profile_options_option_id_seq OWNED BY cevatrack_mix.user_profile_options.option_id;
+
+
+--
+-- TOC entry 242 (class 1259 OID 66705)
+-- Name: user_profile_user_profile_id_seq; Type: SEQUENCE; Schema: cevatrack_mix; Owner: postgres
+--
+
+CREATE SEQUENCE cevatrack_mix.user_profile_user_profile_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cevatrack_mix.user_profile_user_profile_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2405 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: user_profile_user_profile_id_seq; Type: SEQUENCE OWNED BY; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER SEQUENCE cevatrack_mix.user_profile_user_profile_id_seq OWNED BY cevatrack_mix.user_profile.user_profile_id;
+
+
+--
+-- TOC entry 2179 (class 2604 OID 66534)
+-- Name: permission_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_permission ALTER COLUMN permission_id SET DEFAULT nextval('cevatrack_mix.aaf_permission_permission_id_seq'::regclass);
+
+
+--
+-- TOC entry 2180 (class 2604 OID 66535)
+-- Name: role_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role ALTER COLUMN role_id SET DEFAULT nextval('cevatrack_mix.aaf_role_role_id_seq'::regclass);
+
+
+--
+-- TOC entry 2181 (class 2604 OID 66536)
+-- Name: role_permission_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role_permission ALTER COLUMN role_permission_id SET DEFAULT nextval('cevatrack_mix.aaf_role_permission_role_permission_id_seq'::regclass);
+
+
+--
+-- TOC entry 2186 (class 2604 OID 66537)
+-- Name: user_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user ALTER COLUMN user_id SET DEFAULT nextval('cevatrack_mix.aaf_user_user_id_seq'::regclass);
+
+
+--
+-- TOC entry 2187 (class 2604 OID 66538)
+-- Name: password_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_password_hist ALTER COLUMN password_id SET DEFAULT nextval('cevatrack_mix.aaf_user_password_hist_password_id_seq'::regclass);
+
+
+--
+-- TOC entry 2188 (class 2604 OID 66539)
+-- Name: user_role_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_role ALTER COLUMN user_role_id SET DEFAULT nextval('cevatrack_mix.aaf_user_role_user_role_id_seq'::regclass);
+
+
+--
+-- TOC entry 2193 (class 2604 OID 66707)
+-- Name: app_user_profile_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.app_user_profile ALTER COLUMN app_user_profile_id SET DEFAULT nextval('cevatrack_mix.app_user_profile_app_user_profile_id_seq'::regclass);
+
+
+--
+-- TOC entry 2189 (class 2604 OID 66540)
+-- Name: id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.cjf_user ALTER COLUMN id SET DEFAULT nextval('cevatrack_mix.cjf_user_id_seq'::regclass);
+
+
+--
+-- TOC entry 2194 (class 2604 OID 66708)
+-- Name: id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.file_uploader ALTER COLUMN id SET DEFAULT nextval('cevatrack_mix.file_uploader_id_seq'::regclass);
+
+
+--
+-- TOC entry 2190 (class 2604 OID 66541)
+-- Name: id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.smartnet_client ALTER COLUMN id SET DEFAULT nextval('cevatrack_mix.smartnet_client_id_seq'::regclass);
+
+
+--
+-- TOC entry 2191 (class 2604 OID 66542)
+-- Name: id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.todo ALTER COLUMN id SET DEFAULT nextval('cevatrack_mix.todo_id_seq'::regclass);
+
+
+--
+-- TOC entry 2195 (class 2604 OID 66709)
+-- Name: user_profile_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.user_profile ALTER COLUMN user_profile_id SET DEFAULT nextval('cevatrack_mix.user_profile_user_profile_id_seq'::regclass);
+
+
+--
+-- TOC entry 2197 (class 2604 OID 66710)
+-- Name: option_id; Type: DEFAULT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.user_profile_options ALTER COLUMN option_id SET DEFAULT nextval('cevatrack_mix.user_profile_options_option_id_seq'::regclass);
+
+
+--
+-- TOC entry 2357 (class 0 OID 66449)
+-- Dependencies: 212
+-- Data for Name: aaf_domain_action_lookup; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_user', 'view', 'view action', 1, 'View User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_user', 'create', 'create action', 2, 'Create User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_user', 'edit', 'edit action', 3, 'Edit User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_user', 'delete', 'delete action', 4, 'Delete User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_user', '*', 'manage action', 5, 'Manage User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', 'view', 'view action', 1, 'View Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', 'create', 'create action', 2, 'Create Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', 'edit', 'edit action', 3, 'Edit Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', 'delete', 'delete action', 4, 'Delete Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', 'assign', 'assign action', 5, 'Assign Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', '*', 'manage action', 6, 'Manage Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'view', 'view action', 1, 'View Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'create', 'create action', 2, 'Create Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'edit', 'edit action', 3, 'Edit Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'delete', 'delete action', 4, 'Delete Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'assign', 'assign action', 5, 'Assign Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', '*', 'manage action', 6, 'Manage Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_user', 'change_roles', 'change roles action', 7, 'Change Roles User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_role', 'change_permission', 'change permissions action', 8, 'Change Permission Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('todo', 'view', 'view action', 1, 'View Todo', '2018-09-20 17:47:36.9204+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('todo', 'create', 'create action', 2, 'Create Todo', '2018-09-20 17:47:36.9204+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('todo', 'edit', 'edit action', 3, 'Edit Todo', '2018-09-20 17:47:36.9204+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('todo', 'delete', 'delete action', 4, 'Delete Todo', '2018-09-20 17:47:36.9204+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('todo', '*', 'manage action', 5, 'Manage Todo', '2018-09-20 17:47:36.9204+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('sn_client', 'view', 'View SmartNet Client', 1, 'View SmartNet Client', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('sn_site', 'view', 'View SmartNet Site', 1, 'View SmartNet Site', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('sn_microlise', 'tibco', 'Connect via Tibco', 1, 'Tibco Connection', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('sn_microlise', 'direct', 'Connect directly to Microlise (DEV ONLY)', 1, 'Direct Connection', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'time', 'No session expiration time', 1, 'Session time', '2019-02-13 17:55:15.443071+01', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('technet', 'direct', 'Connecr directly to Technet', 1, 'Direct Connection', '2018-09-20 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('tech_client', 'view', 'View TechNet Clients', 1, 'View TechNet Clients', '2018-09-20 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('tech_site', 'view', 'View TechNet Site', 1, 'View Technet site', '2018-09-20 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_action_lookup VALUES ('aaf_permission', 'consignmentsGroupedTable', 'Special consignments table layout', 1, 'Special consignments layout', '2019-07-15 17:55:15.443+02', 'SYSTEM', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2358 (class 0 OID 66452)
+-- Dependencies: 213
+-- Data for Name: aaf_domain_lookup; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('aaf_user', 'user management', 1, 'User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('aaf_role', 'role management', 2, 'Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('aaf_permission', 'permisssion management', 3, 'Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('todo', 'Todo management', 4, 'Todo', '2018-09-20 17:47:36.9204+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('sn_client', 'SmartNet Client', 5, 'SmartNet Client', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('sn_site', 'SmartNet Site', 6, 'SmartNet Site', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('sn_microlise', 'Microlise Webservice for SmartNet', 7, 'SmartNet Microlise', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('technet', 'TechNet Client', 8, 'TechNet Microlise', '2019-04-12 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('tech_site', 'TechNet Site view', 10, 'TechNet Microlise', '2019-04-12 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_domain_lookup VALUES ('tech_client', 'TechNet Network Clients view', 9, 'TechNet Microlise', '2019-04-12 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2359 (class 0 OID 66455)
+-- Dependencies: 214
+-- Data for Name: aaf_permission; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_permission VALUES (1, 'aaf_user', '*', '*', 'Manage User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (2, 'aaf_user', 'create', '*', 'Create User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (3, 'aaf_user', 'view', '*', 'View User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (4, 'aaf_user', 'edit', '*', 'Edit User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (5, 'aaf_user', 'delete', '*', 'Delete User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (6, 'aaf_role', '*', '*', 'Manage Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (7, 'aaf_role', 'create', '*', 'Create Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (8, 'aaf_role', 'view', '*', 'View Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (9, 'aaf_role', 'edit', '*', 'Edit Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (10, 'aaf_role', 'delete', '*', 'Delete Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (11, 'aaf_role', 'assign', '*', 'Assign Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (12, 'aaf_permission', '*', '*', 'Manage Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (13, 'aaf_permission', 'create', '*', 'Create Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (14, 'aaf_permission', 'view', '*', 'View Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (15, 'aaf_permission', 'edit', '*', 'Edit Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (16, 'aaf_permission', 'delete', '*', 'Delete Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (17, 'aaf_permission', 'assign', '*', 'Assign Permission', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (18, 'aaf_user', 'change_roles', '*', 'Change Roles User', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (19, 'aaf_role', 'change_permission', '*', 'Change Permission Role', '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (20, 'todo', '*', '*', 'Manage Todo', '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (21, 'todo', 'create', '*', 'Create Todo', '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (22, 'todo', 'view', '*', 'View Todo', '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (23, 'todo', 'edit', '*', 'Edit Todo', '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (24, 'todo', 'delete', '*', 'Delete Todo', '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (25, 'sn_client', 'view', '*', 'View SmartNet All Clients', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (26, 'sn_client', 'view', 'nike', 'View SmartNet Nike', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (27, 'sn_site', 'view', '*', 'Manage SmartNet All Sites', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (29, 'sn_microlise', 'tibco', 'prod', 'Connect indirectly to Microlise Production', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (30, 'sn_microlise', 'tibco', 'uat', 'Connect indirectly to Microlise Test', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (31, 'sn_microlise', 'direct', 'prod', 'Connect directly to Microlise Production', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (32, 'sn_microlise', 'direct', 'uat', 'Connect directly to Microlise Test', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (33, 'sn_client', 'view', 'lush', 'View SmartNet Lush', '2018-09-28 12:17:53.893+02', 'CJF.Admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (34, 'sn_client', 'view', 'gap', 'View SmartNet Gap', '2018-10-17 15:35:28.443+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (28, 'sn_site', 'view', '296633', 'Manage SmartNet Site 296633', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (38, 'aaf_permission', 'time', '*', 'Session never expires', '2019-02-13 17:55:15.443071+01', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (39, 'technet', 'direct', 'prod', 'Connect directly to technet direct Production', '2019-12-20 17:47:36+01', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (40, 'tech_client', 'view', '*', 'View technet all Clients', '2019-12-20 17:47:36+01', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (41, 'tech_site', 'view', '*', 'Manage Technet All Sites', '2019-12-20 17:47:36+01', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_permission VALUES (42, 'aaf_permission', 'consignmentsGroupedTable', '*', 'Grouped special table for Nike', '2019-07-15 17:55:15.443+02', 'SYSTEM', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2406 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: aaf_permission_permission_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.aaf_permission_permission_id_seq', 38, true);
+
+
+--
+-- TOC entry 2361 (class 0 OID 66463)
+-- Dependencies: 216
+-- Data for Name: aaf_role; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_role VALUES (2, 'Todo Management', 'Todo Management', '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (3, 'Demo Time', 'Demo Time operator', '2018-09-20 17:47:36.946342+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (5, 'sn_nike_all', 'SmartNet Nike All Sites', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (6, 'sn_nike_296633', 'SmartNet Site 296633', '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (7, 'sn_microlise_prod_via_tibco', 'Production microlise via Tibco', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (8, 'sn_microlise_test_via_tibco', 'Test microlise via Tibco', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (9, 'sn_microlise_direct_prod', 'Direct to microlise production (DEV ONLY)', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (10, 'sn_microlise_direct_test', 'Direct to microlise test system (DEV ONLY)', '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (11, 'sn_lush_all', 'SmartNet Lush All Sites', '2018-09-28 12:18:51.055+02', 'CJF.Admin', '2018-10-01 12:54:00.665+02', 'CJF.Admin', 2);
+INSERT INTO cevatrack_mix.aaf_role VALUES (4, 'sn_all', 'SmartNet Global', '2018-09-20 17:47:36.953764+02', 'SYSTEM', '2018-10-04 10:48:05.689+02', 'CJF.Admin', 1);
+INSERT INTO cevatrack_mix.aaf_role VALUES (12, 'sn_gap_all', 'SmartNet Gap All Sites', '2018-10-17 15:41:40.171+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role VALUES (1, 'AAF Admin', 'AAF Admin', '2018-09-20 17:47:36.822984+02', 'SYSTEM', '2019-02-13 14:51:10.46+01', 'cjf.admin', 1);
+INSERT INTO cevatrack_mix.aaf_role VALUES (13, 'S N E', 'Session Never Expires', '2019-02-13 14:52:31.212+01', 'cjf.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role VALUES (15, 'technet_direct_prod', 'Production environment direct to Technet', '2018-09-20 17:47:36+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role VALUES (14, 'technet_all', 'Technet Global', '2018-09-20 17:47:36+02', 'SYSTEM', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2362 (class 0 OID 66469)
+-- Dependencies: 217
+-- Data for Name: aaf_role_permission; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (1, 1, 1, '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (2, 1, 6, '2018-09-20 17:47:36.822984+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (4, 2, 20, '2018-09-20 17:47:36.931331+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (5, 4, 25, '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (6, 4, 27, '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (7, 5, 26, '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (8, 5, 27, '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (9, 6, 26, '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (10, 6, 28, '2018-09-20 17:47:36.953764+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (11, 7, 29, '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (12, 8, 30, '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (13, 9, 31, '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (14, 10, 32, '2018-09-20 17:47:36.989494+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (15, 11, 33, '2018-09-28 12:19:32.2+02', 'CJF.Admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (16, 11, 27, '2018-09-28 12:26:24.86+02', 'CJF.Admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (17, 12, 34, '2018-10-17 15:43:35.135+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (20, 12, 27, '2018-10-17 17:36:26.928+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (25, 13, 38, '2019-02-14 09:51:10.685+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (27, 1, 13, '2019-03-01 17:52:56.856+01', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (28, 1, 14, '2019-03-01 17:53:04.716+01', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (29, 1, 15, '2019-03-01 17:53:04.72+01', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (30, 1, 16, '2019-03-01 17:53:10.481+01', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (31, 1, 17, '2019-03-01 17:53:15.991+01', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (33, 14, 40, '2019-04-15 10:24:44+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (34, 14, 41, '2019-04-15 10:24:44+02', 'SYSTEM', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (32, 15, 39, '2019-04-15 10:24:44.618+02', 'ceva', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_role_permission VALUES (35, 1, 42, '2019-07-16 15:53:15.991+02', 'ramon', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2407 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: aaf_role_permission_role_permission_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.aaf_role_permission_role_permission_id_seq', 34, true);
+
+
+--
+-- TOC entry 2408 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: aaf_role_role_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.aaf_role_role_id_seq', 14, true);
+
+
+--
+-- TOC entry 2365 (class 0 OID 66476)
+-- Dependencies: 220
+-- Data for Name: aaf_user; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_user VALUES (3, 'nike296633', 'nike', 'client', 'noreply@cevalogistics.com', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'E', true, 0, false, NULL, false, NULL, NULL, '2018-09-20 17:47:36.953764+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user VALUES (6, 'todo.admin', 'cjf', 'admin', 'noreply@cevalogistics.com', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'E', true, 0, false, NULL, false, NULL, NULL, '2018-09-20 17:47:43.739189+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user VALUES (4, 'nike', 'nike', 'site 296633', 'noreply@cevalogistics.com', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'E', true, 0, false, NULL, false, '2018-09-28 12:11:09.419+02', NULL, '2018-09-20 17:47:36.953764+02', 'initial_load', '2018-09-28 12:11:09.423+02', 'nike', 6);
+INSERT INTO cevatrack_mix.aaf_user VALUES (10, 'reidm', 'Matt', 'Reid', 'matt.reid@lush.co.uk', '$shiro1$SHA-256$500000$+q9GPRTOfdo74aOOFrFjHQ==$KFA9pnpwhC4uZvnWPZhRQXeucXdl2AS+ghZBMlgietQ=', 'E', true, 0, false, '2018-10-17 12:27:05.145+02', false, '2018-10-23 16:37:26.95+02', '2020-11-16 01:00:00+01', '2018-10-17 11:40:32.156+02', 'CJF.admin', '2018-12-11 14:59:06.694+01', 'ceva', 11);
+INSERT INTO cevatrack_mix.aaf_user VALUES (8, 'riddickl', 'Laura', 'Riddick', 'laura.reddick@lush.co.uk', '$shiro1$SHA-256$500000$gHbvyHGXJQzsvbOH5rKl1Q==$CyY0qgryCixI5VbqGoyQDrvvNUmi5SWIq8VC9R++L58=', 'E', false, 2, false, '2018-10-17 09:30:32.87+02', true, NULL, '2021-11-16 01:00:00+01', '2018-10-17 09:30:33.129+02', 'CJF.admin', '2018-10-17 09:46:12.337+02', 'CJF.admin', 5);
+INSERT INTO cevatrack_mix.aaf_user VALUES (9, 'reddickl', 'Laura', 'Reddick', 'laura.reddick@lush.co.uk', '$shiro1$SHA-256$500000$FETln6ZBxUorzpvMONOnAw==$Vp1EY7DSaulLyFmn1L5qDsNOczVWy52IsipXLtodvxk=', 'E', true, 0, false, '2018-10-17 09:53:32.141+02', false, '2019-01-15 17:13:57.159+01', '2020-11-16 01:00:00+01', '2018-10-17 09:47:02.556+02', 'CJF.admin', '2019-01-15 17:13:57.162+01', 'reddickl', 16);
+INSERT INTO cevatrack_mix.aaf_user VALUES (14, 'adriaensene', 'Elise', 'Adriaensen', 'Elise.Adriaensen@nike.com', '$shiro1$SHA-256$500000$5sNYYT9DH9k/A8pCUUV8sQ==$wGTJHf8jd9Fvgujqt7jsB9foTVOzz9JEsLxiwFX5gU4=', 'E', true, 0, false, '2018-10-26 12:54:42.352+02', false, '2018-10-29 15:56:18.627+01', '2018-11-25 11:54:42.352+01', '2018-10-26 12:52:31.369+02', 'CJF.admin', '2018-10-29 15:56:18.627+01', 'AdriaensenE', 8);
+INSERT INTO cevatrack_mix.aaf_user VALUES (7, 'lush', 'Lush', 'Test', 'brian.goodall@cevalogistics.com', '$shiro1$SHA-256$500000$Q/X2hAk/yzmYefjKvF2hYQ==$ijawAAifoVJeOCuv6NvuhCKXGEFysDXgtfzxUGsiy64=', 'E', true, 5, false, '2018-09-28 12:20:33.447+02', true, '2018-10-17 13:12:42.191+02', '2018-11-28 01:00:00+01', '2018-09-28 12:15:56.709+02', 'CJF.Admin', '2018-11-22 17:46:29.513+01', 'Anonymous', 24);
+INSERT INTO cevatrack_mix.aaf_user VALUES (15, 'user.test.client', 'user.test.client', 'user.test.client', 'user@ceva.com', '$shiro1$SHA-256$500000$QiW83U3jEWkfgehEQZGpmQ==$LxVCn5C/JmeCSdlKO5CXgBUEvYcvl8LATIJvW1XrV/Q=', 'E', true, 0, false, '2018-11-07 17:11:10.823+01', false, '2018-11-14 14:17:07.645+01', '2018-12-07 17:11:10.823+01', '2018-11-07 16:55:56.067+01', 'ceva', '2018-11-14 14:17:07.645+01', 'user.test.client', 8);
+INSERT INTO cevatrack_mix.aaf_user VALUES (19, 'kortlevenn', 'Niels', 'Kortleven', 'Niels.Kortleven@nike.com', '$shiro1$SHA-256$500000$EnkUOTQTFmxG3HyxLXB8Ag==$liYt/rRTvOnbnT5L/J7AEods+3EBRGFE0jbobrovELQ=', 'E', true, 0, false, '2019-01-04 17:33:10.697+01', false, '2019-01-08 14:35:35.327+01', '2019-02-03 17:33:10.697+01', '2019-01-04 17:31:26.463+01', 'ceva', '2019-01-08 14:35:35.33+01', 'kortlevenn', 10);
+INSERT INTO cevatrack_mix.aaf_user VALUES (13, 'taylor-ringsellm', 'Marion', 'Taylor-Ringsell', 'Marion_Taylor-Ringsell@gap.com', '$shiro1$SHA-256$500000$vqTRWJR1k4cgfF70/gAlPQ==$BOuNzcSljQPetWtiCrDVZbM5Fd2KZUYp6ZqWcreqZDE=', 'E', true, 0, false, '2018-10-17 17:30:24.236+02', false, '2018-10-17 17:36:43.322+02', '2018-11-16 16:30:24.236+01', '2018-10-17 17:29:38.345+02', 'CJF.admin', '2018-10-17 17:36:43.322+02', 'taylor-ringsellm', 5);
+INSERT INTO cevatrack_mix.aaf_user VALUES (11, 'dan', 'Dan', 'Dan', 'dan@lush.co.uk', '$shiro1$SHA-256$500000$kC63/RwFFSclLusJ2mpDNg==$yuGbygP33MeFNjygxHC6U2eL4eR0IGgPTpv+5FjUo9c=', 'E', true, 0, false, '2018-10-17 12:36:33.823+02', false, '2018-12-14 16:32:54.849+01', '2020-11-16 01:00:00+01', '2018-10-17 12:32:57.712+02', 'CJF.admin', '2018-12-14 16:32:54.85+01', 'dan', 23);
+INSERT INTO cevatrack_mix.aaf_user VALUES (16, 'user.test.shop', 'user.test.shop', 'user.test.shop', 'adolfo.cano@cevalogistics.com', '$shiro1$SHA-256$500000$SrT1hn/cAQG2UvHIQdSgRw==$l4ER/2+f5Val3ofcRkJ3vEZpZ+SMXayMyKOhYGUepmo=', 'E', true, 3, false, '2018-11-07 17:29:41.8+01', true, '2018-11-13 16:25:17.117+01', '2018-12-07 17:29:41.8+01', '2018-11-07 17:01:33.505+01', 'ceva', '2018-11-14 17:13:24.068+01', 'Anonymous', 11);
+INSERT INTO cevatrack_mix.aaf_user VALUES (17, 'user.test.allclients', 'user.test.AllClients', 'user.test.AllClients', 'user3@ceva.com', '$shiro1$SHA-256$500000$auCAQkrz77+ruHHQ8lPGmw==$e78kzUddwmfZonreMp/Qw8hgIrwgTHrdI2SUmedB+HE=', 'E', true, 0, false, '2018-11-07 17:07:05.369+01', false, '2018-11-07 17:09:26.57+01', '2018-12-07 17:07:05.369+01', '2018-11-07 17:03:54.351+01', 'ceva', '2018-11-07 17:09:26.57+01', 'user.test.AllClients', 5);
+INSERT INTO cevatrack_mix.aaf_user VALUES (18, 'test.user.3', 'test.user.3', 'test.user.3', 'adolfo.cano@cevalogistics.com', '$shiro1$SHA-256$500000$8k/0+siIvucjSyF3O45Ekw==$P7/ROP+Sf6ASoNquuABLaqGMZhP7HicXOLvDbOOewXU=', 'E', true, 1, false, '2018-11-14 17:31:41.762+01', true, NULL, '2018-12-14 17:31:41.762+01', '2018-11-14 17:31:15.305+01', 'ceva', '2018-11-14 17:32:04.994+01', 'Anonymous', 4);
+INSERT INTO cevatrack_mix.aaf_user VALUES (12, 'osbornej', 'Josh', 'Osborne', 'josh.osborne@lush.co.uk', '$shiro1$SHA-256$500000$3LVSYbdRNhIVd4YkM9jnfA==$j0L6FFKOZcEbKNSOdOTzMB52/Nz1/aKMUeRdo21sO5w=', 'E', true, 0, false, '2018-10-17 12:39:11.201+02', false, '2018-12-11 15:00:35.423+01', '2020-11-01 01:00:00+01', '2018-10-17 12:38:17.416+02', 'CJF.admin', '2018-12-11 15:00:35.424+01', 'osbornej', 15);
+INSERT INTO cevatrack_mix.aaf_user VALUES (21, 'millsg', 'Gary ', 'Mills', 'gary.mills@cevalogistics.com', '$shiro1$SHA-256$500000$uJN4/TRd3nyDSTOBSjFYjg==$2vB/YYLntgtNPlq946ZCOLEn+NfPT6m0Ia+/G69CEqw=', 'E', true, 0, false, '2019-01-10 15:21:24.476+01', false, '2019-01-10 15:58:41.328+01', '2019-02-09 15:21:24.476+01', '2019-01-10 15:18:44.399+01', 'ceva', '2019-01-10 15:58:41.328+01', 'millsg', 7);
+INSERT INTO cevatrack_mix.aaf_user VALUES (23, 'garrettm', 'Mary', 'Garrett', 'Mary.Garrett@nike.com', '$shiro1$SHA-256$500000$1pouqb15HnbpecVWuX4wNA==$OXHRt+lbDrEtOrdghxFO4SqnWiMHZquB6dropLy4ZJ4=', 'E', true, 0, false, '2019-01-14 14:37:42.245+01', false, '2019-01-21 12:15:18.641+01', '2019-02-13 14:37:42.245+01', '2019-01-14 10:29:48.09+01', 'ceva', '2019-01-21 12:15:18.641+01', 'garrettm', 7);
+INSERT INTO cevatrack_mix.aaf_user VALUES (24, 'shawa', 'Alexander', 'Shaw', 'Alexander.Shaw@nike.com', '$shiro1$SHA-256$500000$7ZBRETC+wIIoN1blSUst9Q==$hj+yBo0LJQ/rHE7NbeH3rZm/lsd1yUqVCUTn384GGUI=', 'E', true, 0, false, '2019-01-14 14:43:36.346+01', false, '2019-01-14 14:43:54.136+01', '2019-02-13 14:43:36.346+01', '2019-01-14 10:31:05.582+01', 'ceva', '2019-01-14 14:43:54.137+01', 'shawa', 4);
+INSERT INTO cevatrack_mix.aaf_user VALUES (20, 'cooked', 'Daniel', 'Cooke', 'DanielJohn.Cooke@Cevalogistics.com', '$shiro1$SHA-256$500000$9C9vAhCu1yLQlGOLv8tLoQ==$cAW4ebRLwT4Cg1zRAibpOiIC5dfPq4FQlcQl+K45ShU=', 'E', true, 0, false, '2019-01-10 15:20:35.488+01', false, '2019-01-22 15:09:17.252+01', '2019-02-09 00:00:00+01', '2019-01-10 15:13:47.716+01', 'ceva', '2019-02-13 14:17:47.201+01', 'cjf.admin', 26);
+INSERT INTO cevatrack_mix.aaf_user VALUES (22, 'ramon', 'ramon', 'fuertes', 'ramon@lush.co.uk', '$shiro1$SHA-256$500000$BxMUrVjAnZ/lSnZHVP6yJg==$AgJ6Dt/JDzW3I0jLqVRSpshq2sTTceoh4veOA48QPzI=', 'E', true, 0, false, '2019-01-11 16:56:52.142+01', false, '2019-09-11 10:40:50.677+02', '2035-11-01 00:00:00+01', '2019-01-11 16:56:06.698+01', 'ceva', '2019-09-11 10:40:50.678+02', 'ramon', 389);
+INSERT INTO cevatrack_mix.aaf_user VALUES (1, 'aaf.admin', 'aaf', 'admin', 'noreply@cevalogistics.com', '$shiro1$SHA-256$500000$NloEOMDwdx69paycM+bKTQ==$vPfNio0VSVPbSW504PfksqMFLfooI5vvKUY5av8reWo=', 'E', true, 0, false, NULL, false, '2019-09-23 15:54:50.207+02', '2019-10-23 15:54:50.207+02', '2018-09-20 17:47:36.822984+02', 'initial_load', '2019-09-23 15:54:50.207+02', 'aaf.admin', 6);
+INSERT INTO cevatrack_mix.aaf_user VALUES (25, 'technetws', 'techNetWS', 'WS', 'adolfo.cano@cevalogistics.com', '$shiro1$SHA-256$500000$Lv4SpzPMRyWNtbZbvjDrTw==$iY4gBjBeH0Rf6/hSe1ykAaZmjhJ5MsmWFooWlC/6IqI=', 'E', true, 0, false, '2019-05-06 14:39:51.945+02', false, '2019-05-09 11:54:39.524+02', '2099-06-05 00:00:00+02', '2019-05-06 14:38:25.201+02', 'ceva', '2019-05-09 11:54:39.53+02', 'techNetWS', 5);
+INSERT INTO cevatrack_mix.aaf_user VALUES (5, 'ceva', 'Ceva', 'Global', 'noreply@cevalogistics.com', '$shiro1$SHA-256$500000$U0/yIRFoyp/lJ3PcmBcobg==$s0VPMHUjqdcw89S5Xg3MUrmJVK5BrJovhbc5+FLmd/Q=', 'E', true, 0, false, '2018-09-28 13:00:55.913+02', false, '2019-09-23 15:41:58.245+02', '2019-10-23 15:41:58.245+02', '2018-09-20 17:47:36.953764+02', 'initial_load', '2019-09-23 15:41:58.26+02', 'ceva', 1017);
+INSERT INTO cevatrack_mix.aaf_user VALUES (26, 'prueba', 'Prueba', 'Prueba1', 'test@test.com', '$shiro1$SHA-256$500000$rDHur0RsUOsXGO7ugSSq9Q==$OuCMS8E+wRnyhx018kKqSsBjcNcnDomICY7sWB3v7KA=', 'E', true, 0, false, '2019-09-11 10:39:45.051+02', false, '2019-09-16 11:07:51.783+02', '2019-10-11 10:39:45.051+02', '2019-09-11 10:39:11.418+02', 'ramon', '2019-09-16 11:07:51.79+02', 'Prueba', 6);
+INSERT INTO cevatrack_mix.aaf_user VALUES (2, 'cjf.admin', 'cjf', 'admin', 'noreply@cevalogistics.com', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'E', true, 0, false, NULL, false, '2019-09-27 12:24:45.47+02', '2019-10-27 11:24:45.47+01', '2018-09-20 17:47:36.931331+02', 'initial_load', '2019-09-27 12:24:45.47+02', 'cjf.admin', 137);
+
+
+--
+-- TOC entry 2366 (class 0 OID 66486)
+-- Dependencies: 221
+-- Data for Name: aaf_user_password_hist; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (1, 7, '$shiro1$SHA-256$500000$N4I06DJsjGjNbAwi5McZNA==$0AHjBfXCV0SKk34u4kh93yIVhy4YDcRO2okuODJbJuw=', '2018-09-28 12:20:33.446+02', NULL, '2018-09-28 12:20:33.447+02', 'Lush', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (2, 5, '$shiro1$SHA-256$500000$U0/yIRFoyp/lJ3PcmBcobg==$s0VPMHUjqdcw89S5Xg3MUrmJVK5BrJovhbc5+FLmd/Q=', '2018-09-28 13:00:55.91+02', NULL, '2018-09-28 13:00:55.911+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (3, 9, '$shiro1$SHA-256$500000$FETln6ZBxUorzpvMONOnAw==$Vp1EY7DSaulLyFmn1L5qDsNOczVWy52IsipXLtodvxk=', '2018-10-17 09:53:32.14+02', NULL, '2018-10-17 09:53:32.141+02', 'reddickl', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (4, 10, '$shiro1$SHA-256$500000$+q9GPRTOfdo74aOOFrFjHQ==$KFA9pnpwhC4uZvnWPZhRQXeucXdl2AS+ghZBMlgietQ=', '2018-10-17 12:27:05.142+02', NULL, '2018-10-17 12:27:05.143+02', 'reidm', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (5, 11, '$shiro1$SHA-256$500000$kC63/RwFFSclLusJ2mpDNg==$yuGbygP33MeFNjygxHC6U2eL4eR0IGgPTpv+5FjUo9c=', '2018-10-17 12:36:33.823+02', NULL, '2018-10-17 12:36:33.823+02', 'dan', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (6, 12, '$shiro1$SHA-256$500000$3LVSYbdRNhIVd4YkM9jnfA==$j0L6FFKOZcEbKNSOdOTzMB52/Nz1/aKMUeRdo21sO5w=', '2018-10-17 12:39:11.2+02', NULL, '2018-10-17 12:39:11.201+02', 'osbornej', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (7, 13, '$shiro1$SHA-256$500000$vqTRWJR1k4cgfF70/gAlPQ==$BOuNzcSljQPetWtiCrDVZbM5Fd2KZUYp6ZqWcreqZDE=', '2018-10-17 17:30:24.235+02', NULL, '2018-10-17 17:30:24.236+02', 'taylor-ringsellm', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (8, 14, '$shiro1$SHA-256$500000$5sNYYT9DH9k/A8pCUUV8sQ==$wGTJHf8jd9Fvgujqt7jsB9foTVOzz9JEsLxiwFX5gU4=', '2018-10-26 12:54:42.351+02', NULL, '2018-10-26 12:54:42.352+02', 'Adriaensene', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (9, 17, '$shiro1$SHA-256$500000$auCAQkrz77+ruHHQ8lPGmw==$e78kzUddwmfZonreMp/Qw8hgIrwgTHrdI2SUmedB+HE=', '2018-11-07 17:07:05.368+01', NULL, '2018-11-07 17:07:05.368+01', 'user.test.AllClients', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (10, 15, '$shiro1$SHA-256$500000$QiW83U3jEWkfgehEQZGpmQ==$LxVCn5C/JmeCSdlKO5CXgBUEvYcvl8LATIJvW1XrV/Q=', '2018-11-07 17:11:10.823+01', NULL, '2018-11-07 17:11:10.823+01', 'user.test.client', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (11, 16, '$shiro1$SHA-256$500000$0VE0OdPAs+Bi5ohUgK8STg==$t9v/ttV/lttqmQAuqrutV9s/x/0InOAHytLv2LcHxak=', '2018-11-07 17:29:41.8+01', NULL, '2018-11-07 17:29:41.8+01', 'user.test.shop', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (12, 18, '$shiro1$SHA-256$500000$tPbLutBxrwrvKhvQEpBEyQ==$Z0bhOpQhqO5gw+prX9nR8DFkxN1RNblTtnbRdoSvDBo=', '2018-11-14 17:31:41.76+01', NULL, '2018-11-14 17:31:41.761+01', 'test.user.3', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (13, 19, '$shiro1$SHA-256$500000$EnkUOTQTFmxG3HyxLXB8Ag==$liYt/rRTvOnbnT5L/J7AEods+3EBRGFE0jbobrovELQ=', '2019-01-04 17:33:10.696+01', NULL, '2019-01-04 17:33:10.697+01', 'Kortlevenn', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (14, 20, '$shiro1$SHA-256$500000$9C9vAhCu1yLQlGOLv8tLoQ==$cAW4ebRLwT4Cg1zRAibpOiIC5dfPq4FQlcQl+K45ShU=', '2019-01-10 15:20:35.488+01', NULL, '2019-01-10 15:20:35.488+01', 'cooked', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (15, 21, '$shiro1$SHA-256$500000$uJN4/TRd3nyDSTOBSjFYjg==$2vB/YYLntgtNPlq946ZCOLEn+NfPT6m0Ia+/G69CEqw=', '2019-01-10 15:21:24.476+01', NULL, '2019-01-10 15:21:24.476+01', 'millsg', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (16, 22, '$shiro1$SHA-256$500000$BxMUrVjAnZ/lSnZHVP6yJg==$AgJ6Dt/JDzW3I0jLqVRSpshq2sTTceoh4veOA48QPzI=', '2019-01-11 16:56:52.141+01', NULL, '2019-01-11 16:56:52.142+01', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (17, 23, '$shiro1$SHA-256$500000$1pouqb15HnbpecVWuX4wNA==$OXHRt+lbDrEtOrdghxFO4SqnWiMHZquB6dropLy4ZJ4=', '2019-01-14 14:37:42.243+01', NULL, '2019-01-14 14:37:42.244+01', 'garrettm', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (18, 24, '$shiro1$SHA-256$500000$7ZBRETC+wIIoN1blSUst9Q==$hj+yBo0LJQ/rHE7NbeH3rZm/lsd1yUqVCUTn384GGUI=', '2019-01-14 14:43:36.345+01', NULL, '2019-01-14 14:43:36.345+01', 'shawa', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (19, 25, '$shiro1$SHA-256$500000$Lv4SpzPMRyWNtbZbvjDrTw==$iY4gBjBeH0Rf6/hSe1ykAaZmjhJ5MsmWFooWlC/6IqI=', '2019-05-06 14:39:51.944+02', NULL, '2019-05-06 14:39:51.944+02', 'techNetWS', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_password_hist VALUES (20, 26, '$shiro1$SHA-256$500000$rDHur0RsUOsXGO7ugSSq9Q==$OuCMS8E+wRnyhx018kKqSsBjcNcnDomICY7sWB3v7KA=', '2019-09-11 10:39:45.05+02', NULL, '2019-09-11 10:39:45.051+02', 'Prueba', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2409 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: aaf_user_password_hist_password_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.aaf_user_password_hist_password_id_seq', 20, true);
+
+
+--
+-- TOC entry 2368 (class 0 OID 66491)
+-- Dependencies: 223
+-- Data for Name: aaf_user_role; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (5, 4, 5, '2018-09-20 17:47:36.953764+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (6, 3, 6, '2018-09-20 17:47:36.953764+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (8, 4, 9, '2018-09-20 17:47:36.989494+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (9, 3, 9, '2018-09-20 17:47:36.989494+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (10, 6, 2, '2018-09-20 17:47:43.739189+02', 'initial_load', NULL, NULL, 0);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (14, 7, 11, '2018-09-28 12:20:08.109+02', 'CJF.Admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (15, 7, 9, '2018-09-28 12:20:08.112+02', 'CJF.Admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (16, 8, 11, '2018-10-17 09:31:49.869+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (17, 8, 9, '2018-10-17 09:31:49.924+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (18, 9, 11, '2018-10-17 09:48:32.126+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (19, 9, 9, '2018-10-17 09:48:32.162+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (20, 10, 9, '2018-10-17 11:53:18.168+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (21, 10, 11, '2018-10-17 11:53:18.209+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (22, 11, 9, '2018-10-17 12:33:46.705+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (23, 11, 11, '2018-10-17 12:33:46.766+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (24, 12, 9, '2018-10-17 12:38:39.016+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (25, 12, 11, '2018-10-17 12:38:39.022+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (26, 13, 12, '2018-10-17 17:29:59.849+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (27, 13, 9, '2018-10-17 17:29:59.858+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (28, 14, 9, '2018-10-26 12:53:00.197+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (29, 14, 5, '2018-10-26 12:53:00.218+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (50, 1, 4, '2018-11-06 15:08:25.979+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (51, 1, 1, '2018-11-06 15:08:25.988+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (52, 1, 9, '2018-11-06 15:08:25.994+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (72, 15, 9, '2018-11-07 17:00:36.492+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (73, 15, 5, '2018-11-07 17:00:36.547+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (74, 16, 9, '2018-11-07 17:02:05.665+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (75, 16, 6, '2018-11-07 17:02:05.67+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (76, 17, 9, '2018-11-07 17:04:38.616+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (77, 17, 4, '2018-11-07 17:04:38.621+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (84, 19, 9, '2019-01-04 17:32:06.586+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (85, 19, 5, '2019-01-04 17:32:06.619+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (86, 20, 4, '2019-01-10 15:14:33.274+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (87, 20, 9, '2019-01-10 15:14:33.287+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (88, 21, 4, '2019-01-10 15:19:03.849+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (89, 21, 9, '2019-01-10 15:19:03.858+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (93, 23, 9, '2019-01-14 10:30:19.728+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (94, 23, 5, '2019-01-14 10:30:19.788+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (97, 24, 9, '2019-01-14 13:07:37.536+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (98, 24, 5, '2019-01-14 13:07:37.547+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (224, 22, 1, '2019-09-10 10:13:42.407+02', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (225, 22, 4, '2019-09-10 10:13:42.411+02', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (226, 22, 7, '2019-09-10 10:13:42.416+02', 'ramon', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (250, 5, 1, '2019-09-16 11:22:27.389+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (251, 5, 4, '2019-09-16 11:22:27.392+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (252, 5, 7, '2019-09-16 11:22:27.396+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (146, 2, 1, '2019-03-07 12:02:13.242+01', 'cjf.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (157, 2, 4, '2019-03-07 12:02:13.304+01', 'cjf.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (174, 25, 14, '2019-05-06 14:38:44.309+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (175, 25, 15, '2019-05-06 14:38:44.32+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.aaf_user_role VALUES (176, 25, 1, '2019-05-06 14:38:44.325+02', 'ceva', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2410 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: aaf_user_role_user_role_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.aaf_user_role_user_role_id_seq', 252, true);
+
+
+--
+-- TOC entry 2411 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: aaf_user_user_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.aaf_user_user_id_seq', 26, true);
+
+
+--
+-- TOC entry 2380 (class 0 OID 66682)
+-- Dependencies: 235
+-- Data for Name: app_user_profile; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.app_user_profile VALUES (1, 2, false, '2019-09-24 10:20:18.735+02', 'cjf.admin', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2412 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: app_user_profile_app_user_profile_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.app_user_profile_app_user_profile_id_seq', 1, true);
+
+
+--
+-- TOC entry 2371 (class 0 OID 66498)
+-- Dependencies: 226
+-- Data for Name: cjf_user; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.cjf_user VALUES (1, 'lush', '2018-09-28 12:15:56.721+02', 'CJF.Admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (2, 'riddickl', '2018-10-17 09:30:33.158+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (3, 'reddickl', '2018-10-17 09:47:02.561+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (4, 'reidm', '2018-10-17 11:40:32.17+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (5, 'dan', '2018-10-17 12:32:57.727+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (6, 'osbornej', '2018-10-17 12:38:17.427+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (7, 'taylor-ringsellm', '2018-10-17 17:29:38.362+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (8, 'adriaensene', '2018-10-26 12:52:31.385+02', 'CJF.admin', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (9, 'user.test.client', '2018-11-07 16:55:56.082+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (10, 'user.test.shop', '2018-11-07 17:01:33.515+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (11, 'user.test.allclients', '2018-11-07 17:03:54.364+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (12, 'test.user.3', '2018-11-14 17:31:15.319+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (13, 'kortlevenn', '2019-01-04 17:31:26.495+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (14, 'cooked', '2019-01-10 15:13:47.729+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (15, 'millsg', '2019-01-10 15:18:44.41+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (16, 'ramon', '2019-01-11 16:56:06.711+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (17, 'garrettm', '2019-01-14 10:29:48.109+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (18, 'shawa', '2019-01-14 10:31:05.613+01', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (19, 'technetws', '2019-05-06 14:38:25.384+02', 'ceva', NULL, NULL, 1);
+INSERT INTO cevatrack_mix.cjf_user VALUES (20, 'prueba', '2019-09-11 10:39:11.588+02', 'ramon', NULL, NULL, 1);
+
+
+--
+-- TOC entry 2413 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: cjf_user_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.cjf_user_id_seq', 20, true);
+
+
+--
+-- TOC entry 2373 (class 0 OID 66503)
+-- Dependencies: 228
+-- Data for Name: databasechangelog; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-aaf-db-001', 'mahendran.mookkiah', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.899337+02', 1, 'EXECUTED', '7:bbf10db5d4ce18f06748953fc61d4e7e', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-001', 'venkateswarlu', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.917935+02', 2, 'EXECUTED', '7:fb9f04c3704fd3901eeb67fe87358eac', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-002', 'srinivas.lyagala', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.927587+02', 3, 'EXECUTED', '7:02b94c2b9136b6ad0ae6d9e739998de1', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-003', 'venkateswarlu', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.938532+02', 4, 'EXECUTED', '7:cf05860d8ca06e44b18be79bfe8f1da9', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-004', 'venkateswarlu', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.944025+02', 5, 'EXECUTED', '7:a980da61e48668e5bd48b653e6d6dd55', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-005', 'mahendran.mookkiah', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.949538+02', 6, 'EXECUTED', '7:ba85e89391f54c2e6225f05b82fe0a43', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-006', 'brian.goodall', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.9638+02', 7, 'EXECUTED', '7:e24b6f20841c1399a8adeb120aad2953', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-007', 'brian.goodall', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.974315+02', 8, 'EXECUTED', '7:77059ec1e615057deaa44243c4c42d7a', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-008', 'brian.goodall', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.983149+02', 9, 'EXECUTED', '7:63c5745875dfb76706fb119afb6f87aa', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-009', 'brian.goodall', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-09-20 17:47:36.9971+02', 10, 'EXECUTED', '7:aef4af4e2b873f91977c88fa24352b4f', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('master-data-001-template-001', 'mahendran.mookkiah', 'src/main/resources/liquibase/master-data-changesets/master-data-001-template.sql', '2018-09-20 17:47:43.745109+02', 11, 'EXECUTED', '7:c0b358b044a1da25118b20ad03a4717e', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-010', 'adolfo.cano', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-10-21 05:02:42.330344+02', 12, 'EXECUTED', '7:9f3bcfb54b9de93e71a7287ea785fbc0', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-011', 'adolfo.cano', 'src/main/resources/liquibase/changesets/001-template.sql', '2018-10-21 05:14:47.36245+02', 13, 'EXECUTED', '7:336ff94c15a7315f5fc1f0217433fd4b', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-012', 'adolfo.cano', 'src/main/resources/liquibase/changesets/001-template.sql', '2019-01-22 16:44:38.021724+01', 14, 'EXECUTED', '7:9616b75922c053c1cc6e0aa1d601dc84', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-013', 'adolfo.cano', 'src/main/resources/liquibase/changesets/001-template.sql', '2019-01-22 16:44:38.078878+01', 15, 'EXECUTED', '7:37a8d73f8c0e7ce119ba5f5cd9bbbcb3', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-014', 'adolfo.cano', 'src/main/resources/liquibase/changesets/001-template.sql', '2019-02-13 17:55:15.450091+01', 16, 'EXECUTED', '7:e4197b52ffc6a3742011aa9b14beed32', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+INSERT INTO cevatrack_mix.databasechangelog VALUES ('001-cjf-template-db-015', 'adolfo.cano', 'src/main/resources/liquibase/changesets/001-template.sql', '2019-02-27 11:39:06.380841+01', 17, 'EXECUTED', '7:10b47ec1100d95fc893ae474481f5545', 'The ''sql'' tag allows you to specify whatever sql you want. It is useful for complex changes that aren''t supported through Liquibase''s automated refactoring tags and to work around bugs and limitations of Liquibase. The SQL contained in the sql tag...', '', NULL, '3.0.5', NULL, NULL);
+
+
+--
+-- TOC entry 2374 (class 0 OID 66509)
+-- Dependencies: 229
+-- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.databasechangeloglock VALUES (1, false, NULL, NULL);
+
+
+--
+-- TOC entry 2382 (class 0 OID 66688)
+-- Dependencies: 237
+-- Data for Name: file_uploader; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2414 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: file_uploader_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.file_uploader_id_seq', 1, false);
+
+
+--
+-- TOC entry 2375 (class 0 OID 66512)
+-- Dependencies: 230
+-- Data for Name: smartnet_client; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.smartnet_client VALUES (5, 'Continental', 'CONTI', 'Continental.png', 'continental', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (7, 'Gap', 'GAP', 'Gap.png', 'gap', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (8, 'Lush', 'LUSH', 'Lush.png', 'lush', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (10, 'Nike', 'NIKE', 'Nike.png', 'nike', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (12, 'Uniqlo', 'ARVATO', 'Uniqlo.png', 'uniqlo', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (13, 'Uniqlo Adhoc', 'AdhocARVATO', 'UniqloAdhoc.png', 'uniqloadhoc', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (14, 'Whitworths', 'WHITWR', 'Whitworths.png', 'whitworths', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (11, 'Twinings', 'TWINNG', 'Twinings.png', 'twinings', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (2, 'British Gypsum Sherburn', 'BGYPSH', 'bgypsh.png', 'bgypsh', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (6, 'Crown Paints', 'CWNRAD', 'Cwnrad2.png', 'crown', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (3, 'Bentley', 'BENTL', 'Bentley.png', 'bentley', '2018-09-20 17:47:36.978844+02', 'SYSTEM', '2018-09-20 17:47:36.978844+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.smartnet_client VALUES (15, 'RICOHT', 'RICOHT', 'Uniqlo.png', 'RICOHT', '2018-09-20 17:47:36+02', 'SYSTEM', '2018-09-20 17:47:36+02', 'SYSTEM', 1);
+
+
+--
+-- TOC entry 2415 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: smartnet_client_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.smartnet_client_id_seq', 14, true);
+
+
+--
+-- TOC entry 2377 (class 0 OID 66520)
+-- Dependencies: 232
+-- Data for Name: technet_client; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.technet_client VALUES (1, 'RICOHT', 'RICOHT', 'Uniqlo.png', 'RICOHT', '2018-09-20 17:47:36+02', 'SYSTEM', '2018-09-20 17:47:36+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.technet_client VALUES (2, 'CANON', 'CANON', NULL, 'CANON', '2018-09-20 17:47:36+02', 'SYSTEM', '2018-09-20 17:47:36+02', 'SYSTEM', 1);
+INSERT INTO cevatrack_mix.technet_client VALUES (3, 'PITNEY', 'PITNEY', NULL, 'PITNEY', '2018-09-20 17:47:36+02', 'SYSTEM', '2018-09-20 17:47:36+02', 'SYSTEM', 1);
+
+
+--
+-- TOC entry 2378 (class 0 OID 66526)
+-- Dependencies: 233
+-- Data for Name: todo; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2416 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: todo_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.todo_id_seq', 1, false);
+
+
+--
+-- TOC entry 2384 (class 0 OID 66693)
+-- Dependencies: 239
+-- Data for Name: user_profile; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.user_profile VALUES (1, 'aaf.admin', 'English', 'MM/dd/yyyy', 'HH:mm:ss', 'EUR', 'America/Managua', '2019-09-20 15:47:29.973774+02', 'Anonymous', '2019-09-20 15:47:30.098785+02', NULL, 1, 'layout-menu-horizontal', 'cjf');
+INSERT INTO cevatrack_mix.user_profile VALUES (2, 'cjf.admin', 'en', 'MM/dd/yyyy', 'HH:mm:ss', 'EUR', 'America/Managua', '2019-09-20 15:47:29.973774+02', 'Anonymous', '2019-09-24 10:20:18.73+02', 'cjf.admin', 1, 'layout-menu-horizontal', 'cjf');
+
+
+--
+-- TOC entry 2385 (class 0 OID 66699)
+-- Dependencies: 240
+-- Data for Name: user_profile_options; Type: TABLE DATA; Schema: cevatrack_mix; Owner: postgres
+--
+
+INSERT INTO cevatrack_mix.user_profile_options VALUES (5, 'currency', 'EUR', true, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (6, 'currency', 'USD', false, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (9, 'language', 'English', true, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (10, 'menuMode', 'layout-menu-static', false, '2019-09-20 15:47:29.926892+02', 'CJF', '2019-09-20 15:47:29.926892+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (11, 'menuMode', 'layout-menu-overlay', false, '2019-09-20 15:47:29.926892+02', 'CJF', '2019-09-20 15:47:29.926892+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (12, 'menuMode', 'layout-menu-slim', false, '2019-09-20 15:47:29.926892+02', 'CJF', '2019-09-20 15:47:29.926892+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (13, 'menuMode', 'layout-menu-horizontal', true, '2019-09-20 15:47:29.926892+02', 'CJF', '2019-09-20 15:47:29.926892+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (14, 'theme', 'cjf', true, '2019-09-20 15:47:29.926892+02', 'CJF', '2019-09-20 15:47:29.926892+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (1, 'dateFormat', 'MM/dd/yyyy', true, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (2, 'dateFormat', 'dd/MM/yyyy', false, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (3, 'timeFormat', 'HH:mm:ss', true, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:30.098785+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (4, 'timeFormat', 'hh:mm:ss a', false, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:30.098785+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (15, 'timeFormat', 'HH:mm:ss.s', false, '2019-09-20 15:47:30.098785+02', 'CJF', '2019-09-20 15:47:30.098785+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (16, 'timeFormat', 'hh:mm:ss.s a', false, '2019-09-20 15:47:30.098785+02', 'CJF', '2019-09-20 15:47:30.098785+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (17, 'timeFormat', 'HH:mm', false, '2019-09-20 15:47:30.098785+02', 'CJF', '2019-09-20 15:47:30.098785+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (18, 'timeFormat', 'hh:mm a', false, '2019-09-20 15:47:30.098785+02', 'CJF', '2019-09-20 15:47:30.098785+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (8, 'timeZone', 'America/Cancun', false, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+INSERT INTO cevatrack_mix.user_profile_options VALUES (7, 'timeZone', 'America/Managua', true, '2019-09-20 15:47:29.554136+02', 'CJF', '2019-09-20 15:47:29.554136+02', 'CJF', 0);
+
+
+--
+-- TOC entry 2417 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: user_profile_options_option_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.user_profile_options_option_id_seq', 1, false);
+
+
+--
+-- TOC entry 2418 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: user_profile_user_profile_id_seq; Type: SEQUENCE SET; Schema: cevatrack_mix; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cevatrack_mix.user_profile_user_profile_id_seq', 2, true);
+
+
+--
+-- TOC entry 2199 (class 2606 OID 66544)
+-- Name: aaf_domain_action_lookup_pk; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_domain_action_lookup
+    ADD CONSTRAINT aaf_domain_action_lookup_pk PRIMARY KEY (aaf_domain_code, aaf_domain_action_code);
+
+
+--
+-- TOC entry 2201 (class 2606 OID 66546)
+-- Name: aaf_domain_lookup_pk; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_domain_lookup
+    ADD CONSTRAINT aaf_domain_lookup_pk PRIMARY KEY (aaf_domain_code);
+
+
+--
+-- TOC entry 2203 (class 2606 OID 66548)
+-- Name: aaf_permission_pkey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_permission
+    ADD CONSTRAINT aaf_permission_pkey PRIMARY KEY (permission_id);
+
+
+--
+-- TOC entry 2205 (class 2606 OID 66550)
+-- Name: aaf_permission_ukey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_permission
+    ADD CONSTRAINT aaf_permission_ukey UNIQUE (domain, action, instance);
+
+
+--
+-- TOC entry 2211 (class 2606 OID 66552)
+-- Name: aaf_role_permission_pkey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role_permission
+    ADD CONSTRAINT aaf_role_permission_pkey PRIMARY KEY (role_permission_id);
+
+
+--
+-- TOC entry 2207 (class 2606 OID 66554)
+-- Name: aaf_role_pkey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role
+    ADD CONSTRAINT aaf_role_pkey PRIMARY KEY (role_id);
+
+
+--
+-- TOC entry 2209 (class 2606 OID 66556)
+-- Name: aaf_role_ukey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role
+    ADD CONSTRAINT aaf_role_ukey UNIQUE (role_name);
+
+
+--
+-- TOC entry 2217 (class 2606 OID 66558)
+-- Name: aaf_user_password_hist_pkey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_password_hist
+    ADD CONSTRAINT aaf_user_password_hist_pkey PRIMARY KEY (password_id);
+
+
+--
+-- TOC entry 2213 (class 2606 OID 66560)
+-- Name: aaf_user_pkey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user
+    ADD CONSTRAINT aaf_user_pkey PRIMARY KEY (user_id);
+
+
+--
+-- TOC entry 2219 (class 2606 OID 66562)
+-- Name: aaf_user_role_pkey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_role
+    ADD CONSTRAINT aaf_user_role_pkey PRIMARY KEY (user_role_id);
+
+
+--
+-- TOC entry 2215 (class 2606 OID 66564)
+-- Name: aaf_user_ukey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user
+    ADD CONSTRAINT aaf_user_ukey UNIQUE (user_principal);
+
+
+--
+-- TOC entry 2225 (class 2606 OID 66712)
+-- Name: app_user_profile_pk; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.app_user_profile
+    ADD CONSTRAINT app_user_profile_pk PRIMARY KEY (app_user_profile_id);
+
+
+--
+-- TOC entry 2227 (class 2606 OID 66714)
+-- Name: file_uploader_pk; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.file_uploader
+    ADD CONSTRAINT file_uploader_pk PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2221 (class 2606 OID 66566)
+-- Name: pk_databasechangelog; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.databasechangelog
+    ADD CONSTRAINT pk_databasechangelog PRIMARY KEY (id, author, filename);
+
+
+--
+-- TOC entry 2223 (class 2606 OID 66568)
+-- Name: pk_databasechangeloglock; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.databasechangeloglock
+    ADD CONSTRAINT pk_databasechangeloglock PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2233 (class 2606 OID 66716)
+-- Name: user_profile_options_pk; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.user_profile_options
+    ADD CONSTRAINT user_profile_options_pk PRIMARY KEY (option_id);
+
+
+--
+-- TOC entry 2235 (class 2606 OID 66718)
+-- Name: user_profile_options_ukey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.user_profile_options
+    ADD CONSTRAINT user_profile_options_ukey UNIQUE (key, value);
+
+
+--
+-- TOC entry 2229 (class 2606 OID 66720)
+-- Name: user_profile_pk; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.user_profile
+    ADD CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id);
+
+
+--
+-- TOC entry 2231 (class 2606 OID 66722)
+-- Name: user_profile_ukey; Type: CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.user_profile
+    ADD CONSTRAINT user_profile_ukey UNIQUE (user_principal);
+
+
+--
+-- TOC entry 2236 (class 2606 OID 66569)
+-- Name: aaf_domain_action_lookup_domain_code_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_domain_action_lookup
+    ADD CONSTRAINT aaf_domain_action_lookup_domain_code_fk FOREIGN KEY (aaf_domain_code) REFERENCES cevatrack_mix.aaf_domain_lookup(aaf_domain_code) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2237 (class 2606 OID 66574)
+-- Name: aaf_role_permission_permission_id_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role_permission
+    ADD CONSTRAINT aaf_role_permission_permission_id_fk FOREIGN KEY (permission_id) REFERENCES cevatrack_mix.aaf_permission(permission_id);
+
+
+--
+-- TOC entry 2238 (class 2606 OID 66579)
+-- Name: aaf_role_permission_role_id_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_role_permission
+    ADD CONSTRAINT aaf_role_permission_role_id_fk FOREIGN KEY (role_id) REFERENCES cevatrack_mix.aaf_role(role_id);
+
+
+--
+-- TOC entry 2239 (class 2606 OID 66584)
+-- Name: aaf_user_password_hist_user_id_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_password_hist
+    ADD CONSTRAINT aaf_user_password_hist_user_id_fk FOREIGN KEY (user_id) REFERENCES cevatrack_mix.aaf_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2240 (class 2606 OID 66589)
+-- Name: aaf_user_role_role_id_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_role
+    ADD CONSTRAINT aaf_user_role_role_id_fk FOREIGN KEY (role_id) REFERENCES cevatrack_mix.aaf_role(role_id);
+
+
+--
+-- TOC entry 2241 (class 2606 OID 66594)
+-- Name: aaf_user_role_user_id_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.aaf_user_role
+    ADD CONSTRAINT aaf_user_role_user_id_fk FOREIGN KEY (user_id) REFERENCES cevatrack_mix.aaf_user(user_id);
+
+
+--
+-- TOC entry 2242 (class 2606 OID 66723)
+-- Name: user_profile_id_fk; Type: FK CONSTRAINT; Schema: cevatrack_mix; Owner: postgres
+--
+
+ALTER TABLE ONLY cevatrack_mix.app_user_profile
+    ADD CONSTRAINT user_profile_id_fk FOREIGN KEY (user_profile_id) REFERENCES cevatrack_mix.user_profile(user_profile_id) ON UPDATE CASCADE;
+
+
+-- Completed on 2019-09-27 14:37:12
+
+--
+-- PostgreSQL database dump complete
+--
+
