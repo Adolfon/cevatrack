@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.cevalogistics.com/WSDL/Concrete/MicroliseSmartNet/TMC" xmlns:ns0="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetConsignment" xmlns:ns2="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/FindConsignmentSummaries" xmlns:ns1="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetJourneySummaryForAliasAndDate" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="Untitled" targetNamespace="http://www.cevalogistics.com/WSDL/Concrete/MicroliseSmartNet/TMC">
+    <wsdl:types>
+        <xs:schema xmlns="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/FindConsignmentSummaries" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/FindConsignmentSummaries" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:complexType name="ArrayOfConsignmentSummary">
+                <xs:sequence>
+                    <xs:element name="ConsignmentSummary" nillable="true" type="ns2:ConsignmentSummary" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfString">
+                <xs:sequence>
+                    <xs:element name="string" nillable="true" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ConsignmentFilter">
+                <xs:sequence>
+                    <xs:element name="ConsignmentReference" type="xs:string" minOccurs="0"/>
+                    <xs:element name="OrderReference" type="xs:string" minOccurs="0"/>
+                    <xs:element name="EarliestDeliveryDate" type="xs:dateTime"/>
+                    <xs:element name="LatestDeliveryDate" type="xs:dateTime"/>
+                    <xs:element name="SiteID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteAddress" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SitePostCode" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ConsignmentSummary">
+                <xs:sequence>
+                    <xs:element name="ConsignmentReference" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentStatus" type="xs:short"/>
+                    <xs:element name="OrderReferences" type="ns2:ArrayOfString" minOccurs="0"/>
+                    <xs:element name="PTA" type="xs:dateTime"/>
+                    <xs:element name="ATA" type="xs:dateTime"/>
+                    <xs:element name="PTA2" type="xs:dateTime"/>
+                    <xs:element name="SiteID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Address1" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+                    <xs:element name="County" type="xs:string" minOccurs="0"/>
+                    <xs:element name="PostCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Country" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContactName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContactNumber" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderID" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="FindConsignmentSummaries">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="consignmentFilter" type="ns2:ConsignmentFilter" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="FindConsignmentSummariesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="FindConsignmentSummariesResult" type="ns2:ArrayOfConsignmentSummary" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetConsignment" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetConsignment" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:complexType name="ArrayOfClausedConsignmentDetail">
+                <xs:sequence>
+                    <xs:element name="ClausedConsignmentDetail" nillable="true" type="ns0:ClausedConsignmentDetail" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfConsignmentDetail">
+                <xs:sequence>
+                    <xs:element name="ConsignmentDetail" nillable="true" type="ns0:ConsignmentDetail" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfDriver">
+                <xs:sequence>
+                    <xs:element name="Driver" nillable="true" type="ns0:Driver" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfVehicle">
+                <xs:sequence>
+                    <xs:element name="Vehicle" nillable="true" type="ns0:Vehicle" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ClausedConsignmentDetail">
+                <xs:sequence>
+                    <xs:element name="ParentCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ParentClauseDescription" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ClauseCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ClauseDescription" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ClausedQuantity" type="xs:int"/>
+                    <xs:element name="ConsignmentDetailID" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Consignment">
+                <xs:sequence>
+                    <xs:element name="Label1" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Label2" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Label3" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Label4" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentReference" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentCustomerOrderRef" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentStatus" type="xs:short"/>
+                    <xs:element name="ConsignmentDetails" type="ns0:ArrayOfConsignmentDetail" minOccurs="0"/>
+                    <xs:element name="ATA" type="xs:dateTime"/>
+                    <xs:element name="ATD" type="xs:dateTime"/>
+                    <xs:element name="Signatory" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Signature" type="xs:base64Binary" minOccurs="0"/>
+                    <xs:element name="JourneyDropID" type="xs:int"/>
+                    <xs:element name="PTA" type="xs:dateTime"/>
+                    <xs:element name="PTD" type="xs:dateTime"/>
+                    <xs:element name="ETA" type="xs:dateTime"/>
+                    <xs:element name="ETD" type="xs:dateTime"/>
+                    <xs:element name="TimeWindowStart" type="xs:dateTime"/>
+                    <xs:element name="TimeWindowEnd" type="xs:dateTime"/>
+                    <xs:element name="SiteID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Address1" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Address3" type="xs:string" minOccurs="0"/>
+                    <xs:element name="County" type="xs:string" minOccurs="0"/>
+                    <xs:element name="PostCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Country" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContactName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContactNumber" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteLat" type="xs:decimal"/>
+                    <xs:element name="SiteLong" type="xs:decimal"/>
+                    <xs:element name="RouteID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="JourneyAlias" type="xs:string" minOccurs="0"/>
+                    <xs:element name="PlannedStartTime" type="xs:dateTime"/>
+                    <xs:element name="ActualStartTime" type="xs:dateTime"/>
+                    <xs:element name="PODStartTime" type="xs:dateTime"/>
+                    <xs:element name="Vehicles" type="ns0:ArrayOfVehicle" minOccurs="0"/>
+                    <xs:element name="Drivers" type="ns0:ArrayOfDriver" minOccurs="0"/>
+                    <xs:element name="SiteGeoRadius" type="xs:int"/>
+                    <xs:element name="DurationOnSite" type="xs:double"/>
+                    <xs:element name="JourneyActualStartTime" type="xs:dateTime"/>
+                    <xs:element name="IsAdHoc" type="xs:short"/>
+                    <xs:element name="IsTranshipment" type="xs:short"/>
+                    <xs:element name="ClauseCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ParentCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderID" type="xs:int"/>
+                    <xs:element name="JourneyID" type="xs:int"/>
+                    <xs:element name="ConsignmentHeaderInfo1" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo2" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo3" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo4" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo5" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo6" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo7" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo8" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo9" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo10" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo11" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderInfo12" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ConsignmentDetail">
+                <xs:sequence>
+                    <xs:element name="DetailID" type="xs:int"/>
+                    <xs:element name="DetailRef" type="xs:string" minOccurs="0"/>
+                    <xs:element name="CustomerDetailRef" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ParentRef" type="xs:string" minOccurs="0"/>
+                    <xs:element name="OrderRef" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Description" type="xs:string" minOccurs="0"/>
+                    <xs:element name="PlannedQuantity" type="xs:int"/>
+                    <xs:element name="ActualQuantity" type="xs:int"/>
+                    <xs:element name="Status" type="xs:short"/>
+                    <xs:element name="ClauseDetails" type="ns0:ArrayOfClausedConsignmentDetail" minOccurs="0"/>
+                    <xs:element name="Info1" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Info2" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Info3" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Info4" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ConsignmentHeaderID" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Driver">
+                <xs:sequence>
+                    <xs:element name="DisplayName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="FullName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ContactNumber" type="xs:string" minOccurs="0"/>
+                    <xs:element name="JourneyID" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Vehicle">
+                <xs:sequence>
+                    <xs:element name="DisplayName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="LastLocation" type="xs:string" minOccurs="0"/>
+                    <xs:element name="LastContactLat" type="xs:float"/>
+                    <xs:element name="LastContactLong" type="xs:float"/>
+                    <xs:element name="JourneyID" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetConsignment">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ConsignmentRef" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetConsignmentResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="GetConsignmentResult" type="ns0:Consignment" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetJourneySummaryForAliasAndDate" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetJourneySummaryForAliasAndDate" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:complexType name="ArrayOfJourneySummaryResource">
+                <xs:sequence>
+                    <xs:element name="JourneySummaryResource" nillable="true" type="ns1:JourneySummaryResource" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfJourneySummarySite">
+                <xs:sequence>
+                    <xs:element name="JourneySummarySite" nillable="true" type="ns1:JourneySummarySite" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfJourneySummarySystemEvent">
+                <xs:sequence>
+                    <xs:element name="JourneySummarySystemEvent" nillable="true" type="ns1:JourneySummarySystemEvent" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfJourneySummaryTrackedVehicle">
+                <xs:sequence>
+                    <xs:element name="JourneySummaryTrackedVehicle" nillable="true" type="ns1:JourneySummaryTrackedVehicle" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfPlannedDelay">
+                <xs:sequence>
+                    <xs:element name="PlannedDelay" nillable="true" type="ns1:PlannedDelay" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummary">
+                <xs:sequence>
+                    <xs:element name="ActualEndTime" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="ActualMileage" type="xs:int"/>
+                    <xs:element name="ActualStartTime" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="Events" type="ns1:ArrayOfJourneySummarySystemEvent" minOccurs="0"/>
+                    <xs:element name="FuelConsumption" type="xs:double"/>
+                    <xs:element name="PlannedEndTime" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="PlannedMileage" type="xs:int"/>
+                    <xs:element name="PlannedStartTime" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="Resources" type="ns1:ArrayOfJourneySummaryResource" minOccurs="0"/>
+                    <xs:element name="RouteID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="JourneyStatus" type="xs:string" minOccurs="0"/>
+                    <xs:element name="PODStatus" type="xs:string" minOccurs="0"/>
+                    <xs:element name="TrackingStatus" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Sites" type="ns1:ArrayOfJourneySummarySite" minOccurs="0"/>
+                    <xs:element name="Vehicles" type="ns1:ArrayOfJourneySummaryTrackedVehicle" minOccurs="0"/>
+                    <xs:element name="JourneyID" type="xs:int"/>
+                    <xs:element name="JourneyAlias" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummaryResource">
+                <xs:sequence>
+                    <xs:element name="ResourceInfo" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ResourceName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="ResourceType" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummaryResponse">
+                <xs:sequence>
+                    <xs:element name="JourneySummary" type="ns1:JourneySummary" minOccurs="0"/>
+                    <xs:element name="ErrorDescription" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummarySite">
+                <xs:sequence>
+                    <xs:element name="ActualOdometerLegMileage" type="xs:double"/>
+                    <xs:element name="CallSequence" type="xs:int"/>
+                    <xs:element name="FuelConsumption" type="xs:double"/>
+                    <xs:element name="JourneyDropID" type="xs:int"/>
+                    <xs:element name="JourneyDropRef" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Latitude" type="xs:double"/>
+                    <xs:element name="Longitude" type="xs:double"/>
+                    <xs:element name="PlannedLegMileage" type="xs:double"/>
+                    <xs:element name="PodActualCallSequence" type="xs:int"/>
+                    <xs:element name="PodActualLegMileage" type="xs:double"/>
+                    <xs:element name="PODATA" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="PODATD" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="PTA" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="PTD" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="SiteAddress1" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteAddress2" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteCity" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteCountry" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteCounty" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SiteName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="SitePostCode" type="xs:string" minOccurs="0"/>
+                    <xs:element name="TrackingActualLegMileage" type="xs:double"/>
+                    <xs:element name="TrackingATA" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="TrackingATD" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="JourneySummarySiteDelays" type="ns1:JourneySummarySiteDeplay" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummarySiteDeplay">
+                <xs:sequence>
+                    <xs:element name="PlannedDelays" type="ns1:ArrayOfPlannedDelay" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummarySystemEvent">
+                <xs:sequence>
+                    <xs:element name="RuleID" type="xs:string" minOccurs="0"/>
+                    <xs:element name="EventDateTime" type="xs:dateTime"/>
+                    <xs:element name="EventDescription" type="xs:string" minOccurs="0"/>
+                    <xs:element name="DisplayName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="EventLatitude" type="xs:double" minOccurs="0"/>
+                    <xs:element name="EventLocation" type="xs:string" minOccurs="0"/>
+                    <xs:element name="EventLongitude" type="xs:double" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="JourneySummaryTrackedVehicle">
+                <xs:sequence>
+                    <xs:element name="DisplayName" type="xs:string" minOccurs="0"/>
+                    <xs:element name="EndOdometer" type="xs:double"/>
+                    <xs:element name="StartOdometer" type="xs:double"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="PlannedDelay">
+                <xs:sequence>
+                    <xs:element name="Duration" type="xs:int"/>
+                    <xs:element name="Type" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Position" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetJourneySummaryForAliasAndDate">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="journeyAlias" type="xs:string" minOccurs="0"/>
+                        <xs:element name="startDate" type="xs:dateTime"/>
+                        <xs:element name="user" type="xs:string" minOccurs="0"/>
+                        <xs:element name="pass" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetJourneySummaryForAliasAndDateResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="GetJourneySummaryForAliasAndDateResult" type="ns1:JourneySummaryResponse" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="MicroliseSmartNet_v1">
+        <wsdl:port name="MicroliseSmartNet" binding="tns:MicroliseSmartNetBinding">
+            <soap:address location="http://integration-eu.logistics.corp/MicroliseSmartNet"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="MicroliseSmartNetSoap">
+        <wsdl:operation name="GetConsignment">
+            <wsdl:input message="tns:GetConsignmentIn"/>
+            <wsdl:output message="tns:GetConsignmentOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetJourneySummaryForAliasAndDate">
+            <wsdl:input message="tns:GetJourneySummaryForAliasAndDateIn"/>
+            <wsdl:output message="tns:GetJourneySummaryForAliasAndDateOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="findConsignmentSummaries">
+            <wsdl:input message="tns:FindConsignmentSummariesIn"/>
+            <wsdl:output message="tns:FindConsignmentSummariesOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MicroliseSmartNetBinding" type="tns:MicroliseSmartNetSoap">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetConsignment">
+            <soap:operation style="document" soapAction="GetConsignment"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="input"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="output"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetJourneySummaryForAliasAndDate">
+            <soap:operation style="document" soapAction="GetJourneySummaryForAliasAndDate"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="input"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="output"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findConsignmentSummaries">
+            <soap:operation style="document" soapAction="findConsignmentSummaries"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="input"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="output"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="GetConsignmentIn">
+        <wsdl:part name="input" element="ns0:GetConsignment"/>
+    </wsdl:message>
+    <wsdl:message name="GetConsignmentOut">
+        <wsdl:part name="output" element="ns0:GetConsignmentResponse"/>
+    </wsdl:message>
+    <wsdl:message name="GetJourneySummaryForAliasAndDateIn">
+        <wsdl:part name="input" element="ns1:GetJourneySummaryForAliasAndDate"/>
+    </wsdl:message>
+    <wsdl:message name="GetJourneySummaryForAliasAndDateOut">
+        <wsdl:part name="output" element="ns1:GetJourneySummaryForAliasAndDateResponse"/>
+    </wsdl:message>
+    <wsdl:message name="FindConsignmentSummariesIn">
+        <wsdl:part name="input" element="ns2:FindConsignmentSummaries"/>
+    </wsdl:message>
+    <wsdl:message name="FindConsignmentSummariesOut">
+        <wsdl:part name="output" element="ns2:FindConsignmentSummariesResponse"/>
+    </wsdl:message>
+</wsdl:definitions>
