@@ -82,3 +82,341 @@
 .log-table {
 	width: 45%;
 }
+
+/* styles copied from 2.2 cevatrack --- */
+@import "cjf-theme.scss";
+
+.user_right_menu_icon {
+	padding-right: 43px;
+}
+
+.centeredColumn {
+   text-align:center !important;
+}
+
+
+@media screen and (max-width: 768px) {
+	.cjf_user_menu_item_right ul {
+		vertical-align: middle;
+		font-size: 12px;
+		margin-top: 5px;
+		margin-left: 1px;
+		text-decoration: none;
+		z-index: 1001;
+		float:left;
+	}
+	.cjf_template_header .cjf_user_menu_item_right {
+		margin-top: 2px;
+		display: none;
+		position: absolute;
+		background-color: #990033 !important;
+		min-width: 100px;
+		overflow: auto;
+		box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+		z-index: 1001;
+	    right: 25px;
+	    top : 40px;
+	}
+	.cjf_user_menu_item_right ul li {
+		display: block;
+		text-align: center;
+	}
+	.cjf_user_menu_item_right ul li a{
+		color : $ceva-black;
+	}
+}
+
+@media screen and (min-width: 768px) {
+
+	.user_right_menu_icon {
+		display: none;
+	}
+	.cjf_user_menu_item_right ul li {
+		float: right;
+	}
+}
+
+.cjf_user_menu_item_right ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.cjf_user_menu_item_right ul li a {
+	display: block;
+	text-align: left;
+	padding: 2px;
+	text-decoration: none;
+}
+
+.ui-datepicker-trigger {
+	padding-bottom: 0px;
+	border-width: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	padding-left: 0px;
+	margin-left: 3px;
+}
+
+.cjf-template-font-bold{
+	font-weight: bold;
+}
+
+
+/*
+.ui-panelgrid .ui-panelgrid-cell {
+    border: none;
+
+.ui-panelgrid .ui-panelgrid-cell .product-table {
+  border-collapse: collapse; }
+.ui-panelgrid .ui-panelgrid-cell .product-table-header {
+  text-align: center;
+background: none repeat scroll 0 0 #E5E5E5;
+  border-bottom: 1px solid #BBBBBB;
+  padding: 16px; }
+.ui-panelgrid .ui-panelgrid-cell .product-table-odd-row {
+  text-align: center;
+  background: none repeat scroll 0 0 #FFFFFFF;
+  border-top: 1px solid #BBBBBB; }
+.ui-panelgrid .ui-panelgrid-cell .product-table-even-row {
+  text-align: center;
+  background: none repeat scroll 0 0 #F9F9F9;
+  border-top: 1px solid #BBBBBB; }   
+   
+} */
+
+/* Container holding the image and the text */
+.imagelink {
+	width: 100%;
+	maxwidth: 250px;
+    position: relative;
+}
+
+/* Container holding the image and the text */
+.centerimage {
+    margin: auto;
+    display: block;
+}
+/* Centered text */
+.centered {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    opacity: 65%;
+    color: $ceva-black;
+    border: 1px solid $ceva-black;
+    border-radius: 2px;
+    font-weight: bold;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+#cjf_template_logo_min{
+		display:none;
+	}
+	#cjf_template_logo_max{
+		display:block;
+	}
+@media ( max-width: 640px)
+{
+	#cjf_template_logo_min{
+		display:block;
+	}
+	#cjf_template_logo_max{
+		display:none;
+	}
+}
+ï»¿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges 
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+} */
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+
+.dl-horizontal dt {
+    white-space: normal;
+}  */
+
+/* Set width on the form input elements since they're 100% wide by default 
+input,
+select,
+textarea {
+    max-width: 280px;
+} */
+
+/* now my stuff */
+
+/* Default Links */
+a, a:hover, a:visited, a:focus {
+    color: #990033;
+}
+
+/* Information Text */
+.text-info {
+    color: #990033 !important;
+}
+
+/* Navigation Bar */
+.navbar-inverse {
+    background-color: #990033 !important;
+}
+.navbar-header > a {
+    color: #dddddd !important;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: #cccccc !important;
+}
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus, .navbar-header > a:hover, .navbar-header > a:focus {
+    color: #ffffff !important;
+}
+.navbar-inverse .navbar-toggle, .navbar-inverse .navbar-toggle:active {
+    border-color: #666666;
+}
+
+/*Primary Panels*/
+.panel-primary > .panel-heading {
+    background-color: #990033 !important;
+    border-color: #990033 !important;
+}
+.panel-primary {
+    border-color: #e6e6e6;
+    border-width: 1px;
+    border-style: solid;
+}
+
+/* Field display Panels*/
+.field-panel > .panel-heading {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 3px;
+}
+.field-panel > .panel-body {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 3px;
+}
+.field-panel {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+
+/*Collapsable Panels*/
+.panel-heading a, a:active, .panel-heading a:hover, .panel-heading a:visited, .panel-heading a:focus {
+    text-decoration: none !important;
+}
+
+/* BUTTONS */
+/* Default Buttons */
+.btn, .btn:hover, .btn:visited, .btn:focus {
+    color: #dddddd !important;
+}
+/* Primary Buttons */
+.btn-primary, .btn-primary:visited, .btn-primary:active {
+    color: #eeeeee !important;
+    background-color: #990033 !important;
+    border-color: #990033 !important;
+    box-shadow: none;
+    font-weight: bold;
+}
+.btn-primary:focus {
+    color: #ffffff !important;
+    box-shadow: none;
+}
+.btn-primary:hover {
+    color: #ffffff !important;
+    box-shadow: none;
+}
+
+/* pointer over readonly inputs*/
+.rdonly:hover {
+    cursor: default;
+} 
+
+/* dropdown lists */
+.dropdown {
+    max-width: 280px;
+}
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color: #990033 !important;
+}
+.nopad {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+body, div, span, td, th, caption {
+    font-family: Calibri, Source Sans Pro, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: normal;
+}
+.signatureimg {
+    width: 100%;
+    height: auto;
+}
+
+/* override the theme to get rid of the black */
+.ui-widget-header {
+    border: 1px solid #666666;
+    background: #666666;
+    color: #ffffff;
+    font-weight: bold;
+}
+.ui-panel-titlebar > .ui-panel-titlebar-icon {
+    border: 1px solid #999999;
+    background: #666666;
+    color: #ffffff;
+}
+
+/* this isn't in bootstrap 3 - but I need it */
+ @media screen and (min-width: 64.063em) {
+   .d-lg-none {
+     display: none !important;
+   }
+ }
+ @media screen and (min-width: 40.063em) and (max-width: 64em) {
+   .d-md-none {
+     display: none !important;
+   }
+ }
+ @media screen and (max-width: 40em) {
+   .d-sm-none {
+     display: none !important;
+   }
+   .respborder {
+     border-bottom: 1px solid #666666; 
+   }
+ }
+ 
+
+.datepicker input {
+    cursor: pointer !important;
+    padding: 4px 7px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    width: 100px !important;
+    height: 30px !important;
+    background: #e6e6e6 !important;
+    color: #000000 !important;
+    border-radius: 2px !important;
+    border-color: #cccccc !important;
+}
+
+.filteredCol {
+  width: 100%;
+}
+
+/* for ajax busy hourglass */
+html.progress, html.progress * {
+    cursor: progress !important;
+}
+

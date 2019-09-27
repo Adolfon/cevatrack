@@ -1,0 +1,41 @@
+/* 
+	1) This file is intended for Theme specific (color) CSS to the CJF widgets ONLY.
+	2) Any CSS attribute other than the color related should be added in the style.css
+	3) CSS classes defined here are also defined in style.css to add CSS attributes other than the color related. 	
+*/
+
+/* From CEVA Brand Identity Primary palette */
+$ceva-burgundy: #990033;
+$ceva-red: #FF0033;
+$ceva-black: #000000;
+$ceva-white: #FFFFFF;
+  
+  /* From CEVA Brand Identity Extended palette */
+$ceva-purple: #660066;
+$ceva-maroon: #660033;
+$ceva-cardinal: #CC0033;
+$ceva-pink: #FF9999;
+$ceva-navy: #003366;
+$ceva-cerulean: #006699;
+$ceva-sky: #99CCFF;
+$ceva-aqua: #009999;
+$ceva-lime: #99CC00;
+$ceva-amber: #FF9900;
+$ceva-orange: #FF6600;
+$ceva-storm: #666666;
+$ceva-silver: #999999;
+$ceva-pearl: #CCCCCC;
+$ceva-mist: #E6E6E6;
+
+$ui-theme-name: primefaces-cjf-primefaces-theme-burgundy;
+
+/* Apply to all the div elements with in the header   */
+.cjf_template_header div {	
+	background-color: $ceva-burgundy;
+	border: 0px;
+}
+
+/* Apply to all the div elements with in the menubar and the footer   */
+.cjf_template_menu div, .cjf_template_footer_layout div {
+	background-color: $ceva-silver;
+}

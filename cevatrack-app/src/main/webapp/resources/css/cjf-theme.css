@@ -1,0 +1,17 @@
+/* 
+	1) This file is intended for Theme specific (color) CSS to the CJF widgets ONLY.
+	2) Any CSS attribute other than the color related should be added in the style.css
+	3) CSS classes defined here are also defined in style.css to add CSS attributes other than the color related. 	
+*/
+/* From CEVA Brand Identity Primary palette */
+/* From CEVA Brand Identity Extended palette */
+/* Apply to all the div elements with in the header   */
+.cjf_template_header div {
+  background-color: #990033;
+  border: 0px; }
+
+/* Apply to all the div elements with in the menubar and the footer   */
+.cjf_template_menu div, .cjf_template_footer_layout div {
+  background-color: #999999; }
+
+/*# sourceMappingURL=../../../../../target/css/cjf-theme.css.map */
