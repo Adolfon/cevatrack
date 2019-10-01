@@ -1,0 +1,20 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	
+	<p:panelGrid id="cjf_template_menu" styleClass="cjf_template_menu" layout="grid" columns="2" columnClasses="ui-grid-col-9,ui-grid-col-3">
+		<h:panelGroup id="cjf_template_leftAlignedMenu" layout="block" styleClass="cjf_template_leftAlignedMenu">
+			<ui:insert name="cjf_template_leftAlignedMenu">
+            	<ui:include src="menubar-items.xhtml"/>
+            </ui:insert>
+		</h:panelGroup>
+		<h:panelGroup id="cjf_template_rightAlignedMenu" styleClass="cjf_template_rightAlignedMenu" layout="block">
+			<ui:insert name="cjf_template_rightAlignedMenu">
+            	<ui:include src="menubar-custom-area.xhtml"/>
+            </ui:insert>
+		</h:panelGroup>
+	</p:panelGrid>
+</ui:composition>

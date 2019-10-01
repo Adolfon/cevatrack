@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:p="http://primefaces.org/ui">
+		
+			
+       <h:panelGrid columns="2" width="100%" id="grid">									       
+		 <p:commandLink id="controlLink" action="#{dtDetailView.changePoll()}"  update="panelRefresh">
+			<h:panelGrid  id="panelRefresh" columns="1">
+		              <h:outputText value="Disable autorefresh" rendered="#{dtDetailView.pollEnabled}" >
+		              	<script type="text/javascript">PF('poll').start();</script>
+		              </h:outputText>
+		              <h:outputText value="Enable Autorefresh" rendered="#{!dtDetailView.pollEnabled}" >
+		              	<script type="text/javascript">PF('poll').stop();</script>			                		
+		              </h:outputText>                   
+			</h:panelGrid>
+		 </p:commandLink>			         
+       	 <!-- <h:outputText id="serverDate" style="font-size:16px" value="Updated at: #{dtDetailView.date}"/> -->
+    </h:panelGrid>
+		
+</ui:composition>

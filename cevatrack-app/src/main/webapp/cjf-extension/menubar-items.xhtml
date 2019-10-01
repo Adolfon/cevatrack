@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags">
+	<p:menubar id="cjf_template_app_menu">
+		<aaf:authenticated>
+			<shiro:hasRole name="AAF Admin">
+				<p:submenu label="Transport">
+					<p:menuitem value="SmartNet" url="/smartNet.xhtml" />
+				</p:submenu>
+				<p:submenu label="User">
+					<p:menuitem value="Role" url="/role.xhtml" />
+					<p:menuitem rendered="#{!aAFSecurityBean.internal}"
+						value="Change Password" icon="fa fa-unlock"
+						url="/change-password.xhtml" />
+					<p:menuitem value="Permission" url="/permission.xhtml" />
+					<p:menuitem value="Role Permission" url="/role-permission.xhtml" />
+					<p:menuitem value="User Maintenance" url="/users-maintenance.xhtml" />
+				</p:submenu>
+			</shiro:hasRole>
+			<shiro:lacksRole name="AAF Admin">
+				<p:submenu label="Transport">
+					<p:menuitem value="SmartNet" url="/smartNet.xhtml" />
+				</p:submenu>
+				<p:submenu label="User">					
+					<p:menuitem rendered="#{!aAFSecurityBean.internal}"
+						value="Change Password" icon="fa fa-unlock"
+						url="/change-password.xhtml" />					
+				</p:submenu>			
+			</shiro:lacksRole>
+
+		</aaf:authenticated>
+	</p:menubar>
+</ui:composition>

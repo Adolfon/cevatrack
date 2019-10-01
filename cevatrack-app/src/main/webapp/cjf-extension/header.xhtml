@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<!-- <header class="main-header"> -->
+	<header>
+		<p:panelGrid id="cjf_template_header" layout="grid" columns="3"
+			styleClass="cjf_template_header"
+			columnClasses="ui-grid-col-6,ui-grid-col-2,ui-grid-col-4">
+			<h:panelGroup id="cjf-template-sitelogo" layout="block"
+                styleClass="cjf-template-sitelogo">                	
+                <p:row>
+	                <p:column style="text-align: center">
+	                	<p:link id="ceva_logo" href="/home.xhtml" style="color:white" onmouseover="this.style.color='#DADADA';" onmouseout="this.style.color='white';">
+		                	<!-- Place holder for the application specific logo -->
+			                <h:graphicImage library="wms_theme" url="#{resource['images/cevaLogoNew.png']}" alt="Ceva logo" style="width: 9%; min-width:30px;background-color:white;"/>
+			                <!-- <p:graphicImage library="images"  url="#{resource['images/cevatrack_logo_text.gif']}" alt="CEVAtrack" />  -->	
+		                </p:link>	                
+	                </p:column>                
+                </p:row>
+            </h:panelGroup>
+			<h:panelGroup id="cjf_template_header_env_name"
+				styleClass="cjf_template_header_env_name" layout="block">
+				<!-- Show environment name. Should not show for PROD. -->
+				<h:outputText value="#{environmentInfoBean.environmentName}"
+					rendered="#{environmentInfoBean.showEnvironmentName}" />
+			</h:panelGroup>
+			<h:panelGroup id="cjf_template_header_right" layout="block"
+				styleClass="cjf_template_header_right">
+				<p:panelGrid id="cjf_template_header_right_table"
+					styleClass="cjf_template_header_right_table" layout="grid"
+					columns="1" columnClasses="right">
+					<h:panelGroup id="cjf_template_topRight"
+						styleClass="cjf_template_topRight" layout="block">
+						<ui:insert name="cjf_template_topRight">
+							<ui:include src="header-custom-area.xhtml" />
+						</ui:insert>
+					</h:panelGroup>
+					<h:panelGroup id="cjf_template_CEVALogo"
+						styleClass="cjf_template_CEVALogo" layout="block">
+						<div class="user_right_menu_icon">
+							<p:graphicImage height="25" width="25"
+								url="resources/images/right_menu_user_icon.png" />
+						</div>
+						
+					</h:panelGroup>
+				</p:panelGrid>
+			</h:panelGroup>
+		</p:panelGrid>
+	</header>
+</ui:composition>

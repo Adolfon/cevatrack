@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<f:view contentType="text/html" id="fview">
+
+			<f:metadata>
+	       		<ui:insert name="metadata" />
+	    	</f:metadata>
+	    <h:head>
+	     <f:facet name="first">
+         <meta http-equiv="X-UA-Compatible" content="IE=Edge" /> 
+        </f:facet>
+	    	<ui:insert name="title">
+	    		<title>You can control the page title runtime</title>
+	    	</ui:insert>
+	        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	    </h:head>
+	
+	    <h:body>
+		   
+		   <!-- Font Awesome css are used in AAF. This link will make showing up font awesome icons in AAF pages. -->
+		   <h:outputStylesheet library="webjars" name="font-awesome/4.7.0/css/font-awesome-jsf.css" />
+		   <!-- Include css here make sure these css will override the default primefaces css -->
+			<h:outputStylesheet library="cjf-base" name="css/style.css" />
+			<ui:insert name="stylesheets"/>
+			
+			<!-- can be used to define functions which required by application ex P:importConstants 
+                It should not have any UIComponent to render view. If you need to have space to add widgets, 
+                let CJF team know. we will create a space with new ui:insert 
+            --> 
+            <ui:insert name="custom-functions"/>	
+			
+	    
+		    <p:layout fullPage="true" resizeTitle="resize" id="cjf_template" styleClass="cjf_template">
+		        <p:layoutUnit position="north" id="cjf_template_header_layout" styleClass="cjf_template_header_layout" resizable="true" closable="true" collapsible="true" gutter="0">
+		            <ui:decorate template="/cjf-extension/header.xhtml" />
+		            <p:panelGrid id="cjf_template_menubar" styleClass="cjf_template_menu cjf_template_menubar" layout="grid" columns="1" columnClasses="ui-grid-col-12">
+		        		<ui:insert name="menubar">
+		            		<h:panelGroup id="cjf_template_menu_layout" styleClass="cjf_template_menu_layout" layout="block">
+		            			<ui:decorate template="/cjf-extension/menubar.xhtml" />
+		            		</h:panelGroup>
+		            	</ui:insert>
+		            </p:panelGrid>		            		          		        	
+		        </p:layoutUnit>		
+		
+		        <p:layoutUnit position="center" id="cjf_template_center_layout" styleClass="cjf_template_center_layout" collapsible="true" gutter="0">		        	
+		            <p:panelGrid id="cjf_template_body" layout="grid" columns="1" styleClass="cjf_template_body" columnClasses="ui-grid-col-12">
+		            	<h:panelGroup id="cjf_template_content_layout" styleClass="cjf_template_content_layout" layout="block">
+		            		<ui:insert name="content" />
+		            	</h:panelGroup>
+		        	</p:panelGrid>
+		        </p:layoutUnit>		        
+		
+		        <p:layoutUnit position="south" id="cjf_template_footer_layout" styleClass="cjf_template_footer_layout" resizable="true" closable="true" collapsible="true" gutter="0">
+		            <ui:insert name="footer">
+		            	<ui:include src="/cjf-extension/footer.xhtml" />
+		            </ui:insert>
+		        </p:layoutUnit>
+	    	</p:layout>
+	    
+	    </h:body>
+	    <h:outputScript name="js/script.js" library="cjf-base" />
+
+	</f:view>
+	
+</html>
