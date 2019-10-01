@@ -9,8 +9,9 @@
 	<ph:menu widgetVar="me">
 		<aaf:authenticated>
 
-				
-
+			<p:submenu label="Transport">
+				<p:menuitem value="SmartNet" url="/smartNet.xhtml" />
+			</p:submenu>
 			<p:submenu label="#{lbl['menu.subm.user']}" icon="fa fa-user"
 				rendered="#{(aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.ROLE_VIEW,AAFPermissionConstants.PERMISSION_VIEW, AAFPermissionConstants.USER_VIEW )) or
 							(!aAFSecurityBean.internal)	}">

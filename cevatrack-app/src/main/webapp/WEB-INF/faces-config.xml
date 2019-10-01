@@ -31,4 +31,7 @@
 		</resource-bundle>
 		
 	</application>
+	<factory>
+        <exception-handler-factory>com.ceva.cevatrack.exception.CustomExceptionHandlerFactory</exception-handler-factory>
+    </factory>
 </faces-config>

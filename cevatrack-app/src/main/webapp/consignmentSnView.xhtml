@@ -1,0 +1,153 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://java.sun.com/jsf/composite/aaf"
+	xmlns:shiro="http://shiro.apache.org/tags"
+	template="app-template-consignmentsRefresh.xhtml">
+
+	
+	<ui:define name="content">
+		<p:growl />
+		<shiro:authenticated>
+		<div class="ceva-welcome-page">
+			<div id="welcomePage" class="ceva-text-welcome-page">
+			 <h:outputText id="serverDate" style="font-size:16px" value="Updated at: #{dtConsignmentView.date}"/>												          			  
+			  <h:form id="form">
+			    <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtConsignmentView.refresh}" widgetVar="poll" update="tableStateDT,serverDate" />			      
+				<h:panelGroup layout="block" styleClass="ui-g">
+					<h:panelGroup layout="block" styleClass="d-sm-none ui-md-3 d-lg-2">
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 d-lg-8">
+						<h1 style="text-align: center">#{param['client']}</h1>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-2">
+						<p:calendar id="datesel" styleClass="datepicker h5"
+							value="#{dtConsignmentView.reportDate}"
+							mindate="#{dtConsignmentView.minDate}"
+							maxdate="#{dtConsignmentView.maxDate}" pattern="dd MMM yyyy"
+							locale="en_GB" readonlyInput="true">
+							<p:ajax event="dateSelect"
+								listener="#{dtConsignmentView.onDateSelect}"
+								update="tableStateDT,datesel,dateselTo" />
+						</p:calendar> -- To --
+						<p:calendar id="dateselTo" styleClass="datepicker h5"
+							value="#{dtConsignmentView.reportDateTo}"
+							mindate="#{dtConsignmentView.reportDate}"
+							maxdate="#{dtConsignmentView.maxDateTo}" pattern="dd MMM yyyy"
+							locale="en_GB" readonlyInput="true">
+							<p:ajax event="dateSelect"
+								listener="#{dtConsignmentView.onDateSelectTo}"
+								update="tableStateDT,dateselTo" />
+						</p:calendar>
+					</h:panelGroup>
+				</h:panelGroup>
+				<p:growl id="growl" showDetail="true" sticky="true" />				
+				
+				<h:commandLink>
+                    <p:graphicImage value="resources/images/Excel-icon.png" width="30" style="position:absolute;right:2px;top:7px;"/>
+                    <p:dataExporter type="xls" target="tableStateDT" fileName="consignments" />
+                </h:commandLink>
+
+				<p:dataTable id="tableStateDT" var="con"					
+					tableStyleClass="bootstraptable table table-hover"
+					rowStyleClass="#{dtConsignmentView.getStatusCssClass(con.consignmentStatus)} respborder"
+					value="#{dtConsignmentView.consignments}"
+					widgetVar="consignmentsTable" rows="50" paginator="true"
+					multiViewState="true"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20,50,100,1000,2000"
+					selectionMode="single"
+					selection="#{dtConsignmentView.selectedConsignment}"
+					rowKey="#{con.consignmentReference}"
+					emptyMessage="No consignments found with given criteria"
+					filteredValue="#{dtConsignmentView.filteredSnConsignments}" 
+					scrollHeight="500" 					
+					scrollable="true" 
+					reflow="true">
+
+					<f:facet name="header">
+						<p:outputPanel style="float: right">
+							<h:outputText value="Search" />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('consignmentsTable').filter()"
+								placeholder="Enter Search Criteria" />
+						</p:outputPanel>
+					</f:facet>
+
+					<p:ajax event="rowSelect"
+						listener="#{dtConsignmentView.onRowSelect}">
+					</p:ajax>
+										
+					<p:column styleClass="filteredCol" headerText="Reference"
+						filterBy="#{con.consignmentReference}"
+						sortBy="#{con.consignmentReference}" priority="0"
+						filterMatchMode="contains">
+						<h:outputText value="#{con.consignmentReference}" />
+					</p:column>
+
+					<p:column styleClass="filteredCol" headerText="Site"
+						filterBy="#{con.siteName}" sortBy="#{con.siteName}" priority="3"
+						filterMatchMode="contains">
+						<h:outputText value="#{con.siteName}" />
+					</p:column>
+
+					<p:column styleClass="filteredCol" headerText="Postcode"
+						filterBy="#{con.postCode}" sortBy="#{con.postCode}" priority="6"
+						filterMatchMode="contains">
+						<h:outputText value="#{con.postCode}" />
+					</p:column>
+
+					<p:column styleClass="filteredCol" headerText="Site ID"
+						filterBy="#{con.siteId}" sortBy="#{con.siteId}" priority="5"
+						filterMatchMode="contains">
+						<h:outputText value="#{con.siteId}" />
+					</p:column>
+
+					<p:column styleClass="filteredCol" headerText="Planned"
+						sortBy="#{con.pta}" priority="5">
+						<h:outputText value="#{con.ptaString}" />
+					</p:column>
+
+					<p:column styleClass="filteredCol" headerText="Arrival"
+						sortBy="#{con.ata}" priority="4">
+						<h:outputText value="#{con.ataString}" />
+					</p:column>
+
+					<p:column styleClass="filteredCol" headerText="Status" id="statusColumn"
+						sortBy="#{con.statusString}" filterMatchMode="exact"
+						filterBy="#{con.statusString}" priority="3">
+						<f:facet name="filter">
+							<p:selectOneMenu onchange="PF('consignmentsTable').filter()" styleClass="filteredCol" ajax="true">	                        	
+                          		<f:selectItem itemLabel="#{param['initstatus']}" itemValue="#{param['initstatus']}"   />		                        																								
+								<f:selectItems value="#{dtConsignmentView.statusSelectItems}"  />
+								<f:selectItem itemLabel="No filter" itemValue="" noSelectionOption="true" />
+							</p:selectOneMenu>
+						</f:facet>
+						<h:outputText value="#{con.statusString}" />
+					</p:column>
+
+					<f:facet name="footer">#{dtConsignmentView.message}</f:facet>
+				</p:dataTable>
+			</h:form>
+			
+		  </div>
+		</div>
+	</shiro:authenticated>
+	</ui:define>
+
+	<ui:define name="footer">
+	  <shiro:authenticated>
+		<!-- <ui:fragment rendered="#{!neverExpires}">
+			<aaf:sessionmonitor id="sessionMonitor" />
+		</ui:fragment>   -->
+		<ui:include src="cjf-extension/footer.xhtml" />
+		<h:outputScript library="javax.faces" name="jsf.js" />
+		<h:outputScript library="js" name="app-ajax.js" />
+		<h:outputScript library="js" name="app-script-1.js" />
+		<h:outputScript library="js" name="sn-consignments.js" />
+	  </shiro:authenticated>
+	</ui:define>
+	
+</ui:composition>

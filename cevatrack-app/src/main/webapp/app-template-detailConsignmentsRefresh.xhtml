@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://java.sun.com/jsf/composite/aaf" template="cjf-base/template/template.xhtml">
+
+	
+	<ui:define name="title">
+	    <title><h:outputText value="CEVAtrack"/></title>
+	    <link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}"/>
+	</ui:define>
+	
+	<ui:define name="stylesheets">		
+	    <h:outputStylesheet name="css/primefaces-override.css" /> 
+	    <h:outputStylesheet name="css/cjf-theme.css" /> <!-- set header, menu and footer background color -->
+	    <h:outputStylesheet name="aaf/css/aaf.css" /> 
+	    <h:outputStylesheet name="css/aaf-override.css" /> <!-- set login and password width -->
+	    <h:outputStylesheet name="css/cjf-override.css" />
+	    <h:outputStylesheet library="webjars" name="bootstrap/3.3.7-1/css/bootstrap.min-jsf.css" />
+        <h:outputStylesheet name="css/app.css" />
+	    <!--  link rel="stylesheet" type="text/css" media="all" href="webjars/bootstrap/3.3.5/css/bootstrap.min-jsf.css"/>  -->
+	</ui:define>
+	
+	<ui:define name="custom-functions">
+		<p:importConstants type="com.ceva.security.aaf.utils.AAFPermissionConstants" var="AAFPermissionConstants" />
+		<p:importConstants type="com.ceva.cevatrack.util.CJFPermissionConstants" var="CJFPermissionConstants" />
+	</ui:define>
+	
+	<ui:define name="cjf_template_sitelogo">
+		<h:outputLink  value = "#{request.contextPath}">
+		    <p:graphicImage library="cjf-base" name="images/CEVA_logo.png" alt="Ceva logo" />
+	   	</h:outputLink>
+	</ui:define>
+	<ui:define name="cjf_template_sitelogo2">
+        <h:outputLink  value = "#{request.contextPath}">
+            <p:graphicImage library="images" name="cevatrack_logo_text.gif" alt="CEVAtrack" />
+        </h:outputLink>
+    </ui:define>
+	
+	<ui:define name="cjf_template_topRight">
+		<ui:include src="/cjf-extension/app-header-menu.xhtml"/>
+	</ui:define>
+	
+	<ui:define name="cjf_template_leftAlignedMenu">
+		<ui:include src="/cjf-extension/menubar-items.xhtml"/>
+	</ui:define>
+	
+	<ui:define name="cjf_template_rightAlignedMenu">
+		<ui:include src="/cjf-extension/menubar-items-detailConsignmentsRefresh.xhtml"/>
+	</ui:define>
+	
+	<ui:define name="footer">
+		<!-- <ui:fragment rendered="#{!neverExpires}">
+				<aaf:sessionmonitor id="sessionMonitor" />
+		</ui:fragment>  -->		
+		<ui:include src="cjf-extension/footer.xhtml"/>
+		<h:outputScript library = "js" name="app-script-1.js" />
+	</ui:define>
+	
+</ui:composition>
