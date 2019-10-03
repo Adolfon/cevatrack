@@ -1,0 +1,35 @@
+.aaf_login_forgotPassword_lnk{
+	font-family: Calibri,'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.ui-panelgrid-content{
+	background: #fff repeat-x scroll 0 0;
+	border: 0px;
+}
+
+.btn_login_loginbutton{
+	width:100%;
+}
+
+.aaf_ellipsis {
+  word-wrap:normal;
+  white-space:nowrap;
+  overflow:hidden;
+  -o-text-overflow:ellipsis;
+  text-overflow:ellipsis;
+}
+
+.ui-picklist-list.ui-picklist-source, .ui-picklist-list.ui-picklist-target {
+    border: solid;
+}
+
+.user_role_picklist .ui-picklist .ui-picklist-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    height: 200px;
+    width: 400px;
+}
