@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:p="http://primefaces.org/ui">
+			<div class="login-navbar">
+				<div>
+					<p:link id="topbar-profile-menu-button-login" outcome="login.xhtml?faces-redirect=true">
+						<span> <h:outputText
+								value="#{cjfBaseLbls['topbar.signIn']}" />
+						</span>
+					</p:link>
+				</div>			
+
+				
+				<div class="lang">
+					<div class="dropdown">
+						<button class="dropbtn">
+							<h:outputText value="#{cjfBaseLbls['topbar.language']}" />
+							#{localeController.getLanguage()}
+
+						</button>
+						<div class="dropdown-content login-sub-menu">
+							<h:form styleClass="language-background">
+								<p:repeat id="som_locale"
+									value="#{localeController.supportedLocales}" var="languageVar">
+									<p:commandLink id="cml_englishLink"
+										action="#{localeController.changeLanguage(languageVar.language)}">
+									#{languageVar.language} -
+									#{lbl['language.'.concat(languageVar.language)]}
+						</p:commandLink>
+								</p:repeat>
+							</h:form>
+						</div>
+
+					</div>
+				</div>
+			</div>
+</ui:composition>
