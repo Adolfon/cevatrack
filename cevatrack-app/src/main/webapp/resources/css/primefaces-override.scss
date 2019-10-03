@@ -1,0 +1,112 @@
+@import "cjf-theme.scss";
+
+.cjf_template_topRight{
+    padding-right: 20px;
+    text-align: right;
+    font-size: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+.ui-menubar .ui-menu-child .ui-menuitem-link:hover {
+    width: 85%;
+    padding-left: .1em;
+}
+
+.ui-datepicker {
+	border: 1px solid $ceva-black;
+	.ui-datepicker-header {
+	background-color: $ceva-burgundy;
+}
+.ui-datepicker-trigger {
+	padding-bottom: 0px;
+	border-width: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	padding-left: 0px;
+	margin-left: 3px;
+}
+}
+.ui-menu{
+	padding:0px;
+	.ui-icon{
+	position: inherit;
+	width:10px;
+}
+.ui-menu-parent .ui-menu-child {
+    white-space: nowrap;
+    width: auto;
+}
+
+}
+.ui-menubar .ui-menu-child .ui-menuitem-link {
+  width: 100%; }
+li ul .ui-menu-list .ui-menu-child .ui-shadow{
+	padding-right:10px;
+}
+
+ .ui-icon,
+ .ui-icon .ui-button,
+ .ui-icon .ui-button:hover,
+ .ui-icon .ui-button:focus,
+ .ui-icon .ui-button:active {
+  background-image: url("\#{resource['#{$ui-theme-name}:images/ui-icons_ffffff_256x240.png']}");
+}
+
+.ui-widget-content .ui-icon,
+.ui-widget-content .ui-icon:hover,
+.ui-widget-content .ui-icon:focus,
+.ui-widget-content .ui-icon .ui-state-focus,
+.ui-widget-content .ui-icon .ui-state-hover {
+  background-image: url("\#{resource['#{$ui-theme-name}:images/ui-icons_ffffff_256x240.png']}");
+}
+.ui-widget {
+	.ui-inputfield{
+	background: $ceva-white;
+	color: $ceva-black;
+	.ui-state-default{
+		color: $ceva-black;
+	}
+	}
+}
+/* Below two CSS classes make sure to overflow the menu items from north layout unit to center layout unit  */
+.ui-layout-north {
+    z-index:20 !important;
+    overflow:visible;
+    .ui-layout-unit-content {
+     overflow:visible;
+ }
+}
+
+
+/*  CSS class to remove the data table borders  */
+.ui-datatable
+{ 
+  thead th,  tbody td {  
+    padding: 2px 5px;
+    border-style: none;
+}
+ /*  Below CSS adds the background colour to the odd numbered rows  */
+.ui-datatable-odd {
+	background: none repeat scroll 0 0 $ceva-mist;
+}
+/*  Below CSS adds the background colour to the even numbered rows  */
+.ui-datatable-even {
+	background: none repeat scroll 0 0 $ceva-pearl;
+}}
+
+.ui-panelgrid {
+  .ui-panelgrid-cell {
+    border: none;
+   }
+ }
+ 
+ /* this is to cater for bootstrap colouring */
+ .bootstraptable tbody .ui-state-hover {
+   color: #111111;
+ }
+ .bootstraptable thead {
+   color: #ffffff;
+ }
+ .ui-state-hover {
+   color: #111111;
+ }

@@ -1,0 +1,107 @@
+/* 
+	1) This file is intended for Theme specific (color) CSS to the CJF widgets ONLY.
+	2) Any CSS attribute other than the color related should be added in the style.css
+	3) CSS classes defined here are also defined in style.css to add CSS attributes other than the color related. 	
+*/
+/* From CEVA Brand Identity Primary palette */
+/* From CEVA Brand Identity Extended palette */
+/* Apply to all the div elements with in the header   */
+.cjf_template_header div {
+  background-color: #990033;
+  border: 0px; }
+
+/* Apply to all the div elements with in the menubar and the footer   */
+.cjf_template_menu div, .cjf_template_footer_layout div {
+  background-color: #999999; }
+
+.cjf_template_topRight {
+  padding-right: 20px;
+  text-align: right;
+  font-size: 12px;
+  color: #FFFFFF;
+  text-decoration: none; }
+
+.ui-menubar .ui-menu-child .ui-menuitem-link:hover {
+  width: 85%;
+  padding-left: .1em; }
+
+.ui-datepicker {
+  border: 1px solid #000000; }
+  .ui-datepicker .ui-datepicker-header {
+    background-color: #990033; }
+  .ui-datepicker .ui-datepicker-trigger {
+    padding-bottom: 0px;
+    border-width: 0px;
+    margin-right: 0px;
+    margin-bottom: 4px;
+    padding-left: 0px;
+    margin-left: 3px; }
+
+.ui-menu {
+  padding: 0px; }
+  .ui-menu .ui-icon {
+    position: inherit;
+    width: 10px; }
+  .ui-menu .ui-menu-parent .ui-menu-child {
+    white-space: nowrap;
+    width: auto; }
+
+.ui-menubar .ui-menu-child .ui-menuitem-link {
+  width: 100%; }
+
+li ul .ui-menu-list .ui-menu-child .ui-shadow {
+  padding-right: 10px; }
+
+.ui-icon,
+.ui-icon .ui-button,
+.ui-icon .ui-button:hover,
+.ui-icon .ui-button:focus,
+.ui-icon .ui-button:active {
+  background-image: url("#{resource['primefaces-cjf-primefaces-theme-burgundy:images/ui-icons_ffffff_256x240.png']}"); }
+
+.ui-widget-content .ui-icon,
+.ui-widget-content .ui-icon:hover,
+.ui-widget-content .ui-icon:focus,
+.ui-widget-content .ui-icon .ui-state-focus,
+.ui-widget-content .ui-icon .ui-state-hover {
+  background-image: url("#{resource['primefaces-cjf-primefaces-theme-burgundy:images/ui-icons_ffffff_256x240.png']}"); }
+
+.ui-widget .ui-inputfield {
+  background: #FFFFFF;
+  color: #000000; }
+  .ui-widget .ui-inputfield .ui-state-default {
+    color: #000000; }
+
+/* Below two CSS classes make sure to overflow the menu items from north layout unit to center layout unit  */
+.ui-layout-north {
+  z-index: 20 !important;
+  overflow: visible; }
+  .ui-layout-north .ui-layout-unit-content {
+    overflow: visible; }
+
+/*  CSS class to remove the data table borders  */
+.ui-datatable {
+  /*  Below CSS adds the background colour to the odd numbered rows  */
+  /*  Below CSS adds the background colour to the even numbered rows  */ }
+  .ui-datatable thead th, .ui-datatable tbody td {
+    padding: 2px 5px;
+    border-style: none; }
+  .ui-datatable .ui-datatable-odd {
+    background: none repeat scroll 0 0 #E6E6E6; }
+  .ui-datatable .ui-datatable-even {
+    background: none repeat scroll 0 0 #CCCCCC; }
+
+.ui-panelgrid .ui-panelgrid-cell {
+  border: none; }
+
+/* this is to cater for bootstrap colouring */
+.bootstraptable tbody .ui-state-hover {
+  color: #111111; }
+
+.bootstraptable thead {
+  color: #ffffff; }
+
+.ui-state-hover {
+  color: #111111; }
+
+/*# sourceMappingURL=../../../../../target/css/primefaces-override.css.map */

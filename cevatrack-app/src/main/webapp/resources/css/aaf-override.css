@@ -1,0 +1,8 @@
+#aaf_login\:frm_login\:pwd_login_password,
+#aaf_login\:frm_login\:txt_login_loginid{
+	width:95%;
+}
+
+#aaf_login\:frm_login\:lbl_login_loginid{
+	padding-right: 6px;
+}
