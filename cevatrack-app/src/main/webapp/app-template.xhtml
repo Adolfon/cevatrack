@@ -15,7 +15,19 @@
 	    <h:outputStylesheet library="aaf" name="css/aaf.css?#{buildInfoBean.buildTime}"/>
 	    <h:outputStylesheet library="css" name="app.css?#{buildInfoBean.buildTime}" />
 	    <h:outputStylesheet library="css" name="common.css?#{buildInfoBean.buildTime}" />
+	<!--  From OLD CEVATRACK BEGIN -->    
+	    <h:outputStylesheet name="css/primefaces-override.css" /> 
+	    <h:outputStylesheet name="css/cjf-theme.css" /> <!-- set header, menu and footer background color -->
+	   
+	  <!-- <h:outputStylesheet name="aaf/css/aaf.css" />   leaving the other aaf styles   
+	    <h:outputStylesheet name="css/aaf-override.css" />  set login and password width -->
+	    <h:outputStylesheet name="css/cjf-override.css" />
+	    <h:outputStylesheet library="webjars" name="bootstrap/3.3.7-1/css/bootstrap.min-jsf.css" />
+        <h:outputStylesheet name="css/app.css" />
+       <!--  From OLD CEVATRACK END -->
 	</ui:define>
+	
+	
 	
 	<ui:define name="custom-functions">
 		<p:importConstants type="com.ceva.security.aaf.utils.AAFPermissionConstants" var="AAFPermissionConstants" />

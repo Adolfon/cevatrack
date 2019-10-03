@@ -1,6 +1,6 @@
 /**
  * javascript for the clients smartnet view
- */
+ 
 if (sessionStorage.getItem("sn-save")) {
 	$("#sn-save").html(sessionStorage.getItem("sn-save"));	
 }
@@ -12,3 +12,4 @@ $(window).unload(function () {
 	sessionStorage.setItem("sn-save", $("#sn-save").html());
 });
 
+*/

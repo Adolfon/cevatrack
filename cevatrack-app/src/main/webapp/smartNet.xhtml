@@ -7,7 +7,11 @@
 	xmlns:aaf="http://java.sun.com/jsf/composite/aaf"	
 	xmlns:shiro="http://shiro.apache.org/tags"		
 	template="app-template.xhtml">
-
+   
+   	<!-- 
+   	<ui:define name="stylesheets">
+		<h:outputStylesheet library="css" name="smartNet.css?#{buildInfoBean.buildTime}" /> 
+    </ui:define>   -->
    
 	<ui:define name="content">
 		<p:growl />
@@ -20,7 +24,7 @@
 						<h:panelGroup layout="block" styleClass="d-sm-none ui-md-3 d-lg-2">
 						</h:panelGroup>
 						<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 d-lg-8">
-							<h1 style="text-align: center">SmartNet</h1>
+							<h1 id="title" style="text-align: center">SmartNet</h1>
 						</h:panelGroup>
 						<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-2">
 							<p:calendar id="datesel" styleClass="datepicker h5"
