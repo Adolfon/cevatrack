@@ -38,7 +38,7 @@
 			<ui:decorate template="sidebar.xhtml" />
 
 			<div class="layout-main"
-				style="position: absolute; top: 64px; bottom: 36px; left: 0px; right: 0px; overflow: auto;">
+				style="position: static; bottom: 36px; left: 0px; right: 0px; overflow: auto;">
 
 				<div class="layout-content">
 					<ui:insert name="content"></ui:insert>
@@ -59,9 +59,9 @@
 				<div class="layout-mask"></div>
 			</div>
 
-			<ui:insert name="footer">
+			<!-- <ui:insert name="footer">
 				<ui:include src="footer.xhtml" />
-			</ui:insert>
+			</ui:insert>   -->
 		</div>
 		<h:outputStylesheet
 			name="css/nanoscroller.css?#{buildInfoBean.buildTime}"
