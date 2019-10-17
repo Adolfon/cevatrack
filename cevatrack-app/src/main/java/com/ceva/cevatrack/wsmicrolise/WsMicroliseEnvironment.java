@@ -97,8 +97,10 @@ public class WsMicroliseEnvironment {
             LOGGER.debug(directory.getAbsolutePath());
             LOGGER.warn(directory.getAbsolutePath());
             // java.net.URL url = getClass().getResource("CEVAtrack-responsive.xml");//null
-            String path = "C:/Users/canoad/git/CEVAtrack-responsive/CEVAtrack-responsive-app/local_tomee/conf"
-                    + "/Catalina/localhost/CEVAtrack-responsive_mod.xml";
+            // String path = "C:/Users/canoad/git/CEVAtrack-responsive/CEVAtrack-responsive-app/local_tomee/conf"
+            // + "/Catalina/localhost/CEVAtrack-responsive_mod.xml";
+            String path = "C:/Users/canoad/git/cevatrack/cevatrack-app/local_tomee/conf"
+                    + "/Catalina/localhost/cevatrack_mod.xml";
             File file = new File(path);
             final FileInputStream in = new FileInputStream(file);
             properties.loadFromXML(in);
