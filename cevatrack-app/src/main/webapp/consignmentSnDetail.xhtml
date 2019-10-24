@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" 
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:shiro="http://shiro.apache.org/tags"	
-	template="app-template-detailConsignmentsRefresh.xhtml">
+	template="app-template_detailRefresh.xhtml">
 	
 	<ui:define name="content">
 		<p:growl />
@@ -13,11 +13,9 @@
 		<div class="ceva-welcome-page">
 			<div class="ceva-panel-welcome-page"></div>
 			<div id="welcomePage" class="ceva-text-welcome-page">
-
-				<h3></h3>
-				<h:outputText id="serverDate" style="font-size:16px" value="Updated at: #{dtDetailView.date}"/>
+			
 				<h:form id="form">
-				  <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtDetailView.refresh}" widgetVar="poll" update="serverDate,toggleable-header,toggleable-site,toggleable-timings,toggleable-journey,fragmentSignatory,fragmentVehicles,fragmentDrivers,fragmentConsignment" />
+				  <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtDetailView.refresh}" widgetVar="poll" update="menuform:serverDate,toggleable-header,toggleable-site,toggleable-timings,toggleable-journey,fragmentSignatory,fragmentVehicles,fragmentDrivers,fragmentConsignment" />
 					<p:growl id="growl" showDetail="true" />
 					
 					<p:panel id="toggleable-header" header="Consignment #{dtDetailView.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
