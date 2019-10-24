@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:p="http://primefaces.org/ui">
+	<h:form id="frm_headerLinks">
+		<div class="cjf_user_menu_item_right">
+			<ul class="ui_menu_list ui_helper_reset" role="menu">
+				<li role="menuitem">
+				   <p:link id="cjf_template_topRight_help" href="#" style="color:white" onmouseover="this.style.color='#DADADA';" onmouseout="this.style.color='white';">
+						<i class="fa fa-support" aria-hidden="true"></i> 
+						  Help 
+				   </p:link>
+				</li>
+				<aaf:notAuthenticated>
+					<li role="menuitem">
+					  <p:link id="cjf_template_topRight_login"
+							href="/login.xhtml" style="color:white" onmouseover="this.style.color='#DADADA';" onmouseout="this.style.color='white';">
+							  <i class="fa fa-sign-in" aria-hidden="true"></i> 
+							    Login 
+					  </p:link>
+				   </li>
+				</aaf:notAuthenticated>
+				<aaf:authenticated>
+			     	<li role="menuitem">
+				     	 <p:link href="" style="color:white" onmouseover="this.style.color='#DADADA';" onmouseout="this.style.color='white';">
+				     	    <i class="fa fa-user" aria-hidden="true"></i>
+				     	       #{appUserBean.appUser.AAFUser.firstName} #{appUserBean.appUser.AAFUser.lastName}
+				     	 </p:link>
+			     	 </li>
+					<li role="menuitem">
+						<p:commandLink id="cjf_template_topRight_logout" action="#{logoutBean.logout()}" style="color:white" onmouseover="this.style.color='#DADADA';" onmouseout="this.style.color='white';">
+						  <i class="fa fa-sign-out" aria-hidden="true"></i>
+						    Logout 
+						</p:commandLink>
+					</li>
+				</aaf:authenticated>
+			</ul>
+		</div>
+	</h:form>
+</ui:composition>

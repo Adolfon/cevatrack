@@ -1,3 +1,58 @@
+body .ui-datatable thead th {
+  background-color: #990033;
+  border: 1px solid #c8c8c8;
+  color: #ffffff;
+  width: auto !important;
+  padding: 8px 12px; }
+  body .ui-datatable thead th * {
+    font-weight: 400; }
+  body .ui-datatable thead th .ui-column-title {
+    font-weight: 700; }
+  body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s {
+    background: none;
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-indent: 0px !important;
+    text-align: center; }
+    body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-carat-2-n-s:before {
+      content: ""; }
+  body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-triangle-1-n {
+    background: none;
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-indent: 0px !important;
+    text-align: center; }
+    body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-triangle-1-n:before {
+      content: ""; }
+  body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-triangle-1-s {
+    background: none;
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-indent: 0px !important;
+    text-align: center; }
+    body .ui-datatable thead th .ui-sortable-column-icon.ui-icon-triangle-1-s:before {
+      content: ""; }
+  body .ui-datatable thead th.ui-state-hover {
+    background-color: #eaeaea;
+    color: #333333; }
+  body .ui-datatable thead th.ui-state-active {
+    background-color: #ca2446;
+    color: #FFFFFF; }
+
+
+
 //mainly used in forms
 $primaryColor:#990033;
 $primaryColorText:#ffffff;

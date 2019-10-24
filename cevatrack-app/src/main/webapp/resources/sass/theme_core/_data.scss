@@ -328,6 +328,7 @@ body {
 
         .ui-datatable-scrollable-header, .ui-datatable-scrollable-footer {
             background-color: $datatableHeaderCellBgColor;
+            /* width:100%; */
         }
 
         .ui-selection-column {

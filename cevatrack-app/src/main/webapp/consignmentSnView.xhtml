@@ -5,17 +5,16 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:aaf="http://java.sun.com/jsf/composite/aaf"
 	xmlns:shiro="http://shiro.apache.org/tags"
-	template="app-template-consignmentsRefresh.xhtml">
+	template="app-template_consRefresh.xhtml">
 
 	
 	<ui:define name="content">
 		<p:growl />
 		<shiro:authenticated>
 		<div class="ceva-welcome-page">
-			<div id="welcomePage" class="ceva-text-welcome-page">
-			 <h:outputText id="serverDate" style="font-size:16px" value="Updated at: #{dtConsignmentView.date}"/>												          			  
-			  <h:form id="form">
-			    <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtConsignmentView.refresh}" widgetVar="poll" update="tableStateDT,serverDate" />			      
+			<div id="welcomePage" class="ceva-text-welcome-page">			 											          			  
+			  <h:form id="form">			  
+			    <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtConsignmentView.refresh}" widgetVar="poll" update="tableStateDT,menuform:serverDate" />			      
 				<h:panelGroup layout="block" styleClass="ui-g">
 					<h:panelGroup layout="block" styleClass="d-sm-none ui-md-3 d-lg-2">
 					</h:panelGroup>
@@ -46,12 +45,12 @@
 				<p:growl id="growl" showDetail="true" sticky="true" />				
 				
 				<h:commandLink>
-                    <p:graphicImage value="resources/images/Excel-icon.png" width="30" style="position:absolute;right:2px;top:7px;"/>
+                    <p:graphicImage  value="resources/images/Excel-icon.png" width="30" style="float: right;"/>
                     <p:dataExporter type="xls" target="tableStateDT" fileName="consignments" />
                 </h:commandLink>
 
 				<p:dataTable id="tableStateDT" var="con"					
-					tableStyleClass="bootstraptable table table-hover"
+					tableStyleClass=""
 					rowStyleClass="#{dtConsignmentView.getStatusCssClass(con.consignmentStatus)} respborder"
 					value="#{dtConsignmentView.consignments}"
 					widgetVar="consignmentsTable" rows="50" paginator="true"
@@ -67,27 +66,26 @@
 					scrollable="true" 
 					reflow="true">
 
-					<f:facet name="header">
-						<p:outputPanel style="float: right">
-							<h:outputText value="Search" />
+				<f:facet name="header">
+						<p:outputPanel style="width: fit-content;">							
 							<p:inputText id="globalFilter"
 								onkeyup="PF('consignmentsTable').filter()"
 								placeholder="Enter Search Criteria" />
 						</p:outputPanel>
-					</f:facet>
+					</f:facet>  
 
 					<p:ajax event="rowSelect"
 						listener="#{dtConsignmentView.onRowSelect}">
 					</p:ajax>
 										
-					<p:column styleClass="filteredCol" headerText="Reference"
+					<p:column styleClass="filteredCol" headerText="Reference"  					
 						filterBy="#{con.consignmentReference}"
 						sortBy="#{con.consignmentReference}" priority="0"
 						filterMatchMode="contains">
 						<h:outputText value="#{con.consignmentReference}" />
 					</p:column>
 
-					<p:column styleClass="filteredCol" headerText="Site"
+					<p:column styleClass="filteredCol" headerText="Site" 					
 						filterBy="#{con.siteName}" sortBy="#{con.siteName}" priority="3"
 						filterMatchMode="contains">
 						<h:outputText value="#{con.siteName}" />
@@ -147,6 +145,7 @@
 		<h:outputScript library="js" name="app-ajax.js" />
 		<h:outputScript library="js" name="app-script-1.js" />
 		<h:outputScript library="js" name="sn-consignments.js" />
+		<h:outputScript library="js" name="app-script-2.js" />
 	  </shiro:authenticated>
 	</ui:define>
 	

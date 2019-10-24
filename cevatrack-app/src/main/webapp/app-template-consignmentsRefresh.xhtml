@@ -18,8 +18,15 @@
 	    <h:outputStylesheet name="aaf/css/aaf.css" /> 
 	    <h:outputStylesheet name="css/aaf-override.css" /> <!-- set login and password width -->
 	    <h:outputStylesheet name="css/cjf-override.css" />
-	    <h:outputStylesheet library="webjars" name="bootstrap/3.3.7-1/css/bootstrap.min-jsf.css" />
+	    <!-- <h:outputStylesheet library="webjars" name="bootstrap/3.3.7-1/css/bootstrap.min-jsf.css" /> -->	    
         <h:outputStylesheet name="css/app.css" />
+        <!-- <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+        <h:outputScript target="head">
+		    $ = jQuery;		   
+		    $(document).ready(function() {
+		        console.log('inside jquery ready');
+		    });
+		</h:outputScript>   -->
 	    <!--  link rel="stylesheet" type="text/css" media="all" href="webjars/bootstrap/3.3.5/css/bootstrap.min-jsf.css"/>  -->
 	</ui:define>
 	
@@ -52,11 +59,12 @@
 	</ui:define>
 	
 	<ui:define name="footer">
-		<ui:fragment rendered="#{!neverExpires}">
+		<!--  <ui:fragment rendered="#{!neverExpires}">
 				<aaf:sessionmonitor id="sessionMonitor" />
-		</ui:fragment>
-		<ui:include src="cjf-extension/footer.xhtml"/>
+		</ui:fragment> -->
+		<h:outputScript library = "js" name="app-script-2.js" />
 		<h:outputScript library = "js" name="app-script-1.js" />
+		<ui:include src="cjf-extension/footer.xhtml"/>
 	</ui:define>
 	
 </ui:composition>

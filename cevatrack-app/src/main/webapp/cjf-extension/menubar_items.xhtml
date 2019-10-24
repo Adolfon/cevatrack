@@ -31,8 +31,6 @@
 					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.USER_VIEW)}" />
 			</p:submenu>
 
-
-
 		</aaf:authenticated>
 
 
@@ -58,5 +56,11 @@
 				url="login.xhtml?faces-redirect=true" icon="fa fa-sign-in" />
 		</aaf:notAuthenticated>
 
-	</ph:menu>
+	</ph:menu> <!-- 
+	<aaf:authenticated>
+		<div id= "autorefresh">
+			<h:outputLabel value="Enable auto refresh"/>
+			<h:outputLabel value="Updated: 22:10:01 " style= "margin-left: 8px; margin-right: 8px;"/>
+		</div>			
+	</aaf:authenticated>   -->	
 </ui:composition>

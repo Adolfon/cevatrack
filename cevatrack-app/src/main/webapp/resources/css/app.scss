@@ -4,6 +4,58 @@
 @import "color-theme.scss";
 
 /* To override harmony css*/
+
+/* Some of the bootstrap styles */
+
+table#tableStateDT tr  td{
+	padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+    box-sizing: border-box;
+    border-spacing: 0;
+    line-height: 1.42857143;
+    font-size: 1em;
+}
+/* */
+
+#form:tableStateDT:j_id__v_5{
+	color:#737373;
+}
+
+
+
+
+div#autorefresh{	
+	margin:0%;
+	padding-left:0%;
+	float:right;
+	color:#eaeaea;
+	font-weight: 600;
+	font-family: Calibri, Source Sans Pro, Helvetica Neue, Helvetica, Arial, sans-serif;
+	padding-top:0.6%;
+}
+
+div#welcomePage{
+	    margin-top: 3%;
+}
+
+.danger{
+	background-color: #f2dede !important;
+}
+
+.warning{
+	background-color: #fcf8e3 !important;
+}
+
+.success{
+	background-color: #dff0d8 !important;
+}
+
+.default{
+	background-color: white !important;
+}
+
 .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons {
       float: right;
       top: 0;
@@ -30,12 +82,19 @@
 @media (max-width: 1024px) {
 	.layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons {
       display: none; }
-      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons img {
+    .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons img {
         display: none; }
-      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons span {
+    .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons span {
         display: none; }
-      .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons:hover {
+    .layout-wrapper .layout-topbar .topbar-content .topbar-profile-menu-buttons:hover {
         display: none; }
+        
+  	div#autorefresh{
+		visibility:hidden;
+	}	      
+    div#autorefreshDate{
+    	visibility:hidden;
+    }
 }
 
 @media (min-width: 1025px) {
@@ -367,8 +426,7 @@ body, div, span, td, th, caption {
 /* override the theme to get rid of the black */
 .ui-widget-header {
     border: 1px solid #666666;
-    background: #666666;
-    color: #ffffff;
+    background: #666666;    
     font-weight: bold;
 }
 .ui-panel-titlebar > .ui-panel-titlebar-icon {
