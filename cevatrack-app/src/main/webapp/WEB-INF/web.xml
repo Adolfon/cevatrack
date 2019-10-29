@@ -87,5 +87,22 @@
         <res-auth>Container</res-auth>
         <mapped-name>templateDS</mapped-name>
     </resource-ref>
+    
+        <!-- Webservice -->
+    <listener>
+        <listener-class>
+            com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>SoapAppp</servlet-name>
+        <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SoapAppp</servlet-name>
+        <url-pattern>/soapSimple</url-pattern>
+    </servlet-mapping>
+    <!-- Webservice (End) -->
 
 </web-app>
