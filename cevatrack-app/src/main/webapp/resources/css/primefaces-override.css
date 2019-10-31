@@ -7,7 +7,7 @@
 /* From CEVA Brand Identity Extended palette */
 /* Apply to all the div elements with in the header   */
 .cjf_template_header div {
-  background-color: #990033;
+  background-color: #344A7B;
   border: 0px; }
 
 /* Apply to all the div elements with in the menubar and the footer   */
@@ -28,7 +28,7 @@
 .ui-datepicker {
   border: 1px solid #000000; }
   .ui-datepicker .ui-datepicker-header {
-    background-color: #990033; }
+    background-color: #344A7B; }
   .ui-datepicker .ui-datepicker-trigger {
     padding-bottom: 0px;
     border-width: 0px;
@@ -87,9 +87,9 @@ li ul .ui-menu-list .ui-menu-child .ui-shadow {
     padding: 2px 5px;
     border-style: none; }
   .ui-datatable .ui-datatable-odd {
-    background: none repeat scroll 0 0 #E6E6E6; }
+    background: none repeat scroll 0 0 #D9D9D9; }
   .ui-datatable .ui-datatable-even {
-    background: none repeat scroll 0 0 #CCCCCC; }
+    background: none repeat scroll 0 0 #FFFFFF; }
 
 .ui-panelgrid .ui-panelgrid-cell {
   border: none; }
