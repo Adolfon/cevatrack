@@ -70,7 +70,7 @@ public class LoginController extends LoginBean {
         AppUserVO appUser = new AppUserVO();
         appUser.setAAFUser(aafUser);
       // Local environment
-        this.sysConf.SystemSessionConfig();
+        //this.sysConf.SystemSessionConfig();
       // --
         SessionManager.getSession().setAttribute("APP_USER", appUser);
         LOGGER.info(" -- getSessionTimeoutTime(): " + this.getSessionTimeoutTime() + ",for user: "
@@ -94,9 +94,9 @@ public class LoginController extends LoginBean {
         AppUserVO appUser = new AppUserVO();
         appUser.setAAFUser(aafUser);
         
-        // For local properties
+       // For local properties
         //this.sysConf.SystemSessionConfig();
-        
+       // --
         SessionManager.getSession().setAttribute("APP_USER", appUser);
 
         // Set locale based on user profile
