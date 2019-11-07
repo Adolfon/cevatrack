@@ -69,7 +69,9 @@ public class LoginController extends LoginBean {
         LOGGER.info("-- Method setUserToSession starts");
         AppUserVO appUser = new AppUserVO();
         appUser.setAAFUser(aafUser);
+      // Local environment
         this.sysConf.SystemSessionConfig();
+      // --
         SessionManager.getSession().setAttribute("APP_USER", appUser);
         LOGGER.info(" -- getSessionTimeoutTime(): " + this.getSessionTimeoutTime() + ",for user: "
                 + appUser.getAAFUser().getFirstName() + ",LastName: " + appUser.getAAFUser().getLastName() + ", email: "
@@ -91,7 +93,10 @@ public class LoginController extends LoginBean {
     private void setUserToSession() {
         AppUserVO appUser = new AppUserVO();
         appUser.setAAFUser(aafUser);
-        this.sysConf.SystemSessionConfig();
+        
+        // For local properties
+        //this.sysConf.SystemSessionConfig();
+        
         SessionManager.getSession().setAttribute("APP_USER", appUser);
 
         // Set locale based on user profile
