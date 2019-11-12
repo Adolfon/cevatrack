@@ -2,5 +2,5 @@
 	Try not to add more parameters here if you can use application.properties or environment.properties
 	Exceptions, please have a discussion with Architecture team
 -->
-<Parameter name="environment.properties" value="/ds1/tomee/vtop/deploy_cjf-template/properties/CJF-TEMPLATE-DEVL/environment.properties" />
-<Parameter name="shiroConfigLocations" value="file:/ds1/tomee/vtop/deploy_cjf-template/properties/CJF-TEMPLATE-DEVL/shiro.ini" override="false"/>
+<Parameter name="environment.properties" value="/ds1/tomee/vtop/deploy_cevatrack/properties/CEVATRACK-DEVL/environment.properties" />
+<Parameter name="shiroConfigLocations" value="file:/ds1/tomee/vtop/deploy_cevatrack/properties/CEVATRACK-DEVL/shiro.ini" override="false"/>
