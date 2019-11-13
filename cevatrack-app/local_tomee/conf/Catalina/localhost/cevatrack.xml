@@ -1,0 +1,65 @@
+<Context>
+	<!-- Replace username in the next line with your username -->
+	<Parameter name="some.property" value="some.value" />
+	<Parameter name="shiroConfigLocations"
+		value="file:/home/local/WIN/adolfo.cano/git/CEVAtrack-responsive/CEVAtrack-responsive-app/local_tomee/properties/LOCAL/shiro.ini"
+		override="false" />
+	<WatchedResource>WEB-INF/web.xml</WatchedResource>
+	<Parameter name="google.apikey" value="AIzaSyBG_nHwW92gG04j98TxXZUR9X8ygHJYHKI"
+		override="false" />
+	<Parameter name="microlise.usernamepassword.direct.prod"
+		value="CEVACRMWEBSVC:@wSX67Yhn" override="false" />
+	<Parameter name="microlise.usernamepassword.direct.uat"
+		value="CEVACRMUATWEBSVC:W3Q8BgpXwM" override="false" />
+	<Parameter name="microlise.url.direct.prod"
+		value="https://ws6.microlise.com/CEVA_CRM_WEBSERVICE/TMCWebService.asmx"
+		override="false" />
+	<Parameter name="microlise.url.direct.uat"
+		value="https://ws6.microlise.com/CEVA_CRM_UAT_WEBSERVICE/TMCWebService.asmx"
+		override="false" />
+	<Parameter name="microlise.url.tibco.uat" value="http://gdcesbqa:8080/MicroliseSmartNet"
+		override="false" />
+	<Parameter name="microlise.url.tibco.prod" value="http://gdcesbqa:8080/MicroliseSmartNet"
+		override="false" />
+	<Parameter name="microlise.body.getconsignment.direct.prod"
+		value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;"
+		override="false" />
+	<Parameter name="microlise.body.getconsignment.direct.uat"
+		value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;"
+		override="false" />
+	<Parameter name="microlise.body.findconsignmentsummaries.direct.prod"
+		value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;consignmentFilter xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;EarliestDeliveryDate xmlns=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate xmlns=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;"
+		override="false" />
+	<Parameter name="microlise.body.findconsignmentsummaries.direct.uat"
+		value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;consignmentFilter xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;EarliestDeliveryDate xmlns=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate xmlns=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;"
+		override="false" />
+	<Parameter name="microlise.soapapaction.getconsignment.direct.prod"
+		value="http://microlise.com/TMC/GetConsignment" override="false" />
+	<Parameter name="microlise.soapapaction.getconsignment.direct.uat"
+		value="http://microlise.com/TMC/GetConsignment" override="false" />
+	<Parameter
+		name="microlise.soapapaction.findconsignmentsummaries.direct.prod"
+		value="http://microlise.com/TMC/FindConsignmentSummaries" override="false" />
+	<Parameter name="microlise.soapapaction.findconsignmentsummaries.direct.uat"
+		value="http://microlise.com/TMC/FindConsignmentSummaries" override="false" />
+	<Parameter name="microlise.soapapaction.getconsignment.tibco.prod"
+		value="GetConsignment" override="false" />
+	<Parameter name="microlise.soapapaction.getconsignment.tibco.uat"
+		value="GetConsignment" override="false" />
+	<Parameter name="microlise.soapapaction.findconsignmentsummaries.tibco.prod"
+		value="FindCOnsignmentSummaries" override="false" />
+	<Parameter name="microlise.soapapaction.findconsignmentsummaries.tibco.uat"
+		value="FindCOnsignmentSummaries" override="false" />
+	<Parameter name="microlise.proxyserver.direct.prod" value="proxy.fifthlayer.net"
+		override="false" />
+	<Parameter name="microlise.proxyport.direct.prod" value="3128"
+		override="false" />
+	<Parameter name="microlise.proxyserver.direct.uat" value="proxy.fifthlayer.net"
+		override="false" />
+	<Parameter name="microlise.proxyport.direct.uat" value="3128"
+		override="false" />
+	<Parameter name="microlise.proxyport.local" value="3128"
+		override="false" />
+			<Parameter name="microlise.proxyserver.local" value="10.235.52.11"
+		override="false" />
+</Context>
