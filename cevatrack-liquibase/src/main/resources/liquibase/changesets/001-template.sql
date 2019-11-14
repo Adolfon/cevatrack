@@ -400,7 +400,7 @@ CREATE TABLE cjf_user
  	version smallint NOT NULL
 );
 
---changeset srinivas.lyagala:001-cjf-template-db-002 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
+--changeset srinivas.lyagala:001-cjf-template-db-002 failOnError:true splitStatements:false 
  SELECT add_aaf_domain_lookup('todo', 'Todo management', 4, 'Todo');
  
  select add_aaf_domain_action_lookup('todo', 'view', 'view action', 1, 'View Todo');     
@@ -409,7 +409,7 @@ CREATE TABLE cjf_user
  select add_aaf_domain_action_lookup('todo', 'delete', 'delete action', 4, 'Delete Todo');
  select add_aaf_domain_action_lookup('todo', '*', 'manage action', 5, 'Manage Todo');
  
---changeset venkateswarlu:001-cjf-template-db-003 failOnError:true splitStatements:false logicalFilePath:001-template.sql  
+--changeset venkateswarlu:001-cjf-template-db-003 failOnError:true splitStatements:false  
  --encrypted password is CJFAdmin1$
 SELECT add_aaf_user('cjf.admin', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'cjf', 'admin', 'noreply@cevalogistics.com');
 
@@ -429,14 +429,163 @@ SELECT add_aaf_permission ('todo', 'delete', '*', 'Delete Todo');
 -- Parameters: role_name, permission_domain, permission_action, permission_instance
 SELECT add_aaf_role_permission ('Todo Management', 'todo', '*', '*');
 
---changeset venkateswarlu:001-cjf-template-db-004 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset venkateswarlu:001-cjf-template-db-004 failOnError:true splitStatements:false
 -- This change is part of release 1.4 
 update aaf_user set account_expiration_date=(now() + interval '100 years') where account_expiration_date is null and user_type='E';
 
---changeset mahendran.mookkiah:001-cjf-template-db-005 failOnError:true splitStatements:false context:DEV logicalFilePath:001-template.sql
+--changeset mahendran.mookkiah:001-cjf-template-db-005 failOnError:true splitStatements:false context:DEV
 SELECT add_aaf_role ('Demo Time', 'Demo Time operator');
 
---changeset mohammad.weshah:001-cjf-template-db-006 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+
+--changeset brian.goodall:001-cjf-template-db-006 failOnError:true splitStatements:false 
+
+-- Parameters: aaf_domain_code, description, display_order, display_label
+ SELECT add_aaf_domain_lookup('sn_client', 'SmartNet Client', 5, 'SmartNet Client');
+ SELECT add_aaf_domain_lookup('sn_site', 'SmartNet Site', 6, 'SmartNet Site');
+ 
+ -- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+ select add_aaf_domain_action_lookup('sn_client', 'view', 'View SmartNet Client', 1, 'View SmartNet Client');     
+ select add_aaf_domain_action_lookup('sn_site', 'view', 'View SmartNet Site', 1, 'View SmartNet Site');  
+ 
+ --encrypted password is CJFAdmin1$
+ -- Parameters: name, password, forename, lastname, email
+SELECT add_aaf_user('nike296633', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'nike', 'client', 'noreply@cevalogistics.com');
+SELECT add_aaf_user('nike', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'nike', 'site 296633', 'noreply@cevalogistics.com');
+SELECT add_aaf_user('ceva', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'ceva', 'global', 'noreply@cevalogistics.com');
+
+-- Parameters: role_name, description
+SELECT add_aaf_role ('sn_all', 'SmartNet Global');
+SELECT add_aaf_role ('sn_nike_all', 'SmartNet Nike All Sites');
+SELECT add_aaf_role ('sn_nike_296633', 'SmartNet Site 296633');
+
+-- Parameters: user_principal, role_name
+SELECT add_aaf_user_role('ceva', 'sn_all');
+SELECT add_aaf_user_role('nike', 'sn_nike_all');
+SELECT add_aaf_user_role('nike296633', 'sn_nike_296633');
+
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('sn_client', 'view', '*', 'View SmartNet All Clients');
+SELECT add_aaf_permission ('sn_client', 'view', 'nike', 'View SmartNet Nike');
+SELECT add_aaf_permission ('sn_site', 'view', '*', 'Manage SmartNet All Sites');
+SELECT add_aaf_permission ('sn_site', 'view', '296633', 'Manage SmartNet Site 296633');
+
+-- Parameters: role_name, permission_domain, permission_action, permission_instance
+SELECT add_aaf_role_permission ('sn_all', 'sn_client', 'view', '*');
+SELECT add_aaf_role_permission ('sn_all', 'sn_site', 'view', '*');
+SELECT add_aaf_role_permission ('sn_nike_all', 'sn_client', 'view', 'nike');
+SELECT add_aaf_role_permission ('sn_nike_all', 'sn_site', 'view', '*');
+SELECT add_aaf_role_permission ('sn_nike_296633', 'sn_client', 'view', 'nike');
+SELECT add_aaf_role_permission ('sn_nike_296633', 'sn_site', 'view', '296633');
+
+--changeset brian.goodall:001-cjf-template-db-007 failOnError:true splitStatements:false  
+CREATE TABLE smartnet_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+  
+
+--changeset brian.goodall:001-cjf-template-db-008 failOnError:true splitStatements:false  
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Aspall','ASPALL','Aspall.png','aspall',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('British Gypsum Sherburn UAT','BGYPSH','default.png','bgypsh',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Bentley','BENTLEY','Bentley.png','bentley',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('CanPak','CANPAK','CanPak.png','canpak',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Continental','CONTI','Continental.png','continental',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Crown Paints','CWNRAD','Cwnrad.png','crown',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Gap','GAP','Gap.png','gap',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Lush','LUSH','Lush.png','lush',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('New TMG','NEWTMG','NewTMG.png','newtmg',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Nike','NIKE','Nike.png','nike',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Twinings','TWINNG','Twinings.png','twinings',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Uniqlo','ARVATO','Uniqlo.png','uniqlo',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Uniqlo Adhoc','AdhocARVATO','UniqloAdhoc.png','uniqloadhoc',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Whitworths','WHITWR','Whitworths.png','whitworths',now(),'SYSTEM',now(),'SYSTEM',1);
+  
+--changeset brian.goodall:001-cjf-template-db-009 failOnError:true splitStatements:false 
+
+-- Parameters: aaf_domain_code, description, display_order, display_label
+ SELECT add_aaf_domain_lookup('sn_microlise', 'Microlise Webservice for SmartNet', 7, 'SmartNet Microlise');
+ 
+ -- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+ select add_aaf_domain_action_lookup('sn_microlise', 'tibco', 'Connect via Tibco', 1, 'Tibco Connection');  
+ select add_aaf_domain_action_lookup('sn_microlise', 'direct', 'Connect directly to Microlise (DEV ONLY)', 1, 'Direct Connection');     
+ 
+-- Parameters: role_name, description
+SELECT add_aaf_role ('sn_microlise_prod_via_tibco', 'Production microlise via Tibco');
+SELECT add_aaf_role ('sn_microlise_test_via_tibco', 'Test microlise via Tibco');
+SELECT add_aaf_role ('sn_microlise_direct_prod', 'Direct to microlise production (DEV ONLY)');
+SELECT add_aaf_role ('sn_microlise_direct_test', 'Direct to microlise test system (DEV ONLY)');
+
+-- Parameters: user_principal, role_name
+SELECT add_aaf_user_role('ceva', 'sn_microlise_direct_prod');
+SELECT add_aaf_user_role('nike', 'sn_microlise_direct_prod');
+SELECT add_aaf_user_role('nike296633', 'sn_microlise_direct_prod');
+
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('sn_microlise', 'tibco', 'prod', 'Connect indirectly to Microlise Production');
+SELECT add_aaf_permission ('sn_microlise', 'tibco', 'uat', 'Connect indirectly to Microlise Test');
+SELECT add_aaf_permission ('sn_microlise', 'direct', 'prod', 'Connect directly to Microlise Production');
+SELECT add_aaf_permission ('sn_microlise', 'direct', 'uat', 'Connect directly to Microlise Test');
+
+-- Parameters: role_name, permission_domain, permission_action, permission_instance
+SELECT add_aaf_role_permission ('sn_microlise_prod_via_tibco', 'sn_microlise', 'tibco', 'prod');
+SELECT add_aaf_role_permission ('sn_microlise_test_via_tibco', 'sn_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('sn_microlise_direct_prod', 'sn_microlise', 'direct', 'prod');
+SELECT add_aaf_role_permission ('sn_microlise_direct_test', 'sn_microlise', 'direct', 'uat');
+
+--changeset adolfo.cano:001-cjf-template-db-010 failOnError:true splitStatements:false
+UPDATE smartnet_client
+ SET name = 'Twinings', image = 'Twinings.png'
+   WHERE name = 'Twinings' and prefixes='TWINNG';
+   
+--changeset adolfo.cano:001-cjf-template-db-011 failOnError:true splitStatements:false  
+UPDATE smartnet_client
+ SET name = 'British Gypsum Sherburn', image = 'bgypsh.png'
+   WHERE aaf_instance = 'bgypsh' and prefixes='BGYPSH';   
+
+--changeset adolfo.cano:001-cjf-template-db-012 failOnError:true splitStatements:false  
+UPDATE smartnet_client
+ SET  image = 'Cwnrad2.png'
+   WHERE aaf_instance = 'crown' and prefixes='CWNRAD';   
+
+--changeset adolfo.cano:001-cjf-template-db-013 failOnError:true splitStatements:false  
+UPDATE smartnet_client
+ SET  prefixes = 'BENTL'
+   WHERE aaf_instance = 'bentley' and name='Bentley';
+   
+--changeset adolfo.cano:001-cjf-template-db-014 failOnError:true splitStatements:false
+SELECT add_aaf_permission ('aaf_permission', 'time', '*', 'Session never expires');
+select add_aaf_domain_action_lookup('aaf_permission','time','No session expiration time',1,'Session time');
+
+--changeset adolfo.cano:001-cjf-template-db-015 failOnError:true splitStatements:false
+DELETE from smartnet_client WHERE prefixes = 'ASPALL';
+DELETE from smartnet_client WHERE prefixes = 'CANPAK';
+DELETE from smartnet_client WHERE prefixes = 'NEWTMG';
+
+
+--changeset mohammad.weshah:001-cjf-template-db-016 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 -- Parameters: aaf_domain_code, description, display_order, display_label 
 SELECT add_aaf_domain_lookup('cjf-admin', 'CJF Administration', 5, 'CJF Admin');
 -- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
@@ -448,7 +597,7 @@ SELECT add_aaf_permission ('cjf-admin', '*', '*','Administration');
 -- Parameters: role_name, permission_domain, permission_action, permission_action_instance
 SELECT add_aaf_role_permission ('CJF Admin', 'cjf-admin', '*', '*');
 
---changeset pruthvi.janapareddy:001-cjf-template-db-007 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset pruthvi.janapareddy:001-cjf-template-db-017 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 --To drop the tables if exists
 drop table if exists user_profile;
 drop table if exists user_profile_options;
@@ -508,7 +657,7 @@ INSERT INTO user_profile_options ( option_id, key, value, app_default, created_o
 INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
 			VALUES (9, 'language', 'English', true, now(), 'CJF', now(), 'CJF', 0);
 
---changeset murthy.koppaka:001-cjf-template-db-008 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset murthy.koppaka:001-cjf-template-db-018 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 --alter table for todo
 ALTER TABLE todo ADD CONSTRAINT todo_pk PRIMARY KEY (id);
 
@@ -532,7 +681,7 @@ WITH (
 
 
 			
---changeset pruthvi.janapareddy:001-cjf-template-db-009 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset pruthvi.janapareddy:001-cjf-template-db-019 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 --alter table for User Profile to add new column
 ALTER TABLE user_profile ADD COLUMN one_id varchar(12);
 
@@ -543,7 +692,7 @@ SELECT add_aaf_domain_lookup('user_profile_one_id', 'User Profile One Id', 6, 'U
 SELECT add_aaf_domain_action_lookup('user_profile_one_id', 'edit', 'Edit', 9, 'Edit');
 
 
---changeset leonardo.oliveira:001-cjf-template-db-011 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset leonardo.oliveira:001-cjf-template-db-020 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 --Change cjf-admin domain, change actions
 UPDATE aaf_domain_lookup SET description = 'System Administration', display_label = 'System Administration' WHERE aaf_domain_code = 'cjf-admin';
 UPDATE aaf_domain_action_lookup SET aaf_domain_action_code = 'manage', description = 'Allowed to perform all actions', display_label = 'Manage' WHERE aaf_domain_action_code = 'generate';
@@ -552,11 +701,11 @@ UPDATE aaf_domain_action_lookup SET aaf_domain_action_code = 'manage', descripti
 SELECT add_aaf_permission ('cjf-admin', 'manage', 'heap', 'Create Heap Dump');
 SELECT add_aaf_permission ('cjf-admin', 'manage', 'serving', 'Enable/Disable Serving Application');
 
---changeset leonardo.oliveira:001-cjf-template-db-012 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset leonardo.oliveira:001-cjf-template-db-021 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 -- adding this record to match the permission Created
 SELECT add_aaf_domain_action_lookup('cjf-admin', '*', 'All', 1, 'All');
 
---changeset pruthvi.janapareddy:001-cjf-template-db-013 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset pruthvi.janapareddy:001-cjf-template-db-022 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 --alter the length of created by and updated by fields for user profile and user profile options
 ALTER TABLE user_profile ALTER COLUMN created_by TYPE varchar(64);
 ALTER TABLE user_profile ALTER COLUMN updated_by TYPE varchar(64);
@@ -587,11 +736,11 @@ ALTER TABLE user_profile ADD CONSTRAINT user_profile_ukey UNIQUE (user_principal
 ALTER TABLE user_profile_options DROP CONSTRAINT IF EXISTS user_profile_options_ukey;
 ALTER TABLE user_profile_options ADD CONSTRAINT user_profile_options_ukey UNIQUE (key,value);
 
---changeset varsha.anumolu:001-cjf-template-db-014 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.anumolu:001-cjf-template-db-023 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 UPDATE aaf_user SET email ='mahendran.mookkiah@Cevalogistics.com' 
 where user_principal = 'cjf.admin';
 
---changeset varsha.chowdary:001-cjf-template-db-015 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.chowdary:001-cjf-template-db-024 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 ALTER TABLE user_profile ADD COLUMN menu_mode varchar(25);
 ALTER TABLE user_profile ADD COLUMN theme varchar(50);
 
@@ -607,7 +756,7 @@ INSERT INTO user_profile_options ( option_id, key, value, app_default, created_o
 INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
 			VALUES (14, 'theme', 'cjf', true, now(), 'CJF', now(), 'CJF', 0);
 
---changeset varsha.chowdary:001-cjf-template-db-016 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.chowdary:001-cjf-template-db-025 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 INSERT INTO user_profile (user_principal, language, date_format, time_format, currency, time_zone, created_on, created_by, version, menu_mode, theme ) 
 SELECT 'aaf.admin', 'English', 'mm/dd/yyyy', '24HR', 'EUR', 'CST', now(), 'Anonymous', '1', 'layout-menu-horizontal', 'cjf' 
 WHERE
@@ -622,14 +771,14 @@ WHERE
         SELECT user_principal FROM user_profile WHERE user_principal = 'cjf.admin'
     );
     
---changeset leonardo.oliveira:001-cjf-template-db-017 failOnError:true splitStatements:false logicalFilePath:001-template.sql  
+--changeset leonardo.oliveira:001-cjf-template-db-026 failOnError:true splitStatements:false logicalFilePath:001-template.sql  
  --encrypted password is CJFAdmin1$
 SELECT add_aaf_user('three.automation', '$shiro1$SHA-256$500000$IY8UpTSgw+IJDSX5n9mWWg==$HlTbeTYyX1PnaLbsdD8m2YLUZ1YZhsMTD7zBV3IP3RA=', 'Three', 'Automation', 'three.automation@mailinator.com');
 SELECT add_aaf_user_role('three.automation', 'Todo Management');
 SELECT add_aaf_user_role('three.automation', 'AAF Admin');
 SELECT add_aaf_user_role('three.automation', 'CJF Admin');
 
---changeset varsha.chowdary:001-cjf-template-db-018-1 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.chowdary:001-cjf-template-db-027-1 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 UPDATE user_profile_options SET value = 'MM/dd/yyyy' 
 where key = 'dateFormat' AND value = 'mm/dd/yyyy';
 
@@ -642,10 +791,10 @@ where date_format = 'mm/dd/yyyy';
 UPDATE user_profile SET date_format = 'dd/MM/yyyy' 
 where date_format = 'dd/mm/yyyy';
 
---changeset mahendran.mookkiah:001-cjf-template-db-019 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset mahendran.mookkiah:001-cjf-template-db-028 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 UPDATE aaf_user SET email ='_SH_-GL-US-CJF@Cevalogistics.com' where user_principal = 'cjf.admin';
 
---changeset pruthvi.janapareddy:001-cjf-template-db-020 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset pruthvi.janapareddy:001-cjf-template-db-029 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 CREATE TABLE app_user_profile
 (
 	app_user_profile_id SERIAL,
@@ -662,11 +811,11 @@ CREATE TABLE app_user_profile
              ON UPDATE CASCADE
 );
 
---changeset varsha.chowdary:001-cjf-template-db-021 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.chowdary:001-cjf-template-db-030 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 UPDATE user_profile_options SET value = 'dd/MM/yyyy' 
 where key = 'dateFormat' AND value = 'dd/mm/yyyy';
 
---changeset shanmuk.pragada:001-cjf-template-db-022 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset shanmuk.pragada:001-cjf-template-db-031 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 UPDATE user_profile_options SET value = 'HH:mm:ss', updated_on = now()
 where key = 'timeFormat' AND value = '24HR';
 
@@ -691,7 +840,7 @@ INSERT INTO user_profile_options ( option_id, key, value, app_default, created_o
 INSERT INTO user_profile_options ( option_id, key, value, app_default, created_on, created_by, updated_on, updated_by, version) 
 			VALUES (18, 'timeFormat', 'hh:mm a', false, now(), 'CJF', now(), 'CJF', 0);
 
---changeset arun.kumar:001-cjf-template-db-023 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset arun.kumar:001-cjf-template-db-032 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 alter table user_profile alter column time_zone TYPE varchar(30);
 
 UPDATE user_profile SET time_zone = 'America/Cancun'
@@ -706,19 +855,19 @@ where key = 'timeZone' AND value = 'EST';
 UPDATE user_profile_options SET value = 'America/Managua' 
 where key = 'timeZone' AND value = 'CST';
 
---changeset varsha.chowdary:001-cjf-template-db-024 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.chowdary:001-cjf-template-db-033 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 -- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
 SELECT add_aaf_domain_action_lookup('cjf-admin', 'manage', 'Manage', 11, 'Manage');
 -- Parameters: domain, action, instance, description
 SELECT add_aaf_permission ('cjf-admin','manage','log-config','Manage Logs');
 
---changeset varsha.anumolu:001-cjf-template-db-025 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset varsha.anumolu:001-cjf-template-db-034 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 -- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
 SELECT add_aaf_domain_action_lookup('cjf-admin', 'view', 'View', 10, 'View');
 -- Parameters: domain, action, instance, description
 SELECT add_aaf_permission ('cjf-admin','view','log','View Logs');
 
---changeset pruthvi.janapareddy:001-cjf-template-db-026 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset pruthvi.janapareddy:001-cjf-template-db-035 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 -- Below is to grop the columns warehouse code, client code and one id was they are removed from the user profile
 ALTER TABLE user_profile DROP COLUMN warehouse_code, DROP COLUMN client_code, DROP COLUMN one_id;
 
@@ -734,3 +883,6 @@ DELETE FROM aaf_domain_lookup where aaf_domain_code = 'user_profile_one_id';
 SELECT add_aaf_domain_action_lookup('aaf_user', 'user_profile_edit', 'To Edit User Profile', 8, 'Edit User Profile');
 -- Parameters: domain, action, instance, description
 SELECT add_aaf_permission ('aaf_user','user_profile_edit','*','Edit User Profile');
+
+
+
