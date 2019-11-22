@@ -201,7 +201,7 @@ public class WsMicroliseEnvironment {
                     + base.replace("#EARLIEST#", earliestDate).replace("#LATESTDATE#", latestDate));
             return base.replace("#EARLIEST#", earliestDate).replace("#LATESTDATE#", latestDate);
         } catch (Exception e) {
-            throw new Exception("No body context found for findConsignmentSummaries call " + envDescription);
+            throw new Exception("No body context found for findConsignmentSummaries call " + FINDCONSIGNMENTSUMMARIESBODY + envDescription);
         }
     }
 
@@ -216,7 +216,7 @@ public class WsMicroliseEnvironment {
             LOGGER.info(" -- Action to be requested: " + base);
             return base;
         } catch (Exception e) {
-            throw new Exception("No SOAP Action context found for findConsignmentSummaries call " + envDescription);
+            throw new Exception("No SOAP Action context found for findConsignmentSummaries call, " + FINDCONSIGNMENTSUMMARIESSOAPACTION + envDescription);
         }
     }
 

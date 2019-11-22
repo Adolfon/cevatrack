@@ -14,6 +14,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 //import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public class DetailView implements Serializable, CommonApp {
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
             }
         } catch (Exception e) {
-            LOGGER.error("-- Problem retrieving consignment´s detail.. ", e.getMessage());
+            LOGGER.error("-- Problem retrieving consignment´s detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e));
             // this message works fine
             // message = ExceptionUtils.getRootCauseMessage(e) + "... Press F5 to retry.";
             message = e.getCause().getMessage() + "... Press F5 to retry.";

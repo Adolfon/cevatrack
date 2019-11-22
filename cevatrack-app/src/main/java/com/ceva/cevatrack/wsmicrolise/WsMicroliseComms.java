@@ -434,7 +434,7 @@ public class WsMicroliseComms {
             return jaxbClass.cast(o);
 
         } catch (SocketTimeoutException e1) {
-            LOGGER.info("WsMicroliseComms - Socket Timeout! - throwing dummy 504 exception");
+            LOGGER.info("WsMicroliseComms - Socket Timeout! - throwing dummy 504 exception, " +e1.getMessage() );
             throw new IOException("504", e1);
         } catch (Exception e2) {
             LOGGER.error("WsMicroliseComms - Exception: " + e2.getMessage());

@@ -17,7 +17,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
-//import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
@@ -113,8 +113,8 @@ public class ClientView implements Serializable, CommonApp {
         try {
             LOGGER.info(" -- Updating the Datepicker dates.. ");
             sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER), null, configs);
-        } catch (Exception e) {
-            LOGGER.error(" -- getPortfolioStats web service call failed .. (init method)");
+        } catch (Exception e) {            
+            LOGGER.error(" -- getPortfolioStats web service call failed .. (init method). \n trace: \n " + ExceptionUtils.getFullStackTrace(e));
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error",
                     e.getCause().getMessage() + "... Press F5 to retry.");
             FacesContext.getCurrentInstance().addMessage(null, msg);
