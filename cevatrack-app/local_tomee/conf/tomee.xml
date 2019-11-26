@@ -20,14 +20,16 @@
 		initialSize 3
         maxActive 6
 	</Resource> -->
-	 <Resource id="cevatrackDS" type="javax.sql.DataSource">
-        jdbcDriver org.postgresql.Driver
-        jdbcUrl
-        jdbc:postgresql://localhost:5432/cevatrack_v6?currentSchema=cevatrack
-        userName postgres
-        password holahola
-        jtaManaged true
-    </Resource>
+	  <Resource id="jdbc/cevatrackDS" type="DataSource"> 
+		jdbcDriver=org.postgresql.Driver 
+		jdbcUrl=jdbc:postgresql://iahlvlpgdb002:5432/cevatrack_responsive?currentSchema=cevatrack_responsive
+		UserName=cevatrack_responsive 
+		Password=cevatrack_responsive 
+		jtaManaged true
+		initialSize 3
+        maxActive 6
+	  </Resource> 
+
 </tomee>
 
 		

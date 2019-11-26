@@ -50,8 +50,8 @@
             <param-name>jaxrs.features</param-name>
             <param-value>
                 org.apache.cxf.jaxrs.swagger.Swagger2Feature
-                (basePath=/cjf-template/rest/api
-                title=CjfTemplateApp
+                (basePath=/cevatrack/rest/api
+                title=CevatrackApp
                 description=CjfReferenceImplementation
                 contact=cjf@ceva.com
                 license=CevaLicense
@@ -85,7 +85,7 @@
         <res-ref-name>aafDataSource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
-        <mapped-name>templateDS</mapped-name>
+        <mapped-name>CevatrackDS</mapped-name>
     </resource-ref>
     
         <!-- Webservice -->
