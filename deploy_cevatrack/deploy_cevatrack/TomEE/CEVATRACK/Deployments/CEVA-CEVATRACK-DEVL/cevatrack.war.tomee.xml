@@ -9,6 +9,8 @@
 		userName   cevatrack_responsive
 		password   cevatrack_responsive
 		jtaManaged true
+	    initialSize 3
+        maxActive 6		
 </Resource>
 
 		
