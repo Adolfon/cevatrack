@@ -11,12 +11,17 @@
 		    <h:form id="form">          
 		    	 <p:growl id="growl" life="3000" />
 		            
-
+ 		<!-- 
                     <p:dataTable id="tableDynamo" var="con"
-                        value="#{dynamoView.tableFire}"
-                        widgetVar="consignmentsTable" multiViewState="true"
-                        rowKey="#{con.id}">
- 
+                        value="#{dynamoViewUpdate.tableFire}"
+                        widgetVar="fireTable" filteredValue = "#{dynamoViewUpdate.tableFireFilter}"
+                        emptyMessage="There is no people in the office">
+  -->
+  				 <p:dataTable id="tableDynamo" var="con"
+                        value="#{dynamoViewUpdate.tableFire}"
+                        widgetVar="fireTable" rowKey="#{con.id}" filteredValue = "#{dynamoViewUpdate.tableFireFilter}"
+                        emptyMessage="There is no people in the office">
+                        
 						<p:column styleClass="centeredColumn" colspan="2" selectionMode="multiple">
 						</p:column>
 						
@@ -25,41 +30,83 @@
                             <h:outputText style="center;" value="#{con.id}" />
                         </p:column>
                         
-                          <p:column styleClass="centeredColumn" headerText="Employee ID"
-                            colspan="2">
-                            <h:outputText style="center;" value="#{con.employeeId}" />
+                          <p:column styleClass="centeredColumn" headerText="CEVA Location"
+                            colspan="2" sortBy="#{con.cevaLocation}">
+                            <h:outputText style="center;" value="#{con.cevaLocation}" />
                         </p:column>
                         
-                          <p:column styleClass="centeredColumn" headerText="Entry time"
+                          <p:column styleClass="centeredColumn" headerText="Entry Date"
+                            colspan="2" sortBy="#{con.entryTime}">
+                            <h:outputText style="center;" value="#{con.entryDate}" />
+                        </p:column>
+                        
+                        
+                        <p:column styleClass="centeredColumn" headerText="Entry Time"
                             colspan="2" sortBy="#{con.entryTime}">
                             <h:outputText style="center;" value="#{con.entryTime}" />
                         </p:column>
+                        
+                        <p:column filterBy="#{con.fireAssemblyPoint}" styleClass="centeredColumn" headerText="FireAssemblyPoint" 
+                            colspan="2" filterMatchMode="exact">
+                             <f:facet name="filter">
+	                            <p:selectOneMenu onchange="PF('fireTable').filter()">	                        	
+	                          		<f:selectItem itemLabel="No filter" itemValue="" />                        																								
+									<f:selectItems value="#{dynamoViewUpdate.fireAssemblyElements}"  />									
+								</p:selectOneMenu>
+                            </f:facet>
+                        	<h:outputText style="center;" value="#{con.fireAssemblyPoint}" />
+                        </p:column>
+                        
+                        <!-- <p:column filterBy="#{con.fireAssemblyPoint}" styleClass="centeredColumn" headerText="FireAssemblyPoint" 
+                            colspan="2" >
+                            <f:facet name="filter">
+	                            <p:selectOneMenu onchange="PF('fireTable').filter()">	                        	
+	                          		<f:selectItem itemLabel="No filter" itemValue="" />                        																								
+									<f:selectItems value="#{dynamoViewUpdate.fireAssemblyElements}"  />									
+								</p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText style="center;" value="#{con.fireAssemblyPoint}" />
+                        </p:column>
+                         -->
+                    <!--     
+                    <p:column styleClass="filteredCol" headerText="Status" id="statusColumn"
+						sortBy="#{con.statusString}" filterMatchMode="exact"
+						filterBy="#{con.statusString}" priority="3">
+						<f:facet name="filter">
+							<p:selectOneMenu onchange="PF('consignmentsTable').filter()" styleClass="filteredCol" ajax="true">	                        	
+                          		<f:selectItem itemLabel="#{param['initstatus']}" itemValue="#{param['initstatus']}"   />		                        																								
+								<f:selectItems value="#{dtConsignmentView.statusSelectItems}"  />
+								<f:selectItem itemLabel="No filter" itemValue="" noSelectionOption="true" />
+							</p:selectOneMenu>
+						</f:facet>
+						<h:outputText value="#{con.statusString}" />
+					</p:column>   -->
+                        
+       
+                        
+                        <p:column styleClass="centeredColumn" headerText="Is appointment?"
+                            colspan="2" sortBy="#{con.entryTime}">
+                            <h:outputText style="center;" value="#{con.isAppointment}" />
+                        </p:column>
+                        <p:column styleClass="centeredColumn" headerText="First Name"
+                            colspan="2" sortBy="#{con.entryTime}">
+                            <h:outputText style="center;" value="#{con.empFirstName}" />
+                        </p:column>
+                        <p:column styleClass="centeredColumn" headerText="Last Name"
+                            colspan="2" sortBy="#{con.entryTime}">
+                            <h:outputText style="center;" value="#{con.empLastTime}" />
+                        </p:column>
+                        <p:column styleClass="centeredColumn" headerText="Fire group"
+                            colspan="2" sortBy="#{con.entryTime}">
+                            <h:outputText style="center;" value="#{con.fireGroup}" />
+                        </p:column>
+                        
+                        
+                        
 					</p:dataTable>
 					
 					<div style = "padding-top:1%; text-align:center; width:100% ">
-					
-						<h:panelGrid columns="2" style="margin-bottom:1%;position:center; width:100%" cellpadding="5" >
-					        
-					        <p:selectOneButton value="#{dynamoView.option}" onchange="$('comButton').attr('disabled',false)">
-					            <f:selectItem itemLabel="Check in" itemValue="ChkIN" style= "margin-right: 1%" />
-					            <f:selectItem itemLabel="Check out" itemValue="ChkOUT" />			            
-				        	</p:selectOneButton>
-				        	
-				        </h:panelGrid>
-				        	
-			        	
-			        	
-			        	   
-						      <!-- <p:inputText id="float-input" value="#{basicView.text}" /> --> 
-						      <p:outputLabel for="@previous" value="Employee ID number: " style="margin-right:1%;"/>
-						      <p:inputNumber id="inputText" value="#{dynamoView.inputText}" decimalPlaces="0" style="margin-right:1%;" />
-						      
-					
-			         
-				        <p:commandButton id="comButton" value="Submit" action="#{dynamoView.buttonAction}" update="tableDynamo,growl" icon="pi pi-check" style="margin-right:1%;"/>
-				        <!-- <p:commandButton value="Ajax Submit" id="ajax" update="growl" action="#{buttonView.buttonAction}" style="margin-right:20px;" styleClass="ui-priority-primary" /> -->
-				        <p:spacer />
-				        
+															        
 					</div>
 			        
 					
