@@ -2,6 +2,7 @@
 	Refer the default values from http://tomee.apache.org/datasource-config.html for configuring datasource. 
 	We configured only minimum needed change for development.
 	For higher environment, please review with Architecture team if you think we need to change.
+		WE DON´T HAVE PROD SERVER, STAGE IS WORKING AS PROD US
 -->
 <Resource id="templateDS" type="javax.sql.DataSource">
 	    jdbcDriver org.postgresql.Driver
