@@ -884,5 +884,7 @@ SELECT add_aaf_domain_action_lookup('aaf_user', 'user_profile_edit', 'To Edit Us
 -- Parameters: domain, action, instance, description
 SELECT add_aaf_permission ('aaf_user','user_profile_edit','*','Edit User Profile');
 
-
-
+--changeset adolfo.cano:001-cjf-template-db-036 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO cevatrack_responsive.todo
+(id, title, description, duedate, priority, "owner", created_on, created_by, updated_on, updated_by, "version")
+VALUES(1, 'test', 'desc test', '2020-01-01 00:00:00.000', 1, 'adolfo', '2020-01-01 00:00:00.000', 'adolfo', '2020-01-01 00:00:00.000', 'adolfo', 1);
