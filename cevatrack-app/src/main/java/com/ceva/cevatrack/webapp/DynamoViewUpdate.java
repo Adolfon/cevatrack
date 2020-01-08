@@ -20,6 +20,7 @@ import javax.faces.context.ExternalContext;
 //import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,42 @@ public class DynamoViewUpdate {
   private List<DynamoBuildingRegisterTable> tableFireFilter;
   //dummyTable(tableFire);
   //this.dummyTable(tableFire);
+  
+  private Map<String,String> params;
+  private String defaultLocation;
+  private String defaultPoint;
+  
  
+  public String getDefaultPoint() {
+    return defaultPoint;
+  }
+
+
+  public void setDefaultPoint(String defaultPoint) {
+    this.defaultPoint = defaultPoint;
+  }
+
+
+  public String getDefaultLocation() {
+    return defaultLocation;
+  }
+
+
+  public void setDefaultLocation(String defaultLocation) {
+    this.defaultLocation = defaultLocation;
+  }
+
+
+  public Map<String, String> getParams() {
+    return params;
+  }
+
+
+  public void setParams(Map<String, String> params) {
+    this.params = params;
+  }
+
+
   public List<DynamoBuildingRegisterTable> getTableFireFilter() {
     return tableFireFilter;
   }
@@ -78,6 +114,19 @@ public class DynamoViewUpdate {
 
   public void setFireAssemblyElements(List<String> fireAssemblyElements) {
     this.fireAssemblyElements = fireAssemblyElements;
+  }
+
+
+  private List<String> cevaLocations;
+  
+
+  public List<String> getCevaLocations() {
+    return cevaLocations;
+  }
+
+
+  public void setCevaLocations(List<String> cevaLocations) {
+    this.cevaLocations = cevaLocations;
   }
 
 
@@ -198,6 +247,7 @@ public void setTableFire(List<DynamoBuildingRegisterTable> tableFire) {
     
     HashSet<String> fireAssemblyPoint = new HashSet<>();
     fireAssemblyElements = new ArrayList();
+    cevaLocations = new ArrayList();
     
     log.info("-- Recovered table: " + table.getTableName());
    
@@ -205,6 +255,7 @@ public void setTableFire(List<DynamoBuildingRegisterTable> tableFire) {
           this.tableFire.clear();
           fireAssemblyPoint.clear();
           fireAssemblyElements.clear();
+          cevaLocations.clear();
           Iterator<Item> iterator = scanAllElements(table);
           log.info(" -- All the elements in the table are: ");          
              
@@ -239,21 +290,48 @@ public void setTableFire(List<DynamoBuildingRegisterTable> tableFire) {
               if (!fireAssemblyPoint.contains(element.getFireAssemblyPoint() == null? "no value" : element.getFireAssemblyPoint() )){
                 fireAssemblyPoint.add(element.getFireAssemblyPoint() == null? "no value" : element.getFireAssemblyPoint());
                 log.info(" --adding element to the selection: " + element.getFireAssemblyPoint());
+                fireAssemblyElements.add(element.getFireAssemblyPoint() == null? "no value" : element.getFireAssemblyPoint());
               }
-              
-              
+              if (!fireAssemblyPoint.contains(element.getCevaLocation() == null? "no value" : element.getCevaLocation() )){
+                fireAssemblyPoint.add(element.getCevaLocation() == null? "no value" : element.getCevaLocation());
+                log.info(" --adding element to the Ceva Location box filter: " + element.getCevaLocation());
+                cevaLocations.add(element.getCevaLocation() == null? "no value" : element.getCevaLocation());
+              }                            
               // Only people who did not check out. // is empty but it is now working...
               if ( (element.getExitDate() == null || element.getExitDate().trim().equals("")) && 
                   (element.getExitTime() == null || element.getExitTime().trim().equals(""))  ){
                 this.tableFire.add(element);
               }
-              //this.tableFire.add(element);
-          }    
+          }
+          this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+          if (params.containsKey("FireAssemblyPoint")) {   
+            log.info("FireAssembyPoint parameter: " + params.get("FireAssemblyPoint"));
+            if (params.get("FireAssemblyPoint") == null || !fireAssemblyElements.contains(params.get("FireAssemblyPoint"))){
+              //FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put("FireAssemblyPoint", "");
+              this.defaultPoint = "";
+            } else{
+              this.defaultPoint = params.get("FireAssemblyPoint");
+            }
+            RequestContext rc = RequestContext.getCurrentInstance();
+            rc.execute("PF('fireTable').filter();");        
+          }
+          if (params.containsKey("CEVALocation")) {
+            log.info("CEVALocation parameter: " + params.get("CEVALocation"));
+            if (params.get("CEVALocation") == null || !cevaLocations.contains(params.get("CEVALocation"))){
+              //FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put("CEVALocation", "");
+              this.defaultLocation = "";
+            }else {
+              this.defaultLocation = params.get("CEVALocation");
+            }
+            RequestContext rc = RequestContext.getCurrentInstance();
+            rc.execute("PF('fireTable').filter();");        
+          }
+          
     } catch (Exception e){
       log.error(" -- Error while I was scanning the dynamoDB table .. " + e);
     }    
     
-    fireAssemblyElements.addAll(fireAssemblyPoint); //For the dropdown box filter
+    //fireAssemblyElements.addAll(fireAssemblyPoint); //For the dropdown box filter
   }
   
   private Integer getIDKey(Table table){
