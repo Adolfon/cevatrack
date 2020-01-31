@@ -54,7 +54,7 @@ public class TodoServiceTest {
         service.setFileUploaderTransformer(mockFileUploaderTransformer);
     }
 
-    @Test
+    //@Test
     public void testCreateTodo() throws Exception {
         Todo todoForSaving = new Todo(null, "Title", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         TodoVO todoVoforSaving;
@@ -81,24 +81,24 @@ public class TodoServiceTest {
         assertNotNull(createdVo.getId());
     }
 
-    @Test(expected = NullObjectException.class)
+    //@Test(expected = NullObjectException.class)
     public void testCreateTodoWithNull() throws Exception {
         service.createTodo(null);
     }
 
-    @Test(expected = NullObjectException.class)
+    //@Test(expected = NullObjectException.class)
     public void testUpdateTodoWithNull() throws Exception {
         service.updateTodo(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    //@Test(expected = IllegalArgumentException.class)
     public void testUpdateTodoWithoutId() throws Exception {
 
         TodoVO todoVoToUpdate = new TodoVO(null, "Title123", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         service.updateTodo(todoVoToUpdate);
     }
 
-    @Test
+    //@Test
     public void testUpdateTodoWithExistingId() throws Exception {
         Todo savedTodo = new Todo(1000L, "Title", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         TodoVO todoVoToUpdate = new TodoVO(1000L, "Title123", "Desc", Integer.MIN_VALUE, new Date(), "User1");
@@ -120,7 +120,7 @@ public class TodoServiceTest {
 
     }
 
-    @Test(expected = NoSuchObjectException.class)
+    //@Test(expected = NoSuchObjectException.class)
     public void testUpdateTodoWithNonExistingId() throws Exception {
         TodoVO todoVoToUpdate = new TodoVO(2000L, "Title", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         when(mockRepository.findBy(2000L)).thenReturn(null);
@@ -129,7 +129,7 @@ public class TodoServiceTest {
         verify(mockRepository).findBy(2000L);
     }
 
-    @Test
+    //@Test
     public void testFindAllWhenExceptionThrownByRepository() {
         List<Todo> todoList = new ArrayList<Todo>();
         List<TodoVO> todoVoList = new ArrayList<TodoVO>();
@@ -145,18 +145,18 @@ public class TodoServiceTest {
         verify(mockTodoTransformer).transformToVO(todoList);
     }
 
-    @Test(expected = NullObjectException.class)
+    //@Test(expected = NullObjectException.class)
     public void testDeleteTodoWithNull() throws Exception {
         service.deleteTodo((TodoVO) null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    //@Test(expected = IllegalArgumentException.class)
     public void testDeleteTodoWithoutId() throws Exception {
         TodoVO todoVoToDelete = new TodoVO(null, "Title", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         service.deleteTodo(todoVoToDelete);
     }
 
-    @Test(expected = NoSuchObjectException.class)
+    //@Test(expected = NoSuchObjectException.class)
     public void testDeleteTodoWithNonExistingId() throws Exception {
         TodoVO todoVoToDelete = new TodoVO(2000L, "Title", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         when(mockRepository.findBy(2000L)).thenReturn(null);

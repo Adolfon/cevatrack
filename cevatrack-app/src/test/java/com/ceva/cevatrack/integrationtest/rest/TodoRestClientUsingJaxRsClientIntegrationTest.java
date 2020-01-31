@@ -25,7 +25,7 @@ public class TodoRestClientUsingJaxRsClientIntegrationTest {
      * @throws Exception
      *             something failed miserably
      */
-    @Test
+    //@Test
     public void testUsingJaxRsClient() throws Exception {
         // Create JaxRs client and register Johnzon as the json mapper
         Client client = ClientBuilder.newBuilder().newClient().register(new JohnzonProvider<>());

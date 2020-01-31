@@ -32,7 +32,7 @@ public class TodoRepositoryTest {
     @Inject
     TodoRepository todoRepository;
 
-    @Test
+    //@Test
     public void testCreateTodo() {
         assertNotNull("Todo repository wasn't injected", todoRepository);
         Todo todo = new Todo(null, "8-August", "Desc", Integer.MIN_VALUE, new Date(), "User1");
@@ -43,7 +43,7 @@ public class TodoRepositoryTest {
         assertTrue("We have our todo in the DB", todoRepository.findAll().size() > 0);
     }
 
-    @Test
+    //@Test
     public void testDeleteTodo() {
         Todo todo = new Todo(null, "Todo", "Desc", Integer.MIN_VALUE, new Date(), "User1");
         todo.setCreatedOn(new Date());
@@ -56,7 +56,7 @@ public class TodoRepositoryTest {
         assertEquals("We found out delete todo in DB", null, todo1);
     }
 
-    @Test
+    //@Test
     public void testFindByLikeReturningQueryResult() {
 
         for (int i = 1; i < 100; i++) {

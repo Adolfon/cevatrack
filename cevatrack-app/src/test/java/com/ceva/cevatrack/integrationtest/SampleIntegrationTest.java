@@ -1,6 +1,7 @@
 package com.ceva.cevatrack.integrationtest;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 public class SampleIntegrationTest {
 
@@ -9,7 +10,7 @@ public class SampleIntegrationTest {
      */
     @Test
     public void test() {
-        System.out.println("SampleIntegrationTest.test()");
+    	Assert.assertTrue(true);        
     }
 
 }

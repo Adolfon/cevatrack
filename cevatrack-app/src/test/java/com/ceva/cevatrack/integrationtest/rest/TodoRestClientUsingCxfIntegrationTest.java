@@ -37,7 +37,7 @@ public class TodoRestClientUsingCxfIntegrationTest {
      * @throws RestServiceException
      *             restServiceException
      */
-    @Test
+    //@Test
     public void testUsingSoapUiMockAndCxfRestClient() throws RestServiceException, Exception {
         // setup johnzon has the jaxrs provider, default provider for cxf/tomEE ( and its not jackson :(
         // )
