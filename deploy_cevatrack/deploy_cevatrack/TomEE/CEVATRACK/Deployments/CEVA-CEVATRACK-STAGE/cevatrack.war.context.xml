@@ -1,5 +1,5 @@
-<Parameter name="environment.properties" value="/ds1/tomee/vtop/deploy_cevatrack/properties/CEVATRACK-STAGE/environment.properties" />
-<Parameter name="shiroConfigLocations" value="file:/ds1/tomee/vtop/deploy_cevatrack/properties/CEVATRACK-STAGE/shiro.ini"  override="false"/>
+<Parameter name="environment.properties" value="/ds1/tomee/vtop/deploy_cevatrack/properties/CEVA-CEVATRACK-STAGE/environment.properties" />
+<Parameter name="shiroConfigLocations" value="file:/ds1/tomee/vtop/deploy_cevatrack/properties/CEVA-CEVATRACK-STAGE/shiro.ini"  override="false"/>
 <Parameter name="google.apikey" value="AIzaSyBG_nHwW92gG04j98TxXZUR9X8ygHJYHKI" override="false"/>
 <Parameter name="microlise.usernamepassword.direct.prod" value="CEVACRMWEBSVC:@wSX67Yhn" override="false"/>
 <Parameter name="microlise.usernamepassword.direct.uat" value="CEVACRMUATWEBSVC:W3Q8BgpXwM" override="false"/>
