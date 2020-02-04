@@ -168,7 +168,7 @@
                prefix="localhost_access_log" suffix=".txt"
                pattern="%h %l %u %t %{x-Forwarded-For}i %{x-forwarded-proto}i %{JESSIONID}c &quot;%r&quot; %s %D ms %b bytes" />
 		
-		<!-- <Context path="/showcase" docBase="/ds1/tomee/vtop/deploy_cjf-template/TomEE/webapps/showcase.war"/>
+		<!-- <Context path="/showcase" docBase="/ds1/tomee/vtop/deploy_cevatrack/TomEE/webapps/showcase.war"/>
 		 -->
       </Host>
     </Engine>

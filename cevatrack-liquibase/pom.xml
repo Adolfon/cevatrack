@@ -47,7 +47,7 @@
 									<outputDirectory>${project.basedir}/src/main/resources/liquibase/properties</outputDirectory>
 									<resources>
 										<resource>
-											<directory>${project.basedir}/src/main/resources/liquibase/properties/LOCAL</directory>
+											<directory>${project.basedir}/src/main/resources/liquibase/properties/${DB.INSTANCE}</directory>
 											<includes>
 												<include>liquibase.properties</include>
 											</includes>
@@ -76,7 +76,7 @@
 						<configuration>
 							<driver>org.postgresql.Driver</driver>
 							<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-							<propertyFile>src/main/resources/liquibase/properties/LOCAL/liquibase.properties</propertyFile>
+							<propertyFile>src/main/resources/liquibase/properties/${DB.INSTANCE}/liquibase.properties</propertyFile>
 							<changeLogFile>src/main/resources/liquibase/changeset.xml</changeLogFile>
 						</configuration>
 						<executions>
@@ -110,7 +110,7 @@
 						<configuration>
 							<driver>org.postgresql.Driver</driver>
 							<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-							<propertyFile>src/main/resources/liquibase/properties/LOCAL/liquibase.properties</propertyFile>
+							<propertyFile>src/main/resources/liquibase/properties/${DB.INSTANCE}/liquibase.properties</propertyFile>
 							<changeLogFile>src/main/resources/liquibase/master-data-changeset.xml</changeLogFile>
 						</configuration>
 						<executions>

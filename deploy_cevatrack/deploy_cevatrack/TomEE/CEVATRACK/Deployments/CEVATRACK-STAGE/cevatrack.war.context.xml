@@ -1,2 +1,0 @@
-<Parameter name="environment.properties" value="/ds1/tomee/vtop/deploy_cjf-template/properties/CJF-TEMPLATE-STAGE/environment.properties" />
-<Parameter name="shiroConfigLocations" value="file:/ds1/tomee/vtop/deploy_cjf-template/properties/CJF-TEMPLATE-STAGE/shiro.ini"  override="false"/>

@@ -3,6 +3,9 @@
 export JAVA_HOME="/jre"
 export PATH="$JAVA_HOME/bin:$PATH"
 
+#Applications deployments name
+mv /tomee/conf/Catalina/localhost/cevatrack-responsive.xml /tomee/conf/Catalina/localhost/cevatrack.xml
+
 if [ "$1" != "stop" ] ; then
 	
 	#Estimate the metaspace required in TEST/UAT environment and set double the size as MaxMetaspaceSize.

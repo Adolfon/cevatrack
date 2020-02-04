@@ -21,6 +21,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 //import org.apache.commons.lang.exception.ExceptionUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -148,7 +149,7 @@ public class ConsignmentView implements Serializable, CommonApp {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
                     null, clientDetail.getPfx(), true, false);
         } catch (Exception e) {
-            LOGGER.error("Smartnet get today's consignments error for :" + client);
+            LOGGER.error("Smartnet consignments error :" + client + "\n trace: \n" + ExceptionUtils.getFullStackTrace(e));
             message = e.getCause().getMessage() + "... Press F5 to retry.";
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error", getMessage());
             FacesContext.getCurrentInstance().addMessage(null, msg);
