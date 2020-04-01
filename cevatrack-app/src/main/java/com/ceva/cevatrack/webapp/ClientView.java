@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.SmartNetClientService;
+import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -81,6 +83,7 @@ public class ClientView implements Serializable, CommonApp {
     }
 
     private List<SmartNetClientVO> configs;
+    private List<SmartNetClientVO> configsTechNet;
     private static LocalDate datePickerSuccess;
 
     @ManagedProperty(value = "#{consignmentListManager}")
@@ -88,6 +91,9 @@ public class ClientView implements Serializable, CommonApp {
 
     @EJB
     SmartNetClientService snClientService;
+    
+    @EJB
+    TechNetClientService tnClientService;
 
     /**
      * initialise
@@ -104,6 +110,16 @@ public class ClientView implements Serializable, CommonApp {
             return;
         }
         configs = snClientService.searchSmartNetClient();
+        LOGGER.info(" -- number of smartNet clients recovered: " + configs.size());
+        
+        try{
+         configsTechNet = tnClientService.searchTechNetClients();
+        }catch (Exception e){
+        	LOGGER.error(" error trying recovering database table for technet clients: " + e.getStackTrace());
+        }
+        if (configsTechNet != null){
+        	LOGGER.info(" -- number of techNet clients recovered: " + configsTechNet.size());
+        }
         reportLocalDate = LocalDate.now();
         reportLocalDateTo = LocalDate.now();
         this.maxLocalDateTo = LocalDate.now().plusDays(INTERVAL_DAYS);

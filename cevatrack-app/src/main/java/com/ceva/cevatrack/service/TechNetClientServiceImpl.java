@@ -15,7 +15,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
-@Stateless(name = "com.ceva.cevatrack.service.SmartNetClientServiceImpl")
+@Stateless(name = "com.ceva.cevatrack.service.TechNetClientServiceImpl")
 public class TechNetClientServiceImpl implements TechNetClientService {
 
     @Inject
@@ -24,8 +24,10 @@ public class TechNetClientServiceImpl implements TechNetClientService {
     @Inject
     private TechNetClientTransformer techNetClientTransformer;
 
-    private static final String PERM = "technet_client:view:";
-    private static final String PERM_GLOBAL = "technet_client:view";
+//    private static final String PERM = "technet_client:view:";
+//    private static final String PERM_GLOBAL = "technet_client:view";
+    private static final String PERM = "sn_client:view:";
+    private static final String PERM_GLOBAL = "sn_client:view";
 
     @Override
     public List<SmartNetClientVO> searchTechNetClients() {
