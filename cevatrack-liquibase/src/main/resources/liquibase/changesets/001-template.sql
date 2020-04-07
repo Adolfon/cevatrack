@@ -888,3 +888,26 @@ SELECT add_aaf_permission ('aaf_user','user_profile_edit','*','Edit User Profile
 INSERT INTO cevatrack_responsive.todo
 (id, title, description, duedate, priority, "owner", created_on, created_by, updated_on, updated_by, "version")
 VALUES(1, 'test', 'desc test', '2020-01-01 00:00:00.000', 1, 'adolfo', '2020-01-01 00:00:00.000', 'adolfo', '2020-01-01 00:00:00.000', 'adolfo', 1);
+
+--changeset adolfo.cano:001-cjf-template-db-037 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, description, display_order, display_label
+SELECT add_aaf_domain_lookup('tn_microlise', 'Microlise WS for Technet', 7, 'Microlise WS for Technet');
+SELECT add_aaf_domain_lookup('tn_site', 'TechNet web site', 7, 'TechNet web site');
+SELECT add_aaf_domain_lookup('tn_client', 'TechNet web client', 7, 'TechNet web client');
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('tn_microlise', 'connect', 'Connections for Technet web in Microlise', 1, 'Connections for Technet web network in Microlise');
+select add_aaf_domain_action_lookup('tn_site', 'view', 'view technet web site', 1, 'view technet web site');
+select add_aaf_domain_action_lookup('tn_client', 'view', 'View technet web client', 1, 'View technet web client');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('tn_microlise', 'tibco', 'uat', 'Connects to technet UAT through tibco');
+SELECT add_aaf_permission ('tn_microlise', 'tibco', 'prod', 'Connects to technet PROD through tibco');
+SELECT add_aaf_permission ('tn_site', 'view', '*', 'View all the technet web sites');
+SELECT add_aaf_permission ('aaf_user', 'view', '*', 'View all the technet web clients of a given site');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('tn_all', 'Technet network web all sites and clients');
+SELECT add_aaf_role ('tn_microlise_tibco_uat', 'Technet web connection to UAT throgh Tibco');
+SELECT add_aaf_role ('tn_microlise_tibco_prod', 'Technet web connection to PROD throgh Tibco');
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('tn_all', 'tn_client', 'view', '*');
+SELECT add_aaf_role_permission ('tn_microlise_tibco_uat', 'tn_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('tn_microlise_tibco_prod', 'tn_microlise', 'tibco', 'prod');
