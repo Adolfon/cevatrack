@@ -24,10 +24,9 @@ public class TechNetClientServiceImpl implements TechNetClientService {
     @Inject
     private TechNetClientTransformer techNetClientTransformer;
 
-//    private static final String PERM = "technet_client:view:";
-//    private static final String PERM_GLOBAL = "technet_client:view";
-    private static final String PERM = "sn_client:view:";
-    private static final String PERM_GLOBAL = "sn_client:view";
+    private static final String PERM = "tn_client:view:";
+    private static final String PERM_GLOBAL = "tn_client:view";
+
 
     @Override
     public List<SmartNetClientVO> searchTechNetClients() {

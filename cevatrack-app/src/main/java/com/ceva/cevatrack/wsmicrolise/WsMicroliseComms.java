@@ -86,9 +86,9 @@ public class WsMicroliseComms {
      * @throws Exception
      *             for any errors found
      */
-    public static Consignment getConsignment(String consignmentRef) throws Exception {
+    public static Consignment getConsignment(String consignmentRef, String network) throws Exception {
         LOGGER.info("WsMicroliseComms - getConsignment-starting");
-        WsMicroliseEnvironment env = new WsMicroliseEnvironment();
+        WsMicroliseEnvironment env = new WsMicroliseEnvironment(network);
         // String requestBody = GETCONSIGNMENT.replace("???????", consignmentRef);
         String requestBody = env.getGetConsignmentBody(consignmentRef);
         String soapAction = env.getGetConsignmentSoapAction();
@@ -126,7 +126,7 @@ public class WsMicroliseComms {
      *             if unable to access for any reason or duff date
      */
     public static List<ConsignmentSummary> findConsignmentSummariesForDateRange(String fromdate, String todate,
-            Boolean WS) throws Exception {
+            Boolean WS, String network) throws Exception {
         LocalDate fromlocaldate;
         LocalDate tolocaldate;
         try {
@@ -158,7 +158,7 @@ public class WsMicroliseComms {
         List<ConsignmentSummary> resp;
         try {
             resp = findConsignmentSummaries(fromlocaldate.format(FORMATTERISO) + "T00:00:00",
-                    tolocaldate.format(FORMATTERISO) + "T23:59:59", WS);
+                    tolocaldate.format(FORMATTERISO) + "T23:59:59", WS, network);
         } catch (IOException e1) {
             throw new IOException("IOException abend escalated in FindConsignmentSummariesForDateRange", e1);
         } catch (Exception e) {// Aqui IO
@@ -309,13 +309,13 @@ public class WsMicroliseComms {
         return transformResp;
     }
 
-    private static List<ConsignmentSummary> findConsignmentSummaries(String fromDate, String toDate, Boolean WS)
+    private static List<ConsignmentSummary> findConsignmentSummaries(String fromDate, String toDate, Boolean WS, String network)
             throws Exception {
         LOGGER.info("WsMicroliseComms - findConsignentSummaries-starting");
 
         WsMicroliseEnvironment env;
         if (!WS) {
-            env = new WsMicroliseEnvironment();
+            env = new WsMicroliseEnvironment(network);
         } else {
             env = new WsMicroliseEnvironment(true);
         }

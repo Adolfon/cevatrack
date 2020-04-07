@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.SmartNetClientService;
+import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -55,8 +56,9 @@ public class ConsignmentView implements Serializable, CommonApp {
     private LocalDate reportLocalDate;
     private LocalDate reportLocalDateTo;
     private final byte INTERVAL_DAYS = 7;
+    private String network;
 
-    public void setReportDateTo(Date reportLocalDateTo) {
+	public void setReportDateTo(Date reportLocalDateTo) {
         this.reportLocalDateTo = dateToLocal(reportLocalDateTo);
     }
 
@@ -109,6 +111,9 @@ public class ConsignmentView implements Serializable, CommonApp {
     @EJB
     SmartNetClientService snClientService;
 
+    @EJB
+    TechNetClientService tnClientService;
+    
     /**
      * called once
      */
@@ -127,9 +132,18 @@ public class ConsignmentView implements Serializable, CommonApp {
         retry = new Boolean(true);
 
         this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        client = params.get("client");
-        clientDetail = snClientService.getSmartNetClient(client);
-
+        this.network = params.get("network");        
+        LOGGER.info("the network value in Consignment view is: " + network);
+        client = params.get("client");                
+        try{
+	        if (client != null && network!=null && network.equalsIgnoreCase("technet")){
+	        	clientDetail = tnClientService.getTechNetClient(client);
+	        } else {
+	        	clientDetail = snClientService.getSmartNetClient(client);
+	        }
+        } catch (Exception e){
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + e.getStackTrace());
+        }        
         reportLocalDate = LocalDate.now();
         reportLocalDateTo = reportLocalDate; // init the date to the 'from date'
 
@@ -147,7 +161,7 @@ public class ConsignmentView implements Serializable, CommonApp {
                 reportLocalDateTo = LocalDate.parse(reportDateTo, FORMATTER);
             }
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    null, clientDetail.getPfx(), true, false);
+                    null, clientDetail.getPfx(), true, false, this.network);
         } catch (Exception e) {
             LOGGER.error("Smartnet consignments error :" + client + "\n trace: \n" + ExceptionUtils.getFullStackTrace(e));
             message = e.getCause().getMessage() + "... Press F5 to retry.";
@@ -172,7 +186,7 @@ public class ConsignmentView implements Serializable, CommonApp {
         setReportDateTo(localToDate(reportLocalDate));
         try {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    null, clientDetail.getPfx(), true, false);
+                    null, clientDetail.getPfx(), true, false, this.network);
         } catch (Exception e) {
             setReportDate(Date.from(datePickerSuccess.atStartOfDay(ZoneId.systemDefault()).toInstant()));
             LOGGER.error("Request consignments summaries for the new dates (calendar event) failed", e);
@@ -194,7 +208,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 
         try {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), true, false);
+                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), true, false, this.network);
             requestContext.execute("PF('consignmentsTable').clearFilters()");
         } catch (IOException st) {
             LOGGER.error("Socket time out exception, there were too many consingments probably..: " + st);
@@ -242,7 +256,7 @@ public class ConsignmentView implements Serializable, CommonApp {
                 + clientDetail.getPfx());
         try {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), false, false);
+                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), false, false, this.network);
             retry = true;
             this.setDate(LocalDateTime.now().format(DATEFORMAT));
         } catch (Exception e) {
@@ -372,6 +386,14 @@ public class ConsignmentView implements Serializable, CommonApp {
         return Common.getStatusCssClass(thiscode);
     }
 
+    public String getNetwork() {
+		return network;
+	}
+
+	public void setNetwork(String network) {
+		this.network = network;
+	}
+	
     /**
      * @param event
      *            called from screen when user clicks (picks up from selected consignment)
@@ -379,7 +401,8 @@ public class ConsignmentView implements Serializable, CommonApp {
     public void onRowSelect(SelectEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("consignmentSnDetail.xhtml?con=" + selectedConsignment.getConsignmentReference()
+                    .redirect("consignmentSnDetail.xhtml?network=" + this.network 
+                    		+ "&con=" + selectedConsignment.getConsignmentReference()
                             + "&daterange=" + consignments.getDateRange() + "&client=" + client);
         } catch (IOException e) {
             LOGGER.error("An IO Exception happened when the row was selected", e);

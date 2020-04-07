@@ -24,7 +24,7 @@
 						<h:panelGroup layout="block" styleClass="d-sm-none ui-md-3 d-lg-2">
 						</h:panelGroup>
 						<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 d-lg-8">
-							<h1 id="title" style="text-align: center">SmartNet</h1>
+							<h1 id="title" style="text-align: center"><h:outputText value="#{dtClientView.network}" /></h1>
 						</h:panelGroup>
 						<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-2" style="align-self:center;">
 							<p:calendar id="datesel" styleClass="datepicker h5"
@@ -71,6 +71,7 @@
 											styleClass="panel panel-#{dtClientView.getClientCssClass(client.clientConfig.name)}">
 											<h:panelGroup layout="block" styleClass="panel-heading">
 												<h:link outcome="consignmentSnView.xhtml">
+													<f:param name="network" value="#{dtClientView.network}" />
 													<f:param name="client" value="#{client.clientConfig.name}" />
 													<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 													<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
@@ -82,6 +83,7 @@
 					                <h:panelGroup layout="block" styleClass="panel">
 					                  <h:panelGroup layout="block" styleClass="panel-body">
 					                  	<h:link outcome="consignmentSnView.xhtml">
+					                  	<f:param name="network" value="#{dtClientView.network}" />
 										<f:param name="client" value="#{client.clientConfig.name}" />
 										<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 										<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
@@ -103,6 +105,7 @@
 					                              <tr class="#{dtClientView.getStatusCssClass(entry.key)}">   					                              						                              	
 						                                <td>
 							                                <h:link outcome="consignmentSnView.xhtml">
+							                                	<f:param name="network" value="#{dtClientView.network}" />
 																<f:param name="client" value="#{client.clientConfig.name}" />
 																<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 																<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
@@ -112,6 +115,7 @@
 					                                  </td>
 					                                  <td>
 						                                  <h:link outcome="consignmentSnView.xhtml">
+						                                  	<f:param name="network" value="#{dtClientView.network}" />
 															<f:param name="client" value="#{client.clientConfig.name}" />
 															<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 															<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
