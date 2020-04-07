@@ -5,7 +5,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -24,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.SmartNetClientService;
+import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -34,7 +38,7 @@ import com.ceva.cevatrack.wsmicrolise.Common;
  */
 @SuppressWarnings("serial")
 @ManagedBean(name = "dtClientView")
-@SessionScoped
+@ViewScoped
 public class ClientView implements Serializable, CommonApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientView.class);
@@ -44,8 +48,10 @@ public class ClientView implements Serializable, CommonApp {
     private LocalDate reportLocalDate;
     private LocalDate reportLocalDateTo;
     private static LocalDate datePickerSuccessTo;
+    
+    private String network;    
 
-    public void setReportDateTo(Date reportLocalDateTo) {
+	public void setReportDateTo(Date reportLocalDateTo) {
         this.reportLocalDateTo = dateToLocal(reportLocalDateTo);
     }
 
@@ -79,8 +85,9 @@ public class ClientView implements Serializable, CommonApp {
     public void setMaxDateTo(Date maxLocalDateTo) {
         this.maxLocalDateTo = dateToLocal(maxLocalDateTo);
     }
-
+    //SmartNetClientVO is the same for all the clients
     private List<SmartNetClientVO> configs;
+    private List<SmartNetClientVO> configsTechNet;
     private static LocalDate datePickerSuccess;
 
     @ManagedProperty(value = "#{consignmentListManager}")
@@ -88,6 +95,9 @@ public class ClientView implements Serializable, CommonApp {
 
     @EJB
     SmartNetClientService snClientService;
+    
+    @EJB
+    TechNetClientService tnClientService;
 
     /**
      * initialise
@@ -103,16 +113,35 @@ public class ClientView implements Serializable, CommonApp {
             LOGGER.error(" -- There is not user in the session when calling ClientView class ", e1);
             return;
         }
-        configs = snClientService.searchSmartNetClient();
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, String> paramMap = context.getExternalContext().getRequestParameterMap();
+		this.network = paramMap.get("network");
+        
+        try{
+        	 if (network != null && network.equalsIgnoreCase("technet")){
+             	configs = tnClientService.searchTechNetClients();
+             	this.network="TechNet";
+             	LOGGER.info("configuration went through techNet clients..");
+             } else {
+             	configs = snClientService.searchSmartNetClient();
+             	this.network="SmartNet";
+             	LOGGER.info("configuration went through smartNet clients..");
+             }
+             LOGGER.info(" -- the number of clients recovered from the data base are: " + configs.size());
+        }catch (Exception e){
+        	LOGGER.error(" error trying recovering database table for clients: " + e.getStackTrace());
+        }
+                
         reportLocalDate = LocalDate.now();
         reportLocalDateTo = LocalDate.now();
         this.maxLocalDateTo = LocalDate.now().plusDays(INTERVAL_DAYS);
         // setMaxDateTo(localToDate(LocalDate.now().plusDays(INTERVAL_DAYS)));
         maxLocalDate = reportLocalDate.minusDays(0L);
         minLocalDate = reportLocalDate.minusDays(30L);
-        try {
+        try {        	
             LOGGER.info(" -- Updating the Datepicker dates.. ");
-            sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER), null, configs);
+            sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER), null, configs, network);
         } catch (Exception e) {            
             LOGGER.error(" -- getPortfolioStats web service call failed .. (init method). \n trace: \n " + ExceptionUtils.getFullStackTrace(e));
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error",
@@ -120,7 +149,8 @@ public class ClientView implements Serializable, CommonApp {
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
-
+    
+    
     /**
      * @param event
      *            for selection of date
@@ -128,7 +158,7 @@ public class ClientView implements Serializable, CommonApp {
     public void onDateSelect(SelectEvent event) {
         LOGGER.info("-- Datepicker OnDateSelect event, date selected: " + reportLocalDate.format(FORMATTER));
         try {
-            sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER), null, configs);
+            sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER), null, configs, network);
         } catch (Exception e) {
             setReportDate(Date.from(datePickerSuccess.atStartOfDay(ZoneId.systemDefault()).toInstant()));
             LOGGER.error(" -- On error I synchronize the datePicker to the last success value:  "
@@ -151,7 +181,7 @@ public class ClientView implements Serializable, CommonApp {
         this.setMinDateTo(getReportDate());
         try {
             sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER),
-                    reportLocalDateTo.format(FORMATTER), configs);
+                    reportLocalDateTo.format(FORMATTER), configs, network);
         } catch (IOException st) {
             LOGGER.error("Socket time out exception, there were probably too many consingments..: " + st.getMessage());
             saveDateTo();
@@ -225,6 +255,9 @@ public class ClientView implements Serializable, CommonApp {
     }
 
     public Map<String, ConsignmentPortfolioSummary> getSclients() {
+    	if (sclients == null){
+    		sclients = new HashMap<String, ConsignmentPortfolioSummary>();
+    	}
         return sclients;
     }
 
@@ -241,6 +274,14 @@ public class ClientView implements Serializable, CommonApp {
         short thiscode = Short.parseShort(code);
         return Common.getStatusCssClass(thiscode);
     }
+    
+    public String getNetwork() {
+		return network;
+	}
+
+	public void setNetwork(String network) {
+		this.network = network;
+	}
 
     /**
      * @param client

@@ -96,7 +96,7 @@ public class DatedConsignmentList {
      *             if unable to access data
      */
     // public DatedConsignmentList(String dateRange) throws Exception {
-    public DatedConsignmentList(String earliestDate, String latestDate, Boolean WS) throws Exception {
+    public DatedConsignmentList(String earliestDate, String latestDate, Boolean WS, String network) throws Exception {
         super();
         this.dateRange = dateRange;
         try {
@@ -113,7 +113,7 @@ public class DatedConsignmentList {
         }
         try {
             consignmentSummaries = WsMicroliseComms.findConsignmentSummariesForDateRange(fromDate.format(FORMATTER),
-                    toDate.format(FORMATTER), WS);
+                    toDate.format(FORMATTER), WS, network);
         } catch (IOException e1) {
             throw new IOException("IOException error in remote server communication is escalating", e1);
         } catch (Exception e) { // Exception but cause IOException

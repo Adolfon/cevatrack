@@ -63,8 +63,9 @@ public class ConsignmentListManager {
      * @throws Exception
      *             if unable to access list
      */
+    // I need to make this method generic for different networks (in case of different DB table structure)
     public Map<String, ConsignmentPortfolioSummary> getPortfolioStats(String fromYyyymmdd, String toYyyymmdd,
-            List<SmartNetClientVO> clientsDB) throws Exception {
+            List<SmartNetClientVO> clientsDB, String network) throws Exception {
         DatedConsignmentList WsConsignmentSummaries;
 
         Map<String, ConsignmentPortfolioSummary> resp = new HashMap<String, ConsignmentPortfolioSummary>();
@@ -82,7 +83,7 @@ public class ConsignmentListManager {
         LOGGER.info(" -- Prefixes to filter from the database: " + prefixCountsDB.toString());
         // We're all set up to count now...
         try {
-            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false);
+            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false, network);
         } catch (IOException io) {
             throw new IOException("IO Error accessing WsConsignmentSummaries Consignment List", io);
         } catch (Exception e) {
@@ -102,7 +103,7 @@ public class ConsignmentListManager {
                 }
             }
         });
-        LOGGER.info(" -- Clients that are NOT in the SmartNet database: " + outSmartNet);
+        LOGGER.info(" -- Clients that are NOT in the clients database: " + outSmartNet);
 
         // This adds up prefixes by client in the DataBase
         clientsDB.forEach(cl -> {
@@ -130,11 +131,11 @@ public class ConsignmentListManager {
      *             This is the main method to call for ConsingmentSummaries
      */
     public DatedConsignmentList getFilteredConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd,
-            List<String> prefixes, Boolean cache, Boolean WS) throws Exception {
+            List<String> prefixes, Boolean cache, Boolean WS, String network) throws Exception {
         DatedConsignmentList parent;
         List<ConsignmentSummary> respList = new ArrayList<ConsignmentSummary>();
         try {
-            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS);
+            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS, network);
         } catch (IOException e1) {
             throw new IOException("IOExcpetion accessing Parent Consignment List", e1);
         } catch (Exception e) {
@@ -161,7 +162,7 @@ public class ConsignmentListManager {
      *             if unable to generate one
      */
     public DatedConsignmentList getConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd, Boolean cache,
-            Boolean WS) throws Exception {
+            Boolean WS, String network) throws Exception {
 
         housekeep(); // Erase old consignments
         String listKey;
@@ -169,7 +170,7 @@ public class ConsignmentListManager {
         WsMicroliseEnvironment env = null;
         if (!WS) {
             currentUser = SecurityUtils.getSubject();
-            env = new WsMicroliseEnvironment();
+            env = new WsMicroliseEnvironment(network);
         } else {
             env = new WsMicroliseEnvironment(WS);
         }
@@ -190,7 +191,7 @@ public class ConsignmentListManager {
         }
 
         try {
-            DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS);
+            DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS, network);
             // Fix Status from Pending to Delivered when the consignment arrival date is present
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
             LOGGER.info("Consignment store size before put: " + consignmentStore.size());
@@ -258,12 +259,12 @@ public class ConsignmentListManager {
      * @throws Exception
      *             if not available
      */
-    public Consignment getConsignmentDetail(String consignmentReference) throws Exception {
+    public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
         Consignment consignment;
         Subject currentUser = SecurityUtils.getSubject();
         boolean ok = false;
         try {
-            consignment = WsMicroliseComms.getConsignment(consignmentReference);
+            consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
             if (currentUser.isPermitted(PERM_GLOBAL)) {
                 return consignment;

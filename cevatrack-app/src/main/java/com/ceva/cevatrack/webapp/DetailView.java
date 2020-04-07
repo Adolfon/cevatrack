@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.SmartNetClientService;
+import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -46,6 +47,7 @@ public class DetailView implements Serializable, CommonApp {
     private String date;
     private Boolean pollEnabled;
     private Boolean retry;
+    private String network;
 
     @ManagedProperty(value = "#{consignmentListManager}")
     public ConsignmentListManager consignmentListManager;
@@ -53,6 +55,8 @@ public class DetailView implements Serializable, CommonApp {
     @EJB
     SmartNetClientService snClientService;
 
+    @EJB
+    TechNetClientService tnClientService;
     /**
      * called once
      */
@@ -77,9 +81,21 @@ public class DetailView implements Serializable, CommonApp {
         LOGGER.info("(init) Parameters: client: " + client + ",dateRange: " + dateRange + ",cons Ref: "
                 + consignmentReference);
         // ClientConfig cc;
-        SmartNetClientVO clientDetail;
+        SmartNetClientVO clientDetail = null;
 
-        clientDetail = snClientService.getSmartNetClient(client);
+        this.network = params.get("network");        
+        LOGGER.info("the network value in Consignment view is: " + network);
+        client = params.get("client");                
+        try{
+	        if (client != null && network!=null && network.equalsIgnoreCase("technet")){
+	        	clientDetail = tnClientService.getTechNetClient(client);
+	        } else {
+	        	clientDetail = snClientService.getSmartNetClient(client);
+	        }
+        } catch (Exception e){
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + e.getStackTrace());
+        }        
+        //clientDetail = snClientService.getSmartNetClient(client);
 
         // check that the client has access to this consignment
         if (!clientDetail.getPfx().contains(Common.getPrefix(consignmentReference))) {
@@ -89,7 +105,7 @@ public class DetailView implements Serializable, CommonApp {
 
         // fetch the consignment
         try {
-            consignment = consignmentListManager.getConsignmentDetail(consignmentReference);
+            consignment = consignmentListManager.getConsignmentDetail(consignmentReference,network);
             if (!StringUtils.isBlank(consignmentReference)) {
                 this.consignment.setConsignmentReference(consignmentReference);
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
@@ -119,7 +135,7 @@ public class DetailView implements Serializable, CommonApp {
         consignmentReference = this.consignment.getConsignmentReference();
         LOGGER.info(" consignmentReference from the form: " + consignmentReference);
         try {
-            consignment = consignmentListManager.getConsignmentDetail(consignmentReference);
+            consignment = consignmentListManager.getConsignmentDetail(consignmentReference,network);
             if (!StringUtils.isBlank(consignmentReference)) {
                 this.consignment.setConsignmentReference(consignmentReference);
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);

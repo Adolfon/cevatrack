@@ -6,6 +6,7 @@
 	xmlns:aaf="http://java.sun.com/jsf/composite/aaf"
 	xmlns:aaft="http://security.ceva.com/jsf/aaf/tags"
 	template="app-template.xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:shiro="http://shiro.apache.org/tags">
 	<f:metadata>
 	    <f:event type="preRenderView" listener="#{dtHomeView.init}"/>
@@ -19,21 +20,32 @@
 					<div id="welcomePage" class="ceva-text-welcome-page">
 						<h2 style="text-align: center">Welcome to CEVAtrack</h2>
 		
+				
+				<ui:fragment rendered="#{dtHomeView.sn}">
 						<div class="imagegrid">
-							<!-- <div class="imagelink">
-								<h:link outcome="AftermarketView.xhtml" value="">
-									<p:graphicImage library="images" name="circle_dial_big.png" styleClass="centerimage"/>
-								</h:link>
-								<div class="centered">Aftermarket</div>
-							</div>  -->
+
 							<div class="imagelink">
 								<h:link outcome="smartNet.xhtml" value="">
-									<p:graphicImage library="images" name="circle_dial_big.png"
+									<p:graphicImage library="images" name="SmartNet001.png" width="20%"
 										styleClass="centerimage" />
-								</h:link>
-								<div class="centered">SmartNet</div>
+									<f:param name="network" value="smartnet" />
+								</h:link>								
 							</div>
 						</div>
+				</ui:fragment>
+			
+				<ui:fragment rendered="#{dtHomeView.tn}">
+						<div class="imagegrid">
+
+							<div class="imagelink">
+								<h:link outcome="smartNet.xhtml" value="">
+									<p:graphicImage library="images" name="TechNet001.png" width="20%"
+										styleClass="centerimage" />
+									<f:param name="network" value="technet" />	
+								</h:link>								
+							</div>
+						</div>
+				</ui:fragment>
 					</div>			
 				</div>	
 		</shiro:authenticated>	   		  
