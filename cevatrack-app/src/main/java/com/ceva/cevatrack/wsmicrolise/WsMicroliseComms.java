@@ -363,32 +363,10 @@ public class WsMicroliseComms {
         // byte[] soapBody = (SOAPSTART + requestBody + SOAPEND).getBytes();
         byte[] soapBody = requestBody.getBytes();
 
-        // if (env.getUrl().trim().contains("https")){
-        // https = true;
-        // }
-
         // String soapAction = HEADERSOAPACTIONSTART + call;
         HttpURLConnection httpsUrlConnection = null;
-        BufferedReader in = null;
         OutputStream out = null; // This is for the request body
-        JAXBContext context;
-        try {
-            context = JAXBContext.newInstance(jaxbClass);
-        } catch (JAXBException e1) {
-            throw new Exception("JAXBException abend occurred while creating JAXB Context", e1);
-        }
-        NamespaceFilter nsf = new NamespaceFilter(null, false); // this will remove all namespaces
-        Unmarshaller u = null;
-        try {
-            u = context.createUnmarshaller();
-        } catch (JAXBException e1) {
-            throw new Exception("JAXBException abend occurred while creating JAXB Unmarshaller", e1);
-        }
-        try {
-            u.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
-        } catch (JAXBException e1) {
-            throw new Exception("JAXBException abend occurred while creating JAXB Event Handler", e1);
-        }
+       
 
         try {
             httpsUrlConnection = setUpHttpsConnection(httpsUrlConnection, env, soapAction);
@@ -417,22 +395,7 @@ public class WsMicroliseComms {
                 throw new IOException(String.valueOf(respcode));
             }
 
-            XMLReader reader = XMLReaderFactory.createXMLReader();
-            InputSource is;
-            if ("gzip".equals(httpsUrlConnection.getContentEncoding())) {
-                is = new InputSource(new GZIPInputStream(httpsUrlConnection.getInputStream()));
-            } else {
-                is = new InputSource(httpsUrlConnection.getInputStream());
-            }
-            nsf.setParent(reader); // load a reader to the filter
-
-            // Create a SAXSource specifying the filter
-            SAXSource source = new SAXSource(nsf, is);
-
-            Object o = u.unmarshal(source); // Exception here: unexpected element (uri:"", local:"string"). Expected
-                                            // elements are (none)
-            LOGGER.info("WsMicroliseComms - object has been unmarshalled");
-            return jaxbClass.cast(o);
+            return fromXMLtoObject(httpsUrlConnection, jaxbClass);
 
         } catch (SocketTimeoutException e1) {
             LOGGER.info("WsMicroliseComms - Socket Timeout! - throwing dummy 504 exception, " +e1.getMessage() );
@@ -444,12 +407,48 @@ public class WsMicroliseComms {
             LOGGER.info(" -- Finally block reached, cleaning resources..");
             if (out != null) {
                 out = null;
-            }
-            if (in != null) {
-                in = null;
-            }
+            }            
             httpsUrlConnection = cleanConnection(httpsUrlConnection);
         }
+    }
+    
+     private static <T> T fromXMLtoObject(HttpURLConnection httpsUrlConnection, Class<T> jaxbClass) throws JAXBException, Exception{
+    	 Unmarshaller u = null;   	 
+         BufferedReader in = null;
+         OutputStream out = null; // This is for the request body
+         JAXBContext context;
+    	 XMLReader reader = XMLReaderFactory.createXMLReader();
+        InputSource is;
+        try {
+            context = JAXBContext.newInstance(jaxbClass);
+        } catch (JAXBException e1) {
+            throw new Exception("JAXBException abend occurred while creating JAXB Context", e1);
+        }
+        NamespaceFilter nsf = new NamespaceFilter(null, false); // this will remove all namespaces
+        try {
+            u = context.createUnmarshaller();
+        } catch (JAXBException e1) {
+            throw new Exception("JAXBException abend occurred while creating JAXB Unmarshaller", e1);
+        }
+        try {
+            u.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
+        } catch (JAXBException e1) {
+            throw new Exception("JAXBException abend occurred while creating JAXB Event Handler", e1);
+        }
+        if ("gzip".equals(httpsUrlConnection.getContentEncoding())) {
+            is = new InputSource(new GZIPInputStream(httpsUrlConnection.getInputStream()));
+        } else {
+            is = new InputSource(httpsUrlConnection.getInputStream());
+        }
+        nsf.setParent(reader); // load a reader to the filter
+
+        // Create a SAXSource specifying the filter
+        SAXSource source = new SAXSource(nsf, is);
+
+        Object o = u.unmarshal(source); // Exception here: unexpected element (uri:"", local:"string"). Expected
+                                        // elements are (none)
+        LOGGER.info("WsMicroliseComms - object has been unmarshalled");
+        return jaxbClass.cast(o);
     }
 
     private static HttpURLConnection cleanConnection(HttpURLConnection httpsUrlConnection) {
