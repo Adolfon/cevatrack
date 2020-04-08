@@ -911,3 +911,36 @@ SELECT add_aaf_role ('tn_microlise_tibco_prod', 'Technet web connection to PROD 
 SELECT add_aaf_role_permission ('tn_all', 'tn_client', 'view', '*');
 SELECT add_aaf_role_permission ('tn_microlise_tibco_uat', 'tn_microlise', 'tibco', 'uat');
 SELECT add_aaf_role_permission ('tn_microlise_tibco_prod', 'tn_microlise', 'tibco', 'prod');
+
+--changeset adolfo.cano:001-cjf-template-db-038 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE technet_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+   
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Canon','CANON','Canon001.png','CANON',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Amazon','AMAZON','Amazon001.png','AMAZON',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('NHS','NHSUK','NHS001.png','NHSUK',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('BMI Healthcare','BMI','BMIHealthcare001.png','BMI',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('XEROX','XEROX','Xerox001.png','XEROX',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('COCA COLA','COKE','CocaCola001.png','COKE',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHP','RICOHP','Ricoh001.png','RICOHP',now(),'SYSTEM',now(),'SYSTEM',1);
+
+  
+ 
