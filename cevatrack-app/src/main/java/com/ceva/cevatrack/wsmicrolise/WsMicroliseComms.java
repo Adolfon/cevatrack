@@ -402,6 +402,7 @@ public class WsMicroliseComms {
                     + httpsUrlConnection.getContentEncoding());
             // read the response
             int respcode = httpsUrlConnection.getResponseCode();
+            LOGGER.info("Response code for the WS request: " + respcode);
             switch (respcode) {
             case HttpURLConnection.HTTP_OK:
                 break; // fine, go on

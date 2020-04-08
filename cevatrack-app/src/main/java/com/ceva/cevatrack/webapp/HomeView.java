@@ -32,7 +32,8 @@ private boolean tn = false;
             log.error(" -- There is not user in the session when calling HomeView class ", e);
         }
         Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser.isPermitted("sn_microlise:tibco:uat") || currentUser.isPermitted("sn_microlise:tibco:prod")) {
+        if (currentUser.isPermitted("sn_microlise:tibco:uat") || currentUser.isPermitted("sn_microlise:tibco:prod") 
+        		|| currentUser.isPermitted("sn_microlise:direct:uat") || currentUser.isPermitted("sn_microlise:direct:prod")) {
             this.sn = true;
             log.info("access for smartnet granted..");
             
