@@ -64,7 +64,14 @@ public class WsMicroliseEnvironment {
      * he has permission in that network
      */
     public WsMicroliseEnvironment(String network) {
-        //this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();
+        this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();
+        Map<String, String> local = loadCevaResponsiveXmlProps();
+        if (local != null) {
+        	LOGGER.info(" -- adding local file parameters, before size: " + parameters.size());
+        	HashMap<String, String> impl = new HashMap<>(local);
+        	parameters = impl;
+        	LOGGER.info(" -- adding local file parameters, after size: " + parameters.size());
+        }
         // first of all decide the environment based on the user
         Subject currentUser = SecurityUtils.getSubject();
         envDescription = "tibco.prod"; //by default
@@ -115,7 +122,7 @@ public class WsMicroliseEnvironment {
         final Properties properties = new Properties();
         try {
             File directory = new File("./");// C:\Users\canoad\applications\neon64\eclipse\.
-            LOGGER.debug(directory.getAbsolutePath());
+            //LOGGER.debug(directory.getAbsolutePath());
             LOGGER.warn(directory.getAbsolutePath());
             // java.net.URL url = getClass().getResource("CEVAtrack-responsive.xml");//null
             // String path = "C:/Users/canoad/git/CEVAtrack-responsive/CEVAtrack-responsive-app/local_tomee/conf"
@@ -128,8 +135,10 @@ public class WsMicroliseEnvironment {
             in.close();
         } catch (FileNotFoundException fnfEx) {
             System.err.println("Could not read properties from file " + filePathAndName);
+            return null;
         } catch (IOException ioEx) {
             System.err.println("IOException encountered while reading from " + filePathAndName);
+            return null;
         }
         return (Map) properties;
     }
@@ -141,13 +150,11 @@ public class WsMicroliseEnvironment {
         // LOGGER.debug("Test Debug log --- parameters size: " + parameters.size());// Working as FINE in the log
         // LOGGER.warn("Test Warn log--- parameters size: " + parameters.size()); //WARNING
         // LOGGER.error("Test Error log--- parameters size: " + parameters.size());//SEVERE
-        // LOGGER.info("Test Info log--- parameters size: " + parameters.size());//INFO
+         LOGGER.info("-- Info in setAuthorized--- parameters size: " + parameters.size());//INFO
         // LOGGER.trace("Test Trace log--- parameters size: " + parameters.size());//NO SHOW--
-        Map<String, String> test = loadCevaResponsiveXmlProps();
         //test.putAll(parameters); //Here null pointer exception
-        parameters = new HashMap<String, String>(test);
-        LOGGER.debug("parameters size: " + parameters.size());
-        LOGGER.warn("parameters size: " + parameters.size());
+        //parameters = new HashMap<String, String>(test);
+        //LOGGER.warn("parameters size: " + parameters.size());
         if (parameters.containsKey(AUTHHEADER + envDescription)) {// microlise.usernamepassword. tibco.prod
             authorized = true;
         }
