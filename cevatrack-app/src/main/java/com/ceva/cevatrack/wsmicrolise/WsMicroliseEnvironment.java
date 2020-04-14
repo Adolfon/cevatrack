@@ -183,7 +183,7 @@ public class WsMicroliseEnvironment {
             String base = parameters.get(GETCONSIGNMENTBODY + envDescription);
             return base.replace("#CONREF#", consignmentReference);// NULL?
         } catch (Exception e) {
-            throw new Exception("No body context found for getConsignment call " + envDescription);
+            throw new Exception("No body context found for getConsignment call " + envDescription,e);
         }
     }
 
@@ -201,7 +201,7 @@ public class WsMicroliseEnvironment {
             String base = parameters.get(GETCONSIGNMENTSOAPACTION + envDescription);
             return base;
         } catch (Exception e) {
-            throw new Exception("No SOAP Action context found for getConsignment call " + envDescription);
+            throw new Exception("No SOAP Action context found for getConsignment call " + envDescription,e);
         }
     }
 
