@@ -154,6 +154,7 @@ public class DetailView implements Serializable, CommonApp {
                 FacesContext.getCurrentInstance().addMessage(null, msg);
                 retry = true;
             }
+            LOGGER.error("-- Error in refresh method in the DetailView: " + e.getStackTrace());
         }
     }
 
