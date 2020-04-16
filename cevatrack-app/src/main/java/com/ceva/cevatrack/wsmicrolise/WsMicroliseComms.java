@@ -1,12 +1,17 @@
 package com.ceva.cevatrack.wsmicrolise;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,7 +33,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.sax.SAXSource;
+
+import javax.xml.bind.JAXBElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +58,9 @@ import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummar
 import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.FindConsignmentSummariesSoapEnvelope;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.GetConsignmentSoapEnvelope;
+
+import javax.xml.bind.JAXBElement;
+
 
 /**
  * @author brian.goodall
@@ -296,8 +309,8 @@ public class WsMicroliseComms {
                 consSum.setContactNumber(data.getContactName());
                 consSum.setCountry(data.getCountry());
                 consSum.setCounty(data.getCounty());
-                consSum.setOrderReferences((data.getOrderReferences() == null) ? null
-                        : (ArrayList<String>) data.getOrderReferences().getString());
+//                consSum.setOrderReferences((data.getOrderReferences() == null) ? null
+//                        : (ArrayList<String>) data.getOrderReferences().getString());
                 consSum.setPostCode(data.getPostCode());
                 consSum.setPta((data.getPTA() == null) ? "" : data.getPTA().toString());
                 consSum.setPta2((data.getPTA2() == null) ? "" : data.getPTA2().toString());
@@ -396,6 +409,7 @@ public class WsMicroliseComms {
             }
 
             return fromXMLtoObject(httpsUrlConnection, jaxbClass);
+            //return xmlToObject(httpsUrlConnection, jaxbClass, soapBody);
 
         } catch (SocketTimeoutException e1) {
             LOGGER.info("WsMicroliseComms - Socket Timeout! - throwing dummy 504 exception, " +e1.getMessage() );
@@ -412,7 +426,7 @@ public class WsMicroliseComms {
         }
     }
     
-     private static <T> T fromXMLtoObject(HttpURLConnection httpsUrlConnection, Class<T> jaxbClass) throws JAXBException, Exception{
+     private static <T> T fromXMLtoObject(HttpURLConnection httpsUrlConnection, Class<T> jaxbClass) throws JAXBException, Exception{    	 
     	 Unmarshaller u = null;   	 
          BufferedReader in = null;
          OutputStream out = null; // This is for the request body
@@ -440,17 +454,43 @@ public class WsMicroliseComms {
         } else {
             is = new InputSource(httpsUrlConnection.getInputStream());
         }
+        
+//        BufferedReader br = new BufferedReader(new InputStreamReader(readerhttp.getInputStream()));
+//        String s;
+//        LOGGER.info(" ================= Response from WS ===================");
+//        while ((s=br.readLine())!=null)
+//        {
+//               //LOGGER.info(s + "\n");
+//        	LOGGER.info(s);
+//        }
+        
+        
         nsf.setParent(reader); // load a reader to the filter
 
         // Create a SAXSource specifying the filter
         SAXSource source = new SAXSource(nsf, is);
-
+        
         Object o = u.unmarshal(source); // Exception here: unexpected element (uri:"", local:"string"). Expected
                                         // elements are (none)
         LOGGER.info("WsMicroliseComms - object has been unmarshalled");
         return jaxbClass.cast(o);
     }
-
+     
+     public static <T> T xmlToObject(HttpURLConnection httpsUrlConnection, Class<T> jaxbClass, byte[] soapBody) throws XMLStreamException, JAXBException, IOException{
+    	 LOGGER.info("WsMicroliseComms - xmlToObject method httpsUrlConnection.getContentEncoding(): "
+                 + httpsUrlConnection.getContentEncoding());
+    	 String string = new String(soapBody, StandardCharsets.UTF_8);
+    	 LOGGER.info(" --response string from the outputstream: " + string);
+         InputStream stream = new ByteArrayInputStream(string.getBytes("UTF-8"));
+         JAXBContext jaxbContext2 = JAXBContext.newInstance(jaxbClass);
+         Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
+         XMLInputFactory factory = XMLInputFactory.newInstance();
+         XMLEventReader someSource = factory.createXMLEventReader(stream);
+         JAXBElement<T> userElement =  jaxbUnmarshaller2.unmarshal(someSource, jaxbClass);
+         T responseObject = userElement.getValue();
+         return responseObject;
+     }
+     
     private static HttpURLConnection cleanConnection(HttpURLConnection httpsUrlConnection) {
         if (httpsUrlConnection != null) {
             try {

@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import com.ceva.cevatrack.wsmicrolise.Common;
 
 /**
@@ -15,7 +17,7 @@ public class ConsignmentSummary {
 
     protected String consignmentReference;
     protected short consignmentStatus;
-    protected ArrayList<String> orderReferences;
+    protected ArrayOfString orderReferences;
 
     protected String pta;
     protected String ata;
@@ -68,14 +70,14 @@ public class ConsignmentSummary {
     }
 
     @XmlElement(name = "OrderReferences")
-    public ArrayList<String> getOrderReferences() {
+    public ArrayOfString getOrderReferences() {
         return orderReferences;
     }
 
-    public void setOrderReferences(ArrayList<String> value) {
+    public void setOrderReferences(ArrayOfString value) {
         this.orderReferences = value;
-    }
-
+    }    
+    
     @XmlElement(name = "PTA")
     public String getPta() {
         return pta;
