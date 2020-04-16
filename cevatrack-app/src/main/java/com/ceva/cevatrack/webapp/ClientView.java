@@ -163,7 +163,7 @@ public class ClientView implements Serializable, CommonApp {
             setReportDate(Date.from(datePickerSuccess.atStartOfDay(ZoneId.systemDefault()).toInstant()));
             LOGGER.error(" -- On error I synchronize the datePicker to the last success value:  "
                     + reportLocalDate.format(FORMATTER));
-            LOGGER.error(" -- getPortfolioStats web service call failed .. (ajax method) ", e);
+            LOGGER.error(" -- ClientView.onDateSelect getPortfolioStats web service call failed .. (ajax method) ", e);
         } finally {
             reportLocalDateTo = reportLocalDate;
         }
