@@ -5,7 +5,7 @@
 		http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="WebApp_ID" version="3.0">
     <!-- Rename to your app - Petstore -->
-    <display-name>CJF Template</display-name>
+    <display-name>Cevatrack</display-name>
     <welcome-file-list>
         <welcome-file>login.xhtml</welcome-file>
     </welcome-file-list>
