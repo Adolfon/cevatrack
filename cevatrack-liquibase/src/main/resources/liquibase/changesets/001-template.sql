@@ -942,5 +942,16 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('RICOHP','RICOHP','Ricoh001.png','RICOHP',now(),'SYSTEM',now(),'SYSTEM',1);
 
+--changeset adolfo.cano:001-cjf-template-db-039 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOH','RICOH','Ricoh001.png','RICOH',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHD','RICOHD','Ricoh001.png','RICOHD',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHE','RICOHE','Ricoh001.png','RICOHE',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHR','RICOHR','Ricoh001.png','RICOHR',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHT','RICOHT','Ricoh001.png','RICOHT',now(),'SYSTEM',now(),'SYSTEM',1);
   
  
