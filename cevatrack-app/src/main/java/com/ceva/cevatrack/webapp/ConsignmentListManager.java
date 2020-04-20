@@ -35,10 +35,12 @@ import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 public class ConsignmentListManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsignmentListManager.class);
     private Map<String, DatedConsignmentList> consignmentStore;
-    private static final String PERM = "sn_site:view:";
-    private static final String PERM_GLOBAL = "sn_site:view";
+    private static final String SN_SITE = "sn_site:view:";
+    private static final String SN_GLOBAL = "sn_site:view";
     private static final String TECHNET_SITE = "tech_site:view"; // WS user
-
+    private static final String TN_GLOBAL = "tn_site:view";
+    private static final String TN_SITE = "tn_site:view:";
+    
     @PostConstruct
     public void init() {
         consignmentStore = new ConcurrentHashMap<String, DatedConsignmentList>();
@@ -185,7 +187,7 @@ public class ConsignmentListManager {
             if (consignmentStore.containsKey(listKey)) {
                 if (consignmentStore.get(listKey).isCurrent()) {
                     LOGGER.info("-- The obtained consignment list was from the cache -- cache: " + cache);
-                    return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS);
+                    return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS, network);
                 }
             }
         }
@@ -198,11 +200,11 @@ public class ConsignmentListManager {
             consignmentStore.put(listKey, dcl);
             LOGGER.info("Consignment store after put: " + consignmentStore.size() + ",key: " + listKey
                     + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size());
-            return getUserConsignmentList(dcl, currentUser, WS);
+            return getUserConsignmentList(dcl, currentUser, WS, network);
         } catch (Exception e) {// here I need IOException
             if (consignmentStore.containsKey(listKey)) {
                 // old data is better than no data!
-                return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS);
+                return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS, network);
             }
             if (e.getClass() == IOException.class) {
                 throw new IOException("IO Exception error in remote server communication is escalating..", e);
@@ -221,14 +223,31 @@ public class ConsignmentListManager {
                 });
     }
 
-    private DatedConsignmentList getUserConsignmentList(DatedConsignmentList source, Subject currentUser, Boolean WS) {
+    private DatedConsignmentList getUserConsignmentList(DatedConsignmentList source, Subject currentUser, Boolean WS, String network) {
         // this subroutine will only allow out things that a user is allowed to see
-        if (WS || currentUser.isPermitted(PERM_GLOBAL) || currentUser.isPermitted(TECHNET_SITE)) {
-            return source;
-        }
+//        if (WS || currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(TECHNET_SITE)) {
+//            return source;
+//        }
+        
+        if (WS && currentUser.isPermitted(TECHNET_SITE)){
+        	return source;
+        }        
         DatedConsignmentList dcl = new DatedConsignmentList(source);
-        dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
-                .filter(con -> currentUser.isPermitted(PERM + con.getSiteId())).collect(Collectors.toList()));
+        if(network.equalsIgnoreCase("smartnet")){
+        	if (currentUser.isPermitted(SN_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(SN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        }
+        
+        if(network.equalsIgnoreCase("technet")){
+        	if (currentUser.isPermitted(TN_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(TN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        }                
         return dcl;
     }
 
@@ -266,12 +285,16 @@ public class ConsignmentListManager {
         try {
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
-            if (currentUser.isPermitted(PERM_GLOBAL)) {
-                return consignment;
+            if (network.equalsIgnoreCase("smartnet")){
+	            if (currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(SN_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
             }
-            if (currentUser.isPermitted(PERM + consignment.getSiteId())) {
-                return consignment;
-            }
+            if (network.equalsIgnoreCase("technet")){
+	            if (currentUser.isPermitted(TN_GLOBAL) || currentUser.isPermitted(TN_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
+            }            
             throw new Exception("User does not have access to site - Security violation");
         } catch (Exception e) {
             // there was an error - so maybe build something from the summary instead??
