@@ -955,5 +955,5 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
   VALUES ('RICOHT','RICOHT','Ricoh001.png','RICOHT',now(),'SYSTEM',now(),'SYSTEM',1);
   
  
---changeset adolfo.cano:001-cjf-template-db-040 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset adolfo.cano:001-cjf-template-db-040 failOnError:false splitStatements:false logicalFilePath:001-template.sql
   SELECT add_aaf_role_permission ('tn_all', 'tn_site', 'view', '*');
