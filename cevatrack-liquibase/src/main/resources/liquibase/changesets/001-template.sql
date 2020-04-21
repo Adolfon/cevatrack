@@ -957,3 +957,7 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
  
 --changeset adolfo.cano:001-cjf-template-db-040 failOnError:false splitStatements:false logicalFilePath:001-template.sql
   SELECT add_aaf_role_permission ('tn_all', 'tn_site', 'view', '*');
+--changeset adolfo.cano:001-cjf-template-db-041 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE technet_client SET name ='NHSUK' where prefixes = 'NHSUK';
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('NHS','NHS','NHS001.png','NHS',now(),'SYSTEM',now(),'SYSTEM',1);
