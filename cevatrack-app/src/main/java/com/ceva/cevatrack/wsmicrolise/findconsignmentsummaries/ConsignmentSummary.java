@@ -2,11 +2,7 @@
 package com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-
 import com.ceva.cevatrack.wsmicrolise.Common;
 
 /**
@@ -14,15 +10,13 @@ import com.ceva.cevatrack.wsmicrolise.Common;
  *
  */
 public class ConsignmentSummary {
-
+	
     protected String consignmentReference;
     protected short consignmentStatus;
     protected ArrayOfString orderReferences;
-
     protected String pta;
     protected String ata;
     protected String pta2;
-
     protected String siteId;
     protected String siteName;
     protected String address1;
@@ -42,7 +36,11 @@ public class ConsignmentSummary {
      */
     @XmlElement(name = "ConsignmentReference")
     public String getConsignmentReference() {
-    	if ("LOTPRO".equals(consignmentReference.substring(0,6))){    		
+    	if ("LOTPRO".equals(consignmentReference.substring(0,6))){
+    		if ("L02".equals(consignmentReference.substring(7,10)) || "RED".equals(consignmentReference.substring(7,10)) 
+    				&& !"REDARCH".equals(consignmentReference.substring(7,14))){
+    			return consignmentReference.replaceAll("\\s", "");
+    		}
     		return consignmentReference;
     	}    	
         if (consignmentReference.length() > 16) {
