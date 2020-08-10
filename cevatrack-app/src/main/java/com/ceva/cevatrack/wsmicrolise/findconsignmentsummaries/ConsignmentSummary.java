@@ -42,6 +42,9 @@ public class ConsignmentSummary {
      */
     @XmlElement(name = "ConsignmentReference")
     public String getConsignmentReference() {
+    	if ("LOTPRO".equals(consignmentReference.substring(0,6))){    		
+    		return consignmentReference;
+    	}    	
         if (consignmentReference.length() > 16) {
             return consignmentReference.substring(0, 16) + consignmentReference.substring(17);
         }
