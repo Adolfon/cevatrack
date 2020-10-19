@@ -194,14 +194,21 @@ public class ConsignmentListManager {
 
         try {
             DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS, network);
-            // Fix Status from Pending to Delivered when the consignment arrival date is present
-            fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
+            // Fix Status from Pending to Delivered when the consignment arrival date is present            
             LOGGER.info("Consignment store size before put: " + consignmentStore.size());
-            consignmentStore.put(listKey, dcl);
+            if (dcl.getConsignmentSummaries() == null){
+            	LOGGER.info( " --------it is null");
+            }else{
+            	LOGGER.info( " --------it is not null, size: " + dcl.getConsignmentSummaries().size());            	
+            	consignmentStore.put(listKey, dcl);
+            	fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
+            }
+            
             LOGGER.info("Consignment store after put: " + consignmentStore.size() + ",key: " + listKey
                     + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size());
             return getUserConsignmentList(dcl, currentUser, WS, network);
         } catch (Exception e) {// here I need IOException
+        	LOGGER.error(" -- Exception in Consignment List manager calling new DatedConsignmentList or fixing status..");
             if (consignmentStore.containsKey(listKey)) {
                 // old data is better than no data!
                 return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS, network);
