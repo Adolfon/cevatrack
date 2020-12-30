@@ -7,16 +7,14 @@
 
     <persistence-unit name="cevatrackPU" transaction-type="JTA">
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-
-
 <!--    <jta-data-source>java:openejb/Resource/templateDS</jta-data-source>
         <class>com.ceva.template.domain.Todo</class>   -->        
         <jta-data-source>java:openejb/Resource/cevatrackDS</jta-data-source>
-		<jar-file>../lib/aaf-ejb-3.3.0.jar</jar-file>
 		<class>com.ceva.cevatrack.domain.AbstractEntity</class>
 		<class>com.ceva.cevatrack.domain.SmartNetClient</class>
+		<class>com.ceva.cevatrack.domain.SmartNetClientTest</class>
 		<class>com.ceva.cevatrack.domain.User</class>
-
+		<class>com.ceva.cevatrack.domain.OrderLookUp</class>
         <properties>
             <property name="show_sql" value="true"/>
             <property name="openejb.jpa.auto-scan" value="true"/>

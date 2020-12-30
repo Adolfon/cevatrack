@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.security.Policy.Parameters;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +19,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.apache.xmlbeans.SystemProperties;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -64,8 +67,21 @@ public class WsMicroliseEnvironment {
      * he has permission in that network
      */
     public WsMicroliseEnvironment(String network) {
-        this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();
-        Map<String, String> local = loadCevaResponsiveXmlProps();
+    	Map<String, String> local = null;  
+    	Properties systemProps = System.getProperties();
+    	try{
+    		this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();//problem for WS
+    		LOGGER.info(" -- Existing parameters: " + parameters.size() + systemProps.getProperty("environment.code"));
+    		if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("LOCAL")){
+    			LOGGER.info(" -- In the local environment JSF container..");
+    			local = loadCevaResponsiveXmlJAXRSProps();
+    		}
+    	}catch (Exception e){
+    		LOGGER.error(" -- FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap() ---> is NULL.., charging local properties..");
+    		this.parameters = new HashMap<String, String>();
+    		local = loadCevaResponsiveXmlJAXRSProps();
+    		LOGGER.info(" -- Existing parameters after local properties loaded: " + parameters.size());
+    	}
         if (local != null) {
         	LOGGER.info(" -- adding local file parameters, before size: " + parameters.size());
         	HashMap<String, String> impl = new HashMap<>(local);
@@ -103,7 +119,23 @@ public class WsMicroliseEnvironment {
         setProxied();
     }
 
-    public WsMicroliseEnvironment(Boolean WS) {
+    private Map<String, String> loadCevaResponsiveXmlJAXRSProps() {
+    	String resourceName = "nike-jaxrs-config.xml"; 
+    	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    	Properties props = new Properties();    	
+    	try {
+    		InputStream resourceStream = loader.getResourceAsStream(resourceName);
+			props.loadFromXML(resourceStream);
+		} catch (InvalidPropertiesFormatException e) {			
+			LOGGER.error("InvalidPropertiesFormatException....", e);
+		} catch (IOException e) {			
+			LOGGER.error("IOException....", e);
+		}
+    	LOGGER.info(" --- Properties resource returned");
+		return (Map) props;
+	}
+
+	public WsMicroliseEnvironment(Boolean WS) {
         // first of all decide the environment based on the user
         // Subject currentUser = SecurityUtils.getSubject();
         if (WS) {

@@ -964,3 +964,17 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 --changeset adolfo.cano:001-cjf-template-db-042 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('Lotus','LOTPRO','Lotus.png','lotus',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-043 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+  CREATE TABLE order_lookup
+(    
+    client text COLLATE pg_catalog."default",
+    client_ref text COLLATE pg_catalog."default",
+    load_id text COLLATE pg_catalog."default",
+    load_date date,
+    order_number text COLLATE pg_catalog."default",
+    notify_method text COLLATE pg_catalog."default",
+    shipped_date timestamp with time zone,
+    ml_order_ref text COLLATE pg_catalog."default",
+    last_updated timestamp with time zone,    
+    CONSTRAINT orderlookup_unique UNIQUE (client, client_ref)
+);

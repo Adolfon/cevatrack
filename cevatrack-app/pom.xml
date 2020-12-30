@@ -127,14 +127,44 @@
                   <artifactId>woodstox-core-asl</artifactId>
                   <version>4.2.0</version>
             </dependency>
+			<!-- Deltaspike dependencies  -->
+			<dependency>
+			    <groupId>org.apache.deltaspike.modules</groupId>
+			    <artifactId>deltaspike-jpa-module-api</artifactId>
+			    <version>${deltaspike.version}</version>
+			    <scope>compile</scope>
+			</dependency>
 			
+			<dependency>
+			    <groupId>org.apache.deltaspike.modules</groupId>
+			    <artifactId>deltaspike-jpa-module-impl</artifactId>
+			    <version>${deltaspike.version}</version>
+			    <scope>runtime</scope>
+			</dependency>
 			
 						
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
+		<resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>            
+        </resources>
 		<plugins>
+			<plugin>
+		        <artifactId>maven-war-plugin</artifactId>
+		        <version>3.2.2</version>
+		        <configuration>
+		          <!--
+		            Excluding this file as per conflict with the persistence.xml
+		          -->
+		          <packagingExcludes>
+		            WEB-INF/lib/cjf-common-ejb-1.10.0.jar		            
+		          </packagingExcludes>
+		        </configuration>
+		      </plugin>
 			<plugin>
 				<groupId>org.apache.tomee.maven</groupId>
 				<artifactId>tomee-maven-plugin</artifactId>
