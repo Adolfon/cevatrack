@@ -978,3 +978,7 @@ INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, cr
     last_updated timestamp with time zone,    
     CONSTRAINT orderlookup_unique UNIQUE (client, client_ref)
 );
+--changeset adolfo.cano:001-cjf-template-db-044 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO order_lookup (client,client_ref,load_id,load_date,order_number,notify_method,shipped_date,ml_order_ref,last_updated) VALUES 
+('NIKE','302332068','8846028','2018-04-09','NIK1616179','NONE','2018-04-09 03:53:47.000','NIKE/NIK1616179','2020-12-15 17:17:47.000')
+,('NIKE','302332049','8846028','2018-04-09','NIK1616170','NONE','2018-04-09 03:52:46.000','NIKE/NIK2860811','2020-12-14 17:11:47.000');

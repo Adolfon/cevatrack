@@ -2,79 +2,49 @@ package com.ceva.cevatrack.rest.v1.impl;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-import javax.xml.ws.WebServiceContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ceva.cevatrack.domain.OrderLookUp;
-import com.ceva.cevatrack.domain.SmartNetClient;
-import com.ceva.cevatrack.domain.SmartNetClientTest;
-import com.ceva.cevatrack.repository.SmartNetClientRepository;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
-
-import javax.ws.rs.PathParam;
-//import javax.ws.rs.Produces;
-//import javax.ws.rs.core.MediaType;
-//import javax.ws.rs.Consumes;
-
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Disposes;
 //import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.io.IOException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.io.File;
-import java.io.InputStream;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+//import javax.ws.rs.Produces;
+//import javax.ws.rs.core.MediaType;
+//import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import com.ceva.security.aaf.exception.AAFException;
-import com.ceva.security.aaf.service.AAFUserService;
-import com.ceva.security.aaf.service.AAFUserServiceImpl;
-
-import com.ceva.security.aaf.domain.AAFUser;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.realm.jdbc.JdbcRealm;
-import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.PasswordMatcher;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.ceva.cevatrack.domain.OrderLookUp;
+import com.ceva.cevatrack.domain.SmartNetClientTest;
+import com.ceva.cevatrack.repository.SmartNetClientRepository;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 
@@ -162,27 +132,25 @@ public class NikeAPI implements Serializable{
 		switch (response_auth){
 			case -2:
 				LOGGER.error(" -- Authentication error code: -2");
-				Response.status(403).entity("There was a problem with the user Login").build();
-				break;
+				return Response.status(403).entity("There was a problem with the user Login").build();			
 			case -3:
-				LOGGER.error(" -- Authentication error code: -3");
-				Response.status(403).entity("There was a problem with the user Login").build();
-				break;
+				LOGGER.error(" -- Authentication error code: -3 (Unsupport coding exception)");
+				return Response.status(403).entity("There was a problem with the user Login (unsupport encoding) ").build();		
+			case -4:
+				LOGGER.error(" -- Authentication error code: -4");
+				return Response.status(403).entity("There was a problem with the user Login (Not a Nike user) ").build();				
 			case 0:
 				LOGGER.info(" Authentication of the user was correct! ");
 				break;
 			case 1:
 				LOGGER.error(" -- Authentication error code: 1");
-				Response.status(403).entity("Unknown Account exception").build();
-				break;
+				return Response.status(403).entity("Unknown Account exception").build();				
 			case 2:
 				LOGGER.error(" -- Authentication error code: 2");
-				Response.status(403).entity("Incorrect user - password combination").build();
-				break;
+				return Response.status(403).entity("Incorrect user - password combination").build();				
 			case 3:
 				LOGGER.error(" -- Authentication error code: 3");
-				Response.status(403).entity("Basic authentication is required").build();
-				break;			
+				return Response.status(403).entity("Basic authentication is required").build();						
 		}
 		
 		
@@ -228,13 +196,23 @@ public class NikeAPI implements Serializable{
 		Consignment resultWS = null;
 		try {
 			resultWS = ws.getConsignment(consignment_dateShipped[0], "smartnet");
+			if (resultWS == null){
+				LOGGER.warn(" -- No response from the WS..");
+				return Response.ok().entity("{ " + "'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
+			}
 	    	responseBean.setActual_arrival_date(resultWS.getAtaString());
 	    	//responseBean.setEstimated_arrival_date(resultWS.getEtaString());//This info is null..
 	    	responseBean.setEstimated_arrival_date(resultWS.getPtaString());
 	    	LOGGER.info(" -- WS getConsignment call was successfull, recoverd output Bean: " + responseBean);
 		} catch (Exception e) {
 			LOGGER.error(" -- Querying the consignment caused and exception, only shipped date will be returned..  ", e);
-			Response.ok().entity("{ " + "'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
+			return Response.ok().entity("{ " + "'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
+		}
+		
+		
+		if(!currentUser.isPermitted("sn_site:view:" + resultWS.getSiteId())){
+			LOGGER.warn(" -- The current user does not have permission for viewing the site: " + resultWS.getSiteId());
+			return Response.status(403).entity("User does not have permission for site: " + resultWS.getSiteId()).build();
 		}
 		
 		return Response.ok().entity("{'arrival date': '" + responseBean.getActual_arrival_date() + "', 'estimated date': '" + responseBean.getEstimated_arrival_date() + "', 'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
@@ -244,7 +222,8 @@ public class NikeAPI implements Serializable{
 		LOGGER.info("-- String method read_nike_consignment..");
 		OrderLookUp OLResult = null;
 		try{
-			OLResult = (OrderLookUp) entityManager.createQuery("SELECT ol FROM OrderLookUp ol WHERE ol.client_ref LIKE :p").setParameter("p", id).getSingleResult();
+			OLResult = (OrderLookUp) entityManager.createQuery("SELECT ol FROM OrderLookUp ol WHERE ol.client_ref = ?1 AND ol.client = ?2").
+					setParameter(1, id).setParameter(2, "NIKE").getSingleResult();
 		}catch(Exception e){
 			LOGGER.warn(" -- The query with parameter: " + id + ", did not return an expected result..");
 		}
@@ -366,6 +345,7 @@ public class NikeAPI implements Serializable{
 		}
 		return result;				
 	}
+	
 	public void initDB() {
         emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
     }
@@ -398,6 +378,9 @@ public class NikeAPI implements Serializable{
 		            //LOGGER.info(" -- Permission for no limit session time enable for this user.. ");
 			    	LOGGER.info(" -- This user has permission to view Nike instances..");	
 			    	result = 0;
+		        }else{
+		        	LOGGER.info(" -- This user does NOT have permission to view Nike instances..");
+		        	return -4;
 		        }
 		        LOGGER.info( " -- User was successfully logged in..");
 		        //Logout after recovering the currentUser..
@@ -426,36 +409,5 @@ public class NikeAPI implements Serializable{
 		PasswordMatcher passwordMatcher = (PasswordMatcher) realm.getCredentialsMatcher();
 		return passwordMatcher.getPasswordService().encryptPassword(plainText);
 	}
-
-	
-//    public static void createEntityManager() {
-//        // Change the default path of the persistence file
-//        Thread.currentThread().setContextClassLoader(new ClassLoader() {
-//          @Override
-//          public Enumeration<URL> getResources(String name) throws IOException {
-//            if (name.equals("META-INF/persistence.xml")) {
-//              return Collections
-//                  .enumeration(Arrays.asList(new File(PATH_FILE_PERSISTENCE).toURI().toURL()));
-//            }
-//            return super.getResources(name);
-//          }
-//        });
-//        LOGGER.info(" createEntityManager ok..");
-//        emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-//        // if it is not possible to create EntityManager,
-//        // try adding org.postgresql.Driver or change the run configuration using JRE
-//        em = emf.createEntityManager();
-//      }
-    /**
-     * closes the entity manage.
-     * 
-     * @param entityManager
-     *            class
-     */
-//    public void closeEntityManager(@Disposes EntityManager entityManager) {
-//        if (entityManager != null && entityManager.isOpen()) {
-//            entityManager.close();
-//        }
-//    }
 
 }
