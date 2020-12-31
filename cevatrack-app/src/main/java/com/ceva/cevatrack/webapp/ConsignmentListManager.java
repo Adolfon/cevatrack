@@ -68,6 +68,7 @@ public class ConsignmentListManager {
     // I need to make this method generic for different networks (in case of different DB table structure)
     public Map<String, ConsignmentPortfolioSummary> getPortfolioStats(String fromYyyymmdd, String toYyyymmdd,
             List<SmartNetClientVO> clientsDB, String network) throws Exception {
+    	LOGGER.info(" Starting getPortfolioStats, database members: " + clientsDB.size());
         DatedConsignmentList WsConsignmentSummaries;
 
         Map<String, ConsignmentPortfolioSummary> resp = new HashMap<String, ConsignmentPortfolioSummary>();
@@ -115,7 +116,7 @@ public class ConsignmentListManager {
             });
             resp.put(cl.getName(), clientSummary);
         });
-
+        LOGGER.info(" -- Finising method response size: " + resp.size());
         return resp;
     }
 
@@ -205,7 +206,7 @@ public class ConsignmentListManager {
             }
             
             LOGGER.info("Consignment store after put: " + consignmentStore.size() + ",key: " + listKey
-                    + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size());
+                    + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size() + " WS?: " + WS);
             return getUserConsignmentList(dcl, currentUser, WS, network);
         } catch (Exception e) {// here I need IOException
         	LOGGER.error(" -- Exception in Consignment List manager calling new DatedConsignmentList or fixing status..");
@@ -235,7 +236,7 @@ public class ConsignmentListManager {
 //        if (WS || currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(TECHNET_SITE)) {
 //            return source;
 //        }
-        
+        LOGGER.info(" -- Starting method: getUserConsignmentList");
         if (WS && currentUser.isPermitted(TECHNET_SITE)){
         	return source;
         }        

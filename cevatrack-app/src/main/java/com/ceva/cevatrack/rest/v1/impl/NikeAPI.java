@@ -282,19 +282,19 @@ public class NikeAPI implements Serializable{
 				properties.put("openjpa.ConnectionUserName", "postgres");
 				properties.put("openjpa.ConnectionPassword", "holahola");	
 			}
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("Development")){
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-DEVL")){
 				LOGGER.info(" ----------- We are in the Development environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://iahlvlpgdb002:5432/cevatrack_responsive");	
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
 				properties.put("openjpa.ConnectionPassword", "cevatrack_responsive");				
 			}
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("TEST")){
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-TEST")){
 				LOGGER.info(" ----------- We are in the TEST environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://glsdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
 				properties.put("openjpa.ConnectionPassword", "NqHyxoHGwA56P");				
 			}
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("Cevatrack")){
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
 				LOGGER.info(" ----------- We are in the Cevatrack (PROD) environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://glpdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");	
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
@@ -310,8 +310,13 @@ public class NikeAPI implements Serializable{
 						
 		if (emfact != null){
 			LOGGER.info("I created manually the context...");
-			if (entityManager == null){				
-				entityManager = emfact.createEntityManager();
+			if (entityManager == null){	
+				try{
+					entityManager = emfact.createEntityManager();
+				}catch (Exception e){
+					LOGGER.error(" --- It was not possible to create the entity manager..");
+					return -1;
+				}
 				LOGGER.info(" entityManager created manually..");						
 			}
 			result = 0;
