@@ -52,7 +52,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CXFServlet</servlet-name>
-        <url-pattern>/nike/*</url-pattern>
+        <url-pattern>/clients/*</url-pattern>
     </servlet-mapping>
 
 <filter>

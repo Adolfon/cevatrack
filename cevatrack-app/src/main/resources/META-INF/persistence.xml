@@ -15,6 +15,27 @@
 		<class>com.ceva.cevatrack.domain.SmartNetClientTest</class>
 		<class>com.ceva.cevatrack.domain.User</class>
 		<class>com.ceva.cevatrack.domain.OrderLookUp</class>
+		<class>com.ceva.cevatrack.domain.AAFUser4Nike</class>
+        <properties>
+            <property name="show_sql" value="true"/>
+            <property name="openejb.jpa.auto-scan" value="true"/>
+            <property name="openejb.jpa.init-entitymanager" value="true"/>
+            <!-- <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/> -->
+            <property name="openjpa.Log" value="DefaultLevel=WARN, Runtime=INFO, Tool=WARN, SQL=WARN"/>
+            <!--<property name="openjpa.jdbc.DBDictionary" value="SupportsMultipleNontransactionalResultSets=false,RequiresAutoCommitForMetaData=false"/>-->
+        </properties>
+    </persistence-unit>
+     <persistence-unit name="cevatrackPULocal" transaction-type="RESOURCE_LOCAL">
+        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+<!--    <jta-data-source>java:openejb/Resource/templateDS</jta-data-source>
+        <class>com.ceva.template.domain.Todo</class>   -->        
+        <non-jta-data-source>java:openejb/Resource/cevatrackDS</non-jta-data-source>
+		<class>com.ceva.cevatrack.domain.AbstractEntity</class>
+		<class>com.ceva.cevatrack.domain.SmartNetClient</class>
+		<class>com.ceva.cevatrack.domain.SmartNetClientTest</class>
+		<class>com.ceva.cevatrack.domain.User</class>
+		<class>com.ceva.cevatrack.domain.OrderLookUp</class>
+		<class>com.ceva.cevatrack.domain.AAFUser4Nike</class>
         <properties>
             <property name="show_sql" value="true"/>
             <property name="openejb.jpa.auto-scan" value="true"/>
