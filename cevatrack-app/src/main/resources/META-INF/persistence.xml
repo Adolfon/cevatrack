@@ -29,7 +29,7 @@
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 <!--    <jta-data-source>java:openejb/Resource/templateDS</jta-data-source>
         <class>com.ceva.template.domain.Todo</class>   -->        
-        <non-jta-data-source>java:openejb/Resource/cevatrackDS</non-jta-data-source>
+        <non-jta-data-source>java:openejb/Resource/cevatrackDSLocal</non-jta-data-source>
 		<class>com.ceva.cevatrack.domain.AbstractEntity</class>
 		<class>com.ceva.cevatrack.domain.SmartNetClient</class>
 		<class>com.ceva.cevatrack.domain.SmartNetClientTest</class>

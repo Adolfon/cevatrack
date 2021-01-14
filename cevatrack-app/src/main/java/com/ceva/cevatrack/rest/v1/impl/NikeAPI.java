@@ -400,6 +400,7 @@ public class NikeAPI implements Serializable{
         return entityManager;
     }
     
+    //Be aware that the user authentication is done through the cevatrackPU
     private int doShiroLogin(String userName, String password){
     	LOGGER.info(" -- Doing shiro login..");
     	int result = -1;
