@@ -195,6 +195,9 @@ public class NikeAPI implements Serializable{
 	    		user = (AAFUser4Nike) entityManager.createQuery("SELECT us FROM AAFUser4Nike us WHERE us.userPrincipal = ?1").
 						setParameter(1, userName).getSingleResult();
 	    		LOGGER.info(" -- the user recovered was: " + user);
+	    		if (user == null){
+	    			return 2;
+	    		}
 	    		if (user.getIsLocked() || !user.getIsActive()){
 	    			return 4;
 	    		}
@@ -204,7 +207,8 @@ public class NikeAPI implements Serializable{
 	    		
 	    		
 			}catch(Exception e){
-				LOGGER.warn(" -- The user query with ppal: " + this.userppal + ", did not return an expected result..", e);			
+				LOGGER.warn(" -- The user query with ppal: " + this.userppal + ", did not return an expected result..", e);
+				return 2;
 			}   
     	}else{
     		LOGGER.warn(" -- There was an error creating the DB");
@@ -375,10 +379,15 @@ public class NikeAPI implements Serializable{
 			tokens = (new String(Base64.getDecoder().decode(authHeader.split(" ")[1]), "UTF-8")).split(":");
 			final String username = tokens[0];
 			final String password = tokens[1];
-			LOGGER.info(" user in the Basic Auth: " + username + " ,password: " + password); //OK	
-			if (firstCheckUser(username) == 4){			
-				return 4;
-			}			
+			LOGGER.info(" user in the Basic Auth: " + username + " ,password: " + password); //OK
+			int firstCheck = firstCheckUser(username);
+			LOGGER.info(" -- firstCheckUser method returned: " + firstCheck);
+			if (firstCheck == 4){			
+				return 4; //Too many attempts
+			}		
+			if (firstCheck == 2){
+				return 2; //Bad user/pass combination
+			}
 			//LOGGER.info(" -- encrypting password: " + "Holaquetal123!" + ", result: " + encryptUsingShiroConfig("Holaquetal123!"));
 			result = doShiroLogin(username, password);
 			this.userppal = username;
