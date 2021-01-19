@@ -274,7 +274,10 @@ public class NikeAPI implements Serializable{
 			LOGGER.info(" -- The id: " + id + " returned " + OLResult);
 			String pattern = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
 			DateFormat df = new SimpleDateFormat(pattern);
-			String date_shipped = df.format(OLResult.getShipped_date());
+			String date_shipped = "";
+			if (OLResult.getShipped_date()!=null){
+				date_shipped = df.format(OLResult.getShipped_date());
+			}
 			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped};
 			return stringRes;
 		}else{
