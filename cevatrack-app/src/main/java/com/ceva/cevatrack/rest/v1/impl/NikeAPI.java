@@ -373,7 +373,10 @@ public class NikeAPI implements Serializable{
 
     	String authHeader = headers.getHeaderString("Authorization"); //OK, it needs "Authenticate pre-emptively" option enable in SOAPUI Basic 
 		String[] tokens;
-		if (authHeader.startsWith("Basic")){
+		if (authHeader == null){
+			return 3;
+		}
+		if (authHeader.startsWith("Basic")){ //NPE if not retrieved..
 			LOGGER.info(" -- Basic authentication detected.."); //OK
 		}else{
 			return 3;

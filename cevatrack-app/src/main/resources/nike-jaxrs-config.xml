@@ -6,9 +6,9 @@
 	<entry key ="microlise.userpassword.direct.uat">CEVACRMUATWEBSVC:W3Q8BgpXwM  </entry>
 	<entry key ="microlise.url.direct.prod">https://gdcesbqa:8080/MicroliseSmartNet</entry>
 	<entry key ="microlise.url.direct.uat">https://ws6.microlise.com/CEVA_CRM_UAT_WEBSERVICE/TMCWebService.asmx</entry>
-	<entry key ="microlise.url.tibco.uat" >http://integration-eu-uat.logistics.corp/MicroliseSmartNet</entry>
+	<entry key ="microlise.url.tibco.uat" >https://integration-eu-uat.logistics.corp/MicroliseSmartNet</entry>
 	<entry key ="microlise.url.technetdirect.prod">https://ws2.microlise.com/canon_live_webservice/TMCWebService.asmx</entry>
-	<entry key ="microlise.url.tibco.prod" >http://integration-eu.logistics.corp/MicroliseSmartNet</entry>	
+	<entry key ="microlise.url.tibco.prod" >https://integration-eu.logistics.corp/MicroliseSmartNet</entry>	
 	<entry key ="microlise.url.technetweb.tibco.uat" >http://integration-eu-uat.logistics.corp/MicroliseTechNET</entry>
 	<entry key ="microlise.body.findconsignmentsummaries.technetweb.tibco.uat">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tmc=&quot;http://microlise.com/TMC&quot; xmlns:tmc1=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;tmc:FindConsignmentSummaries&gt;&lt;tmc:consignmentFilter&gt;&lt;tmc1:EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/tmc1:EarliestDeliveryDate&gt;&lt;tmc1:LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/tmc1:LatestDeliveryDate&gt;&lt;/tmc:consignmentFilter&gt;&lt;/tmc:FindConsignmentSummaries&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</entry>
 	<entry key ="microlise.body.getconsignment.technetweb.tibco.uat">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tmc=&quot;http://microlise.com/TMC&quot;&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;tmc:GetConsignment&gt;&lt;tmc:ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/tmc:ConsignmentRef&gt;&lt;/tmc:GetConsignment&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</entry>
