@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 //import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
@@ -278,6 +281,8 @@ public class NikeAPI implements Serializable{
 			if (OLResult.getShipped_date()!=null){
 				date_shipped = df.format(OLResult.getShipped_date());
 			}
+//		    LocalDate ldate = LocalDate.from(OLResult.getShipped_date().toInstant().atZone(ZoneOffset.UTC));
+//		    String date_shipped = DateTimeFormatter.ISO_DATE_TIME.format(ldate); // uuuu-MM-dd
 			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped};
 			return stringRes;
 		}else{

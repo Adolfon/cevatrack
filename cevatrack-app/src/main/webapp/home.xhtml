@@ -20,32 +20,138 @@
 					<div id="welcomePage" class="ceva-text-welcome-page">
 						<h2 style="text-align: center">Welcome to CEVAtrack</h2>
 		
-				
-				<ui:fragment rendered="#{dtHomeView.sn}">
-						<div class="imagegrid">
-
-							<div class="imagelink">
-								<h:link outcome="smartNet.xhtml" value="">
-									<p:graphicImage library="images" name="SmartNet001.png" width="20%"
-										styleClass="centerimage" />
-									<f:param name="network" value="smartnet" />
-								</h:link>								
-							</div>
-						</div>
-				</ui:fragment>
+		<div id="sn-save">
+			<h:panelGroup layout="block" styleClass="ui-g" id="clientgrid">
 			
-				<ui:fragment rendered="#{dtHomeView.tn}">
-						<div class="imagegrid">
+								
+				<ui:fragment rendered="#{(dtHomeView.count eq 3) and (dtHomeView.sn)}">
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-4 ui-lg-4">				
+					<div class="imagegrid">
+						<div class="imagelink">
+							<h:link outcome="clients.xhtml" value="">
+								<p:graphicImage library="images" name="SmartNet001.png" width="33%"
+									styleClass="centerimage" />
+								<f:param name="network" value="smartnet" />
+							</h:link>								
+						</div>
+					</div>
+				</h:panelGroup>
+				</ui:fragment>				
+				<ui:fragment rendered="#{(dtHomeView.count eq 2) and (dtHomeView.sn)}">
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 ui-lg-6">				
+					<div class="imagegrid">
+						<div class="imagelink">
+							<h:link outcome="clients.xhtml" value="">
+								<p:graphicImage library="images" name="SmartNet001.png" width="33%"
+									styleClass="centerimage" />
+								<f:param name="network" value="smartnet" />
+							</h:link>								
+						</div>
+					</div>
+				</h:panelGroup>
+				</ui:fragment>				
+				<ui:fragment rendered="#{(dtHomeView.count eq 1) and (dtHomeView.sn)}">
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-12 ui-lg-12">				
+					<div class="imagegrid">
+						<div class="imagelink">
+							<h:link outcome="clients.xhtml" value="">
+								<p:graphicImage library="images" name="SmartNet001.png" width="33%"
+									styleClass="centerimage" />
+								<f:param name="network" value="smartnet" />
+							</h:link>								
+						</div>
+					</div>
+				</h:panelGroup>
+				</ui:fragment>
 
+
+
+				<ui:fragment rendered="#{(dtHomeView.count eq 3) and (dtHomeView.tn)}">
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-4 ui-lg-4">				
+						<div class="imagegrid">
 							<div class="imagelink">
-								<h:link outcome="smartNet.xhtml" value="">
-									<p:graphicImage library="images" name="TechNet001.png" width="20%"
+								<h:link outcome="clients.xhtml" value="">
+									<p:graphicImage library="images" name="TechNet001.png" width="33%"
 										styleClass="centerimage" />
 									<f:param name="network" value="technet" />	
 								</h:link>								
 							</div>
 						</div>
+					</h:panelGroup>
 				</ui:fragment>
+				<ui:fragment rendered="#{(dtHomeView.count eq 2) and (dtHomeView.tn)}">
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 ui-lg-6">				
+						<div class="imagegrid">
+							<div class="imagelink">
+								<h:link outcome="clients.xhtml" value="">
+									<p:graphicImage library="images" name="TechNet001.png" width="33%"
+										styleClass="centerimage" />
+									<f:param name="network" value="technet" />	
+								</h:link>								
+							</div>
+						</div>
+					</h:panelGroup>
+				</ui:fragment>
+				<ui:fragment rendered="#{(dtHomeView.count eq 1) and (dtHomeView.tn)}">
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-12 ui-lg-12">				
+						<div class="imagegrid">
+							<div class="imagelink">
+								<h:link outcome="clients.xhtml" value="">
+									<p:graphicImage library="images" name="TechNet001.png" width="33%"
+										styleClass="centerimage" />
+									<f:param name="network" value="technet" />	
+								</h:link>								
+							</div>
+						</div>
+					</h:panelGroup>
+				</ui:fragment>
+				
+
+
+				<ui:fragment rendered="#{(dtHomeView.count eq 3) and (dtHomeView.am)}">	
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-4 ui-lg-4">				
+						<div class="imagegrid">
+							<div class="imagelink">
+								<h:link outcome="clients.xhtml" value="">
+									<p:graphicImage library="images" name="Automotive.png" width="33%"
+										styleClass="centerimage" />
+									<f:param name="network" value="automotive" />	
+								</h:link>								
+							</div>
+						</div>
+					</h:panelGroup>
+				</ui:fragment>
+				<ui:fragment rendered="#{(dtHomeView.count eq 2) and (dtHomeView.am)}">	
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 ui-lg-6">				
+						<div class="imagegrid">
+							<div class="imagelink">
+								<h:link outcome="clients.xhtml" value="">
+									<p:graphicImage library="images" name="Automotive.png" width="33%"
+										styleClass="centerimage" />
+									<f:param name="network" value="automotive" />	
+								</h:link>								
+							</div>
+						</div>
+					</h:panelGroup>
+				</ui:fragment>				
+				<ui:fragment rendered="#{(dtHomeView.count eq 1) and (dtHomeView.am)}">	
+					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-12 ui-lg-12">				
+						<div class="imagegrid">
+							<div class="imagelink">
+								<h:link outcome="clients.xhtml" value="">
+									<p:graphicImage library="images" name="Automotive.png" width="33%"
+										styleClass="centerimage" />
+									<f:param name="network" value="automotive" />	
+								</h:link>								
+							</div>
+						</div>
+					</h:panelGroup>
+				</ui:fragment>
+				
+								
+		
+	</h:panelGroup>
+      </div>
 					</div>			
 				</div>	
 		</shiro:authenticated>	   		  

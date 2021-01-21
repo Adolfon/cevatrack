@@ -40,6 +40,8 @@ public class ConsignmentListManager {
     private static final String TECHNET_SITE = "tech_site:view"; // WS user
     private static final String TN_GLOBAL = "tn_site:view";
     private static final String TN_SITE = "tn_site:view:";
+    private static final String AM_GLOBAL = "am_site:view";
+    private static final String AM_SITE = "am_site:view:";
     
     @PostConstruct
     public void init() {
@@ -68,6 +70,9 @@ public class ConsignmentListManager {
     // I need to make this method generic for different networks (in case of different DB table structure)
     public Map<String, ConsignmentPortfolioSummary> getPortfolioStats(String fromYyyymmdd, String toYyyymmdd,
             List<SmartNetClientVO> clientsDB, String network) throws Exception {
+    	if (clientsDB == null){
+    		return null;
+    	}
     	LOGGER.info(" Starting getPortfolioStats, database members: " + clientsDB.size());
         DatedConsignmentList WsConsignmentSummaries;
 
@@ -247,15 +252,21 @@ public class ConsignmentListManager {
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(SN_SITE + con.getSiteId())).collect(Collectors.toList()));
-        }
-        
+        }        
         if(network.equalsIgnoreCase("technet")){
         	if (currentUser.isPermitted(TN_GLOBAL)){
         		return source;
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(TN_SITE + con.getSiteId())).collect(Collectors.toList()));
-        }                
+        }           
+        if(network.equalsIgnoreCase("automotive")){
+        	if (currentUser.isPermitted(AM_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(AM_SITE + con.getSiteId())).collect(Collectors.toList()));
+        } 
         return dcl;
     }
 
@@ -302,7 +313,12 @@ public class ConsignmentListManager {
 	            if (currentUser.isPermitted(TN_GLOBAL) || currentUser.isPermitted(TN_SITE + consignment.getSiteId())) {
 	                return consignment;
 	            }	            
-            }            
+            }     
+            if (network.equalsIgnoreCase("Automotive")){
+	            if (currentUser.isPermitted(AM_GLOBAL) || currentUser.isPermitted(AM_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
+            }
             throw new Exception("User does not have access to site - Security violation");
         } catch (Exception e) {
             // there was an error - so maybe build something from the summary instead??
