@@ -683,4 +683,23 @@ public class Consignment {
         this.consignmentHeaderInfo12 = value;
     }
 
+	@Override
+	public String toString() {
+		return "Consignment [label1=" + label1 + ", label2=" + label2 + ", label3=" + label3 + ", label4=" + label4
+				+ ", consignmentReference=" + consignmentReference + ", consignmentCustomerOrderRef="
+				+ consignmentCustomerOrderRef + ", consignmentStatus=" + consignmentStatus + ", consignmentDetails="
+				+ consignmentDetails + ", ata=" + ata + ", atd=" + atd +  ", journeyDropId=" + journeyDropId + ", pta=" + pta + ", ptd=" + ptd + ", eta=" + eta
+				+ ", etd=" + etd + ", timeWindowStart=" + timeWindowStart + ", timeWindowEnd=" + timeWindowEnd
+				+ ", siteId=" + siteId + ", siteName=" + siteName + ", address1=" + address1 + ", address2=" + address2
+				+ ", address3=" + address3 + ", county=" + county + ", postCode=" + postCode + ", country=" + country
+				+ ", contactName=" + contactName + ", contactNumber=" + contactNumber + ", siteLat=" + siteLat
+				+ ", siteLong=" + siteLong + ", routeId=" + routeId + ", journeyAlias=" + journeyAlias
+				+ ", plannedStartTime=" + plannedStartTime + ", actualStartTime=" + actualStartTime + ", podStartTime="
+				+ podStartTime + ", vehicles=" + vehicles + ", drivers=" + drivers + ", siteGeoRadius=" + siteGeoRadius
+				+ ", durationOnSite=" + durationOnSite + ", journeyActualStartTime=" + journeyActualStartTime
+				+ "]";
+	}
+    
+    
+
 }

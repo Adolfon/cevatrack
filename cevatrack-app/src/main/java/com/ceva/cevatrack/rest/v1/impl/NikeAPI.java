@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 //import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
@@ -56,7 +58,7 @@ import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
  *      - Estimated Arrival Date (ETA from WS)
  *      - Actual Arrival Date (ATA from WS)
  *      
- * Responses: 403 Auth failed, 400 empty Input number, 404 input not found in DB, 200 OK, (even if not found in WS then output just shipped date
+ * Responses: 403 Auth failed, 400 empty Input number, 404 input not found in DB, 200 OK, (even if not found in WS then output just shipped
  * 500 INternal server error when WS down??--> opposite to the requirements mentioned before..
  */
 @Path("/")
@@ -84,6 +86,11 @@ public class NikeAPI implements Serializable{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(NikeAPI.class);
 	Subject currentUser;
+	private static final DateTimeFormatter FORMATWS = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
+	private static final DateTimeFormatter FORMATWS1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+	private static final DateTimeFormatter FORMATWS2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"); //2021-01-21T06:17:43.877
+	private static final String STRNIKE = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
+	private static final DateTimeFormatter FORMATNIKE = DateTimeFormatter.ofPattern(STRNIKE);
 	
     @Inject
     private SmartNetClientRepository smartNetClientRepository;
@@ -241,24 +248,49 @@ public class NikeAPI implements Serializable{
 			resultWS = ws.getConsignment(consignment_dateShipped[0], "smartnet");
 			if (resultWS == null){
 				LOGGER.warn(" -- No response from the WS..");
-				return Response.ok().entity("{ " + "'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
+				return Response.ok().entity("{ " + "'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 			}
-	    	responseBean.setActual_arrival_date(resultWS.getAtaString());
-	    	//responseBean.setEstimated_arrival_date(resultWS.getEtaString());//This info is null..
-	    	responseBean.setEstimated_arrival_date(resultWS.getPtaString());
+			LOGGER.info(" -- The recovered result from the WS: " + resultWS.toString());
+			if(!currentUser.isPermitted("sn_site:view:" + resultWS.getSiteId())){
+				LOGGER.warn(" -- The current user does not have permission for viewing the site: " + resultWS.getSiteId());
+				return Response.status(403).entity("User does not have permission for site: " + resultWS.getSiteId()).build();
+			}
+			LOGGER.info("Dates  pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
+			LOGGER.info("Dates  String pta, eta, ata: " + resultWS.getPtaString() + ", " + resultWS.getEtaString() + ", " + resultWS.getAtaString());
+			LOGGER.info("Dates pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
+			
+			LOGGER.info("-- More values: " + resultWS.getActualStartTime() + resultWS.getActualStartTimeString() + resultWS.getAtd() 
+			 + resultWS.getAtdString() + resultWS.getConsignmentStatus() + resultWS.getJourneyActualStartTime());
+			// Change ETA and ATA form WS to Date and format to my format, erasing 0001-01-01T00:00:00  (ATA is only available in Delivered STATUS)
+			//--> format: PTA 2021-01-21T09:11:52 , ATA: 2021-01-21T10:50:24.863
+			 LocalDateTime ldt = null;
+			if (!"0001-01-01T00:00:00".equals(resultWS.getEta())){
+				ldt = LocalDateTime.parse(resultWS.getEta(), FORMATWS1); 
+				responseBean.setEstimated_arrival_date(ldt.format(FORMATNIKE));               
+			}                
+
+			if (!"0001-01-01T00:00:00".equals(resultWS.getAta())){
+				ldt = LocalDateTime.parse(resultWS.getAta(), FORMATWS2); 
+				responseBean.setActual_arrival_date(ldt.format(FORMATNIKE));               
+			}	    	
+	    	//responseBean.setEstimated_arrival_date(resultWS.getPtaString());
 	    	LOGGER.info(" -- WS getConsignment call was successfull, recoverd output Bean: " + responseBean);
 		} catch (Exception e) {
-			LOGGER.error(" -- Querying the consignment caused and exception, only shipped date will be returned..  ", e);
-			return Response.ok().entity("{ " + "'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
+			LOGGER.error(" -- Querying the consignment caused and exception, only shipped will be returned..  ", e);
+			return Response.ok().entity("{ " + "'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 		}
-		
-		
-		if(!currentUser.isPermitted("sn_site:view:" + resultWS.getSiteId())){
-			LOGGER.warn(" -- The current user does not have permission for viewing the site: " + resultWS.getSiteId());
-			return Response.status(403).entity("User does not have permission for site: " + resultWS.getSiteId()).build();
+		if ("".equals(responseBean.getActual_arrival_date()) && "".equals(responseBean.getEstimated_arrival_date())){
+			LOGGER.info(" -- Both fields came empty in the Microlise WS --");
+			return Response.ok().entity("{'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 		}
-		
-		return Response.ok().entity("{'arrival date': '" + responseBean.getActual_arrival_date() + "', 'estimated date': '" + responseBean.getEstimated_arrival_date() + "', 'shipped date': '" + responseBean.getDate_shipped() + "'}").build();
+		if ("".equals(responseBean.getActual_arrival_date())){
+			return Response.ok().entity("{'estimated_date': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+		}
+		if ("".equals(responseBean.getEstimated_arrival_date())){
+			return Response.ok().entity("{'arrival_date': '" + responseBean.getActual_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();			
+		}
+		//Usually both aren´t there, but just in case
+		return Response.ok().entity("{'arrival_date': '" + responseBean.getActual_arrival_date() + "', 'estimated_date': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 	}
     
 	private String[] read_nike_consignment(String id) {
