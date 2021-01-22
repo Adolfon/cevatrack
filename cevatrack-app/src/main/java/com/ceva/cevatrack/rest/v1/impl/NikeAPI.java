@@ -87,7 +87,7 @@ public class NikeAPI implements Serializable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(NikeAPI.class);
 	Subject currentUser;
 	private static final DateTimeFormatter FORMATWS = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
-	private static final DateTimeFormatter FORMATWS1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+	private static final DateTimeFormatter FORMATWS0 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");	
 	private static final DateTimeFormatter FORMATWS2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"); //2021-01-21T06:17:43.877
 	private static final String STRNIKE = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
 	private static final DateTimeFormatter FORMATNIKE = DateTimeFormatter.ofPattern(STRNIKE);
@@ -259,18 +259,40 @@ public class NikeAPI implements Serializable{
 			LOGGER.info("Dates  String pta, eta, ata: " + resultWS.getPtaString() + ", " + resultWS.getEtaString() + ", " + resultWS.getAtaString());
 			LOGGER.info("Dates pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
 			
-			LOGGER.info("-- More values: " + resultWS.getActualStartTime() + resultWS.getActualStartTimeString() + resultWS.getAtd() 
-			 + resultWS.getAtdString() + resultWS.getConsignmentStatus() + resultWS.getJourneyActualStartTime());
+			LOGGER.info("-- More values sizes pta, eta, ata: " +  resultWS.getPta().trim().length() + ", " + resultWS.getEta().trim().length() + ", " + resultWS.getAta().trim().length());
 			// Change ETA and ATA form WS to Date and format to my format, erasing 0001-01-01T00:00:00  (ATA is only available in Delivered STATUS)
 			//--> format: PTA 2021-01-21T09:11:52 , ATA: 2021-01-21T10:50:24.863
 			 LocalDateTime ldt = null;
 			if (!"0001-01-01T00:00:00".equals(resultWS.getEta())){
-				ldt = LocalDateTime.parse(resultWS.getEta(), FORMATWS1); 
+				if(resultWS.getEta().trim().length() == 19){
+					ldt = LocalDateTime.parse(resultWS.getEta(), FORMATWS0);
+				}
+				if(resultWS.getEta().trim().length() == 21){
+					ldt = LocalDateTime.parse(resultWS.getEta()+"00", FORMATWS2);
+				}
+				if(resultWS.getEta().trim().length() == 22){
+					ldt = LocalDateTime.parse(resultWS.getEta()+"0", FORMATWS2);
+				}
+				if(resultWS.getEta().trim().length() == 23){
+					ldt = LocalDateTime.parse(resultWS.getEta(), FORMATWS2);
+				}
 				responseBean.setEstimated_arrival_date(ldt.format(FORMATNIKE));               
 			}                
 
 			if (!"0001-01-01T00:00:00".equals(resultWS.getAta())){
-				ldt = LocalDateTime.parse(resultWS.getAta(), FORMATWS2); 
+				//ldt = LocalDateTime.parse(resultWS.getAta(), FORMATWS2);
+				if(resultWS.getAta().trim().length() == 19){
+					ldt = LocalDateTime.parse(resultWS.getAta(), FORMATWS0);
+				}
+				if(resultWS.getAta().trim().length() == 21){
+					ldt = LocalDateTime.parse(resultWS.getAta()+"00", FORMATWS2);
+				}
+				if(resultWS.getAta().trim().length() == 22){
+					ldt = LocalDateTime.parse(resultWS.getAta()+"0", FORMATWS2);
+				}
+				if(resultWS.getAta().trim().length() == 23){
+					ldt = LocalDateTime.parse(resultWS.getAta(), FORMATWS2);
+				}
 				responseBean.setActual_arrival_date(ldt.format(FORMATNIKE));               
 			}	    	
 	    	//responseBean.setEstimated_arrival_date(resultWS.getPtaString());
@@ -284,13 +306,13 @@ public class NikeAPI implements Serializable{
 			return Response.ok().entity("{'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 		}
 		if ("".equals(responseBean.getActual_arrival_date())){
-			return Response.ok().entity("{'estimated_date': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+			return Response.ok().entity("{'ETA': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 		}
 		if ("".equals(responseBean.getEstimated_arrival_date())){
-			return Response.ok().entity("{'arrival_date': '" + responseBean.getActual_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();			
+			return Response.ok().entity("{'ATA': '" + responseBean.getActual_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();			
 		}
 		//Usually both aren´t there, but just in case
-		return Response.ok().entity("{'arrival_date': '" + responseBean.getActual_arrival_date() + "', 'estimated_date': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+		return Response.ok().entity("{'ATA': '" + responseBean.getActual_arrival_date() + "', 'ETA': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 	}
     
 	private String[] read_nike_consignment(String id) {
