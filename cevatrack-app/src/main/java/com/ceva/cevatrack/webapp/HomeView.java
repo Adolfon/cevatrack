@@ -22,7 +22,8 @@ public class HomeView implements CommonApp {
     
 private boolean sn = false;
 private boolean tn = false;
-
+private boolean am = false;
+private int count = 0;
 
 	public void init() {
         log.info(" -- In the HomeView class --");
@@ -35,17 +36,33 @@ private boolean tn = false;
         if (currentUser.isPermitted("sn_microlise:tibco:uat") || currentUser.isPermitted("sn_microlise:tibco:prod") 
         		|| currentUser.isPermitted("sn_microlise:direct:uat") || currentUser.isPermitted("sn_microlise:direct:prod")) {
             this.sn = true;
-            log.info("access for smartnet granted..");
+            this.count++;
+            log.info("access for smartnet granted.." + count);
             
         }
         if (currentUser.isPermitted("tn_microlise:tibco:uat") || currentUser.isPermitted("tn_microlise:tibco:prod")) {
             this.tn = true;
-            log.info("access for technet granted..");
+            this.count++; 
+            log.info("access for technet granted.." + count);
         }
-                
-        
+        if (currentUser.isPermitted("am_microlise:tibco:uat") || currentUser.isPermitted("am_microlise:tibco:prod")) {
+            this.am = true;
+            this.count++;
+            log.info("access for automotive granted.." + count);
+        }                        
     }
 	
+	
+	public int getCount() {
+		return count;
+	}
+
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+
 	public boolean isSn() {
 		return sn;
 	}
@@ -64,8 +81,13 @@ private boolean tn = false;
 	public void setTn(boolean tn) {
 		this.tn = tn;
 	}
-
-
 	
 
+	public boolean isAm() {
+		return am;
+	}
+
+	public void setAm(boolean am) {
+		this.am = am;
+	}
 }

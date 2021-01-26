@@ -982,3 +982,64 @@ INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, cr
 INSERT INTO order_lookup (client,client_ref,load_id,load_date,order_number,notify_method,shipped_date,ml_order_ref,last_updated) VALUES 
 ('NIKE','302332068','8846028','2018-04-09','NIK1616179','NONE','2018-04-09 03:53:47.000','NIKE/NIK1616179','2020-12-15 17:17:47.000')
 ,('NIKE','302332049','8846028','2018-04-09','NIK1616170','NONE','2018-04-09 03:52:46.000','NIKE/NIK2860811','2020-12-14 17:11:47.000');
+--changeset adolfo.cano:001-cjf-template-db-045 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('am_microlise', 'tibco', 'Connections for Automotive web in Microlise', 1, 'Connections for Automotive web network in Microlise');
+select add_aaf_domain_action_lookup('am_site', 'view', 'view automotive web site', 1, 'view automotive web site');
+select add_aaf_domain_action_lookup('am_client', 'view', 'View automotive web client', 1, 'View automotive web client');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('am_microlise', 'tibco', 'uat', 'Connects to automotive UAT through tibco');
+SELECT add_aaf_permission ('am_microlise', 'tibco', 'prod', 'Connects to automotive PROD through tibco');
+SELECT add_aaf_permission ('am_site', 'view', '*', 'View all the automotive web sites');
+SELECT add_aaf_permission ('am_client', 'view', '*', 'View all the automotive web clients of a given site');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('am_all', 'Automotive network web all sites and clients');
+SELECT add_aaf_role ('am_microlise_tibco_uat', 'Automotive web connection to UAT throgh Tibco');
+SELECT add_aaf_role ('am_microlise_tibco_prod', 'Automotive web connection to PROD throgh Tibco');
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('am_all', 'am_client', 'view', '*');
+SELECT add_aaf_role_permission ('am_microlise_tibco_uat', 'am_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('am_microlise_tibco_prod', 'am_microlise', 'tibco', 'prod');
+--changeset adolfo.cano:001-cjf-template-db-046 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE automotive_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+   
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('BMW','BMW','BMW.png','BMW',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Land Rover','LROVER','LandRover.png','LROVER',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Jaguar','JAGUAR','Jaguar.png','JAGUAR',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('UKPN','EDF','UKPN.png','EDF',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-047 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_microlise', 'Microlise Webservice for Automotive', 7, 'Automotive Microlise', '2021-01-21 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_microlise', 'tibco', 'Connect via Tibco', 1, 'Tibco Connection', '2021-01-20 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_client', 'Automotive Client', 5, 'Automotive Client', '2020-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_site', 'Automotive Site', 5, 'Automotive Site', '2020-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_client', 'view', 'View Automotive Client', 1, 'View Automotive Client', '2021-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_site', 'view', 'View Automotive Site', 1, 'View Automotive Site', '2021-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+SELECT add_aaf_role_permission ('am_all', 'am_site', 'view', '*');

@@ -26,6 +26,7 @@ import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ceva.cevatrack.service.AutomotiveClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
@@ -43,7 +44,7 @@ public class ClientView implements Serializable, CommonApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientView.class);
     private final byte INTERVAL_DAYS = 7;
-    public Map<String, ConsignmentPortfolioSummary> sclients;
+    public Map<String, ConsignmentPortfolioSummary> sclients = new HashMap<String, ConsignmentPortfolioSummary>();
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
     private LocalDate reportLocalDate;
     private LocalDate reportLocalDateTo;
@@ -98,6 +99,9 @@ public class ClientView implements Serializable, CommonApp {
     
     @EJB
     TechNetClientService tnClientService;
+    
+    @EJB
+    AutomotiveClientService amClientService;
 
     /**
      * initialise
@@ -105,7 +109,7 @@ public class ClientView implements Serializable, CommonApp {
     @PostConstruct
     public void init() {
         LOGGER.info(" -- starting method init on ClientView class -- ");
-        try {
+        try {//TODO Better an interceptor
             if (!checkLogin()) {
                 return;
             }
@@ -117,17 +121,25 @@ public class ClientView implements Serializable, CommonApp {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, String> paramMap = context.getExternalContext().getRequestParameterMap();
 		this.network = paramMap.get("network");
-        
+        LOGGER.info("Network arg: " + network);
+        if (network == null){
+        	LOGGER.error("No network parameter was passed..");
+        	return;
+        }
         try{
-        	 if (network != null && network.equalsIgnoreCase("technet")){
-             	configs = tnClientService.searchTechNetClients();
-             	this.network="TechNet";
-             	LOGGER.info("configuration went through techNet clients..");
-             } else {
-             	configs = snClientService.searchSmartNetClient();
-             	this.network="SmartNet";
-             	LOGGER.info("configuration went through smartNet clients..");
-             }
+        	 switch (network){
+        	 case "technet": 
+        		configs = tnClientService.searchTechNetClients();
+        	 	this.network="TechNet";
+        	 	break;
+        	 case "smartnet": 
+        		configs = snClientService.searchSmartNetClient();
+        	 	this.network="SmartNet";
+        	 	break;
+        	 case "automotive": 
+        		 configs = amClientService.searchAutomotiveClient();
+        		 this.network="Automotive";        		         	
+        	 }        	 
              LOGGER.info(" -- the number of clients recovered from the data base are: " + configs.size());
         }catch (Exception e){
         	LOGGER.error(" error trying recovering database table for clients: " + e.getStackTrace());

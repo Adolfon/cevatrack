@@ -52,9 +52,12 @@ public class WsMicroliseEnvironment {
     // private static final String TIBCOPROD = "sn_microlise:tibco:prod";
     // This is for the web service interface, if you have this perm. you are 
     // the WS.
-    private static final String TECHNET_DIRECT_PROD = "technet:direct:prod";
+    //private static final String TECHNET_DIRECT_PROD = "technet:direct:prod";
     private static final String TECHNETWEB_UAT = "tn_microlise:tibco:uat";
     private static final String TECHNETWEB_PROD = "tn_microlise:tibco:prod";
+    
+    private static final String AUTOMOTIVE_WEB_UAT = "am_microlise:tibco:uat";
+    private static final String AUTOMOTIVE_WEB_PROD = "am_microlise:tibco:prod";
 
     /**
      * set up based on user. Based on permissions setup environment
@@ -113,6 +116,15 @@ public class WsMicroliseEnvironment {
 	        }
 	        if (currentUser.isPermitted(TECHNETWEB_PROD)){  
 	        	envDescription = "technetweb.tibco.prod"; 
+	        }
+        }
+        if (network != null && network.equalsIgnoreCase("automotive")){
+	        if (currentUser.isPermitted(AUTOMOTIVE_WEB_UAT)){  //user permissions in DB (action connect)
+	        	//envDescription = "technetweb.tibco.uat"; //chain to be added to the property name in war.xml
+	        	envDescription = "automotive_web.tibco.uat"; //Trying the same connection as the WS of technet --> "http://localhost:8080/cevatrack/techNet?wsdl"
+	        }
+	        if (currentUser.isPermitted(AUTOMOTIVE_WEB_PROD)){  
+	        	envDescription = "automotive_web.tibco.prod"; 
 	        }
         }
         setAuthorized();

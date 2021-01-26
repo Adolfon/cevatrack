@@ -28,6 +28,7 @@ import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ceva.cevatrack.service.AutomotiveClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
@@ -114,6 +115,9 @@ public class ConsignmentView implements Serializable, CommonApp {
     @EJB
     TechNetClientService tnClientService;
     
+    @EJB
+    AutomotiveClientService amClientService;
+    
     /**
      * called once
      */
@@ -136,13 +140,23 @@ public class ConsignmentView implements Serializable, CommonApp {
         LOGGER.info("the network value in Consignment view is: " + network);
         client = params.get("client");                
         try{
-	        if (client != null && network!=null && network.equalsIgnoreCase("technet")){
+        	if (client == null || network==null){
+        		throw new Exception (" -- There is no a valid network or client parameter -- ");
+        	}
+	        if (network.equalsIgnoreCase("technet")){
+	        	LOGGER.info("technet network detected");
 	        	clientDetail = tnClientService.getTechNetClient(client);
-	        } else {
+	        } 
+	        if (network.equalsIgnoreCase("smartnet")){
+	        	LOGGER.info("smartnet network detected");
 	        	clientDetail = snClientService.getSmartNetClient(client);
 	        }
+	        if (network.equalsIgnoreCase("Automotive")){
+	        	LOGGER.info("Automotive network detected");
+	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        }
         } catch (Exception e){
-        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + e.getStackTrace());
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));
         }        
         reportLocalDate = LocalDate.now();
         reportLocalDateTo = reportLocalDate; // init the date to the 'from date'
