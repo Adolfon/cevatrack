@@ -770,7 +770,7 @@ public class WsMicroliseComms {
             endDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
             LOGGER.info("-- endDate: " + endDate);
 
-            // startDate = new DatatypeFactory.newInstance().newXMLGregorianCalendar(locStartDeliveryDate.toString() ;ª
+            // startDate = new DatatypeFactory.newInstance().newXMLGregorianCalendar(locStartDeliveryDate.toString();
             // endDate = ((DatatypeFactory.newInstance().newXMLGregorianCalendar(locEndDesliveryDate.toString()) ==
             // null) ? DatatypeFactory.newInstance().newXMLGregorianCalendar("2018-10-31T23:59:59") :
             // endDate = ((DatatypeFactory.newInstance().newXMLGregorianCalendar(locEndDesliveryDate.toString()) ==

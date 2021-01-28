@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 //@WebFilter(servletNames = {"MyOwnServlet", "UploadServlet"})
 @WebFilter("/consignmentSnView.xhtml") // No cache for this page so I can see the right row selected when I move across
-                                       // the browser´s history
+                                       // the browsers history
 public class WebBrowserCache implements Filter {
     private static final Logger log = LoggerFactory.getLogger(WebBrowserCache.class);
 

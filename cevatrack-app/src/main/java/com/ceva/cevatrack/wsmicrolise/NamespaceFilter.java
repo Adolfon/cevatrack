@@ -50,7 +50,7 @@ public class NamespaceFilter extends XMLFilterImpl {
         if (addNamespace) {
             this.startControlledPrefixMapping();
         } else {
-            // Remove the namespace, i.e. don´t call startPrefixMapping for parent!
+            // Remove the namespace, i.e. dont call startPrefixMapping for parent!
         }
 
     }

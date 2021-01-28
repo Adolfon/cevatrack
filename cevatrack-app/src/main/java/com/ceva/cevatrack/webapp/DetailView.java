@@ -123,7 +123,7 @@ public class DetailView implements Serializable, CommonApp {
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
             }
         } catch (Exception e) {
-            LOGGER.error("-- Problem retrieving consignment´s detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
+            LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
             // this message works fine
             // message = ExceptionUtils.getRootCauseMessage(e) + "... Press F5 to retry.";
             message = e.getCause().getMessage() + "... Press F5 to retry.";

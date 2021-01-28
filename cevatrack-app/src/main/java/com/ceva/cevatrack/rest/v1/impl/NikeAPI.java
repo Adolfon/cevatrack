@@ -313,7 +313,7 @@ public class NikeAPI implements Serializable{
 		if ("".equals(responseBean.getEstimated_arrival_date())){
 			return Response.ok().entity("{'ATA': '" + responseBean.getActual_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();			
 		}
-		//Usually both aren´t there, but just in case
+		//Usually both arent there, but just in case
 		return Response.ok().entity("{'ATA': '" + responseBean.getActual_arrival_date() + "', 'ETA': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
 	}
     
@@ -529,7 +529,7 @@ public class NikeAPI implements Serializable{
 			LOGGER.info(" -- user recovered: " + user);
 			//entityManager.getTransaction().commit();
 			if (user == null){
-				LOGGER.info(" -- User was not found so the user´s name is incorrect..");
+				LOGGER.info(" -- User was not found so the users name is incorrect..");
 				return;
 			}			
 			entityManager.getTransaction().begin();
