@@ -180,7 +180,7 @@ public class NikeAPI implements Serializable{
 		
 		if (consignment_dateShipped == null){
 			LOGGER.info("-- The pack list number did not returned any result.. ");
-			return Response.status(400).entity("The pack list number is incorrect").build();
+			return Response.status(400).entity("The pack list number is incorrect").build();			
 		}
 				
 		// Create data Bean response		
@@ -250,7 +250,7 @@ public class NikeAPI implements Serializable{
 			resultWS = ws.getConsignment(consignment_dateShipped[0], "smartnet");
 			if (resultWS == null){
 				LOGGER.warn(" -- No response from the WS..");
-				return Response.ok().entity("{ " + "'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
 			}
 			LOGGER.info(" -- The recovered result from the WS: " + resultWS.toString());
 			if(!currentUser.isPermitted("sn_site:view:" + resultWS.getSiteId())){
@@ -301,20 +301,20 @@ public class NikeAPI implements Serializable{
 	    	LOGGER.info(" -- WS getConsignment call was successfull, recoverd output Bean: " + responseBean);
 		} catch (Exception e) {
 			LOGGER.error(" -- Querying the consignment caused and exception, only shipped will be returned..  ", e);
-			return Response.ok().entity("{ " + "'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
 		}
 		if ("".equals(responseBean.getActual_arrival_date()) && "".equals(responseBean.getEstimated_arrival_date())){
 			LOGGER.info(" -- Both fields came empty in the Microlise WS --");
-			return Response.ok().entity("{'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+			return Response.ok().entity("{\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
 		}
 		if ("".equals(responseBean.getActual_arrival_date())){
-			return Response.ok().entity("{'ETA': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+			return Response.ok().entity("{\"ETA\": \"" + responseBean.getEstimated_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
 		}
 		if ("".equals(responseBean.getEstimated_arrival_date())){
-			return Response.ok().entity("{'ATA': '" + responseBean.getActual_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();			
+			return Response.ok().entity("{\"ATA\": \"" + responseBean.getActual_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();			
 		}
 		//Usually both arent there, but just in case
-		return Response.ok().entity("{'ATA': '" + responseBean.getActual_arrival_date() + "', 'ETA': '" + responseBean.getEstimated_arrival_date() + "', 'shipped': '" + responseBean.getDate_shipped() + "'}").build();
+		return Response.ok().entity("{\"ATA\": \"" + responseBean.getActual_arrival_date() + "\", \"ETA\": \"" + responseBean.getEstimated_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
 	}
     
 	private String[] read_nike_consignment(String id) {
