@@ -33,4 +33,7 @@ if [ "$1" != "stop" ] ; then
 	
 	#To add more certificates (internal CA /selfsigned)
 	CATALINA_OPTS="$CATALINA_OPTS -Djavax.net.ssl.trustStore=/tomee/conf/cacerts"	
+	
+	#Setting the server to UK London time
+    CATALINA_OPTS="$CATALINA_OPTS -Duser.timezone=Europe/London"
 fi
