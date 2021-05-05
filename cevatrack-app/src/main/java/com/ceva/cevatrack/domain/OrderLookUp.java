@@ -25,6 +25,14 @@ public class OrderLookUp implements Serializable{
 	Date shipped_date;
 	String ml_order_ref;
 	Date last_updated;
+	Date sent_to_ml;
+	
+	public Date getSent_to_ml() {
+		return sent_to_ml;
+	}
+	public void setSent_to_ml(Date sent_to_ml) {
+		this.sent_to_ml = sent_to_ml;
+	}
 	public String getClient() {
 		return client;
 	}

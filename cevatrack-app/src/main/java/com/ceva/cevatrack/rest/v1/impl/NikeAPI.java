@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 //import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -48,8 +47,8 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.OrderLookUp;
-import com.ceva.cevatrack.domain.SmartNetClientTest;
-import com.ceva.cevatrack.repository.SmartNetClientRepository;
+//import com.ceva.cevatrack.domain.SmartNetClientTest;
+//import com.ceva.cevatrack.repository.SmartNetClientRepository;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 
@@ -88,14 +87,14 @@ public class NikeAPI implements Serializable{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(NikeAPI.class);
 	Subject currentUser;
-	private static final DateTimeFormatter FORMATWS = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
+	//private static final DateTimeFormatter FORMATWS = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
 	private static final DateTimeFormatter FORMATWS0 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");	
 	private static final DateTimeFormatter FORMATWS2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"); //2021-01-21T06:17:43.877
 	private static final String STRNIKE = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
 	private static final DateTimeFormatter FORMATNIKE = DateTimeFormatter.ofPattern(STRNIKE);
 	
-    @Inject
-    private SmartNetClientRepository smartNetClientRepository;
+//    @Inject
+//    private SmartNetClientRepository smartNetClientRepository; //OK
 	
     @Inject
     private EntityManager entityManager;
@@ -111,7 +110,7 @@ public class NikeAPI implements Serializable{
 	@Produces(MediaType.APPLICATION_JSON) 
 	public Response getPackListNumberInfo(){
 		LOGGER.info("--- The methos was called without parameters..");
-		return Response.status(400).entity("The request is malformed").build();
+		return Response.status(404).entity("The request is malformed").build();
 	}
 	/*
 	 * It returns the info for the Pack List Number passed as a parameter
@@ -133,7 +132,7 @@ public class NikeAPI implements Serializable{
 		
 		
 		if (id == null || id == "" || id == "null"){ //Redirect to localhost tomcat welcome page
-			return Response.status(400).entity("No parameter was included on the call..").build();			
+			return Response.status(404).entity("No parameter was included on the call..").build();			
 		}
 		
 		//List<String> authHeaders = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);//KO, null
@@ -180,7 +179,7 @@ public class NikeAPI implements Serializable{
 		
 		if (consignment_dateShipped == null){
 			LOGGER.info("-- The pack list number did not returned any result.. ");
-			return Response.status(400).entity("The pack list number is incorrect").build();			
+			return Response.status(404).entity("The pack list number is incorrect").build();			
 		}
 				
 		// Create data Bean response		
@@ -226,31 +225,29 @@ public class NikeAPI implements Serializable{
 		return 0;
 	}
 	private Response createResponse(String[] consignment_dateShipped) {
-    	LOGGER.info(" -- Starting method createResponse with parameters, consignment: " + consignment_dateShipped[0] + " and, date shipiped: " + consignment_dateShipped[1] );
+    	LOGGER.info(" -- Starting method createResponse with parameters, consignment: " + consignment_dateShipped[0] + ", date shipiped: " + consignment_dateShipped[1] + 
+    			" ,sent to microlise: " + consignment_dateShipped[2]);
     	
     	//Set the variables in the Bean and send it as a entity body for the response
     	NikeResponseBean responseBean = new NikeResponseBean();
     	responseBean.setDate_shipped(consignment_dateShipped[1]);
     	responseBean.setActual_arrival_date("");
     	responseBean.setEstimated_arrival_date("");
+    	responseBean.setSent_to_ml(consignment_dateShipped[2]);
     	
-    	List<SmartNetClientTest> matchingSmartNetClients = entityManager.createQuery("SELECT sn FROM SmartNetClientTest sn WHERE sn.prefixes LIKE :p").setParameter("p", "NIKE").getResultList();
-		//entityManager().createQuery("SELECT sp FROM SparePart sp WHERE sp.process_id LIKE :p").setParameter("p", processId).getResultList();
-        //List<SmartNetClient> matchingSmartNetClients = smartNetClientRepository.findAll();
-		if (matchingSmartNetClients.get(0) != null){
-			LOGGER.info(" prefixes field is: " + matchingSmartNetClients.get(0).getPrefixes() );
-		}
-		LOGGER.info(" -- query was successfull: " + matchingSmartNetClients.size());
-//		closeEntityManager(entityManager);
-        //return Response.ok().entity("Service online, param: " +id + ", clients recovered: " + matchingSmartNetClients.size()).build();		
-		//return Response.ok().entity(responseBean).build();
+    	//Case not sent to Microlise yet (load date returned = shipped date as per data base script update: first shipped and load dates are same, later update only shipped date) 
+    	if (consignment_dateShipped[2] == null || "".equals(consignment_dateShipped[2])){
+    		return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+    	}
+    	//Case 2, has been sent to Microlise
 		WsMicroliseComms ws = new WsMicroliseComms();
 		Consignment resultWS = null;
 		try {
 			resultWS = ws.getConsignment(consignment_dateShipped[0], "smartnet");
 			if (resultWS == null){
 				LOGGER.warn(" -- No response from the WS..");
-				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + 
+						"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 			}
 			LOGGER.info(" -- The recovered result from the WS: " + resultWS.toString());
 			if(!currentUser.isPermitted("sn_site:view:" + resultWS.getSiteId())){
@@ -297,24 +294,28 @@ public class NikeAPI implements Serializable{
 				}
 				responseBean.setActual_arrival_date(ldt.format(FORMATNIKE));               
 			}	    	
-	    	//responseBean.setEstimated_arrival_date(resultWS.getPtaString());
 	    	LOGGER.info(" -- WS getConsignment call was successfull, recoverd output Bean: " + responseBean);
 		} catch (Exception e) {
-			LOGGER.error(" -- Querying the consignment caused and exception, only shipped will be returned..  ", e);
-			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+			LOGGER.error(" -- Querying the consignment caused and exception, only shipped and sent_to_ml will be returned..  ", e);
+			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + 
+					"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 		}
 		if ("".equals(responseBean.getActual_arrival_date()) && "".equals(responseBean.getEstimated_arrival_date())){
 			LOGGER.info(" -- Both fields came empty in the Microlise WS --");
-			return Response.ok().entity("{\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+			return Response.ok().entity("{\"shipped\": \"" + responseBean.getDate_shipped() + 
+					"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 		}
 		if ("".equals(responseBean.getActual_arrival_date())){
-			return Response.ok().entity("{\"ETA\": \"" + responseBean.getEstimated_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+			return Response.ok().entity("{\"ETA\": \"" + responseBean.getEstimated_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + 
+					"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 		}
 		if ("".equals(responseBean.getEstimated_arrival_date())){
-			return Response.ok().entity("{\"ATA\": \"" + responseBean.getActual_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();			
+			return Response.ok().entity("{\"ATA\": \"" + responseBean.getActual_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + 
+					"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();			
 		}
 		//Usually both arent there, but just in case
-		return Response.ok().entity("{\"ATA\": \"" + responseBean.getActual_arrival_date() + "\", \"ETA\": \"" + responseBean.getEstimated_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+		return Response.ok().entity("{\"ATA\": \"" + responseBean.getActual_arrival_date() + "\", \"ETA\": \"" + responseBean.getEstimated_arrival_date() + "\", \"shipped\": \"" + responseBean.getDate_shipped() + 
+				"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 	}
     
 	private String[] read_nike_consignment(String id) {
@@ -324,19 +325,29 @@ public class NikeAPI implements Serializable{
 			OLResult = (OrderLookUp) entityManager.createQuery("SELECT ol FROM OrderLookUp ol WHERE ol.client_ref = ?1 AND ol.client = ?2").
 					setParameter(1, id).setParameter(2, "NIKE").getSingleResult();
 		}catch(Exception e){
-			LOGGER.warn(" -- The query with parameter: " + id + ", did not return an expected result..");
+			LOGGER.warn(" -- The query with parameter: " + id + ", did not return an expected result..\n", e);
+			return null;
 		}
 		if (OLResult != null){
 			LOGGER.info(" -- The id: " + id + " returned " + OLResult);
 			String pattern = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
 			DateFormat df = new SimpleDateFormat(pattern);
 			String date_shipped = "";
-			if (OLResult.getShipped_date()!=null){
-				date_shipped = df.format(OLResult.getShipped_date());
+			String sent_to_ml = null;
+			try{
+				if (OLResult.getShipped_date()!=null){
+					date_shipped = df.format(OLResult.getShipped_date());
+				}
+				if (OLResult.getSent_to_ml()!=null){
+					sent_to_ml = df.format(OLResult.getSent_to_ml());
+				}
+			}catch (Exception e){
+				LOGGER.error(" -- Formatting exception when converting date from the data base --\n", e);
+				return null;
 			}
 //		    LocalDate ldate = LocalDate.from(OLResult.getShipped_date().toInstant().atZone(ZoneOffset.UTC));
 //		    String date_shipped = DateTimeFormatter.ISO_DATE_TIME.format(ldate); // uuuu-MM-dd
-			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped};
+			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped , sent_to_ml};
 			return stringRes;
 		}else{
 			LOGGER.info("No results for the id: " + id + " matching the table..");

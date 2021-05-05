@@ -1043,3 +1043,5 @@ INSERT INTO aaf_domain_action_lookup
 (aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
 VALUES('am_site', 'view', 'View Automotive Site', 1, 'View Automotive Site', '2021-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
 SELECT add_aaf_role_permission ('am_all', 'am_site', 'view', '*');
+--changeset adolfo.cano:001-cjf-template-db-048 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE order_lookup ADD COLUMN sent_to_ml timestamp with time zone;

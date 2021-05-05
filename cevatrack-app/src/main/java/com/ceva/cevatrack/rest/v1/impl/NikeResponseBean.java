@@ -5,7 +5,14 @@ public class NikeResponseBean {
 	private String date_shipped;
 	private String estimated_arrival_date;
 	private String actual_arrival_date;
+	private String sent_to_ml;
 	
+	public String getSent_to_ml() {
+		return sent_to_ml;
+	}
+	public void setSent_to_ml(String sent_to_ml) {
+		this.sent_to_ml = sent_to_ml;
+	}
 	public String getDate_shipped() {
 		return date_shipped;
 	}
@@ -27,9 +34,7 @@ public class NikeResponseBean {
 	@Override
 	public String toString() {
 		return "NikeResponseBean [date_shipped=" + date_shipped + ", estimated_arrival_date=" + estimated_arrival_date
-				+ ", actual_arrival_date=" + actual_arrival_date + "]";
+				+ ", actual_arrival_date=" + actual_arrival_date + ", sent_to_ml=" + sent_to_ml + "]";
 	}
-
-	
-	
+		
 }
