@@ -13,6 +13,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
 //import javax.enterprise.inject.Produces;
@@ -329,11 +330,13 @@ public class NikeAPI implements Serializable{
 			return null;
 		}
 		if (OLResult != null){
-			LOGGER.info(" -- The id: " + id + " returned " + OLResult);
-			String pattern = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
+			LOGGER.info(" -- The id: " + id + " returned " + OLResult);			
+			String pattern = "yyyy-MM-dd HH:mm:ss";
+			TimeZone zone = TimeZone.getTimeZone("Europe/London");			
 			DateFormat df = new SimpleDateFormat(pattern);
+			df.setTimeZone(zone);		
 			String date_shipped = "";
-			String sent_to_ml = null;
+			String sent_to_ml = null;			
 			try{
 				if (OLResult.getShipped_date()!=null){
 					date_shipped = df.format(OLResult.getShipped_date());
@@ -345,8 +348,6 @@ public class NikeAPI implements Serializable{
 				LOGGER.error(" -- Formatting exception when converting date from the data base --\n", e);
 				return null;
 			}
-//		    LocalDate ldate = LocalDate.from(OLResult.getShipped_date().toInstant().atZone(ZoneOffset.UTC));
-//		    String date_shipped = DateTimeFormatter.ISO_DATE_TIME.format(ldate); // uuuu-MM-dd
 			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped , sent_to_ml};
 			return stringRes;
 		}else{
