@@ -235,10 +235,12 @@ public class NikeAPI implements Serializable{
     	responseBean.setActual_arrival_date("");
     	responseBean.setEstimated_arrival_date("");
     	responseBean.setSent_to_ml(consignment_dateShipped[2]);
+    	responseBean.setEta_no_ml(consignment_dateShipped[3]);
     	
     	//Case not sent to Microlise yet (load date returned = shipped date as per data base script update: first shipped and load dates are same, later update only shipped date) 
-    	if (consignment_dateShipped[2] == null || "".equals(consignment_dateShipped[2])){
-    		return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+    	if (responseBean.getSent_to_ml() == null || "".equals(responseBean.getSent_to_ml())){
+    		return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
+    				+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
     	}
     	//Case 2, has been sent to Microlise
 		WsMicroliseComms ws = new WsMicroliseComms();
@@ -336,19 +338,23 @@ public class NikeAPI implements Serializable{
 			DateFormat df = new SimpleDateFormat(pattern);
 			df.setTimeZone(zone);		
 			String date_shipped = "";
-			String sent_to_ml = null;			
+			String sent_to_ml = null;
+			String eta_no_ml = null;
 			try{
-				if (OLResult.getShipped_date()!=null){
+				if (OLResult.getShipped_date() != null){
 					date_shipped = df.format(OLResult.getShipped_date());
 				}
-				if (OLResult.getSent_to_ml()!=null){
+				if (OLResult.getSent_to_ml() != null){
 					sent_to_ml = df.format(OLResult.getSent_to_ml());
+				}
+				if (OLResult.getEta_no_ml() != null){
+					eta_no_ml = df.format(OLResult.getEta_no_ml());
 				}
 			}catch (Exception e){
 				LOGGER.error(" -- Formatting exception when converting date from the data base --\n", e);
 				return null;
 			}
-			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped , sent_to_ml};
+			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped , sent_to_ml , eta_no_ml};
 			return stringRes;
 		}else{
 			LOGGER.info("No results for the id: " + id + " matching the table..");

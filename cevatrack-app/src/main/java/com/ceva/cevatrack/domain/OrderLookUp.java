@@ -26,7 +26,14 @@ public class OrderLookUp implements Serializable{
 	String ml_order_ref;
 	Date last_updated;
 	Date sent_to_ml;
+	Date eta;
 	
+	public Date getEta_no_ml() {
+		return eta;
+	}
+	public void setEta_no_ml(Date eta_no_ml) {
+		this.eta = eta_no_ml;
+	}
 	public Date getSent_to_ml() {
 		return sent_to_ml;
 	}
@@ -91,8 +98,18 @@ public class OrderLookUp implements Serializable{
 	public OrderLookUp(){
 		
 	}
+	
+	@Override
+	public String toString() {
+		return "OrderLookUp [client=" + client + ", client_ref=" + client_ref + ", load_id=" + load_id + ", load_date="
+				+ load_date + ", order_number=" + order_number + ", notify_method=" + notify_method + ", shipped_date="
+				+ shipped_date + ", ml_order_ref=" + ml_order_ref + ", last_updated=" + last_updated + ", sent_to_ml="
+				+ sent_to_ml + ", eta_no_ml=" + eta + "]";
+	}
+	
 	public OrderLookUp(String client, String client_ref, String load_id, Date load_date, String order_number,
-			String notify_method, Date shipped_date, String ml_order_ref, Date last_updated) {
+			String notify_method, Date shipped_date, String ml_order_ref, Date last_updated, Date sent_to_ml,
+			Date eta_no_ml) {
 		super();
 		this.client = client;
 		this.client_ref = client_ref;
@@ -103,12 +120,8 @@ public class OrderLookUp implements Serializable{
 		this.shipped_date = shipped_date;
 		this.ml_order_ref = ml_order_ref;
 		this.last_updated = last_updated;
-	}
-	@Override
-	public String toString() {
-		return "OrderLookUp [client=" + client + ", client_ref=" + client_ref + ", load_id=" + load_id + ", load_date="
-				+ load_date + ", order_number=" + order_number + ", notify_method=" + notify_method + ", shipped_date="
-				+ shipped_date + ", ml_order_ref=" + ml_order_ref + ", last_updated=" + last_updated + "]";
+		this.sent_to_ml = sent_to_ml;
+		this.eta = eta_no_ml;
 	}
 		
 }

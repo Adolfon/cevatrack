@@ -6,6 +6,7 @@ public class NikeResponseBean {
 	private String estimated_arrival_date;
 	private String actual_arrival_date;
 	private String sent_to_ml;
+	private String eta_no_ml;
 	
 	public String getSent_to_ml() {
 		return sent_to_ml;
@@ -35,6 +36,15 @@ public class NikeResponseBean {
 	public String toString() {
 		return "NikeResponseBean [date_shipped=" + date_shipped + ", estimated_arrival_date=" + estimated_arrival_date
 				+ ", actual_arrival_date=" + actual_arrival_date + ", sent_to_ml=" + sent_to_ml + "]";
+	}
+	public String getEta_no_ml() {
+		if (eta_no_ml == null){
+			return "";
+		}
+		return eta_no_ml;
+	}
+	public void setEta_no_ml(String eta_no_ml) {
+		this.eta_no_ml = eta_no_ml;
 	}
 		
 }

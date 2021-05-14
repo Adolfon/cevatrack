@@ -1045,3 +1045,5 @@ VALUES('am_site', 'view', 'View Automotive Site', 1, 'View Automotive Site', '20
 SELECT add_aaf_role_permission ('am_all', 'am_site', 'view', '*');
 --changeset adolfo.cano:001-cjf-template-db-048 failOnError:false splitStatements:false logicalFilePath:001-template.sql
 ALTER TABLE order_lookup ADD COLUMN sent_to_ml timestamp with time zone;
+--changeset adolfo.cano:001-cjf-template-db-049 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE order_lookup ADD COLUMN eta timestamp with time zone;
