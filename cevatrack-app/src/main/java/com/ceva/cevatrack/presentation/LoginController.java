@@ -55,11 +55,30 @@ public class LoginController extends LoginBean {
     protected String afterLogin() {
         LOGGER.trace("User {} authenticated OK.", aafUser.getUserPrincipal());
         setUserToSession();
+        menusVissibilityPermissions();
         // return "list-todo?faces-redirect=true";
         return "home.xhtml?faces-redirect=true";
     }
 
-    @Override
+    private void menusVissibilityPermissions() {
+    	Subject currentUser = SecurityUtils.getSubject();
+    	if (currentUser.isPermitted("sn_microlise:tibco:uat") || currentUser.isPermitted("sn_microlise:tibco:prod") 
+         		|| currentUser.isPermitted("sn_microlise:direct:uat") || currentUser.isPermitted("sn_microlise:direct:prod")) {
+    		 SessionManager.getSession().setAttribute("SN_VISIBLE", true);
+             
+         }
+         if (currentUser.isPermitted("tn_microlise:tibco:uat") || currentUser.isPermitted("tn_microlise:tibco:prod")) {
+        	 SessionManager.getSession().setAttribute("TN_VISIBLE", true);
+         }
+         if (currentUser.isPermitted("am_microlise:tibco:uat") || currentUser.isPermitted("am_microlise:tibco:prod")) {
+        	 SessionManager.getSession().setAttribute("AM_VISIBLE", true);
+         }
+         if (currentUser.isPermitted("hc_microlise:tibco:uat") || currentUser.isPermitted("hc_microlise:tibco:prod")) {
+        	 SessionManager.getSession().setAttribute("HC_VISIBLE", true);
+         }		
+	}
+
+	@Override
     public String handlePasswordChangeRequired(ErrorCode errorCode) {
         setUserToSession();
         return changePasswordPage + "?faces-redirect=true";

@@ -25,7 +25,7 @@ public class SystemSessionConfig implements Serializable {
             LOGGER.debug(directory.getAbsolutePath());
             LOGGER.warn(directory.getAbsolutePath());
             // java.net.URL url = getClass().getResource("CEVAtrack-responsive.xml");//null
-            String path = "C:/Users/canoad/git/cevatrack/cevatrack-app/local_tomee/conf"
+            String path = "C:/Users/canoad/git2/cevatrack/cevatrack-app/local_tomee/conf"
                     + "/Catalina/localhost/cevatrack_mod.xml";
             File file = new File(path);
             final FileInputStream in = new FileInputStream(file);

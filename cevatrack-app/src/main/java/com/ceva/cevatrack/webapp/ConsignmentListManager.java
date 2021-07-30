@@ -42,6 +42,8 @@ public class ConsignmentListManager {
     private static final String TN_SITE = "tn_site:view:";
     private static final String AM_GLOBAL = "am_site:view";
     private static final String AM_SITE = "am_site:view:";
+    private static final String HC_GLOBAL = "hc_site:view";
+    private static final String HC_SITE = "hc_site:view:";
     
     @PostConstruct
     public void init() {
@@ -241,11 +243,11 @@ public class ConsignmentListManager {
 //        if (WS || currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(TECHNET_SITE)) {
 //            return source;
 //        }
-        LOGGER.info(" -- Starting method: getUserConsignmentList");
+        LOGGER.info(" -- Starting method: getUserConsignmentList, network: " + network);
         if (WS && currentUser.isPermitted(TECHNET_SITE)){
         	return source;
         }        
-        DatedConsignmentList dcl = new DatedConsignmentList(source);
+        DatedConsignmentList dcl = new DatedConsignmentList(source); //here dcl = 0 but source = 989 elements...(starts with 0)
         if(network.equalsIgnoreCase("smartnet")){
         	if (currentUser.isPermitted(SN_GLOBAL)){
         		return source;
@@ -266,6 +268,13 @@ public class ConsignmentListManager {
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(AM_SITE + con.getSiteId())).collect(Collectors.toList()));
+        }
+        if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that´s why the consignments are not being added...
+        	if (currentUser.isPermitted(HC_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(HC_SITE + con.getSiteId())).collect(Collectors.toList()));
         } 
         return dcl;
     }
@@ -300,9 +309,12 @@ public class ConsignmentListManager {
     public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
         Consignment consignment;
         Subject currentUser = SecurityUtils.getSubject();
-        boolean ok = false;
         try {
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
+            if (consignment == null){
+            	LOGGER.error(" -- The consignment was not retrieved and it is null --");
+            	throw new Exception("-- The consignment was not retrieved and it is null --");
+            }
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
             if (network.equalsIgnoreCase("smartnet")){
 	            if (currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(SN_SITE + consignment.getSiteId())) {
@@ -318,6 +330,15 @@ public class ConsignmentListManager {
 	            if (currentUser.isPermitted(AM_GLOBAL) || currentUser.isPermitted(AM_SITE + consignment.getSiteId())) {
 	                return consignment;
 	            }	            
+            }
+            if (network.equalsIgnoreCase("Healthcare")){
+	            if (currentUser.isPermitted(HC_GLOBAL) || currentUser.isPermitted(HC_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
+            }
+            if (network.equalsIgnoreCase("HealthLink")){
+            	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK
+	                return consignment;	            	            
             }
             throw new Exception("User does not have access to site - Security violation");
         } catch (Exception e) {

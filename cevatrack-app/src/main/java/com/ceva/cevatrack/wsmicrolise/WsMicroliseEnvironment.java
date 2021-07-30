@@ -59,6 +59,8 @@ public class WsMicroliseEnvironment {
     private static final String AUTOMOTIVE_WEB_UAT = "am_microlise:tibco:uat";
     private static final String AUTOMOTIVE_WEB_PROD = "am_microlise:tibco:prod";
 
+    private static final String HEALTHCARE_WEB_UAT = "hc_microlise:tibco:uat";
+    private static final String HEALTHCARE_WEB_PROD = "hc_microlise:tibco:prod";
     /**
      * set up based on user. Based on permissions setup environment
      * The problem arise when an user has permission en different environments
@@ -126,6 +128,18 @@ public class WsMicroliseEnvironment {
 	        if (currentUser.isPermitted(AUTOMOTIVE_WEB_PROD)){  
 	        	envDescription = "automotive_web.tibco.prod"; 
 	        }
+        }
+        if (network != null && network.equalsIgnoreCase("healthcare")){
+	        if (currentUser.isPermitted(HEALTHCARE_WEB_UAT)){  //user permissions in DB (action connect)
+	        	//envDescription = "technetweb.tibco.uat"; //chain to be added to the property name in war.xml
+	        	envDescription = "healthcare_web.tibco.uat"; //Trying the same connection as the WS of technet --> "http://localhost:8080/cevatrack/techNet?wsdl"
+	        }
+	        if (currentUser.isPermitted(HEALTHCARE_WEB_PROD)){  
+	        	envDescription = "healthcare_web.tibco.prod"; 
+	        }
+        }
+        if (network != null && network.equalsIgnoreCase("HealthLink")){
+        	envDescription = "health_link.tibco.prod";
         }
         setAuthorized();
         setProxied();

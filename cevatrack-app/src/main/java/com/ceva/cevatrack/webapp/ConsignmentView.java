@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.AutomotiveClientService;
+import com.ceva.cevatrack.service.HealthcareClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
@@ -118,6 +119,9 @@ public class ConsignmentView implements Serializable, CommonApp {
     @EJB
     AutomotiveClientService amClientService;
     
+    @EJB
+    HealthcareClientService hcClientService;
+    
     /**
      * called once
      */
@@ -140,20 +144,32 @@ public class ConsignmentView implements Serializable, CommonApp {
         LOGGER.info("the network value in Consignment view is: " + network);
         client = params.get("client");                
         try{
+        	boolean oneSelected = false;
         	if (client == null || network==null){
         		throw new Exception (" -- There is no a valid network or client parameter -- ");
         	}
 	        if (network.equalsIgnoreCase("technet")){
 	        	LOGGER.info("technet network detected");
+	        	oneSelected = true;
 	        	clientDetail = tnClientService.getTechNetClient(client);
 	        } 
 	        if (network.equalsIgnoreCase("smartnet")){
 	        	LOGGER.info("smartnet network detected");
+	        	oneSelected = true;
 	        	clientDetail = snClientService.getSmartNetClient(client);
 	        }
 	        if (network.equalsIgnoreCase("Automotive")){
 	        	LOGGER.info("Automotive network detected");
+	        	oneSelected = true;
 	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        }
+	        if (network.equalsIgnoreCase("Healthcare")){
+	        	LOGGER.info("Health network detected");
+	        	oneSelected = true;
+	        	clientDetail = hcClientService.getHealthcareClient(client);
+	        }
+	        if (!oneSelected){
+	        	throw new Exception (" -- There was not a valid network selected -- ");
 	        }
         } catch (Exception e){
         	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));

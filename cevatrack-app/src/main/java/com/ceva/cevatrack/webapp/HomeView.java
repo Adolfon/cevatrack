@@ -20,9 +20,6 @@ public class HomeView implements CommonApp {
 
     private static final Logger log = LoggerFactory.getLogger(HomeView.class);
     
-private boolean sn = false;
-private boolean tn = false;
-private boolean am = false;
 private int count = 0;
 
 	public void init() {
@@ -35,24 +32,31 @@ private int count = 0;
         Subject currentUser = SecurityUtils.getSubject();
         if (currentUser.isPermitted("sn_microlise:tibco:uat") || currentUser.isPermitted("sn_microlise:tibco:prod") 
         		|| currentUser.isPermitted("sn_microlise:direct:uat") || currentUser.isPermitted("sn_microlise:direct:prod")) {
-            this.sn = true;
-            this.count++;
-            log.info("access for smartnet granted.." + count);
-            
+	            this.count++;
+	            log.info("access for smartnet granted.." + count);        	
         }
         if (currentUser.isPermitted("tn_microlise:tibco:uat") || currentUser.isPermitted("tn_microlise:tibco:prod")) {
-            this.tn = true;
-            this.count++; 
-            log.info("access for technet granted.." + count);
+	            this.count++; 
+	            log.info("access for technet granted.." + count);
+
         }
-        if (currentUser.isPermitted("am_microlise:tibco:uat") || currentUser.isPermitted("am_microlise:tibco:prod")) {
-            this.am = true;
-            this.count++;
-            log.info("access for automotive granted.." + count);
-        }                        
+        if (currentUser.isPermitted("am_microlise:tibco:uat") || currentUser.isPermitted("am_microlise:tibco:prod")) {	        	
+	            this.count++;
+	            log.info("access for automotive granted.." + count);
+        	}
+       
+        if (currentUser.isPermitted("hc_microlise:tibco:uat") || currentUser.isPermitted("hc_microlise:tibco:prod")) {
+	            this.count++;
+	            log.info("access for health care granted.." + count);
+        	
+        }
+        
+        if ((this.count % 2) == 0){
+        	LOG.info("-- Count of allowed networks is even, so going to present in 2 columns");
+        	this.count = 2;
+        }
     }
-	
-	
+		
 	public int getCount() {
 		return count;
 	}
@@ -62,32 +66,4 @@ private int count = 0;
 		this.count = count;
 	}
 
-
-	public boolean isSn() {
-		return sn;
-	}
-
-
-	public void setSn(boolean sn) {
-		this.sn = sn;
-	}
-
-
-	public boolean isTn() {
-		return tn;
-	}
-
-
-	public void setTn(boolean tn) {
-		this.tn = tn;
-	}
-	
-
-	public boolean isAm() {
-		return am;
-	}
-
-	public void setAm(boolean am) {
-		this.am = am;
-	}
 }

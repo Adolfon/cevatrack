@@ -1044,6 +1044,106 @@ INSERT INTO aaf_domain_action_lookup
 VALUES('am_site', 'view', 'View Automotive Site', 1, 'View Automotive Site', '2021-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
 SELECT add_aaf_role_permission ('am_all', 'am_site', 'view', '*');
 --changeset adolfo.cano:001-cjf-template-db-048 failOnError:false splitStatements:false logicalFilePath:001-template.sql
-ALTER TABLE order_lookup ADD COLUMN sent_to_ml timestamp with time zone;
---changeset adolfo.cano:001-cjf-template-db-049 failOnError:false splitStatements:false logicalFilePath:001-template.sql
-ALTER TABLE order_lookup ADD COLUMN eta timestamp with time zone;
+ALTER TABLE order_lookup ADD COLUMN IF NOT EXISTS sent_to_ml timestamp with time zone;
+ALTER TABLE order_lookup ADD COLUMN IF NOT EXISTS eta timestamp with time zone;
+--changeset adolfo.cano:001-cjf-template-db-049 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE IF NOT EXISTS mailer_order (
+	load_id text NULL,
+	load_date date NULL,
+	ml_order_ref text NOT NULL,
+	client text NULL,
+	client_ref text NULL,
+	order_number text NULL,
+	notify_method text NULL,
+	delivery_date timestamptz NULL,
+	shipped_date timestamptz NULL,
+	sent_to_ml timestamptz NULL,
+	access_token text NULL,
+	earliest_booking timestamptz NULL,
+	latest_booking timestamptz NULL,
+	eta timestamptz NULL,
+	email_sent timestamptz NULL,
+	loc_name text NULL,
+	loc_addr1 text NULL,
+	loc_addr2 text NULL,
+	loc_addr3 text NULL,
+	loc_addr4 text NULL,
+	loc_postcode text NULL,
+	loc_latitude text NULL,
+	loc_longitude text NULL,
+	phone text NULL,
+	email text NULL,
+	products text NULL,
+	driver text NULL,
+	last_updated timestamptz NULL,
+	ml_site_lat text NULL,
+	ml_site_long text NULL,
+	ml_route_id text NULL,
+	ml_journey_alias text NULL,
+	ml_journey_id text NULL,
+	ml_driver_fullname text NULL,
+	ml_pta timestamptz NULL,
+	ml_site_id text NULL,
+	ml_journey_drop_id text NULL,
+	email_attempts int4 NULL DEFAULT 0,
+	email_failure_code text NULL,
+	CONSTRAINT mailer_order_pkey PRIMARY KEY (ml_order_ref),
+	CONSTRAINT mailer_order_unique UNIQUE (ml_order_ref),
+	CONSTRAINT mailer_token_unique UNIQUE (access_token)
+);
+--changeset adolfo.cano:001-cjf-template-db-050 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE healthcare_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+   
+INSERT INTO healthcare_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Nutricia','NUTRIC','Nutricia.png','NUTRIC',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-051 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('hc_microlise', 'tibco', 'Connections for Healthcare web in Microlise', 1, 'Connections for Healthcare web network in Microlise');
+select add_aaf_domain_action_lookup('hc_site', 'view', 'view Healthcare web site', 1, 'view Healthcare web site');
+select add_aaf_domain_action_lookup('hc_client', 'view', 'View Healthcare web client', 1, 'View Healthcare web client');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('hc_microlise', 'tibco', 'uat', 'Connects to healthcare UAT through tibco');
+SELECT add_aaf_permission ('hc_microlise', 'tibco', 'prod', 'Connects to healthcare PROD through tibco');
+SELECT add_aaf_permission ('hc_site', 'view', '*', 'View all the healthcare web sites');
+SELECT add_aaf_permission ('hc_client', 'view', '*', 'View all the healthcare web clients of a given site');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('hc_all', 'Healthcare network web all sites and clients');
+SELECT add_aaf_role ('hc_microlise_tibco_uat', 'Healthcare web connection to UAT throgh Tibco');
+SELECT add_aaf_role ('hc_microlise_tibco_prod', 'Healthcare web connection to PROD throgh Tibco');
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('hc_all', 'hc_site', 'view', '*');
+SELECT add_aaf_role_permission ('hc_all', 'hc_client', 'view', '*');
+SELECT add_aaf_role_permission ('hc_microlise_tibco_uat', 'hc_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('hc_microlise_tibco_prod', 'hc_microlise', 'tibco', 'prod');
+--changeset adolfo.cano:001-cjf-template-db-052 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_microlise', 'Microlise Webservice for Healthcare', 7, 'Healthcare Microlise', '2021-08-03 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_client', 'Healthcare Client', 5, 'Healthcare Client', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_site', 'Healthcare Site', 5, 'Healthcare Site', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_microlise', 'tibco', 'Connect via Tibco', 1, 'Tibco Connection', '2021-08-03 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_client', 'view', 'View Healthcare Client', 1, 'View Healthcare Client', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_site', 'view', 'View Healthcare Site', 1, 'View Healthcare Site', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+

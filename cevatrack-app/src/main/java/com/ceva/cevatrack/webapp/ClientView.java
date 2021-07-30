@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.AutomotiveClientService;
+import com.ceva.cevatrack.service.HealthcareClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
@@ -102,6 +103,9 @@ public class ClientView implements Serializable, CommonApp {
     
     @EJB
     AutomotiveClientService amClientService;
+    
+    @EJB
+    HealthcareClientService hcClientService;
 
     /**
      * initialise
@@ -137,9 +141,13 @@ public class ClientView implements Serializable, CommonApp {
         	 	this.network="SmartNet";
         	 	break;
         	 case "automotive": 
-        		 configs = amClientService.searchAutomotiveClient();
-        		 this.network="Automotive";        		         	
-        	 }        	 
+	    		 configs = amClientService.searchAutomotiveClient();
+	    		 this.network="Automotive";
+	    		 break;
+		   	 case "healthcare": 
+				 configs = hcClientService.searchHealthcareClient();
+				 this.network="Healthcare";        		         	
+			 }  
              LOGGER.info(" -- the number of clients recovered from the data base are: " + configs.size());
         }catch (Exception e){
         	LOGGER.error(" error trying recovering database table for clients: " + e.getStackTrace());

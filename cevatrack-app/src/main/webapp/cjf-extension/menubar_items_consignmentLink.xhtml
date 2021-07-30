@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:ph="http://primefaces.org/harmony"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ph:menu widgetVar="me">
+		<aaf:authenticated>
+
+			<p:submenu label="Transport">
+				<p:menuitem value="SmartNet" url="/clients.xhtml?network=smartnet" />
+				<p:menuitem value="TechNet" url="/clients.xhtml?network=technet" />
+				<p:menuitem value="Automotive" url="/clients.xhtml?network=automotive" />
+			</p:submenu>
+			<p:submenu label="#{lbl['menu.subm.user']}" icon="fa fa-user"
+				rendered="#{(aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.ROLE_VIEW,AAFPermissionConstants.PERMISSION_VIEW, AAFPermissionConstants.USER_VIEW )) or
+							(!aAFSecurityBean.internal)	}">
+				<p:menuitem value="#{lbl['menu.mitm.userRole']}" url="/role.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.ROLE_VIEW)}" />
+				<p:menuitem rendered="#{!aAFSecurityBean.internal}"
+					value="#{lbl['menu.mitm.changePassword']}" icon="fa fa-unlock"
+					url="/change-password.xhtml" />
+				<p:menuitem value="#{lbl['menu.mitm.userPermission']}"
+					url="/permission.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.PERMISSION_VIEW)}" />
+				<p:menuitem value="#{lbl['menu.mitm.rolePermission']}"
+					url="/role-permission.xhtml"
+					rendered="#{aAFSecurityBean.hasAllPermissions(AAFPermissionConstants.ROLE_VIEW,AAFPermissionConstants.PERMISSION_VIEW)}" />
+				<p:menuitem value="#{lbl['menu.mitm.userMaintenance']}"
+					url="/users-maintenance.xhtml"
+					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.USER_VIEW)}" />
+			</p:submenu>
+
+		</aaf:authenticated>
+
+
+	
+		<aaf:notAuthenticated>
+			<p:menuitem class="hideMenuInLargeResolution" style="padding-top:60%;"
+				value=" #{lbl['user.mitm.signUp']}"
+				action="signup.xhtml?faces-redirect=true" icon="fa fa-user-plus" />
+		</aaf:notAuthenticated>
+
+		<aaf:authenticated>
+			<p:menuitem class="hideMenuInLargeResolution"
+				value="#{appUserBean.appUser.AAFUser.firstName} #{appUserBean.appUser.AAFUser.lastName}"
+				action="userProfile.xhtml?faces-redirect=true" icon="fa fa-user" />
+			<p:menuitem class="hideMenuInLargeResolution"
+				value="#{lbl['user.logout']}" action="#{logoutBean.logout()}"
+				icon="fa fa-sign-out" />
+		</aaf:authenticated>
+
+		<aaf:notAuthenticated>
+			<p:menuitem class="hideMenuInLargeResolution" style="padding-top:60%;"
+				value=" #{lbl['user.mitm.login']}"
+				url="login.xhtml?faces-redirect=true" icon="fa fa-sign-in" />
+		</aaf:notAuthenticated>
+
+	</ph:menu>
+
+</ui:composition>

@@ -5,21 +5,11 @@
 		
 		<ui:define name="content">
 		    <h2>Sorry, there was an error in the application, please contact support if the problem persist</h2>
-		
-		    <h4>Error message:</h4>
-		    #{requestScope['error-message']}
-		
-			<!-- 
-		    <h4>Stack trace for the error</h4>
-		    <ul>
-		    <ui:repeat value="#{requestScope['error-stack']}" var="stack">
-		        <li>#{stack.className} - #{stack.methodName} - #{stack.fileName} (#{stack.lineNumber})</li>
-		    </ui:repeat>
-		    </ul>  -->
-		<br></br>
-		<div style = "padding-top:3%;">
-			<h:link  value=" Go Home" outcome="home"/>
-		</div>
+	    	<p>Error message:  #{error-message}</p>
+			<br></br>
+			<div style = "padding-top:3%;">
+				<h:link  value=" Go Home" outcome="home"/>
+			</div>
 		</ui:define>
 		
 		<ui:define name="footer">

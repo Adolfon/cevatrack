@@ -5,15 +5,22 @@
 	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
 	xmlns:ph="http://primefaces.org/harmony"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:shiro="http://shiro.apache.org/tags">
 	<ph:menu widgetVar="me">
+			
 		<aaf:authenticated>
-
-			<p:submenu label="Transport">
-				<p:menuitem value="SmartNet" url="/clients.xhtml?network=smartnet" />
-				<p:menuitem value="TechNet" url="/clients.xhtml?network=technet" />
-				<p:menuitem value="Automotive" url="/clients.xhtml?network=automotive" />
+			<p:submenu label="Transport" rendered="#{(SN_VISIBLE) or (TN_VISIBLE) or (AM_VISIBLE) or (HC_VISIBLE)}">
+				<p:menuitem value="SmartNet" url="/clients.xhtml?network=smartnet" 
+					rendered="#{SN_VISIBLE}"/>
+				<p:menuitem value="TechNet" url="/clients.xhtml?network=technet" 
+					rendered="#{TN_VISIBLE}"/>
+				<p:menuitem value="Automotive" url="/clients.xhtml?network=automotive" 
+					rendered="#{AM_VISIBLE}"/>
+				<p:menuitem value="Healthcare" url="/clients.xhtml?network=healthcare" 
+					rendered="#{HC_VISIBLE}"/>
 			</p:submenu>
+			
 			<p:submenu label="#{lbl['menu.subm.user']}" icon="fa fa-user"
 				rendered="#{(aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.ROLE_VIEW,AAFPermissionConstants.PERMISSION_VIEW, AAFPermissionConstants.USER_VIEW )) or
 							(!aAFSecurityBean.internal)	}">
@@ -32,10 +39,7 @@
 					url="/users-maintenance.xhtml"
 					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.USER_VIEW)}" />
 			</p:submenu>
-
 		</aaf:authenticated>
-
-
 	
 		<aaf:notAuthenticated>
 			<p:menuitem class="hideMenuInLargeResolution"
