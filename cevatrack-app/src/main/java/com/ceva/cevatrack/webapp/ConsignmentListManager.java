@@ -307,13 +307,21 @@ public class ConsignmentListManager {
      *             if not available
      */
     public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
+    	LOGGER.info( "-- getConsignmentDetail parameters: "+ consignmentReference + ",network: " + network);
         Consignment consignment;
-        Subject currentUser = SecurityUtils.getSubject();
+        Subject currentUser = null;        
         try {
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
             if (consignment == null){
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
             	throw new Exception("-- The consignment was not retrieved and it is null --");
+            }
+            if (!network.equalsIgnoreCase("HealthLink")){
+            	currentUser = SecurityUtils.getSubject();
+            }else{
+            	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK
+            	LOGGER.info(" -- HealthLind detected --");
+                return consignment;	  
             }
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
             if (network.equalsIgnoreCase("smartnet")){
@@ -335,10 +343,6 @@ public class ConsignmentListManager {
 	            if (currentUser.isPermitted(HC_GLOBAL) || currentUser.isPermitted(HC_SITE + consignment.getSiteId())) {
 	                return consignment;
 	            }	            
-            }
-            if (network.equalsIgnoreCase("HealthLink")){
-            	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK
-	                return consignment;	            	            
             }
             throw new Exception("User does not have access to site - Security violation");
         } catch (Exception e) {

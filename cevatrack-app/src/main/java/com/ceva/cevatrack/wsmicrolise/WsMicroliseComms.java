@@ -100,7 +100,7 @@ public class WsMicroliseComms {
      *             for any errors found
      */
     public static Consignment getConsignment(String consignmentRef, String network) throws Exception {
-        LOGGER.info("WsMicroliseComms - getConsignment-starting");
+        LOGGER.info("WsMicroliseComms - getConsignment-starting, params: " + consignmentRef + " ,network: " + network);
         WsMicroliseEnvironment env = new WsMicroliseEnvironment(network);
         // String requestBody = GETCONSIGNMENT.replace("???????", consignmentRef);
         String requestBody = env.getGetConsignmentBody(consignmentRef);
@@ -125,7 +125,7 @@ public class WsMicroliseComms {
             // e.printStackTrace();
             throw new Exception("abend escalated on getConsignment", e);
         }
-        LOGGER.info("wsAutomotive - Received:" + wsresp.toString());
+        LOGGER.info("Response received: " + wsresp.toString());
         return wsresp.getGetConsignmentSoapBody().getGetConsignmentResponse().getGetConsignmentResult();
     }
 

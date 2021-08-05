@@ -72,6 +72,7 @@ public class WsMicroliseEnvironment {
      * he has permission in that network
      */
     public WsMicroliseEnvironment(String network) {
+    	LOGGER.info(" -- starting environment, param: " + network);
     	Map<String, String> local = null;  
     	Properties systemProps = System.getProperties();
     	try{
@@ -142,6 +143,7 @@ public class WsMicroliseEnvironment {
         if (network != null && network.equalsIgnoreCase("HealthLink")){
         	envDescription = "health_link.tibco.prod";
         }
+        LOGGER.info("envinronment description selected: " + envDescription);
         setAuthorized();
         setProxied();
     }
