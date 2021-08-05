@@ -173,7 +173,7 @@ public class ConsignmentListManager {
      */
     public DatedConsignmentList getConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd, Boolean cache,
             Boolean WS, String network) throws Exception {
-
+    	LOGGER.info(" -- Received parameters: " + fromYyyymmdd + ", toYyyymmdd: " + toYyyymmdd + " ,cache: " + cache);
         housekeep(); // Erase old consignments
         String listKey;
         Subject currentUser = null;

@@ -76,7 +76,8 @@ public class WsMicroliseEnvironment {
     	Properties systemProps = System.getProperties();
     	try{
     		this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();//problem for WS
-    		LOGGER.info(" -- Existing parameters: " + parameters.size() + systemProps.getProperty("environment.code"));
+    		LOGGER.info(" -- Existing parameters: " + parameters.size() + ", " + systemProps.getProperty("environment.code")
+    		+ ",network: " + network);
     		if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("LOCAL")){
     			LOGGER.info(" -- In the local environment JSF container..");
     			local = loadCevaResponsiveXmlJAXRSProps();
@@ -226,7 +227,7 @@ public class WsMicroliseEnvironment {
         if (parameters.containsKey(PROXYSERVER + envDescription)) { // microlise.proxyserver.
             proxied = true;
         }
-        LOGGER.trace("Proxy Required: {0}", Boolean.toString(proxied));
+        LOGGER.info("Proxy Required: {0}", Boolean.toString(proxied));
     }
 
     /**
