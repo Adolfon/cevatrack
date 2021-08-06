@@ -117,7 +117,8 @@
 						sortBy="#{con.statusString}" filterMatchMode="exact"
 						filterBy="#{con.statusString}" priority="3">
 						<f:facet name="filter">
-							<p:selectOneMenu onchange="PF('consignmentsTable').filter()" styleClass="filteredCol" ajax="true">	                        	
+							<p:selectOneMenu widgetVar="selectStatusColVal" id ="selectStatusColID" value="#{dtConsignmentView.initStatusSelect}" 
+								onchange="PF('consignmentsTable').filter()" styleClass="filteredCol" ajax="true">	                        	
                           		<f:selectItem itemLabel="#{param['initstatus']}" itemValue="#{param['initstatus']}"   />		                        																								
 								<f:selectItems value="#{dtConsignmentView.statusSelectItems}"  />
 								<f:selectItem itemLabel="No filter" itemValue="" noSelectionOption="true" />

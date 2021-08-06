@@ -59,6 +59,15 @@ public class ConsignmentView implements Serializable, CommonApp {
     private LocalDate reportLocalDateTo;
     private final byte INTERVAL_DAYS = 7;
     private String network;
+    private String initStatusSelect;
+
+	public String getInitStatusSelect() {
+		return initStatusSelect;
+	}
+
+	public void setInitStatusSelect(String initStatusSelect) {
+		this.initStatusSelect = initStatusSelect;
+	}
 
 	public void setReportDateTo(Date reportLocalDateTo) {
         this.reportLocalDateTo = dateToLocal(reportLocalDateTo);
@@ -199,10 +208,18 @@ public class ConsignmentView implements Serializable, CommonApp {
             FacesContext.getCurrentInstance().addMessage(null, msg);
             consignments = new DatedConsignmentList();
         }
-        if (params.containsKey("initstatus")) {
-            RequestContext rc = RequestContext.getCurrentInstance();
-            rc.execute("PF('consignmentsTable').filter();");
+        RequestContext rc = RequestContext.getCurrentInstance();
+        if (params.containsKey("initstatus")) {        	           
+            String paramStatus = params.get("initstatus");
+            this.initStatusSelect = paramStatus;
+            LOGGER.info(" -- param value: " + paramStatus);
+        }else{
+        	 this.initStatusSelect = "";
         }
+        LOGGER.info("Init filter value: " + this.initStatusSelect);
+        String at = "jQuery('div.ui-helper-hidden-accessible select').val('" + initStatusSelect +"');";
+        rc.execute(at);
+        rc.execute("PF('consignmentsTable').filter();");
     }
 
     /**

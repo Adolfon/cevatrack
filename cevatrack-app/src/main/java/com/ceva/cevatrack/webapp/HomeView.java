@@ -23,7 +23,7 @@ public class HomeView implements CommonApp {
 private int count = 0;
 
 	public void init() {
-        log.info(" -- In the HomeView class --");
+        log.info(" -- In the HomeView class --, count: " + count);
         try {
             checkLogin();
         } catch (IOException e) {
@@ -51,10 +51,19 @@ private int count = 0;
         	
         }
         
-        if ((this.count % 2) == 0){
-        	LOG.info("-- Count of allowed networks is even, so going to present in 2 columns");
+        if (this.count>3){
+        	if ((this.count % 2) == 0){
+            	LOG.info("-- Count of allowed networks is even and bigger than 3, so going to present in 2 columns, count: " + count);
+            	this.count = 2;
+            }else{
+            	LOG.info(" -- Count is odd and bigger than 3, count: " + count);
+            	this.count = 3;
+            }
+        }else if ((this.count % 2) == 0){
+        	LOG.info("-- Count of allowed networks is even, so going to present in 2 columns, count: " + count);
         	this.count = 2;
         }
+                
     }
 		
 	public int getCount() {
