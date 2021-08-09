@@ -23,6 +23,7 @@ import com.ceva.cevatrack.domain.LinkBean;
 import com.ceva.cevatrack.service.LinkService;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
+import com.ceva.cevatrack.wsmicrolise.getconsignment.ConsignmentDetail;
 import com.ceva.security.aaf.session.SessionManager;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Vehicle;
 
@@ -87,7 +88,18 @@ public class DetailViewLink implements Serializable {
     /**
      * called once
      */
-    @PostConstruct
+	private boolean showMap;
+    public boolean isShowMap() {
+		return showMap;
+	}
+
+
+	public void setShowMap(boolean showMap) {
+		this.showMap = showMap;
+	}
+
+
+	@PostConstruct
     public void init() {
         LOGGER.info("-- I am in the init function of DetailViewLink");
         //source = "https://maps.google.com/maps?q='52.51771,-1.90308&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed";
@@ -135,7 +147,24 @@ public class DetailViewLink implements Serializable {
 //            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error", getMessage());
 //            FacesContext.getCurrentInstance().addMessage(null, msg);
             goToError(" - Sorry, there was a network problem, please try again later -");
-        }        
+        }
+        if (consignment == null){
+        	LOGGER.warn(" -- Consignment not available ");
+        	goToError("Sorry, the information is not availalbre righ now, please try again later");
+        	return;
+        }
+        LOGGER.info(" -- Consingment recovered details: " + consignment);
+        for(ConsignmentDetail con: consignment.getConsignmentDetails()){
+        	LOGGER.info("\n --Details: " + con);
+        	LOGGER.info(" \n============================================== ");
+        	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
+        }
+        
+        if (consignment.getStatusString().equalsIgnoreCase("Delivered")){
+        	this.showMap = false;
+        }else{
+        	this.showMap = true;
+        }
         // --- FOR THE DELIVERY PLACE YOU CAN USE THE RECOVERED CONSIGNMENT INFORMATION INSTEAD OF DATABASE INFORMATION??? In my test it looks more accurate----
         //place_loc = consignment.getSiteLat() + ", " + consignment.getSiteLong();
         // ===================================
