@@ -24,9 +24,12 @@ import com.ceva.cevatrack.service.LinkService;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.ConsignmentDetail;
-import com.ceva.security.aaf.session.SessionManager;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Vehicle;
-
+import com.ceva.security.aaf.session.SessionManager;
+/*
+ * SMS sent to the clients with URL token validation
+ * 
+ */
 
 @SuppressWarnings("serial")
 @ManagedBean(name = "dtDetailViewLink")
@@ -44,11 +47,10 @@ public class DetailViewLink implements Serializable {
     private Boolean pollEnabled;
     private Boolean retry;
     private String network;   
-	
-	private String vehicule_loc;
-	
-	private String place_loc;
-	
+    private String windowStart;
+    private String windowEnd;	
+	private String vehicule_loc;	
+	private String place_loc;	
 	private String apiKey = ApplicationGlobalConfig.GoogleMapsAPIKey;
 	
 	public String getApiKey() {
@@ -85,19 +87,14 @@ public class DetailViewLink implements Serializable {
 
     @EJB
     LinkService linkService;
-    /**
-     * called once
-     */
 	private boolean showMap;
     public boolean isShowMap() {
 		return showMap;
 	}
 
-
 	public void setShowMap(boolean showMap) {
 		this.showMap = showMap;
 	}
-
 
 	@PostConstruct
     public void init() {
@@ -106,7 +103,7 @@ public class DetailViewLink implements Serializable {
         place_loc = "52.51771,-1.90308";
         vehicule_loc = "52.5152262,-1.9163927";
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap(); 
-        String linkParameter = params.get("link");
+        String linkParameter = params.get("t");
         LOGGER.info("-- Link parameter retrieved: " + linkParameter + ", and source: " + place_loc);
         if (linkParameter == null){
         	goToError("Parameter mission");
@@ -154,20 +151,17 @@ public class DetailViewLink implements Serializable {
         	return;
         }
         LOGGER.info(" -- Consingment recovered details: " + consignment);
+        modifyConsignmentVisitWindow(consignment);
         for(ConsignmentDetail con: consignment.getConsignmentDetails()){
         	LOGGER.info("\n --Details: " + con);
         	LOGGER.info(" \n============================================== ");
         	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
-        }
-        
+        }        
         if (consignment.getStatusString().equalsIgnoreCase("Delivered")){
         	this.showMap = false;
         }else{
         	this.showMap = true;
         }
-        // --- FOR THE DELIVERY PLACE YOU CAN USE THE RECOVERED CONSIGNMENT INFORMATION INSTEAD OF DATABASE INFORMATION??? In my test it looks more accurate----
-        //place_loc = consignment.getSiteLat() + ", " + consignment.getSiteLong();
-        // ===================================
         String vlong = null, vlat = null;
         for (Vehicle v: consignment.getVehicles()){
         	if (v.getLastContactLong() != 0.0f){
@@ -181,7 +175,33 @@ public class DetailViewLink implements Serializable {
         LOGGER.info(" -- Number of vehicules was: " + consignment.getVehicles().size() + " ,consignment recovered successfully, vehicule location is: " + vehicule_loc);
     }
 
-    private void goToError(String error) {
+    private void modifyConsignmentVisitWindow(Consignment consignment2) {
+    	if (StringUtils.isBlank(consignment2.getTimeWindowStartString()) || StringUtils.isBlank(consignment2.getTimeWindowEndString())){
+    		LOGGER.info(" -- Consignment Window date was empty --");
+    		this.windowStart = "";
+    		this.windowEnd = "";
+    		return;
+    	}
+    	LOGGER.info(" -- Window modified from (start,end): " + consignment.getTimeWindowStartString() + ", " + consignment.getTimeWindowEndString());
+    	try{
+		 //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM hh:mm a", Locale.ENGLISH);   
+	     LocalDateTime ldt_start = LocalDateTime.parse(consignment.getTimeWindowStart(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);	     
+	     //ZoneId defaultZone = TimeZone.getTimeZone("Europe/London").toZoneId();
+	     ldt_start = ldt_start.minusHours(1);
+	     LocalDateTime ldt_end = LocalDateTime.parse(consignment.getTimeWindowEnd(),  DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+	     ldt_end = ldt_end.plusHours(1);
+	     this.windowStart = ldt_start.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
+	     this.windowEnd = ldt_end.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
+    	}catch(Exception e){
+    		this.windowStart = "";
+    		this.windowEnd = "";
+    		LOGGER.error(" -- Date modification error -- ", e);
+    	}
+    	 LOGGER.info("-- Window modified to (start, end): " + getWindowStart() + " ,end: " + getWindowEnd());
+	}
+
+
+	private void goToError(String error) {
     	try {
     		SessionManager.getSession().setAttribute("error-message", error);
 			FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml");
@@ -250,11 +270,28 @@ public class DetailViewLink implements Serializable {
         this.consignment = consignment;
     }
 
-    /**
-     * @return info for user
-     */
     public String getMessage() {
         return message;
     }
+
+
+	public String getWindowStart() {
+		return windowStart;
+	}
+
+
+	public void setWindowStart(String windowStart) {
+		this.windowStart = windowStart;
+	}
+
+
+	public String getWindowEnd() {
+		return windowEnd;
+	}
+
+
+	public void setWindowEnd(String windowEnd) {
+		this.windowEnd = windowEnd;
+	}
 
 }

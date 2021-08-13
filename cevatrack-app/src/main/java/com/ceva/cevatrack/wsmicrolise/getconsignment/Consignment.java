@@ -697,6 +697,7 @@ public class Consignment {
 				+ ", plannedStartTime=" + plannedStartTime + ", actualStartTime=" + actualStartTime + ", podStartTime="
 				+ podStartTime + ", vehicles=" + vehicles + ", drivers=" + drivers + ", siteGeoRadius=" + siteGeoRadius
 				+ ", durationOnSite=" + durationOnSite + ", journeyActualStartTime=" + journeyActualStartTime
+				+ " ,journeyActualStartTimeString: " + getJourneyActualStartTimeString()
 				+ ", isAdHoc=" + isAdHoc + ", isTranshipment=" + isTranshipment + ", clauseCode=" + clauseCode
 				+ ", parentCode=" + parentCode + ", consignmentHeaderId=" + consignmentHeaderId + ", journeyId="
 				+ journeyId + ", consignmentHeaderInfo1=" + consignmentHeaderInfo1 + ", consignmentHeaderInfo2="
@@ -706,7 +707,8 @@ public class Consignment {
 				+ ", consignmentHeaderInfo7=" + consignmentHeaderInfo7 + ", consignmentHeaderInfo8="
 				+ consignmentHeaderInfo8 + ", consignmentHeaderInfo9=" + consignmentHeaderInfo9
 				+ ", consignmentHeaderInfo10=" + consignmentHeaderInfo10 + ", consignmentHeaderInfo11="
-				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";
+				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + ", TimeWindowStartString: " + getTimeWindowStartString()
+				+ " , getTimeWindowEndString: " + getTimeWindowEndString() + " ,statusString: " + getStatusString() + "]";
 	}        
 
 }

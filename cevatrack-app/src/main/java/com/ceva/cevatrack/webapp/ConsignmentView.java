@@ -218,7 +218,9 @@ public class ConsignmentView implements Serializable, CommonApp {
         }
         LOGGER.info("Init filter value: " + this.initStatusSelect);
         String at = "jQuery('div.ui-helper-hidden-accessible select').val('" + initStatusSelect +"');";
+        String at2 = "jQuery('div.ui-selectonemenu label').text('" + initStatusSelect +"');";
         rc.execute(at);
+        rc.execute(at2);
         rc.execute("PF('consignmentsTable').filter();");
     }
 
