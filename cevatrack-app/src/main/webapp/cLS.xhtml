@@ -42,13 +42,12 @@
             </div>
           </p:panel>          		  
 		  
-		  <ui:fragment rendered="#{(! empty dtDetailViewLink.consignment.ataString and dtDetailViewLink.consignment.statusString == 'To be delivered') or 
-		  	(! empty dtDetailViewLink.consignment.etaString and dtDetailViewLink.consignment.statusString == 'To be delivered') or 
-		  	(! empty dtDetailViewLink.consignment.timeWindowStartString and ! empty dtDetailViewLink.consignment.timeWindowEndString and dtDetailViewLink.consignment.statusString == 'To be delivered') or 
-		  	(dtDetailViewLink.consignment.siteGeoRadius != 0) or (! empty dtDetailViewLink.consignment.journeyActualStartTimeString)}">		  			  			
+		  <ui:fragment rendered="#{(! empty dtDetailViewLink.consignment.ataString or ! empty dtDetailViewLink.consignment.etaString) or 		  	 
+		  	(! empty dtDetailViewLink.consignment.timeWindowStartString and ! empty dtDetailViewLink.consignment.timeWindowEndString and dtDetailViewLink.consignment.statusString == 'To be delivered')
+		  		or (dtDetailViewLink.consignment.siteGeoRadius != 0) or (! empty dtDetailViewLink.consignment.journeyActualStartTimeString)}">		  			  			
 	          <p:panel id="toggleable-timings" header="Visit Details" toggleable="true" widgetVar="accordian_timings" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
 	            <div class="ui-g">
-	             <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.ataString and not empty dtDetailViewLink.consignment.etaString}">
+	             <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.ataString or (not empty dtDetailViewLink.consignment.etaString) and (dtDetailViewLink.consignment.statusString != 'To be delivered')}">
 	              <div class="ui-g-12 ui-md-4 ui-lg-3">
 		              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
 		                <div class="panel-heading">Arrival</div>
@@ -116,6 +115,33 @@
 	            </div>
 	          </p:panel>
           </ui:fragment> 
+          
+          <ui:fragment id="fragmentSignatory" rendered="#{dtDetailViewLink.consignment.signatory.length() + dtDetailViewLink.consignment.signatory.length() > 0}">
+	          <p:panel id="toggleable-pod" header="Signature" toggleable="true" widgetVar="accordian_pod" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	            <div class="ui-g">
+	               
+	              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.signatory}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Signatory</div>
+	                    <div class="panel-body">#{dtDetailViewLink.consignment.signatory}</div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	              <ui:fragment rendered="#{dtDetailViewLink.consignment.signature.length() > 0}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Signature</div>
+	                    <div class="panel-body">
+	                      <img class="signatureimg" src="data:image/png;base64, #{dtDetailViewLink.consignment.signature}" />
+	                    </div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	
+	            </div>
+	          </p:panel>
+          </ui:fragment>
 
           <ui:fragment id="fragmentVehicles" rendered="#{dtDetailViewLink.consignment.vehicles.size() gt 0}">
             <p:panel id="toggleable-vehicles" header="Vehicles" toggleable="true" widgetVar="accordian_vehicles" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">

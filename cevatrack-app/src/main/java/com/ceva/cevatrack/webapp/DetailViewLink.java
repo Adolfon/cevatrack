@@ -185,13 +185,15 @@ public class DetailViewLink implements Serializable {
     	LOGGER.info(" -- Window modified from (start,end): " + consignment.getTimeWindowStartString() + ", " + consignment.getTimeWindowEndString());
     	try{
 		 //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM hh:mm a", Locale.ENGLISH);   
-	     LocalDateTime ldt_start = LocalDateTime.parse(consignment.getTimeWindowStart(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);	     
-	     //ZoneId defaultZone = TimeZone.getTimeZone("Europe/London").toZoneId();
-	     ldt_start = ldt_start.minusHours(1);
+	     LocalDateTime ldt_start = LocalDateTime.parse(consignment.getTimeWindowStart(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 	     LocalDateTime ldt_end = LocalDateTime.parse(consignment.getTimeWindowEnd(),  DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-	     ldt_end = ldt_end.plusHours(1);
-	     this.windowStart = ldt_start.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
-	     this.windowEnd = ldt_end.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
+	     //ZoneId defaultZone = TimeZone.getTimeZone("Europe/London").toZoneId();
+	     if (consignment.getStatusString().equalsIgnoreCase("To be delivered")){
+	    	 ldt_start = ldt_start.minusMinutes(30);
+	    	 ldt_end = ldt_end.plusMinutes(30);
+		     this.windowStart = ldt_start.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
+		     this.windowEnd = ldt_end.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
+	     }
     	}catch(Exception e){
     		this.windowStart = "";
     		this.windowEnd = "";
