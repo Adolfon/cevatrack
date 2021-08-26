@@ -42,8 +42,9 @@
             </div>
           </p:panel>          		  
 		  
-		  <ui:fragment rendered="#{(! empty dtDetailViewLink.consignment.ataString or ! empty dtDetailViewLink.consignment.etaString) or 		  	 
-		  	(! empty dtDetailViewLink.consignment.timeWindowStartString and ! empty dtDetailViewLink.consignment.timeWindowEndString and dtDetailViewLink.consignment.statusString == 'To be delivered')
+		  <ui:fragment rendered="#{(! empty dtDetailViewLink.consignment.ataString and dtDetailViewLink.consignment.statusString != 'To be delivered') or 
+		  	(! empty dtDetailViewLink.consignment.etaString and dtDetailViewLink.consignment.statusString == 'To be delivered') or 		  	 
+		  	(! empty dtDetailViewLink.windowStart and ! empty dtDetailViewLink.windowEnd and dtDetailViewLink.consignment.statusString == 'To be delivered')
 		  		or (dtDetailViewLink.consignment.siteGeoRadius != 0) or (! empty dtDetailViewLink.consignment.journeyActualStartTimeString)}">		  			  			
 	          <p:panel id="toggleable-timings" header="Visit Details" toggleable="true" widgetVar="accordian_timings" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
 	            <div class="ui-g">
@@ -73,7 +74,7 @@
 	              	</div>                                                
 	             </ui:fragment>
 	             <ui:fragment rendered="#{dtDetailViewLink.consignment.statusString == 'To be delivered' }">	 
-	               <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.timeWindowStartString and ! empty dtDetailViewLink.consignment.timeWindowEndString}">
+	               <ui:fragment rendered="#{! empty dtDetailViewLink.windowStart and ! empty dtDetailViewLink.windowEnd}">
 	                <div class="ui-g-12 ui-md-4 ui-lg-3">
 	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
 	                    <div class="panel-heading">Window</div>
