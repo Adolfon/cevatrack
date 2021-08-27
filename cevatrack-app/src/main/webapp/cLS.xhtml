@@ -25,20 +25,27 @@
 					
 			<p:panel id="toggleable-header" header="Consignment #{dtDetailViewLink.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
 	          <div class="ui-g">
-		           <div class="ui-g-12 ui-md-4 ui-lg-3">
+		         <div class="ui-g-12 ui-md-4 ui-lg-3">
 		              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
 		                <div class="panel-heading">Reference</div>
 		                <div class="panel-body">#{dtDetailViewLink.consignment.consignmentReference}</div>
 		              </div>
-	             </div>
-		           
-		           
+	             </div>		           		           
                 <div class="ui-g-12 ui-md-3 ui-lg-2">
 		              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
 		                <div class="panel-heading">Status</div>
 		                <div class="panel-body">#{dtDetailViewLink.consignment.statusString}</div>
 		              </div>
-	              </div>	              
+	            </div>
+	            <ui:fragment rendered="#{dtDetailViewLink.consignment.statusString != 'To be delivered' and not empty dtDetailViewLink.feedBack_URL}">
+		            <div class="ui-g-12 ui-md-4 ui-lg-3">
+			              <div class="panel field-panel panel-default">
+			                <div class="panel-heading">How did we do?</div>
+			                <div class="panel-body">
+			                	Click <a target="_blank" href="#{dtDetailViewLink.feedBack_URL}"> here </a> to rate our service</div>
+			              </div>
+		             </div>	  
+	            </ui:fragment>            
             </div>
           </p:panel>          		  
 		  

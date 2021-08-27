@@ -5,20 +5,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
-
-//import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.ceva.cevatrack.domain.LinkBean;
 import com.ceva.cevatrack.service.LinkService;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
@@ -37,15 +32,10 @@ import com.ceva.security.aaf.session.SessionManager;
 public class DetailViewLink implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DetailViewLink.class);
-    private static final DateTimeFormatter DATEFORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
     private Consignment consignment;
     private String client;
-    private String consignmentReference;
     private String message;
-    // AutoRefresh
     private String date;
-    private Boolean pollEnabled;
-    private Boolean retry;
     private String network;   
     private String windowStart;
     private String windowEnd;	
@@ -95,18 +85,28 @@ public class DetailViewLink implements Serializable {
 	public void setShowMap(boolean showMap) {
 		this.showMap = showMap;
 	}
+	String feedBack_URL;
+	
+	public String getFeedBack_URL() {
+		return feedBack_URL;
+	}
+
+
+	public void setFeedBack_URL(String feedBack_URL) {
+		this.feedBack_URL = feedBack_URL;
+	}
+
 
 	@PostConstruct
     public void init() {
         LOGGER.info("-- I am in the init function of DetailViewLink");
-        //source = "https://maps.google.com/maps?q='52.51771,-1.90308&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed";
-        place_loc = "52.51771,-1.90308";
-        vehicule_loc = "52.5152262,-1.9163927";
+        place_loc = "";
+        vehicule_loc = "";
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap(); 
         String linkParameter = params.get("t");
-        LOGGER.info("-- Link parameter retrieved: " + linkParameter + ", and source: " + place_loc);
+        LOGGER.info("-- Link parameter retrieved: " + linkParameter );
         if (linkParameter == null){
-        	goToError("Parameter mission");
+        	goToError("Parameter missing");
         	return;
         }           
         client = "Nutricia"; //Nutricia from "Health care medicine" network      
@@ -121,13 +121,13 @@ public class DetailViewLink implements Serializable {
         	LOGGER.warn(" -- Not found on database --");
         	goToError("Authentication error");
         	return;
-        }
+        }        
         String consingmentString = lbean.getMl_order_ref();
         client = lbean.getClient();
         place_loc = lbean.getMl_site_lat() + ", " + lbean.getMl_site_long();
         LOGGER.info(" -- Data retrieved from data base, client: " + client + " ,consignment ref: " + consingmentString + " ,location: " + place_loc);
-        if (!client.equalsIgnoreCase("NUTRIC") || lbean.getMl_site_lat() == null || lbean.getMl_site_long() == null){
-        	LOGGER.warn(" --  client or place coordinates error --, linkParameter: " + linkParameter + ",linkBean: " + lbean);
+        if (!client.equalsIgnoreCase("NUTRIC")){
+        	LOGGER.warn(" --  client error --, linkParameter: " + linkParameter + ",linkBean: " + lbean);
         	goToError("Not enough information error");
         	return;
         }
@@ -140,28 +140,22 @@ public class DetailViewLink implements Serializable {
             LOGGER.info(" --Consignment retrieved: " + consignment);
         } catch (Exception e) {
             LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n", e);
-//            message = e.getCause().getMessage() + "... Press F5 to retry.";
-//            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error", getMessage());
-//            FacesContext.getCurrentInstance().addMessage(null, msg);
             goToError(" - Sorry, there was a network problem, please try again later -");
         }
         if (consignment == null){
         	LOGGER.warn(" -- Consignment not available ");
         	goToError("Sorry, the information is not availalbre righ now, please try again later");
         	return;
-        }
+        }    
         LOGGER.info(" -- Consingment recovered details: " + consignment);
+        this.feedBack_URL = linkService.getURL_rate_link("NUTRIC");    
+        LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         modifyConsignmentVisitWindow(consignment);
         for(ConsignmentDetail con: consignment.getConsignmentDetails()){
         	LOGGER.info("\n --Details: " + con);
         	LOGGER.info(" \n============================================== ");
         	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
-        }        
-        if (!consignment.getStatusString().equalsIgnoreCase("To be delivered")){
-        	this.showMap = false;
-        }else{
-        	this.showMap = true;
-        }
+        }                
         String vlong = null, vlat = null;
         for (Vehicle v: consignment.getVehicles()){
         	if (v.getLastContactLong() != 0.0f){
@@ -170,6 +164,16 @@ public class DetailViewLink implements Serializable {
         	if (v.getLastContactLat() != 0.0f){
         		vlat = String.valueOf(v.getLastContactLat());
         	}
+        }
+        if (!consignment.getStatusString().equalsIgnoreCase("To be delivered") ||  
+        		lbean.getMl_site_lat() == null || lbean.getMl_site_long() == null
+        		|| "".equals(lbean.getMl_site_lat()) || "".equals(lbean.getMl_site_long())
+        				|| vlong == null || vlat == null || vlong.equals("") || vlat.equals("")){
+        	LOGGER.info("Map is false, values: (site lat) " + lbean.getMl_site_lat() + ", (site long) " + lbean.getMl_site_long() 
+        		+ " ,(vlong) " + vlong + " ,(vlat) " + vlat);
+        	this.showMap = false;
+        }else{
+        	this.showMap = true;
         }
         vehicule_loc = vlat + " ," + vlong;
         LOGGER.info(" -- Number of vehicules was: " + consignment.getVehicles().size() + " ,consignment recovered successfully, vehicule location is: " + vehicule_loc);
@@ -200,51 +204,15 @@ public class DetailViewLink implements Serializable {
     	 LOGGER.info("-- Window modified to (start, end): " + getWindowStart() + " ,end: " + getWindowEnd());
 	}
 
-
 	private void goToError(String error) {
     	try {
-    		SessionManager.getSession().setAttribute("error-message", error);
+    		SessionManager.getSession().setAttribute("error-message-nutricia", error);
 			FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml");
 		} catch (IOException e) {
 			LOGGER.error("-- Error redirecting: ", e);
 		}
 		
 	}
-
-	public void refresh() {
-        LOGGER.info("I am in the refresh method in the Detailed view");
-        consignmentReference = this.consignment.getConsignmentReference();
-        LOGGER.info(" consignmentReference from the form: " + consignmentReference);
-        try {
-            consignment = consignmentListManager.getConsignmentDetail(consignmentReference,network);
-            if (!StringUtils.isBlank(consignmentReference)) {
-                this.consignment.setConsignmentReference(consignmentReference);
-                LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
-            }
-            this.setDate(LocalDateTime.now().format(DATEFORMAT));
-            retry = true;
-        } catch (Exception e) {
-            if (retry) {
-                retry = false;
-                LOGGER.info("-- Retrying to call WS getDetailConsignment..");
-                this.refresh();
-            } else {
-                message = e.getCause().getMessage() + "... Press F5 to retry.";
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error", getMessage());
-                FacesContext.getCurrentInstance().addMessage(null, msg);
-                retry = true;
-            }
-            LOGGER.error("-- Error in refresh method in the DetailView: " + e.getStackTrace());
-        }
-    }
-
-    public Boolean getPollEnabled() {
-        return pollEnabled;
-    }
-
-    public void setPollEnabled(Boolean pollEnabled) {
-        this.pollEnabled = pollEnabled;
-    }
 
     public String getDate() {
         return date;
@@ -274,21 +242,17 @@ public class DetailViewLink implements Serializable {
         return message;
     }
 
-
 	public String getWindowStart() {
 		return windowStart;
 	}
-
 
 	public void setWindowStart(String windowStart) {
 		this.windowStart = windowStart;
 	}
 
-
 	public String getWindowEnd() {
 		return windowEnd;
 	}
-
 
 	public void setWindowEnd(String windowEnd) {
 		this.windowEnd = windowEnd;

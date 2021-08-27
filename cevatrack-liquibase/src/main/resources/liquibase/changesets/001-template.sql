@@ -1146,4 +1146,32 @@ VALUES('hc_client', 'view', 'View Healthcare Client', 1, 'View Healthcare Client
 INSERT INTO aaf_domain_action_lookup
 (aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
 VALUES('hc_site', 'view', 'View Healthcare Site', 1, 'View Healthcare Site', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+--changeset adolfo.cano:001-cjf-template-db-053 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE IF NOT EXISTS mailer_client (
+	client text NOT NULL,
+	feedback_link text NULL,
+	housekeep_days int4 NULL,
+	window_eta_minus_mins int4 NULL,
+	window_eta_plus_mins int4 NULL,
+	from_email text NULL,
+	replyto_email text NULL,
+	email_link text NULL,
+	email_pre_link text NULL,
+	email_post_link text NULL,
+	email_signature text NULL,
+	web_service_group text NULL,
+	latest_notify_mins_before_window int4 NULL,
+	sms_body text NULL,
+	email_subject text NULL,
+	token_length_email int4 NULL,
+	token_length_sms int4 NULL,
+	redirect_to_test_email bool NULL,
+	test_email_recipient text NULL,
+	redirect_to_test_sms bool NULL,
+	test_sms_recipient text NULL,
+	icetrack_prefix text NULL,
+	sms_product bool NULL,
+	email_product bool NULL,
+	CONSTRAINT mailer_client_pkey PRIMARY KEY (client)
+);
 
