@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags"
+	xmlns:composite="http://xmlns.jcp.org/jsf/composite">
+
+	<composite:interface>
+		<composite:attribute name="loginBean" id="cmp_lgn_pge"
+			default="#{loginBean}" type="com.ceva.security.aaf.web.LoginBean" />
+		<composite:attribute name="id" />
+		<composite:attribute name="title" default="#{aafLbls['gen.title.cjftemplate']}"/>
+		<composite:attribute name="defaultHeader" default="true"/>
+		<composite:attribute name="library" default="images"/>
+		<composite:attribute name="name" default="logo.png"/>
+	</composite:interface>
+	<composite:implementation>
+
+		<h:panelGrid styleClass="centered-div">
+			<style>
+				input:-webkit-autofill + label {
+					top:0px;
+					color: #990033;
+    				font-size: 11px;
+				}
+			</style>
+
+				<div class="ui-g ui-g-nopad ui-noborder">
+					<div class="ui-sm-12 ui-md-1 ui-lg-1 ui-xl-1 ui-noborder"></div>
+
+					<div class="ui-sm-12 ui-md-10 ui-lg-10 ui-xl-10 ui-noborder">
+						<h:form styleClass="frm_login" id="frm_login">
+					<h:panelGroup rendered="#{cc.attrs.defaultHeader eq true}">	
+					
+						<div class="ceva-logo">
+							<p:graphicImage styleClass="ceva-image" library="#{cc.attrs.library}" name="#{cc.attrs.name}"/>
+						</div>
+
+						<div class="label-ceva">
+							<p:outputLabel class="label-black" value="#{cc.attrs.title}" />
+						</div>
+						
+					</h:panelGroup>
+					<h:panelGroup rendered="#{cc.attrs.defaultHeader eq false}">	
+						<composite:insertChildren>							
+						</composite:insertChildren>
+					</h:panelGroup>
+						<div class="ffl-wrapper">
+							<p:outputLabel for="txt_login_loginid"
+								value="#{aafLbls['login.username']}" class="ffl-label" />
+
+							<h:inputText id="txt_login_loginid"
+								value="#{cc.attrs.loginBean.loginId}" 
+								requiredMessage="#{aafLbls['user.loginRequired.info']}"
+								validator="#{cc.attrs.loginBean.validateLogin}" />
+						</div>
+						<div class="ffl-wrapper">
+							<p:outputLabel for="pwd_login_password"
+								value="#{aafLbls['login.password']}" class="ffl-label" />
+							<h:inputSecret id="pwd_login_password" 
+								value="#{cc.attrs.loginBean.password}"
+							
+								validator="#{cc.attrs.loginBean.validatePassword}" />
+								
+						</div>
+						<div class="msg"><p:messages  id="info_msgs" showSummary="true" globalOnly="false" autoUpdate="true"
+								closable="true"   /></div>
+						<div>
+							<p:commandButton value="#{aafLbls['login.btn.newLogin']}"
+								validateClient="true" ajax="true"  id="btn_login_loginbutton"
+								action="#{cc.attrs.loginBean.login}"
+								styleClass="ui-priority-primary-login-button" />
+
+						</div>
+						<div class="link-button">
+								<p:link action="#" id="lnk_login_forgotPassword"
+									outcome="forgotPassword">
+									<h:outputText class="gray" value="#{aafLbls['login.forgotYour']}" />
+									<h:outputText class="maroon"
+										value="#{aafLbls['login.passwordQu']}" />
+
+								</p:link>
+								<br />
+								<p:link action="#" id="topbar-profile-menu-button-signUp"
+									outcome="signup">
+									<h:outputText class="gray"
+										value="#{aafLbls['login.dontHaveAnAccount']}" />
+									<h:outputText class="maroon" value="#{aafLbls['login.signUp']}" />
+								</p:link>
+						</div>
+						</h:form>
+					<p>#{cjfBaseLbls['footer.version']} #{buildInfoBean.version} : #{buildInfoBean.deploymentBuildNumber} </p>
+					</div>
+					<div class="ui-sm-12 ui-md-1 ui-lg-1 ui-xl-1 ui-noborder"></div>
+				</div>	
+				<script>
+					$(window).load(function(){
+						$('input[type="text"]')[0].focus(); 
+					});
+				</script>
+		</h:panelGrid>
+	</composite:implementation>
+</ui:composition>
