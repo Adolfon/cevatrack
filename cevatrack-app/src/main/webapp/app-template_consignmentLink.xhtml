@@ -4,7 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:aaf="http://xmlns.jcp.org/jsf/composite/aaf" 
-	template="cjf-base/template/template.xhtml">
+	template="cjf-base/template/template_consignment_link.xhtml">
 		
 	<ui:define name="title">
 	    <title><h:outputText value="CEVATRACK"/></title>
@@ -34,9 +34,6 @@
 		<p:importConstants type="com.ceva.cevatrack.util.CJFPermissionConstants" var="CJFPermissionConstants" />
 	</ui:define>
 	
-	<ui:define name="signuplink">
-		<ui:include src="/cjf-extension/signup.xhtml" />
-	</ui:define>
 	
 	<ui:define name="cjf_template_menubar-items">
 		<ui:include src="/cjf-extension/menubar_items_consignmentLink.xhtml"/>

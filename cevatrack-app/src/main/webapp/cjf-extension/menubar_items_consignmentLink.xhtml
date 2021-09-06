@@ -41,13 +41,6 @@
 		</aaf:authenticated>
 
 
-	
-		<aaf:notAuthenticated>
-			<p:menuitem class="hideMenuInLargeResolution" style="padding-top:60%;"
-				value=" #{lbl['user.mitm.signUp']}"
-				action="signup.xhtml?faces-redirect=true" icon="fa fa-user-plus" />
-		</aaf:notAuthenticated>
-
 		<aaf:authenticated>
 			<p:menuitem class="hideMenuInLargeResolution"
 				value="#{appUserBean.appUser.AAFUser.firstName} #{appUserBean.appUser.AAFUser.lastName}"
@@ -56,12 +49,6 @@
 				value="#{lbl['user.logout']}" action="#{logoutBean.logout()}"
 				icon="fa fa-sign-out" />
 		</aaf:authenticated>
-
-		<aaf:notAuthenticated>
-			<p:menuitem class="hideMenuInLargeResolution" style="padding-top:60%;"
-				value=" #{lbl['user.mitm.login']}"
-				url="login.xhtml?faces-redirect=true" icon="fa fa-sign-in" />
-		</aaf:notAuthenticated>
 
 	</ph:menu>
 
