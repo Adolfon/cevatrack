@@ -127,8 +127,8 @@ public class JohnsonAPI implements Serializable{
 		ClientsAPI jResponseBean = read_johnson_db_info(id);// Bean johnson
 		
 		if (jResponseBean == null){
-			LOGGER.info("-- The pack list number did not returned any result.. ");
-			return Response.status(404).entity("The pack list number is incorrect").build();			
+			LOGGER.info("-- The reference number entered did not returned any result.. ");
+			return Response.status(404).entity("The reference number is incorrect").build();			
 		}
 				
 		return createResponse(jResponseBean);
