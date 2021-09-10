@@ -12,11 +12,12 @@
 		</h:link>
 
 		<div class="topbar-content">
+		<aaf:authenticated>
 			<a href="#" id="topbar-sidebar-button"> <i class="fa fa-bars"></i>
 			</a> <a href="#" id="topbar-quickmenu-button" style="visibility: hidden;">
 				<h:outputText value="#{cjfBaseLbls['topbar.quickMenu']}" />
 			</a>
-
+		</aaf:authenticated>
 			<div class="topbar-icons">
 				<p:outputLabel value="#{environmentInfoBean.environmentName}"
 					rendered="#{environmentInfoBean.showEnvironmentName}"
