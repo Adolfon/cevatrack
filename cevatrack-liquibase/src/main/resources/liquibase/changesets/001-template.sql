@@ -1046,7 +1046,7 @@ SELECT add_aaf_role_permission ('am_all', 'am_site', 'view', '*');
 --changeset adolfo.cano:001-cjf-template-db-048 failOnError:false splitStatements:false logicalFilePath:001-template.sql
 ALTER TABLE order_lookup ADD COLUMN IF NOT EXISTS sent_to_ml timestamp with time zone;
 ALTER TABLE order_lookup ADD COLUMN IF NOT EXISTS eta timestamp with time zone;
---changeset adolfo.cano:001-cjf-template-db-049 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset adolfo.cano:001-cjf-template-db-055 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 CREATE TABLE IF NOT EXISTS mailer_order (
 	load_id text NULL,
 	load_date date NULL,
@@ -1087,9 +1087,10 @@ CREATE TABLE IF NOT EXISTS mailer_order (
 	ml_journey_drop_id text NULL,
 	email_attempts int4 NULL DEFAULT 0,
 	email_failure_code text NULL,
-	CONSTRAINT mailer_order_pkey PRIMARY KEY (ml_order_ref),
-	CONSTRAINT mailer_order_unique UNIQUE (ml_order_ref),
-	CONSTRAINT mailer_token_unique UNIQUE (access_token)
+	ml_ata timestamp with time zone,
+	CONSTRAINT mailer_order_p_key PRIMARY KEY (ml_order_ref),
+	CONSTRAINT mailer_ord_unique UNIQUE (ml_order_ref),
+	CONSTRAINT mailer_tkn_unique UNIQUE (access_token)
 );
 --changeset adolfo.cano:001-cjf-template-db-050 failOnError:true splitStatements:false logicalFilePath:001-template.sql
 CREATE TABLE healthcare_client
@@ -1174,4 +1175,25 @@ CREATE TABLE IF NOT EXISTS mailer_client (
 	email_product bool NULL,
 	CONSTRAINT mailer_client_pkey PRIMARY KEY (client)
 );
+--changeset adolfo.cano:001-cjf-template-db-054 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE if not exists clients_api
+(
+	carrier_name text,
+	tracking_number numeric,
+	status text,
+	status_date timestamp with time zone,
+	revise_delivery_date timestamp with time zone,
+	original_required_date timestamp with time zone,
+	reason_code text,
+	shipment_number text,
+	customer_name text,
+	customer_address text,
+	actual_delivery_date timestamp with time zone,
+	failure_reason_code text,
+	late_reason_code text,
+	redelivery boolean,
+	failure_reason text,
+	client_id text,
+	CONSTRAINT shipping_number_pkey PRIMARY KEY (shipment_number, client_id)
+)
 

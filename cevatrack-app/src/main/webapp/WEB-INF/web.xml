@@ -34,14 +34,15 @@
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
+       
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
         <servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>
         <init-param>
             <param-name>jaxrs.serviceClasses</param-name>
             <param-value>
-            com.ceva.cevatrack.rest.v1.impl.NikeAPI
+            	com.ceva.cevatrack.rest.v1.impl.NikeAPI,
+            	com.ceva.cevatrack.rest.v1.impl.JohnsonAPI
             </param-value>
         </init-param>
         <init-param>
@@ -68,7 +69,6 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
-
 
     <resource-ref>
         <res-ref-name>aafDataSource</res-ref-name>

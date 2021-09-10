@@ -100,6 +100,8 @@ public class DetailViewLink implements Serializable {
 	@PostConstruct
     public void init() {
         LOGGER.info("-- I am in the init function of DetailViewLink");
+        Object obj = FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+        LOGGER.info(" -- Session obj: " + obj);
         place_loc = "";
         vehicule_loc = "";
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap(); 
