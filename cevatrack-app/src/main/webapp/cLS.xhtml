@@ -13,6 +13,9 @@
 		<div id="special_map_container" class="ceva-welcome-page">
 			<div class="ceva-panel-welcome-page"></div>
 			<div id="welcomePage" class="ceva-text-welcome-page">
+			<div id="nutricia_intro" style="width: 100%;text-align:center;">
+				<h:graphicImage id="nutricia_image"  style="padding-bottom:10px;width:80%;" value="resources/images/Nutricia_link_logo.png"/>					 	
+			</div>
 			  <ui:fragment rendered="#{dtDetailViewLink.showMap}">							
 				<div id="map" style="width: 100%; height: 600px;text-align:center;">
 					<h:graphicImage id="map_image_view" style="padding-bottom:10px;" value="http://maps.googleapis.com/maps/api/staticmap?size=600x600&amp;maptype=roadmap&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Location_Truck_Map_Icon.png|#{dtDetailViewLink.vehicule_loc}&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Location_Map_Icon.png|#{dtDetailViewLink.place_loc}&amp;style=feature:poi|visibility:off&amp;key=#{dtDetailViewLink.apiKey}"/>
