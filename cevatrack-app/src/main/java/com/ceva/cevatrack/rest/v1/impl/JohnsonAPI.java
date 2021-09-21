@@ -202,7 +202,16 @@ public class JohnsonAPI implements Serializable{
     		String revDate = ldt.format(FORMATDATE);
     		rs = rs + "\n" + "\"revisedDeliveryDate\":\"" + revDate + "\",";
     		LOGGER.info(" -- Time customized: " + revDate + "\n -- so far: " + rs);
-    	}    	    	
+    	}      	
+    	if(cb.getReason_code() != null && !"".equals(cb.getReason_code())){
+    		rs = rs + "\n" + "\"reason\":\"" + cb.getReason_code() + "\",";
+    	}    	
+    	if(cb.getFailure_reason_code() != null && !"".equals(cb.getFailure_reason_code())){
+    		rs = rs + "\n" + "\"failure_reason\":\"" + cb.getFailure_reason_code() + "\",";
+    	}    	
+    	if(cb.getLate_reason_code() != null && !"".equals(cb.getLate_reason_code())){
+    		rs = rs + "\n" + "\"late_reason\":\"" + cb.getLate_reason_code() + "\",";
+    	}    	
     	rs = rs + "}";
     	if (rs.endsWith(",}")){
     		rs = rs.substring(0, rs.indexOf("}")-1) + "\n}"; //remove the last ","
