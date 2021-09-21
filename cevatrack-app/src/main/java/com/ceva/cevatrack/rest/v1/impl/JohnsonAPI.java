@@ -220,7 +220,7 @@ public class JohnsonAPI implements Serializable{
 		ClientsAPI clients_API = null;
 		try{
 			clients_API = (ClientsAPI) entityManager.createQuery("SELECT c FROM ClientsAPI c WHERE c.client_id = ?1 AND c.shipment_number = ?2").
-					setParameter(1, "NUTRIC").setParameter(2, id).getSingleResult();
+					setParameter(1, "JHNJHN").setParameter(2, id).getSingleResult();
 		}catch(Exception e){
 			LOGGER.warn(" -- The query with parameter: " + id + ", did not return an expected result..\n", e);
 			return null;
