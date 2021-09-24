@@ -18,7 +18,7 @@
 				  <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtDetailView.refresh}" widgetVar="poll" update="menuform:serverDate,toggleable-header,toggleable-site,toggleable-timings,toggleable-journey,fragmentSignatory,fragmentVehicles,fragmentDrivers,fragmentConsignment" />
 					<p:growl id="growl" showDetail="true" />
 					
-					<p:panel id="toggleable-header" header="Consignment #{dtDetailView.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+					<p:panel id="toggleable-header" header="Consignment #{dtDetailView.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px;margin-top:30px;">
 	          <div class="ui-g">
 		           <div class="ui-g-12 ui-md-4 ui-lg-3">
 		              <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
@@ -614,8 +614,16 @@
                         <ui:fragment rendered="#{! empty item.info1}">
                           <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
-                              <div class="panel-heading">#{dtDetailView.consignment.label1}</div>
+                              <div class="panel-heading">Scanned</div>
                               <div class="panel-body">#{item.info1}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{empty item.info1}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Scanned</div>
+                              <div class="panel-body">False</div>
                             </div>
                           </div>
                         </ui:fragment>

@@ -1245,6 +1245,20 @@ CREATE TABLE if not exists seb_order (
 	quantity_actual int4 NULL,
 	quantity_claused int4 NULL,
 	ml_status text NULL,
+	time_window_start timestamptz NULL,
+	time_window_end timestamptz NULL,
 	CONSTRAINT seb_order_pkey PRIMARY KEY (ml_order_ref)
 );
-
+--changeset adolfo.cano:001-cjf-template-db-058 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+SELECT add_aaf_domain_lookup('cevatrack', 'Cevatrack access to the views', 7, 'Cevatrack access to the views');
+SELECT add_aaf_domain_action_lookup('cevatrack', 'view', 'view access to cevatrack screen', 1, 'view access to cevatrack screen');
+SELECT add_aaf_permission ('cevatrack', 'view', 'SEB', 'Grant access to the SEB view');
+SELECT add_aaf_role ('access_seb', 'access to the SEB screen in cevatrack');
+SELECT add_aaf_role_permission ('access_seb', 'cevatrack', 'view', 'SEB');
+--changeset adolfo.cano:001-cjf-template-db-060 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Ford','FORD','Ford.png','FORD',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO healthcare_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Johnson & Johnson','JHNJHN','JJ.png','JHNJHN',now(),'SYSTEM',now(),'SYSTEM',1);
+  
+  

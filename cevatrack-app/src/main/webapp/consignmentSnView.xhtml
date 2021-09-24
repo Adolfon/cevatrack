@@ -19,7 +19,7 @@
 					<h:panelGroup layout="block" styleClass="d-sm-none ui-md-3 d-lg-2">
 					</h:panelGroup>
 					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 d-lg-8">
-						<h1 style="text-align: center">#{param['client']}</h1>
+						<h1 style="text-align: center">#{dtConsignmentView.clientDetail.name}</h1>
 					</h:panelGroup>
 					<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-2">
 						<p:calendar id="datesel" styleClass="datepicker h5"
@@ -86,7 +86,7 @@
 					</p:column>
 
 					<p:column styleClass="filteredCol" headerText="Site" 					
-						filterBy="#{con.siteName}" sortBy="#{con.siteName}" priority="3"
+						filterBy="#{con.siteName}" sortBy="#{con.siteName}" priority="5"
 						filterMatchMode="contains">
 						<h:outputText value="#{con.siteName}" />
 					</p:column>
@@ -98,7 +98,7 @@
 					</p:column>
 
 					<p:column styleClass="filteredCol" headerText="Site ID"
-						filterBy="#{con.siteId}" sortBy="#{con.siteId}" priority="5"
+						filterBy="#{con.siteId}" sortBy="#{con.siteId}" priority="3"
 						filterMatchMode="contains">
 						<h:outputText value="#{con.siteId}" />
 					</p:column>

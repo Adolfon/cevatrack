@@ -37,6 +37,7 @@
 					url="/users-maintenance.xhtml"
 					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.USER_VIEW)}" />
 			</p:submenu>
+			<p:menuitem value="SEB" rendered="#{homeBean.seb_view}" url="/seb.xhtml"/>
 
 		</aaf:authenticated>
 
@@ -60,7 +61,7 @@
 		<aaf:notAuthenticated>
 			<p:menuitem class="hideMenuInLargeResolution"
 				value=" #{lbl['user.mitm.login']}"
-				url="login.xhtml?faces-redirect=true" icon="fa fa-sign-in" />
+				url="login.xhtml?faces-redirect=true" style="margin-bottom: 2px;" icon="fa fa-sign-in" />
 		</aaf:notAuthenticated>
 
 	</ph:menu> <!-- 

@@ -93,4 +93,11 @@ public class AutomotiveClient extends AbstractEntity<Long> implements Serializab
         this.id = id;
     }
 
+	@Override
+	public String toString() {
+		return "AutomotiveClient [id=" + id + ", name=" + name + ", prefixes=" + prefixes + ", image=" + image
+				+ ", aafInstance=" + aafInstance + "]";
+	}
+
+    
 }

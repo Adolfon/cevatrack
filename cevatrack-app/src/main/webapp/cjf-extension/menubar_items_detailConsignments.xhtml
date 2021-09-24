@@ -37,7 +37,7 @@
 					url="/users-maintenance.xhtml"
 					rendered="#{aAFSecurityBean.hasAnyPermissions(AAFPermissionConstants.USER_VIEW)}" />
 			</p:submenu>
-
+			<p:menuitem value="SEB" rendered="#{homeBean.seb_view}" url="/seb.xhtml"/>
 		</aaf:authenticated>
 
 
