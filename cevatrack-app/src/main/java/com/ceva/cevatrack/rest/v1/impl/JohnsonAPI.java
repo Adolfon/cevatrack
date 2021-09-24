@@ -195,7 +195,7 @@ public class JohnsonAPI implements Serializable{
     	if (cb.getStatus_date() != null){        		
     		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getStatus_date().toInstant(), londonZone);
     		String statDate = ldt.format(FORMATDATE);
-    		rs = rs + "\n" + "\"statusDate\":\"" + statDate + "\",";    		
+    		rs = rs + "\n" + "\"status_date\":\"" + statDate + "\",";    		
     	}	
     	if (cb.getRevise_delivery_date() != null){
     		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getRevise_delivery_date().toInstant(), londonZone);
@@ -211,7 +211,17 @@ public class JohnsonAPI implements Serializable{
     	}    	
     	if(cb.getLate_reason_code() != null && !"".equals(cb.getLate_reason_code())){
     		rs = rs + "\n" + "\"late_reason\":\"" + cb.getLate_reason_code() + "\",";
-    	}    	
+    	}
+    	if (cb.getDelivered_date() != null){        		
+    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getDelivered_date().toInstant(), londonZone);
+    		String devDate = ldt.format(FORMATDATE);
+    		rs = rs + "\n" + "\"delivered_date\":\"" + devDate + "\",";    		
+    	}
+    	if (cb.getClaused_date() != null){        		
+    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getClaused_date().toInstant(), londonZone);
+    		String clauDate = ldt.format(FORMATDATE);
+    		rs = rs + "\n" + "\"claused_date\":\"" + clauDate + "\",";    		
+    	}
     	rs = rs + "}";
     	if (rs.endsWith(",}")){
     		rs = rs.substring(0, rs.indexOf("}")-1) + "\n}"; //remove the last ","

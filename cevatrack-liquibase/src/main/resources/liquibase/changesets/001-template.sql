@@ -1196,4 +1196,8 @@ CREATE TABLE if not exists clients_api
 	client_id text,
 	CONSTRAINT shipping_number_pkey PRIMARY KEY (shipment_number, client_id)
 )
+--changeset adolfo.cano:001-cjf-template-db-056 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE clients_api
+	ADD COLUMN delivered_date timestamp with time zone NULL,
+	ADD COLUMN claused_date timestamp with time zone NULL;
 

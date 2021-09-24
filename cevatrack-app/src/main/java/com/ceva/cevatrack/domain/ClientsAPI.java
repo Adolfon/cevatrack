@@ -50,7 +50,11 @@ public class ClientsAPI implements Serializable{
   @Column(name="redelivery")
   private boolean redelivery;
   @Column(name="failure_reason")
-  private String failure_reason;    
+  private String failure_reason;
+  @Column(name="delivered_date")
+  private Date delivered_date;
+  @Column(name="claused_date")
+  private Date claused_date;
 
 public String getCarrier_name() {
 		return carrier_name;
@@ -180,6 +184,22 @@ public String getCarrier_name() {
 		this.shipment_number = shipment_number;
 	}
 
+	public Date getDelivered_date() {
+		return delivered_date;
+	}
+
+	public void setDelivered_date(Date delivered_date) {
+		this.delivered_date = delivered_date;
+	}
+
+	public Date getClaused_date() {
+		return claused_date;
+	}
+
+	public void setClaused_date(Date claused_date) {
+		this.claused_date = claused_date;
+	}
+
 	@Override
 	public String toString() {
 		return "ClientsAPI [client_id=" + client_id + ", shipment_number=" + shipment_number + ", carrier_name="
@@ -188,8 +208,8 @@ public String getCarrier_name() {
 				+ original_required_date + ", reason_code=" + reason_code + ", customer_name=" + customer_name
 				+ ", customer_address=" + customer_address + ", actual_delivery_date=" + actual_delivery_date
 				+ ", failure_reason_code=" + failure_reason_code + ", late_reason_code=" + late_reason_code
-				+ ", redelivery=" + redelivery + ", failure_reason=" + failure_reason + "]";
+				+ ", redelivery=" + redelivery + ", failure_reason=" + failure_reason + ", delivered_date="
+				+ delivered_date + ", claused_date=" + claused_date + "]";
 	}
- 
     
 }
