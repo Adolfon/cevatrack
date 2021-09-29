@@ -224,11 +224,12 @@ public class JohnsonAPI implements Serializable{
     	}
     	rs = rs + "}";
     	if (rs.endsWith(",}")){
-    		rs = rs.substring(0, rs.indexOf("}")-1) + "\n}"; //remove the last ","
+    		LOGGER.info(" -- Ends with ',}'");
+    		rs = rs.substring(0, rs.indexOf("}")-1) + "\n}"; //remove the last ",}" and add return + "}"
     	}else{
+    		LOGGER.info(" -- Ends with  only '}'");
     		rs = rs.substring(0, rs.indexOf("}")) + "\n}"; 
     	}
-    	rs = rs + "}";
 		return Response.ok().entity(rs).build();
 	}
     
