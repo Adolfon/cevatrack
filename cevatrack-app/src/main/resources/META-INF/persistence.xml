@@ -17,6 +17,7 @@
 		<class>com.ceva.cevatrack.domain.OrderLookUp</class>
 		<class>com.ceva.cevatrack.domain.AAFUser4Nike</class>
 		<class>com.ceva.cevatrack.domain.ClientsAPI</class>
+		<class>com.ceva.cevatrack.domain.SEBOrder</class>
         <properties>
             <property name="show_sql" value="true"/>
             <property name="openejb.jpa.auto-scan" value="true"/>
@@ -38,6 +39,7 @@
 		<class>com.ceva.cevatrack.domain.OrderLookUp</class>
 		<class>com.ceva.cevatrack.domain.AAFUser4Nike</class>
 		<class>com.ceva.cevatrack.domain.ClientsAPI</class>
+		<class>com.ceva.cevatrack.domain.SEBOrder</class>
         <properties>
             <property name="show_sql" value="true"/>
             <property name="openejb.jpa.auto-scan" value="true"/>

@@ -1200,4 +1200,65 @@ CREATE TABLE if not exists clients_api
 ALTER TABLE clients_api
 	ADD COLUMN delivered_date timestamp with time zone NULL,
 	ADD COLUMN claused_date timestamp with time zone NULL;
-
+--changeset adolfo.cano:001-cjf-template-db-057 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE if not exists seb_order (
+	load_id text NULL,
+	scheduled_timeout timestamptz NULL,
+	seb_date date NULL,
+	route_id text NULL,
+	drop_number int4 NULL,
+	client text NULL,
+	ml_order_ref text NOT NULL,
+	loc_name text NULL,
+	loc_addr1 text NULL,
+	loc_addr2 text NULL,
+	loc_addr3 text NULL,
+	loc_addr4 text NULL,
+	loc_postcode text NULL,
+	driver text NULL,
+	vehicle text NULL,
+	last_updated timestamptz NULL,
+	last_ws_call timestamptz NULL,
+	pta timestamptz NULL,
+	ptd timestamptz NULL,
+	eta timestamptz NULL,
+	etd timestamptz NULL,
+	ata timestamptz NULL,
+	atd timestamptz NULL,
+	site_id text NULL,
+	site_name text NULL,
+	site_postcode text NULL,
+	clause_code text NULL,
+	clause_description text NULL,
+	driver_name text NULL,
+	planned_start_time timestamptz NULL,
+	actual_start_time timestamptz NULL,
+	pod_start_time timestamptz NULL,
+	journey_actual_start_time timestamptz NULL,
+	journey_id int4 NULL,
+	ml_route_id int4 NULL,
+	ml_journey_drop_id int4 NULL,
+	site_lat text NULL,
+	site_long text NULL,
+	ml_vehicle text NULL,
+	quantity_planned int4 NULL,
+	quantity_actual int4 NULL,
+	quantity_claused int4 NULL,
+	ml_status text NULL,
+	time_window_start timestamptz NULL,
+	time_window_end timestamptz NULL,
+	CONSTRAINT seb_order_pkey PRIMARY KEY (ml_order_ref)
+);
+--changeset adolfo.cano:001-cjf-template-db-058 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+SELECT add_aaf_domain_lookup('cevatrack', 'Cevatrack access to the views', 7, 'Cevatrack access to the views');
+SELECT add_aaf_domain_action_lookup('cevatrack', 'view', 'view access to cevatrack screen', 1, 'view access to cevatrack screen');
+SELECT add_aaf_permission ('cevatrack', 'view', 'SEB', 'Grant access to the SEB view');
+SELECT add_aaf_role ('access_seb', 'access to the SEB screen in cevatrack');
+SELECT add_aaf_role_permission ('access_seb', 'cevatrack', 'view', 'SEB');
+--changeset adolfo.cano:001-cjf-template-db-060 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Ford','FORD','Ford.png','FORD',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO healthcare_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Johnson & Johnson','JHNJHN','JJ.png','JHNJHN',now(),'SYSTEM',now(),'SYSTEM',1);
+  
+  

@@ -9,5 +9,7 @@ public interface AutomotiveClientService {
     public List<SmartNetClientVO> searchAutomotiveClient();
 
     public SmartNetClientVO getAutomotiveClient(String clientName);
+    
+    public SmartNetClientVO getAutomotiveClientByAAFName(String clientName);
 
 }
