@@ -45,12 +45,18 @@ public class JourneyVO {
 		this.loadID = loadID;
 	}
 	public String getDriver() {
+		if (this.driver == null || "".equals(driver)){
+			return "--";
+		}
 		return driver;
 	}
 	public void setDriver(String driver) {
 		this.driver = driver;
 	}
 	public String getVehicule() {
+		if (this.vehicule == null || "".equals(vehicule)){
+			return "--";
+		}
 		return vehicule;
 	}
 	public void setVehicule(String vehicule) {

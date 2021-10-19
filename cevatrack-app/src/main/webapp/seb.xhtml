@@ -61,29 +61,38 @@
 										<h:panelGroup layout="block" styleClass="ui-g" class="${counter % 2 == 0 ? 'row0' : 'row1'}" 
 											style="margin-top:10px;width:100%; border:solid 1px;border-radius:7px;">									
 												<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-3">
-														  <u>Route</u> &#160;&#160;&#160;<u>Time</u> &#160; &#160;&#160;&#160; <u>Load</u> <br/>
-														#{trip.routeID}	#{trip.seb_dateString} #{trip.loadID} <br/>
-														Driver: #{trip.driver} Truck: #{trip.vehicule}
-													
+													<table style="width:100%;text-align:center;border:none;display:table-caption;border-spacing:5px 0;">
+														<tr>
+															<td style="text-decoration: underline;font-weight: bold;">Route</td>
+															<td style="text-decoration: underline;font-weight: bold;">Time</td>
+															<td style="text-decoration: underline;font-weight: bold;">Load</td> 
+														</tr>
+														<tr>
+															<td>#{trip.routeID}&#160;&#160;</td>
+															<td>#{trip.seb_dateString}&#160;&#160;</td> 
+															<td>#{trip.loadID} </td>
+														</tr>
+													</table>																												
+													<span style="text-align:center;"><b>Driver:</b> #{trip.driver}&#160;&#160;<b>Vehicle:</b> #{trip.vehicule}</span>																																																								
 						            			</h:panelGroup>
 						            			<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-9 d-lg-9" style="display:flex;overflow:auto;">	
 						            				<c:forEach items="#{trip.drop}" var="drop">	
 						            				  	<div style="border:solid 1px;border-radius:7px;margin:2px;grid-auto-rows:1fr;min-width:75px;"
 						            				  		class="ui-g-3 ui-md-3 ui-lg-2  #{drop.colour}">	
-						            				  		<ui:fragment rendered="#{drop.site_name != 'private'}">
+						            				  		<ui:fragment rendered="#{drop.site_name != 'Private'}">
 							            				  		<h:link outcome="consignmentSnView.xhtml">
 							            				  			<f:param name="network" value="Automotive" />
 							            				  			<f:param name="client" value="#{drop.client}" />
 																	 <f:param name="site" value="#{drop.site_id}" />
 																	 <f:param name="reportdate" value="#{sebView.tripDateString}" />
 																	 <f:param name="reportdateTo" value="#{sebView.tripDateString}" />					
-																	 <p title="Drop: #{drop.dropNumber}&#10;Client: #{drop.client}&#10;Place: #{drop.address}">
+																	 <p title="Drop: #{drop.dropNumber}&#10;Client: #{drop.client}&#10;Site: #{drop.address}">
 																		 #{drop.site_name}<br/> #{drop.showedTimeString}
 																	 </p>
 																 </h:link>
 															 </ui:fragment>
-															 <ui:fragment rendered="#{drop.site_name == 'private'}">
-															 	<p title="Drop: #{drop.dropNumber}&#10;Client: #{drop.client}&#10;Place: #{drop.address}">
+															 <ui:fragment rendered="#{drop.site_name == 'Private'}">
+															 	<p title="Drop: #{drop.dropNumber}&#10;Client: #{drop.client}&#10;Site: #{drop.address}">
 																		 #{drop.site_name}<br/> #{drop.showedTimeString}
 																	 </p>
 															 </ui:fragment>

@@ -270,7 +270,7 @@ public class SEBServiceImpl implements SEBService{
 		drop.setATA(sebOrder.getAta());
 		//drop.setClient(sebOrder.getClient()); 
 		drop.setClient(ApplicationGlobalConfig.secret);
-		drop.setColour(calculateColor(sebOrder, false));
+		drop.setColour(calculateColor(sebOrder, true));
 		drop.setDropNumber(sebOrder.getDrop_number());
 		drop.setETA(sebOrder.getEta());
 		drop.setPTA(sebOrder.getPta());	
