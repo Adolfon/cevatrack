@@ -93,7 +93,9 @@ public class SEBServiceImpl implements SEBService{
 					}					
 				}else{
 					jvo.setDrop(ldrop); //Before drops added to the last trip
-					allj.add(jvo);//Different Journey starts, I add the old one
+					if (!isAllPrivateDrops(jvo)){
+						allj.add(jvo);//Different Journey starts, I add the old one
+					}
 					log.info(" -- Different trip from before: " + seblist.get(i-1).getRoute_id() + " ,number of drops: " + jvo.getDrop().size());
 					//Different trip, then set header and first drop
 					jvo = setJourney(seblist.get(i));
@@ -116,7 +118,9 @@ public class SEBServiceImpl implements SEBService{
 					log.info(" -- Adding the last trip: " + jvo.getRouteID() + " ,with number of drops: " + ldrop.size());					
 				}
 				jvo.setDrop(ldrop);
-				allj.add(jvo);
+				if (!isAllPrivateDrops(jvo)){
+					allj.add(jvo);
+				}
 			}
 		}//for
 		log.info(" -- Resulted VO, number of Journeys: " + allj.size());
@@ -127,6 +131,17 @@ public class SEBServiceImpl implements SEBService{
 		return allj;
 	}
 	
+	private boolean isAllPrivateDrops(JourneyVO jvo) {
+		int i=0;
+		for (Drop drop: jvo.getDrop()){
+			if (drop.getSite_name() != null && ApplicationGlobalConfig.secret.equals(drop.getSite_name())){
+				i++;
+			}
+		}
+		log.info(" -- Number of drops: " + jvo.getDrop().size() + " ,i: " + i + " ,for trip: " + jvo.getRouteID());
+		return i == jvo.getDrop().size();
+	}
+
 	private Drop addtypeOfDropPermitted(SEBOrder sebOrder, Subject user) {
 		if (sebOrder.getSite_id() == null){
 			log.info("permitted in client globally? " + sebOrder.getClient() + ": " + user.isPermitted(AUTOMOVILE_CLIENT_PERM_GLOBAL + sebOrder.getClient()));
