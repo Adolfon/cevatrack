@@ -1,16 +1,22 @@
 package com.ceva.cevatrack.rest.v1.impl;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 //import java.time.LocalDate;
 //import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 //import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -34,6 +40,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -48,6 +56,10 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.OrderLookUp;
+import com.ceva.cevatrack.domain.Tracking_reference_suspense;
+import com.ceva.cevatrack.rest.v1.impl.data.DPD_request;
+import com.ceva.cevatrack.rest.v1.impl.data.DPD_response;
+import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 //import com.ceva.cevatrack.domain.SmartNetClientTest;
 //import com.ceva.cevatrack.repository.SmartNetClientRepository;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
@@ -112,6 +124,19 @@ public class NikeAPI implements Serializable{
 	public Response getPackListNumberInfo(){
 		LOGGER.info("--- The methos was called without parameters..");
 		return Response.status(404).entity("The request is malformed").build();
+	}
+	/*
+	 * Test the DPD web service
+	 */
+	@GET
+    @Path("/getDPDTestInfo")	
+	@Produces(MediaType.APPLICATION_XML) 
+	public Response getDPDTestInfo(){
+		LOGGER.info("--- Method for testing the DPD web service called..");
+		getDPDInformation("15501550604980K");
+		LOGGER.info(" -- And now the getDPDInformation_jaxb method.. --");
+		getDPDInformation_jaxb("");
+		return Response.status(200).entity("The request was successfully executed").build();
 	}
 	/*
 	 * It returns the info for the Pack List Number passed as a parameter
@@ -239,8 +264,22 @@ public class NikeAPI implements Serializable{
     	
     	//Case not sent to Microlise yet (load date returned = shipped date as per data base script update: first shipped and load dates are same, later update only shipped date) 
     	if (responseBean.getSent_to_ml() == null || "".equals(responseBean.getSent_to_ml())){
-    		return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
-    				+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
+    		//Check on the 'tracking_reference_suspense' table
+    		//if found the query to DPD
+    		//if sucessfully query and 'Delivered' status then include the ATA of that WS response
+    		String ATA_DPD = DPD_WS(this.id);
+    		if ("".equals(ATA_DPD) || "null".equals(ATA_DPD)){
+    			LOGGER.info(" -- ATA was NOT found for DPD WS --");
+    			if ("".equals(responseBean.getEta_no_ml())){
+    				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
+    			}
+	    		return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
+	    				+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
+    		}else{
+    			LOGGER.info(" -- ATA WAS found for DPD WS --");
+    			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
+				+ "\", \"ATA\": \"" + ATA_DPD + "\"}").build();
+    		}
     	}
     	//Case 2, has been sent to Microlise
 		WsMicroliseComms ws = new WsMicroliseComms();
@@ -321,6 +360,24 @@ public class NikeAPI implements Serializable{
 				"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 	}
     
+	private String DPD_WS(String order_id) {
+		LOGGER.info(" -- DPD_WS method, parameter: " + order_id);
+		Tracking_reference_suspense trs_var = null;
+		try{
+			trs_var = (Tracking_reference_suspense) entityManager.createQuery("SELECT tr FROM Tracking_reference_suspense tr WHERE tr.order_number = ?1").
+					setParameter(1, order_id).getSingleResult();
+		}catch(Exception e){
+			LOGGER.warn(" -- The query with parameter: " + order_id + ", did not return an expected result..\n", e);
+			return null;
+		}
+		LOGGER.info(" -- DPD tracking row recovered: " + trs_var);
+		if (trs_var == null || trs_var != null && trs_var.getTracking_reference() == null || trs_var != null && "".equals(trs_var.getTracking_reference())){
+			return "";
+		}else{
+			return getDPDInformation(trs_var.getTracking_reference());
+		}
+		
+	}
 	private String[] read_nike_consignment(String id) {
 		LOGGER.info("-- String method read_nike_consignment..");
 		OrderLookUp OLResult = null;
@@ -583,6 +640,134 @@ public class NikeAPI implements Serializable{
 		}
 		
 	}
+    
+    private String getDPDInformation(String tracking_number){
+    	LOGGER.info("-- getDPDInformation method, parameter: " + tracking_number);
+    	StringBuilder response = new StringBuilder();
+    	try { 
+            URL url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("POST");
+            //Headers
+            connection.setRequestProperty("Accept", "application/xml");
+            connection.setRequestProperty("Content-Type", "application/xml");
+            //Write XML
+            String reqXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
+            					"<trackingrequest>" + 
+            						"<user>CEVALOGISTICS2</user>" +
+            						"<password>UBVgXJU7fuUwJjaQQa</password>" +
+            						"<trackingnumbers>" +
+            							"<trackingnumber>" + tracking_number + "</trackingnumber>" +
+            						"</trackingnumbers>" +
+            					"</trackingrequest>";
+            OutputStream os = connection.getOutputStream();
+            byte[] b = reqXML.getBytes("UTF-8");
+            os.write(b);
+ //JAXB
+    //      JAXBContext jaxbContext = JAXBContext.newInstance(DPD_request.class);;
+	//		jaxbContext.createMarshaller().marshal(dpd_response, os);
+//JAXB
+            os.flush();
+            os.close();
+            //Read XML
+    		InputStream inputStream = connection.getInputStream();
+    		byte[] res = new byte[2048];
+    		int i = 0;    		
+    		while ((i = inputStream.read(res)) != -1) {
+    			response.append(new String(res, 0, i));
+    		}
+    		inputStream.close();
+            int respcode = connection.getResponseCode();
+            connection.disconnect();
+            LOGGER.info(" -- HTTP Response was: " + respcode);
+            LOGGER.info(" -- XML of the response is: " + response.toString());
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //LOGGER.info(" -- Test response: " + response);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    	String stringResponse = response.toString();
+    	if (!stringResponse.contains("DELIVERED")){
+    		LOGGER.info(" -- The response does not include DELIVERED --");
+    		if (stringResponse.contains("OUT FOR DELIVERY")){
+    			LOGGER.info(" -- The response includes OUT FOR DELIVERED --");
+    			int pos = stringResponse.indexOf("<trackingevent><date>");
+        		int pos_size = "<trackingevent><date>".length();
+        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
+        		LOGGER.info(" -- Date out for delivery: " + date_response);
+        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        		LocalDateTime ldt = LocalDateTime.parse(date_response, dtf);
+        		ldt = ldt.plusHours(2);
+        		String ldts = ldt.format(dtf);
+        		LOGGER.info(" -- ETA (2 hours): " + ldts);
+    			return ldts;    			
+    		}else{
+    			return "";
+    		}
+    	}else{
+    		int pos = stringResponse.indexOf("<trackingevent><date>");
+    		int pos_size = "<trackingevent><date>".length();
+    		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
+    		LOGGER.info(" -- Substring result: " + date_response + " ,pos is: " + pos + ", search string lengh: " + pos_size);
+    		date_response = date_response.replace("T", " ");
+    		return date_response;
+    	}    	
+    }
+    
+    private DPD_response getDPDInformation_jaxb(String tracking_number){
+    	LOGGER.info("-- getDPDInformation method, parameter: " + tracking_number);
+    	DPD_response dpd_response = new DPD_response();
+    	try { 
+            URL url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("POST");
+            //Headers
+            connection.setRequestProperty("Accept", "application/xml");
+            connection.setRequestProperty("Content-Type", "application/xml");
+            //Write XML
+            JAXBContext jc = JAXBContext.newInstance(DPD_request.class);
+            DPD_request req = new DPD_request();
+            req.setUser("CEVALOGISTICS2");
+            req.setPass("UBVgXJU7fuUwJjaQQa");
+            List<String> tns = new ArrayList<>();
+            tns.add(new String("155015506050554"));
+            req.setTrackingnumber(tns);
+            LOGGER.info("-- Sending object: " + req);
+            Marshaller marshaller = jc.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            OutputStream os = connection.getOutputStream();
+            marshaller.marshal(req, os);            
+//            byte[] b = req.getBytes("UTF-8");
+//            os.write();
+ //JAXB
+    //      JAXBContext jaxbContext = JAXBContext.newInstance(DPD_request.class);;
+	//		jaxbContext.createMarshaller().marshal(dpd_response, os);
+//JAXB
+            os.flush();
+            os.close();
+            //Read XML
+    		InputStream inputStream = connection.getInputStream();
+    		byte[] res = new byte[2048];
+    		int i = 0;
+    		StringBuilder response = new StringBuilder();
+    		while ((i = inputStream.read(res)) != -1) {
+    			response.append(new String(res, 0, i));
+    		}
+    		inputStream.close();
+            int respcode = connection.getResponseCode();
+            connection.disconnect();
+            LOGGER.info(" -- HTTP Response was: " + respcode);
+            LOGGER.info(" -- XML of the response is: " + response.toString());
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    	return dpd_response;
+    }
+    
     
 	//Just in case you want just to compare the password obtained through a db query
 	private String encryptUsingShiroConfig(String plainText) {

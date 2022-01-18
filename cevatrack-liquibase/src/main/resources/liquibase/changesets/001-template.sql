@@ -1260,5 +1260,13 @@ INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, 
   VALUES ('Ford','FORD','Ford.png','FORD',now(),'SYSTEM',now(),'SYSTEM',1);
 INSERT INTO healthcare_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('Johnson & Johnson','JHNJHN','JJ.png','JHNJHN',now(),'SYSTEM',now(),'SYSTEM',1);
-  
+--changeset adolfo.cano:001-cjf-template-db-061 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE if not exists tracking_reference_suspense (
+	order_number text NOT NULL,
+	tracking_reference text NULL,
+	last_updated timestamptz NULL,
+	applied timestamptz NULL,
+	CONSTRAINT tracking_reference_suspense_pkey PRIMARY KEY (order_number)
+);
+
   
