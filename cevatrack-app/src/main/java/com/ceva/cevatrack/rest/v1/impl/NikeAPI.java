@@ -12,11 +12,9 @@ import java.time.LocalDateTime;
 //import java.time.LocalDate;
 //import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 //import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -40,8 +38,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -57,8 +53,6 @@ import org.slf4j.LoggerFactory;
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.OrderLookUp;
 import com.ceva.cevatrack.domain.Tracking_reference_suspense;
-import com.ceva.cevatrack.rest.v1.impl.data.DPD_request;
-import com.ceva.cevatrack.rest.v1.impl.data.DPD_response;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 //import com.ceva.cevatrack.domain.SmartNetClientTest;
 //import com.ceva.cevatrack.repository.SmartNetClientRepository;
@@ -134,8 +128,7 @@ public class NikeAPI implements Serializable{
 	public Response getDPDTestInfo(){
 		LOGGER.info("--- Method for testing the DPD web service called..");
 		getDPDInformation("15501550604980K");
-		LOGGER.info(" -- And now the getDPDInformation_jaxb method.. --");
-		getDPDInformation_jaxb("");
+		LOGGER.info(" -- And now the getDPDInformation_jaxb method.. --");		
 		return Response.status(200).entity("The request was successfully executed").build();
 	}
 	/*
@@ -262,23 +255,32 @@ public class NikeAPI implements Serializable{
     	responseBean.setSent_to_ml(consignment_dateShipped[2]);
     	responseBean.setEta_no_ml(consignment_dateShipped[3]);
     	
-    	//Case not sent to Microlise yet (load date returned = shipped date as per data base script update: first shipped and load dates are same, later update only shipped date) 
+    	//Case 1 not sent to Microlise yet (load date returned = shipped date as per data base script update: first shipped and load dates are same, later update only shipped date) 
     	if (responseBean.getSent_to_ml() == null || "".equals(responseBean.getSent_to_ml())){
-    		//Check on the 'tracking_reference_suspense' table
-    		//if found the query to DPD
-    		//if sucessfully query and 'Delivered' status then include the ATA of that WS response
-    		String ATA_DPD = DPD_WS(this.id);
-    		if ("".equals(ATA_DPD) || "null".equals(ATA_DPD)){
+    		//Check on the 'tracking_reference_suspense' table, if found the query to DPD
+    		String[] ATA_DPD = DPD_WS(this.id);
+    		if (ATA_DPD == null){
     			LOGGER.info(" -- ATA was NOT found for DPD WS --");
-    			if ("".equals(responseBean.getEta_no_ml())){
+    			if (responseBean.getEta_no_ml() == null || "".equals(responseBean.getEta_no_ml())){
     				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
-    			}
-	    		return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
-	    				+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
+    			}else{
+    				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()
+    					+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
+    			}	    				
     		}else{
-    			LOGGER.info(" -- ATA WAS found for DPD WS --");
-    			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
-				+ "\", \"ATA\": \"" + ATA_DPD + "\"}").build();
+    			LOGGER.info(" -- ATA WAS found for DPD WS --" + ATA_DPD);
+    			if (ATA_DPD[0] != null){// Delivered ATA
+	    			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
+					+ "\", \"ATA\": \"" + ATA_DPD[0] + "\"}").build();
+    			}else{
+    				if (ATA_DPD[1] != null){//Out for delivery DPD ETA
+						return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
+						+ "\", \"ETA\": \"" + ATA_DPD[1] + "\"}").build();
+    				}else{//ATA_DPD not null but the its values are
+    					return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()
+    					+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
+    				}    				
+    			}
     		}
     	}
     	//Case 2, has been sent to Microlise
@@ -360,7 +362,7 @@ public class NikeAPI implements Serializable{
 				"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 	}
     
-	private String DPD_WS(String order_id) {
+	private String[] DPD_WS(String order_id) {
 		LOGGER.info(" -- DPD_WS method, parameter: " + order_id);
 		Tracking_reference_suspense trs_var = null;
 		try{
@@ -372,7 +374,7 @@ public class NikeAPI implements Serializable{
 		}
 		LOGGER.info(" -- DPD tracking row recovered: " + trs_var);
 		if (trs_var == null || trs_var != null && trs_var.getTracking_reference() == null || trs_var != null && "".equals(trs_var.getTracking_reference())){
-			return "";
+			return null;
 		}else{
 			return getDPDInformation(trs_var.getTracking_reference());
 		}
@@ -641,9 +643,10 @@ public class NikeAPI implements Serializable{
 		
 	}
     
-    private String getDPDInformation(String tracking_number){
+    private String[] getDPDInformation(String tracking_number){
     	LOGGER.info("-- getDPDInformation method, parameter: " + tracking_number);
     	StringBuilder response = new StringBuilder();
+    	String[] info = new String[2]; 
     	try { 
             URL url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -702,9 +705,11 @@ public class NikeAPI implements Serializable{
         		ldt = ldt.plusHours(2);
         		String ldts = ldt.format(dtf);
         		LOGGER.info(" -- ETA (2 hours): " + ldts);
-    			return ldts;    			
+        		info[1] = ldts;
+    			return info;    			
     		}else{
-    			return "";
+    			LOGGER.info(" -- DPD not delivery or out for delivery situations --");
+    			return null;
     		}
     	}else{
     		int pos = stringResponse.indexOf("<trackingevent><date>");
@@ -712,62 +717,10 @@ public class NikeAPI implements Serializable{
     		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
     		LOGGER.info(" -- Substring result: " + date_response + " ,pos is: " + pos + ", search string lengh: " + pos_size);
     		date_response = date_response.replace("T", " ");
-    		return date_response;
+    		info[0] = date_response;
+    		return info;
     	}    	
-    }
-    
-    private DPD_response getDPDInformation_jaxb(String tracking_number){
-    	LOGGER.info("-- getDPDInformation method, parameter: " + tracking_number);
-    	DPD_response dpd_response = new DPD_response();
-    	try { 
-            URL url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-            connection.setInstanceFollowRedirects(false);
-            connection.setRequestMethod("POST");
-            //Headers
-            connection.setRequestProperty("Accept", "application/xml");
-            connection.setRequestProperty("Content-Type", "application/xml");
-            //Write XML
-            JAXBContext jc = JAXBContext.newInstance(DPD_request.class);
-            DPD_request req = new DPD_request();
-            req.setUser("CEVALOGISTICS2");
-            req.setPass("UBVgXJU7fuUwJjaQQa");
-            List<String> tns = new ArrayList<>();
-            tns.add(new String("155015506050554"));
-            req.setTrackingnumber(tns);
-            LOGGER.info("-- Sending object: " + req);
-            Marshaller marshaller = jc.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            OutputStream os = connection.getOutputStream();
-            marshaller.marshal(req, os);            
-//            byte[] b = req.getBytes("UTF-8");
-//            os.write();
- //JAXB
-    //      JAXBContext jaxbContext = JAXBContext.newInstance(DPD_request.class);;
-	//		jaxbContext.createMarshaller().marshal(dpd_response, os);
-//JAXB
-            os.flush();
-            os.close();
-            //Read XML
-    		InputStream inputStream = connection.getInputStream();
-    		byte[] res = new byte[2048];
-    		int i = 0;
-    		StringBuilder response = new StringBuilder();
-    		while ((i = inputStream.read(res)) != -1) {
-    			response.append(new String(res, 0, i));
-    		}
-    		inputStream.close();
-            int respcode = connection.getResponseCode();
-            connection.disconnect();
-            LOGGER.info(" -- HTTP Response was: " + respcode);
-            LOGGER.info(" -- XML of the response is: " + response.toString());
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    	return dpd_response;
-    }
-    
+    }    
     
 	//Just in case you want just to compare the password obtained through a db query
 	private String encryptUsingShiroConfig(String plainText) {
