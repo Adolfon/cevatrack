@@ -9,7 +9,10 @@
 		<aaf:authenticated>
 			<shiro:hasRole name="AAF Admin">
 				<p:submenu label="Transport">
-					<p:menuitem value="SmartNet" url="/smartNet.xhtml" />
+					<p:menuitem value="SmartNet" url="/smartNet.xhtml?network=smartnet" />
+				</p:submenu>
+					<p:submenu label="Transport">
+				<p:menuitem value="TechNet" url="/smartNet.xhtml?network=technet" />
 				</p:submenu>
 				<p:submenu label="User">
 					<p:menuitem value="Role" url="/role.xhtml" />
@@ -23,7 +26,10 @@
 			</shiro:hasRole>
 			<shiro:lacksRole name="AAF Admin">
 				<p:submenu label="Transport">
-					<p:menuitem value="SmartNet" url="/smartNet.xhtml" />
+					<p:menuitem value="SmartNet" url="/smartNet.xhtml?network=smartnet" />
+				</p:submenu>
+					<p:submenu label="Transport">
+				<p:menuitem value="TechNet" url="/smartNet.xhtml?network=technet" />
 				</p:submenu>
 				<p:submenu label="User">					
 					<p:menuitem rendered="#{!aAFSecurityBean.internal}"

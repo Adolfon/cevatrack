@@ -1,0 +1,735 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:shiro="http://shiro.apache.org/tags"	
+	template="app-template_consignmentLink.xhtml">
+	
+	<ui:define name="content">
+		<p:growl />
+		<div id="special_map_container" class="ceva-welcome-page">
+			<div class="ceva-panel-welcome-page"></div>
+			<div id="welcomePage" class="ceva-text-welcome-page">
+			<script type="text/javascript">				
+				$(document).ready(function() {
+					if (window.innerWidth > 768) {						
+						$('#special_gmap_responsive').css("height", "600px");		
+					} else{						
+						$('#special_gmap_responsive').css("height", "300px");
+					}
+				});
+				$(window).resize(function() {
+					if (window.innerWidth > 768) {
+						//alert('hello map resize more than 768px size: ' + window.innerWidth);
+						$('#special_gmap_responsive').css("height", "600px");		
+					} else{
+						//alert('hello map resize less than 768px: size: ' + window.innerWidth);
+						$('#special_gmap_responsive').css("height", "300px");
+					}
+				});			
+			</script>
+				<!-- <div class="ui-g-8 ui-md-6 ui-lg-4" style="float:none;">	-->
+					<div id="special_gmap_responsive" class="mapouter">
+						<div class="gmap_canvas">
+							<iframe width="100%" height="100%" id="gmap_canvas" 
+							src="https://maps.google.com/maps?q=52.51771,-1.90308&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed" 
+								 frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+							</iframe>						
+							<style>.mapouter{position:relative;text-align:center;height:100%;width:100%;}</style>							
+							<style>.gmap_canvas {overflow:hidden;background:none!important;height:100%;width:100%;}</style>
+						</div>
+					</div>								  
+				<!-- </div>		 -->
+			
+				<h:form id="form">				  
+					<p:growl id="growl" showDetail="true" />
+					
+					<p:panel id="toggleable-header" header="Consignment #{dtDetailViewLink.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	          <div class="ui-g">
+		           <div class="ui-g-12 ui-md-4 ui-lg-3">
+		              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                <div class="panel-heading">Reference</div>
+		                <div class="panel-body">#{dtDetailViewLink.consignment.consignmentReference}</div>
+		              </div>
+	             </div>
+		           <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentCustomerOrderRef}">
+                  <div class="ui-g-12 ui-md-4 ui-lg-2">
+			              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+			                <div class="panel-heading">Order</div>
+			                <div class="panel-body2">#{dtDetailViewLink.consignment.consignmentCustomerOrderRef}</div>
+			              </div>
+		              </div>
+	              </ui:fragment>
+                <div class="ui-g-12 ui-md-3 ui-lg-2">
+		              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                <div class="panel-heading">Status</div>
+		                <div class="panel-body">#{dtDetailViewLink.consignment.statusString}</div>
+		              </div>
+	              </div>
+	              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.clauseCode}">
+                 <div class="ui-g-12 ui-md-4 ui-lg-2">
+                    <div class="panel field-panel panel-danger">
+                      <div class="panel-heading">Clause Code</div>
+                      <div class="panel-body">#{dtDetailViewLink.consignment.clauseCode}</div>
+                    </div>
+                  </div>
+                </ui:fragment>
+                <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.parentCode}">
+                  <div class="ui-g-12 ui-md-4 ui-lg-2">
+                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                      <div class="panel-heading">Parent Code</div>
+                      <div class="panel-body">#{dtDetailViewLink.consignment.parentCode}</div>
+                    </div>
+                  </div>
+                </ui:fragment>
+	              <div class="ui-g-12 ui-md-3 ui-lg-2">
+		              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                <div class="panel-heading">Header ID</div>
+		                <div class="panel-body">#{dtDetailViewLink.consignment.consignmentHeaderId}</div>
+		              </div>
+	              </div>
+
+                <ui:fragment rendered="#{dtDetailViewLink.consignment.isAdHoc != 0}">
+                  <div class="ui-g-12 ui-md-3 ui-lg-2">
+		                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                  <div class="panel-heading">Adhoc</div>
+		                  <div class="panel-body">#{dtDetailViewLink.consignment.isAdHoc == 1}</div>
+		                </div>
+	                </div>
+                </ui:fragment>
+                <ui:fragment rendered="#{dtDetailViewLink.consignment.isTranshipment != 0}">
+                  <div class="ui-g-12 ui-md-3 ui-lg-2">
+		                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                  <div class="panel-heading">Transhipment</div>
+		                  <div class="panel-body">#{dtDetailViewLink.consignment.isTranshipment == 1}</div>
+		                </div>
+	                </div>
+                </ui:fragment>
+                <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo1
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo2)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo3)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo4)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo5)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo6)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo7)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo8)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo9)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo10)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo11)
+                            .concat(dtDetailViewLink.consignment.consignmentHeaderInfo12)
+                            }">
+                  <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Info</div>
+		                    <div class="panel-body">
+		                     <ul class="list-unstyled">
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo1}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo1}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo2}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo2}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo3}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo3}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo4}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo4}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo5}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo5}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo6}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo6}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo7}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo7}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo8}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo8}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo9}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo9}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo10}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo10}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo11}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo11}</li>
+	                        </ui:fragment>
+	                        <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.consignmentHeaderInfo12}">
+	                          <li>#{dtDetailViewLink.consignment.consignmentHeaderInfo12}</li>
+	                        </ui:fragment>
+	                      </ul>
+	                    </div>
+	                  </div>
+                  </div>
+                </ui:fragment>
+            </div>
+          </p:panel>
+
+          <p:panel id="toggleable-site" header="Site Details for Delivery / Collection" toggleable="true" widgetVar="accordian_site" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-5 ui-lg-3">
+	                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                  <div class="panel-heading">Site ID</div>
+	                  <div class="panel-body">#{dtDetailViewLink.consignment.siteId}</div>
+                  </div>
+                </div>
+                <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.siteName}">
+	                <div class="ui-g-12 ui-md-7 ui-lg-3">
+                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Site</div>
+	                    <div class="panel-body">#{dtDetailViewLink.consignment.siteName}</div>
+	                  </div>
+                  </div>
+                </ui:fragment>
+                <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.contactName}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+		                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                  <div class="panel-heading">Contact</div>
+		                  <div class="panel-body">#{dtDetailViewLink.consignment.contactName}</div>
+		                </div>
+	                </div>
+                </ui:fragment>
+                <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.contactNumber}">
+                  <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Contact Number</div>
+	                    <div class="panel-body">#{dtDetailViewLink.consignment.contactNumber}</div>
+	                  </div>
+                  </div>
+                </ui:fragment>
+                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                  <div class="panel-heading">Address</div>
+	                  <div class="panel-body">
+		                  <ul class="list-unstyled">
+			                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.address1}">
+			                    <li>#{dtDetailViewLink.consignment.address1}</li>
+			                  </ui:fragment>
+			                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.address2}">
+			                    <li>#{dtDetailViewLink.consignment.address2}</li>
+			                  </ui:fragment>
+			                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.address3}">
+			                    <li>#{dtDetailViewLink.consignment.address3}</li>
+			                  </ui:fragment>
+			                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.county}">
+			                    <li>#{dtDetailViewLink.consignment.county}</li>
+			                  </ui:fragment>
+			                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.postCode}">
+			                    <li>#{dtDetailViewLink.consignment.postCode}</li>
+			                  </ui:fragment>
+			                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.country}">
+			                    <li>#{dtDetailViewLink.consignment.country}</li>
+			                  </ui:fragment>
+		                  </ul>
+	                  </div>
+                  </div>
+                </div>
+                <div class="ui-g-12 ui-md-6 ui-lg-4">
+                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                    <div class="panel-heading">Coordinates</div>
+                    <div class="panel-body">
+	                  <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                      <div class="panel-heading">Latitude</div>
+	                      <div class="panel-body">#{dtDetailViewLink.consignment.siteLat}</div>
+	                    </div>
+	                  </div>
+	                  <div class="ui-g-12 ui-md-6 ui-lg-6 panel-default">
+	                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                      <div class="panel-heading">Longitude</div>
+	                      <div class="panel-body">#{dtDetailViewLink.consignment.siteLong}</div>
+	                    </div>
+	                  </div>
+	                  <div class="ui-g-12 ui-md-12 ui-lg-4">
+                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                        <div class="panel-body">
+                          <a target="_blank" href="https://www.google.com/maps/search/#{dtDetailViewLink.consignment.siteLat},#{dtDetailViewLink.consignment.siteLong}/@#{dtDetailViewLink.consignment.siteLat},#{dtDetailViewLink.consignment.siteLong},10z">
+                          Google Maps
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+	                </div>
+                </div>
+               </div>
+            </div>
+          </p:panel>
+
+
+          <p:panel id="toggleable-timings" header="Visit Details" toggleable="true" widgetVar="accordian_timings" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+            <div class="ui-g">
+              
+              <div class="ui-g-12 ui-md-4 ui-lg-3">
+	              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                <div class="panel-heading">Arrival</div>
+	                <div class="panel-body">
+	                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.ptaString}">
+		                  <div class="ui-g-12 ui-md-6 ui-lg-6">
+		                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                      <div class="panel-heading">Planned</div>
+		                      <div class="panel-body">#{dtDetailViewLink.consignment.ptaString}</div>
+		                    </div>
+		                  </div>
+	                  </ui:fragment>
+	                  <ui:fragment rendered="#{empty dtDetailViewLink.consignment.ataString}">
+	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                        <div class="panel-heading">Estimated</div>
+	                        <div class="panel-body">#{dtDetailViewLink.consignment.etaString}</div>
+	                      </div>
+	                    </div>
+	                  </ui:fragment>
+	                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.ataString}">
+	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                        <div class="panel-heading">Actual</div>
+	                        <div class="panel-body">#{dtDetailViewLink.consignment.ataString}</div>
+	                      </div>
+	                    </div>
+	                  </ui:fragment>
+	                </div>
+	              </div>
+              </div>
+                 
+                 
+              <div class="ui-g-12 ui-md-4 ui-lg-3">       
+	              <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                <div class="panel-heading">Departure</div>
+	                <div class="panel-body">
+	                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.ptdString}">
+	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                        <div class="panel-heading">Planned</div>
+	                        <div class="panel-body">#{dtDetailViewLink.consignment.ptdString}</div>
+	                      </div>
+	                    </div>
+	                  </ui:fragment>
+	                  <ui:fragment rendered="#{empty dtDetailViewLink.consignment.atdString}">
+	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                        <div class="panel-heading">Estimated</div>
+	                        <div class="panel-body">#{dtDetailViewLink.consignment.etdString}</div>
+	                      </div>
+	                    </div>
+	                  </ui:fragment>
+	                  <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.atdString}">
+	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                        <div class="panel-heading">Actual</div>
+	                        <div class="panel-body">#{dtDetailViewLink.consignment.atdString}</div>
+	                      </div>
+	                    </div>
+	                  </ui:fragment>
+	                </div>
+	              </div>
+              </div>
+              
+              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.timeWindowStartString.concat(dtDetailViewLink.consignment.timeWindowEndString)}">
+                <div class="ui-g-12 ui-md-4 ui-lg-3">
+                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                    <div class="panel-heading">Window</div>
+                    <div class="panel-body">
+                      <div class="ui-g-12 ui-md-6 ui-lg-6">
+                        <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                          <div class="panel-heading">Start</div>
+                          <div class="panel-body">#{dtDetailViewLink.consignment.timeWindowStartString}</div>
+                        </div>
+                      </div>
+                      <div class="ui-g-12 ui-md-6 ui-lg-6 panel-default">
+                        <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                          <div class="panel-heading">End</div>
+                          <div class="panel-body">#{dtDetailViewLink.consignment.timeWindowEndString}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ui:fragment>
+              
+              <ui:fragment rendered="#{dtDetailViewLink.consignment.durationOnSiteMins > 0}">
+                <div class="ui-g-12 ui-md-2 ui-lg-1">
+                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                    <div class="panel-heading">Minutes on Site</div>
+                    <div class="panel-body">#{dtDetailViewLink.consignment.durationOnSiteMins}</div>
+                  </div>
+                </div>
+              </ui:fragment>
+              <ui:fragment rendered="#{dtDetailViewLink.consignment.siteGeoRadius > 0}">
+                <div class="ui-g-12 ui-md-2 ui-lg-1">
+                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                    <div class="panel-heading">Geo Radius</div>
+                    <div class="panel-body">#{dtDetailViewLink.consignment.siteGeoRadius}</div>
+                  </div>
+                </div>
+              </ui:fragment>
+              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.journeyActualStartTimeString}">
+                <div class="ui-g-12 ui-md-2 ui-lg-2">
+                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                    <div class="panel-heading">At Site</div>
+                    <div class="panel-body">#{dtDetailViewLink.consignment.journeyActualStartTimeString}</div>
+                  </div>
+                </div>
+              </ui:fragment>
+              <div class="ui-g-12 ui-md-2 ui-lg-1">
+                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                  <div class="panel-heading">Drop Id</div>
+                  <div class="panel-body">#{dtDetailViewLink.consignment.journeyDropId}</div>
+                </div>
+              </div>
+            </div>
+          </p:panel>
+
+
+          <p:panel id="toggleable-journey" header="Journey Information" toggleable="true" widgetVar="accordian_journey" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+            <div class="ui-g">
+               
+              <div class="ui-g-12 ui-md-2 ui-lg-2">
+                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                  <div class="panel-heading">Journey Id</div>
+                  <div class="panel-body">#{dtDetailViewLink.consignment.journeyId}</div>
+                </div>
+              </div>
+               
+              <div class="ui-g-12 ui-md-2 ui-lg-2">
+                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                  <div class="panel-heading">Route Id</div>
+                  <div class="panel-body">#{dtDetailViewLink.consignment.routeId}</div>
+                </div>
+              </div>
+                   
+              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.journeyAlias}">    
+	              <div class="ui-g-12 ui-md-2 ui-lg-2">
+	                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                  <div class="panel-heading">Journey Alias</div>
+	                  <div class="panel-body">#{dtDetailViewLink.consignment.journeyAlias}</div>
+	                </div>
+	              </div>
+              </ui:fragment>
+                    
+              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.podStartTimeString}">
+                <div class="ui-g-12 ui-md-2 ui-lg-2">
+                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                    <div class="panel-heading">PoD Start</div>
+                    <div class="panel-body">#{dtDetailViewLink.consignment.podStartTimeString}</div>
+                  </div>
+                </div>
+              </ui:fragment>      
+                    
+              <div class="ui-g-12 ui-md-4 ui-lg-4">
+                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                  <div class="panel-heading">Start Time</div>
+                  <div class="panel-body">
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                        <div class="panel-heading">Planned</div>
+                        <div class="panel-body">#{dtDetailViewLink.consignment.plannedStartTimeString}</div>
+                      </div>
+                    </div>
+                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+                      <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                        <div class="panel-heading">Actual</div>
+                        <div class="panel-body">#{dtDetailViewLink.consignment.actualStartTimeString}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+            </div>
+          </p:panel>
+
+
+          <ui:fragment id="fragmentSignatory" rendered="#{dtDetailViewLink.consignment.signatory.length() + dtDetailViewLink.consignment.signatory.length() > 0}">
+	          <p:panel id="toggleable-pod" header="Signature" toggleable="true" widgetVar="accordian_pod" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	            <div class="ui-g">
+	               
+	              <ui:fragment rendered="#{! empty dtDetailViewLink.consignment.signatory}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Signatory</div>
+	                    <div class="panel-body">#{dtDetailViewLink.consignment.signatory}</div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	              <ui:fragment rendered="#{dtDetailViewLink.consignment.signature.length() > 0}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Signature</div>
+	                    <div class="panel-body">
+	                      <img class="signatureimg" src="data:image/png;base64, #{dtDetailViewLink.consignment.signature}" />
+	                    </div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	
+	            </div>
+	          </p:panel>
+          </ui:fragment>
+
+          <ui:fragment id="fragmentVehicles" rendered="#{dtDetailViewLink.consignment.vehicles.size() > 0}">
+            <p:panel id="toggleable-vehicles" header="Vehicles" toggleable="true" widgetVar="accordian_vehicles" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+              <c:forEach var="veh" items="#{dtDetailViewLink.consignment.vehicles}">
+		            <div class="ui-g">
+		               
+		              <div class="ui-g-12 ui-md-12 ui-lg-12">
+		                <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+		                  <div class="panel-heading">Vehicle: #{veh.displayName}</div>
+		                  <div class="panel-body">
+		                    <div class="ui-g-12 ui-md-3 ui-lg-3">
+			                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+			                      <div class="panel-heading">Name</div>
+			                      <div class="panel-body">#{veh.displayName}</div>
+			                    </div>
+			                  </div>
+			                  <ui:fragment rendered="! empty #{veh.lastLocation}">
+				                  <div class="ui-g-12 ui-md-3 ui-lg-3">
+	                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                            <div class="panel-heading">Last Location</div>
+	                            <div class="panel-body">#{veh.lastLocation}</div>
+	                          </div>
+	                        </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{veh.lastContactLat > 0.0}">
+	                        <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                            <div class="panel-heading">Last Contact</div>
+	                            
+	                            <div class="panel-body">
+				                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+				                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+				                            <div class="panel-heading">Latitude</div>
+				                            <div class="panel-body">#{veh.lastContactLat}</div>
+				                          </div>
+				                        </div>
+				                        
+				                        <div class="ui-g-12 ui-md-6 ui-lg-4">
+				                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+				                            <div class="panel-heading">Longitude</div>
+				                            <div class="panel-body">#{veh.lastContactLong}</div>
+				                          </div>
+				                        </div>
+				                        
+				                        <div class="ui-g-12 ui-md-12 ui-lg-4">			                               
+			                                 <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">			                                			                                
+			                                  <div class="panel-body">
+			                                    <a target="_blank" href="https://www.google.com/maps/dir/#{veh.lastContactLat},#{veh.lastContactLong}/#{dtDetailViewLink.consignment.siteLat},#{dtDetailViewLink.consignment.siteLong}/@#{veh.lastContactLat},#{veh.lastContactLong},9z">
+			                                    Google Maps
+			                                    </a>
+			                                  </div>
+			                                 </div>  
+			                                			                                
+	                              	 	</div>
+	                              
+	                            </div>
+	                          </div>
+	                        </div>
+                        </ui:fragment>
+		                  </div>
+		                </div>
+		              </div>
+		            </div>
+              </c:forEach>
+	          </p:panel>
+	        </ui:fragment>
+
+          <ui:fragment id="fragmentDrivers" rendered="#{dtDetailViewLink.consignment.drivers.size() > 0}">
+            <p:panel id="toggleable-drivers" header="Drivers" toggleable="true" widgetVar="accordian_drivers" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+              <c:forEach var="drv" items="#{dtDetailViewLink.consignment.drivers}">
+                <div class="ui-g">
+                   
+                  <div class="ui-g-12 ui-md-12 ui-lg-12">
+                    <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                      <div class="panel-heading">Driver: #{drv.displayName}</div>
+                      <div class="panel-body">
+                        <div class="ui-g-12 ui-md-3 ui-lg-3">
+                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+                            <div class="panel-heading">Name</div>
+                            <div class="panel-body">#{drv.displayName}</div>
+                          </div>
+                        </div>
+                        <ui:fragment rendered="! empty #{drv.fullName}">
+                          <div class="ui-g-12 ui-md-3 ui-lg-5">
+	                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                            <div class="panel-heading">Full Name</div>
+	                            <div class="panel-body">#{drv.fullName}</div>
+	                          </div>
+	                        </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="! empty #{drv.fullName}">
+	                        <div class="ui-g-12 ui-md-3 ui-lg-4">
+	                          <div class="panel field-panel panel-#{dtDetailViewLink.consignment.statusCssClass}">
+	                            <div class="panel-heading">Contact Number</div>
+	                            <div class="panel-body">#{drv.contactNumber}</div>
+	                          </div>
+	                        </div>
+                        </ui:fragment>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
+            </p:panel>
+          </ui:fragment>
+          
+          
+          <ui:fragment id="fragmentConsignment" rendered="#{dtDetailViewLink.consignment.consignmentDetails.size() > 0}">
+	          <p:panel id="toggleable-contents" header="Contents" toggleable="true" widgetVar="accordian_contents" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+              <c:forEach var="item" items="#{dtDetailViewLink.consignment.consignmentDetails}">
+                <div class="ui-g">
+                   
+                  <div class="ui-g-12 ui-md-12 ui-lg-12">
+                    <div class="panel field-panel panel-#{item.statusCssClass}">
+                      <div class="panel-heading">Item: #{item.detailRef}</div>
+                      <div class="panel-body">
+                        <ui:fragment rendered="! empty #{item.customerDetailRef}">
+                          <div class="ui-g-12 ui-md-4 ui-lg-3">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Reference</div>
+                              <div class="panel-body">#{item.customerDetailRef}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="! empty #{item.parentRef}">
+                          <div class="ui-g-12 ui-md-4 ui-lg-3">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Part of</div>
+                              <div class="panel-body">#{item.parentRef}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="! empty #{item.description}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-6">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Description</div>
+                              <div class="panel-body">#{item.description}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <div class="ui-g-12 ui-md-3 ui-lg-2">
+                          <div class="panel field-panel panel-#{item.statusCssClass}">
+                            <div class="panel-heading">Status</div>
+                            <div class="panel-body">#{item.statusString}</div>
+                          </div>
+                        </div>
+					              <div class="ui-g-12 ui-md-4 ui-lg-4">
+					                <div class="panel field-panel panel-#{item.statusCssClass}">
+					                  <div class="panel-heading">Quantities</div>
+					                  <div class="panel-body">
+					                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+					                      <div class="panel field-panel panel-#{item.statusCssClass}">
+					                        <div class="panel-heading">Planned</div>
+					                        <div class="panel-body">#{item.plannedQuantity}</div>
+					                      </div>
+					                    </div>
+					                    <ui:fragment rendered="#{item.actualQuantity > 0}">
+						                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+						                      <div class="panel field-panel panel-#{item.statusCssClass}">
+						                        <div class="panel-heading">Actual</div>
+						                        <div class="panel-body">#{item.actualQuantity}</div>
+						                      </div>
+						                    </div>
+					                    </ui:fragment>
+					                  </div>
+					                </div>
+					              </div>
+					              
+                        <ui:fragment rendered="! empty #{item.info1}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">#{dtDetailViewLink.consignment.label1}</div>
+                              <div class="panel-body">#{item.info1}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+				                        
+                        <ui:fragment rendered="! empty #{item.info2}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">#{dtDetailViewLink.consignment.label2}</div>
+                              <div class="panel-body">#{item.info2}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                                                
+                        <ui:fragment rendered="! empty #{item.info3}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">#{dtDetailViewLink.consignment.label3}</div>
+                              <div class="panel-body">#{item.info3}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                                                
+                        <ui:fragment rendered="! empty #{item.info4}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">#{dtDetailViewLink.consignment.label4}</div>
+                              <div class="panel-body">#{item.info4}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>	
+                        
+                        <c:forEach var="cld" items="#{item.clauseDetails}">
+				                   
+				                  <div class="ui-g-12 ui-md-12 ui-lg-12">
+				                    <div class="panel field-panel panel-#{item.statusCssClass}">
+				                      <div class="panel-heading">Clause</div>
+				                      <div class="panel-body">
+				                        <div class="ui-g-12 ui-md-3 ui-lg-1">
+				                          <div class="panel field-panel panel-#{item.statusCssClass}">
+				                            <div class="panel-heading">Code</div>
+				                            <div class="panel-body">#{cld.clauseCode}</div>
+				                          </div>
+				                        </div>
+				                        <div class="ui-g-12 ui-md-8 ui-lg-5">
+                                  <div class="panel field-panel panel-#{item.statusCssClass}">
+                                    <div class="panel-heading">Description</div>
+                                    <div class="panel-body">#{cld.clauseDescription}</div>
+                                  </div>
+                                </div>
+                                <ui:fragment rendered="! empty #{cld.parentCode}">
+	                                <div class="ui-g-12 ui-md-8 ui-lg-1">
+	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
+	                                    <div class="panel-heading">Parent Code</div>
+	                                    <div class="panel-body">#{cld.parentCode}</div>
+	                                  </div>
+	                                </div>
+                                </ui:fragment>
+                                <ui:fragment rendered="! empty #{cld.parentClauseDescription}">
+	                                <div class="ui-g-12 ui-md-8 ui-lg-5">
+	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
+	                                    <div class="panel-heading">Parent Description</div>
+	                                    <div class="panel-body">#{cld.parentClauseDescription}</div>
+	                                  </div>
+	                                </div>
+                                </ui:fragment>
+			                          <div class="ui-g-12 ui-md-4 ui-lg-2">
+			                            <div class="panel field-panel panel-#{item.statusCssClass}">
+			                              <div class="panel-heading">Claused Quantity</div>
+			                              <div class="panel-body">#{cld.clausedQuantity}</div>
+			                            </div>
+			                          </div>
+				                      </div>
+				                    </div>
+				                  </div>
+					              </c:forEach>                                      
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
+	          </p:panel>
+          </ui:fragment>
+		</h:form>
+	</div>
+   </div>
+ </ui:define>
+ 
+</ui:composition>

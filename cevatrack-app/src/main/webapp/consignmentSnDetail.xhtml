@@ -18,7 +18,7 @@
 				  <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtDetailView.refresh}" widgetVar="poll" update="menuform:serverDate,toggleable-header,toggleable-site,toggleable-timings,toggleable-journey,fragmentSignatory,fragmentVehicles,fragmentDrivers,fragmentConsignment" />
 					<p:growl id="growl" showDetail="true" />
 					
-					<p:panel id="toggleable-header" header="Consignment #{dtDetailView.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+					<p:panel id="toggleable-header" header="Consignment #{dtDetailView.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px;margin-top:30px;">
 	          <div class="ui-g">
 		           <div class="ui-g-12 ui-md-4 ui-lg-3">
 		              <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
@@ -459,7 +459,7 @@
 			                      <div class="panel-body">#{veh.displayName}</div>
 			                    </div>
 			                  </div>
-			                  <ui:fragment rendered="! empty #{veh.lastLocation}">
+			                  <ui:fragment rendered=" #{! empty veh.lastLocation}">
 				                  <div class="ui-g-12 ui-md-3 ui-lg-3">
 	                          <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
 	                            <div class="panel-heading">Last Location</div>
@@ -525,7 +525,7 @@
                             <div class="panel-body">#{drv.displayName}</div>
                           </div>
                         </div>
-                        <ui:fragment rendered="! empty #{drv.fullName}">
+                        <ui:fragment rendered="#{! empty drv.fullName}">
                           <div class="ui-g-12 ui-md-3 ui-lg-5">
 	                          <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
 	                            <div class="panel-heading">Full Name</div>
@@ -533,7 +533,7 @@
 	                          </div>
 	                        </div>
                         </ui:fragment>
-                        <ui:fragment rendered="! empty #{drv.fullName}">
+                        <ui:fragment rendered="#{! empty drv.fullName}">
 	                        <div class="ui-g-12 ui-md-3 ui-lg-4">
 	                          <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
 	                            <div class="panel-heading">Contact Number</div>
@@ -559,7 +559,7 @@
                     <div class="panel field-panel panel-#{item.statusCssClass}">
                       <div class="panel-heading">Item: #{item.detailRef}</div>
                       <div class="panel-body">
-                        <ui:fragment rendered="! empty #{item.customerDetailRef}">
+                        <ui:fragment rendered="#{! empty item.customerDetailRef}">
                           <div class="ui-g-12 ui-md-4 ui-lg-3">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">Reference</div>
@@ -567,7 +567,7 @@
                             </div>
                           </div>
                         </ui:fragment>
-                        <ui:fragment rendered="! empty #{item.parentRef}">
+                        <ui:fragment rendered="#{! empty item.parentRef}">
                           <div class="ui-g-12 ui-md-4 ui-lg-3">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">Part of</div>
@@ -575,7 +575,7 @@
                             </div>
                           </div>
                         </ui:fragment>
-                        <ui:fragment rendered="! empty #{item.description}">
+                        <ui:fragment rendered="#{! empty item.description}">
                           <div class="ui-g-12 ui-md-6 ui-lg-6">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">Description</div>
@@ -611,16 +611,24 @@
 					                </div>
 					              </div>
 					              
-                        <ui:fragment rendered="! empty #{item.info1}">
+                        <ui:fragment rendered="#{! empty item.info1}">
                           <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
-                              <div class="panel-heading">#{dtDetailView.consignment.label1}</div>
+                              <div class="panel-heading">Scanned</div>
                               <div class="panel-body">#{item.info1}</div>
                             </div>
                           </div>
                         </ui:fragment>
+                        <ui:fragment rendered="#{empty item.info1}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-4">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Scanned</div>
+                              <div class="panel-body">False</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
 				                        
-                        <ui:fragment rendered="! empty #{item.info2}">
+                        <ui:fragment rendered="#{! empty item.info2}">
                           <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">#{dtDetailView.consignment.label2}</div>
@@ -629,7 +637,7 @@
                           </div>
                         </ui:fragment>
                                                 
-                        <ui:fragment rendered="! empty #{item.info3}">
+                        <ui:fragment rendered="#{! empty item.info3}">
                           <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">#{dtDetailView.consignment.label3}</div>
@@ -638,7 +646,7 @@
                           </div>
                         </ui:fragment>
                                                 
-                        <ui:fragment rendered="! empty #{item.info4}">
+                        <ui:fragment rendered="#{! empty item.info4}">
                           <div class="ui-g-12 ui-md-6 ui-lg-4">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">#{dtDetailView.consignment.label4}</div>
@@ -665,7 +673,7 @@
                                     <div class="panel-body">#{cld.clauseDescription}</div>
                                   </div>
                                 </div>
-                                <ui:fragment rendered="! empty #{cld.parentCode}">
+                                <ui:fragment rendered="#{! empty cld.parentCode}">
 	                                <div class="ui-g-12 ui-md-8 ui-lg-1">
 	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
 	                                    <div class="panel-heading">Parent Code</div>
@@ -673,7 +681,7 @@
 	                                  </div>
 	                                </div>
                                 </ui:fragment>
-                                <ui:fragment rendered="! empty #{cld.parentClauseDescription}">
+                                <ui:fragment rendered="#{! empty cld.parentClauseDescription}">
 	                                <div class="ui-g-12 ui-md-8 ui-lg-5">
 	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
 	                                    <div class="panel-heading">Parent Description</div>

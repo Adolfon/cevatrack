@@ -35,10 +35,16 @@ import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 public class ConsignmentListManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsignmentListManager.class);
     private Map<String, DatedConsignmentList> consignmentStore;
-    private static final String PERM = "sn_site:view:";
-    private static final String PERM_GLOBAL = "sn_site:view";
+    private static final String SN_SITE = "sn_site:view:";
+    private static final String SN_GLOBAL = "sn_site:view";
     private static final String TECHNET_SITE = "tech_site:view"; // WS user
-
+    private static final String TN_GLOBAL = "tn_site:view";
+    private static final String TN_SITE = "tn_site:view:";
+    private static final String AM_GLOBAL = "am_site:view";
+    private static final String AM_SITE = "am_site:view:";
+    private static final String HC_GLOBAL = "hc_site:view";
+    private static final String HC_SITE = "hc_site:view:";
+    
     @PostConstruct
     public void init() {
         consignmentStore = new ConcurrentHashMap<String, DatedConsignmentList>();
@@ -63,8 +69,13 @@ public class ConsignmentListManager {
      * @throws Exception
      *             if unable to access list
      */
+    // I need to make this method generic for different networks (in case of different DB table structure)
     public Map<String, ConsignmentPortfolioSummary> getPortfolioStats(String fromYyyymmdd, String toYyyymmdd,
-            List<SmartNetClientVO> clientsDB) throws Exception {
+            List<SmartNetClientVO> clientsDB, String network) throws Exception {
+    	if (clientsDB == null){
+    		return null;
+    	}
+    	LOGGER.info(" Starting getPortfolioStats, database members: " + clientsDB.size());
         DatedConsignmentList WsConsignmentSummaries;
 
         Map<String, ConsignmentPortfolioSummary> resp = new HashMap<String, ConsignmentPortfolioSummary>();
@@ -82,7 +93,7 @@ public class ConsignmentListManager {
         LOGGER.info(" -- Prefixes to filter from the database: " + prefixCountsDB.toString());
         // We're all set up to count now...
         try {
-            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false);
+            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false, network);
         } catch (IOException io) {
             throw new IOException("IO Error accessing WsConsignmentSummaries Consignment List", io);
         } catch (Exception e) {
@@ -102,7 +113,7 @@ public class ConsignmentListManager {
                 }
             }
         });
-        LOGGER.info(" -- Clients that are NOT in the SmartNet database: " + outSmartNet);
+        LOGGER.info(" -- Clients that are NOT in the clients database: " + outSmartNet);
 
         // This adds up prefixes by client in the DataBase
         clientsDB.forEach(cl -> {
@@ -112,7 +123,7 @@ public class ConsignmentListManager {
             });
             resp.put(cl.getName(), clientSummary);
         });
-
+        LOGGER.info(" -- Finising method response size: " + resp.size());
         return resp;
     }
 
@@ -130,11 +141,11 @@ public class ConsignmentListManager {
      *             This is the main method to call for ConsingmentSummaries
      */
     public DatedConsignmentList getFilteredConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd,
-            List<String> prefixes, Boolean cache, Boolean WS) throws Exception {
+            List<String> prefixes, Boolean cache, Boolean WS, String network) throws Exception {
         DatedConsignmentList parent;
         List<ConsignmentSummary> respList = new ArrayList<ConsignmentSummary>();
         try {
-            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS);
+            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS, network);
         } catch (IOException e1) {
             throw new IOException("IOExcpetion accessing Parent Consignment List", e1);
         } catch (Exception e) {
@@ -161,15 +172,15 @@ public class ConsignmentListManager {
      *             if unable to generate one
      */
     public DatedConsignmentList getConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd, Boolean cache,
-            Boolean WS) throws Exception {
-
+            Boolean WS, String network) throws Exception {
+    	LOGGER.info(" -- Received parameters: " + fromYyyymmdd + ", toYyyymmdd: " + toYyyymmdd + " ,cache: " + cache);
         housekeep(); // Erase old consignments
         String listKey;
         Subject currentUser = null;
         WsMicroliseEnvironment env = null;
         if (!WS) {
             currentUser = SecurityUtils.getSubject();
-            env = new WsMicroliseEnvironment();
+            env = new WsMicroliseEnvironment(network);
         } else {
             env = new WsMicroliseEnvironment(WS);
         }
@@ -184,24 +195,31 @@ public class ConsignmentListManager {
             if (consignmentStore.containsKey(listKey)) {
                 if (consignmentStore.get(listKey).isCurrent()) {
                     LOGGER.info("-- The obtained consignment list was from the cache -- cache: " + cache);
-                    return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS);
+                    return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS, network);
                 }
             }
         }
 
         try {
-            DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS);
-            // Fix Status from Pending to Delivered when the consignment arrival date is present
-            fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
+            DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS, network);
+            // Fix Status from Pending to Delivered when the consignment arrival date is present            
             LOGGER.info("Consignment store size before put: " + consignmentStore.size());
-            consignmentStore.put(listKey, dcl);
+            if (dcl.getConsignmentSummaries() == null){
+            	LOGGER.info( " --------it is null");
+            }else{
+            	LOGGER.info( " --------it is not null, size: " + dcl.getConsignmentSummaries().size());            	
+            	consignmentStore.put(listKey, dcl);
+            	fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
+            }
+            
             LOGGER.info("Consignment store after put: " + consignmentStore.size() + ",key: " + listKey
-                    + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size());
-            return getUserConsignmentList(dcl, currentUser, WS);
+                    + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size() + " WS?: " + WS);
+            return getUserConsignmentList(dcl, currentUser, WS, network);
         } catch (Exception e) {// here I need IOException
+        	LOGGER.error(" -- Exception in Consignment List manager calling new DatedConsignmentList or fixing status..");
             if (consignmentStore.containsKey(listKey)) {
                 // old data is better than no data!
-                return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS);
+                return getUserConsignmentList(consignmentStore.get(listKey), currentUser, WS, network);
             }
             if (e.getClass() == IOException.class) {
                 throw new IOException("IO Exception error in remote server communication is escalating..", e);
@@ -220,14 +238,44 @@ public class ConsignmentListManager {
                 });
     }
 
-    private DatedConsignmentList getUserConsignmentList(DatedConsignmentList source, Subject currentUser, Boolean WS) {
+    private DatedConsignmentList getUserConsignmentList(DatedConsignmentList source, Subject currentUser, Boolean WS, String network) {
         // this subroutine will only allow out things that a user is allowed to see
-        if (WS || currentUser.isPermitted(PERM_GLOBAL) || currentUser.isPermitted(TECHNET_SITE)) {
-            return source;
+//        if (WS || currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(TECHNET_SITE)) {
+//            return source;
+//        }
+        LOGGER.info(" -- Starting method: getUserConsignmentList, network: " + network);
+        if (WS && currentUser.isPermitted(TECHNET_SITE)){
+        	return source;
+        }        
+        DatedConsignmentList dcl = new DatedConsignmentList(source); //here dcl = 0 but source = 989 elements...(starts with 0)
+        if(network.equalsIgnoreCase("smartnet")){
+        	if (currentUser.isPermitted(SN_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(SN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        }        
+        if(network.equalsIgnoreCase("technet")){
+        	if (currentUser.isPermitted(TN_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(TN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        }           
+        if(network.equalsIgnoreCase("automotive")){
+        	if (currentUser.isPermitted(AM_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(AM_SITE + con.getSiteId())).collect(Collectors.toList()));
         }
-        DatedConsignmentList dcl = new DatedConsignmentList(source);
-        dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
-                .filter(con -> currentUser.isPermitted(PERM + con.getSiteId())).collect(Collectors.toList()));
+        if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that´s why the consignments are not being added...
+        	if (currentUser.isPermitted(HC_GLOBAL)){
+        		return source;
+        	}
+        	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
+                    .filter(con -> currentUser.isPermitted(HC_SITE + con.getSiteId())).collect(Collectors.toList()));
+        } 
         return dcl;
     }
 
@@ -258,18 +306,43 @@ public class ConsignmentListManager {
      * @throws Exception
      *             if not available
      */
-    public Consignment getConsignmentDetail(String consignmentReference) throws Exception {
+    public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
+    	LOGGER.info( "-- getConsignmentDetail parameters: "+ consignmentReference + ",network: " + network);
         Consignment consignment;
-        Subject currentUser = SecurityUtils.getSubject();
-        boolean ok = false;
+        Subject currentUser = null;        
         try {
-            consignment = WsMicroliseComms.getConsignment(consignmentReference);
-            fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
-            if (currentUser.isPermitted(PERM_GLOBAL)) {
-                return consignment;
+            consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
+            if (consignment == null){
+            	LOGGER.error(" -- The consignment was not retrieved and it is null --");
+            	throw new Exception("-- The consignment was not retrieved and it is null --");
             }
-            if (currentUser.isPermitted(PERM + consignment.getSiteId())) {
-                return consignment;
+            if (!network.equalsIgnoreCase("HealthLink")){
+            	currentUser = SecurityUtils.getSubject();
+            }else{
+            	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK
+            	LOGGER.info(" -- HealthLind detected --");
+                return consignment;	  
+            }
+            fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
+            if (network.equalsIgnoreCase("smartnet")){
+	            if (currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(SN_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
+            }
+            if (network.equalsIgnoreCase("technet")){
+	            if (currentUser.isPermitted(TN_GLOBAL) || currentUser.isPermitted(TN_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
+            }     
+            if (network.equalsIgnoreCase("Automotive")){
+	            if (currentUser.isPermitted(AM_GLOBAL) || currentUser.isPermitted(AM_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
+            }
+            if (network.equalsIgnoreCase("Healthcare")){
+	            if (currentUser.isPermitted(HC_GLOBAL) || currentUser.isPermitted(HC_SITE + consignment.getSiteId())) {
+	                return consignment;
+	            }	            
             }
             throw new Exception("User does not have access to site - Security violation");
         } catch (Exception e) {

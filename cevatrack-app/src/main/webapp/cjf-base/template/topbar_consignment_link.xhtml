@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://security.ceva.com/jsf/aaf/tags">
+
+	<div class="layout-topbar" style="height: 50px">
+		<h:link outcome="" styleClass="logo-container"><!-- here overflows -->
+			<ui:insert name="logo"/>
+			<ui:insert name="app-title"/>
+		</h:link>
+
+		<div class="topbar-content">
+		<aaf:authenticated>
+			<a href="#" id="topbar-sidebar-button"> <i class="fa fa-bars"></i>
+			</a> <a href="#" id="topbar-quickmenu-button" style="visibility: hidden;">
+				<h:outputText value="#{cjfBaseLbls['topbar.quickMenu']}" />
+			</a>
+		</aaf:authenticated>
+			<div class="topbar-icons">
+				<p:outputLabel value="#{environmentInfoBean.environmentName}"
+					rendered="#{environmentInfoBean.showEnvironmentName}"
+					style="color:#ffffff" />
+			</div>
+			
+			<aaf:authenticated>
+				<p:commandLink class="topbar-profile-menu-buttons"
+					id="topbar-profile-menu-button-profile"
+					action="#" style="padding-top:20px;">
+					<span> <i class="fa fa-user" aria-hidden="true"></i>
+						#{appUserBean.appUser.AAFUser.firstName}
+						#{appUserBean.appUser.AAFUser.lastName}
+					</span>
+				</p:commandLink>
+				<p:commandLink class="topbar-profile-menu-buttons"
+					id="topbar-profile-menu-button-logout"
+					action="#{logoutBean.logout()}" style="padding-top:20px;">
+					<span> <i class="fa fa-sign-out" aria-hidden="true"></i> <h:outputText
+							value="#{cjfBaseLbls['topbar.logout']}" /></span>
+				</p:commandLink>
+
+			</aaf:authenticated>
+			
+		</div>
+	</div>
+</ui:composition>

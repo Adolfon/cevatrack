@@ -28,7 +28,10 @@ import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ceva.cevatrack.service.AutomotiveClientService;
+import com.ceva.cevatrack.service.HealthcareClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
+import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -55,8 +58,18 @@ public class ConsignmentView implements Serializable, CommonApp {
     private LocalDate reportLocalDate;
     private LocalDate reportLocalDateTo;
     private final byte INTERVAL_DAYS = 7;
+    private String network;
+    private String initStatusSelect;
 
-    public void setReportDateTo(Date reportLocalDateTo) {
+	public String getInitStatusSelect() {
+		return initStatusSelect;
+	}
+
+	public void setInitStatusSelect(String initStatusSelect) {
+		this.initStatusSelect = initStatusSelect;
+	}
+
+	public void setReportDateTo(Date reportLocalDateTo) {
         this.reportLocalDateTo = dateToLocal(reportLocalDateTo);
     }
 
@@ -97,7 +110,13 @@ public class ConsignmentView implements Serializable, CommonApp {
 
     private Map<String, String> params;
     private SmartNetClientVO clientDetail;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
+    
+    
+    public SmartNetClientVO getClientDetail() {
+		return clientDetail;
+	}
+
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
     private static final DateTimeFormatter DATEFORMAT = DateTimeFormatter.ofPattern("HH:mm:ss");
     // Autorefresh
     private Boolean pollEnabled;
@@ -109,6 +128,15 @@ public class ConsignmentView implements Serializable, CommonApp {
     @EJB
     SmartNetClientService snClientService;
 
+    @EJB
+    TechNetClientService tnClientService;
+    
+    @EJB
+    AutomotiveClientService amClientService;
+    
+    @EJB
+    HealthcareClientService hcClientService;
+    
     /**
      * called once
      */
@@ -127,9 +155,43 @@ public class ConsignmentView implements Serializable, CommonApp {
         retry = new Boolean(true);
 
         this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        client = params.get("client");
-        clientDetail = snClientService.getSmartNetClient(client);
-
+        this.network = params.get("network");        
+        LOGGER.info("the network value in Consignment view is: " + network);
+        client = params.get("client");                
+        try{
+        	boolean oneSelected = false;
+        	if (client == null || network==null){
+        		throw new Exception (" -- There is no a valid network or client parameter -- ");
+        	}
+	        if (network.equalsIgnoreCase("technet")){
+	        	LOGGER.info("technet network detected");
+	        	oneSelected = true;
+	        	clientDetail = tnClientService.getTechNetClient(client);
+	        } 
+	        if (network.equalsIgnoreCase("smartnet")){
+	        	LOGGER.info("smartnet network detected");
+	        	oneSelected = true;
+	        	clientDetail = snClientService.getSmartNetClient(client);
+	        }
+	        if (network.equalsIgnoreCase("Automotive")){
+	        	LOGGER.info("Automotive network detected");
+	        	oneSelected = true;
+	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        	if (clientDetail == null){
+	        		clientDetail = amClientService.getAutomotiveClientByAAFName(client);
+	        	}
+	        }
+	        if (network.equalsIgnoreCase("Healthcare")){
+	        	LOGGER.info("Health network detected");
+	        	oneSelected = true;
+	        	clientDetail = hcClientService.getHealthcareClient(client);
+	        }
+	        if (!oneSelected){
+	        	throw new Exception (" -- There was not a valid network selected -- ");
+	        }
+        } catch (Exception e){
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));
+        }        
         reportLocalDate = LocalDate.now();
         reportLocalDateTo = reportLocalDate; // init the date to the 'from date'
 
@@ -146,8 +208,14 @@ public class ConsignmentView implements Serializable, CommonApp {
                 String reportDateTo = params.get("reportdateTo");
                 reportLocalDateTo = LocalDate.parse(reportDateTo, FORMATTER);
             }
-            consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    null, clientDetail.getPfx(), true, false);
+            if (clientDetail == null){
+            	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
+                        null, new ArrayList<String>(), true, false, this.network);
+            }else{
+            	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
+                        null, clientDetail.getPfx(), true, false, this.network);
+            }
+            
         } catch (Exception e) {
             LOGGER.error("Smartnet consignments error :" + client + "\n trace: \n" + ExceptionUtils.getFullStackTrace(e));
             message = e.getCause().getMessage() + "... Press F5 to retry.";
@@ -155,10 +223,30 @@ public class ConsignmentView implements Serializable, CommonApp {
             FacesContext.getCurrentInstance().addMessage(null, msg);
             consignments = new DatedConsignmentList();
         }
-        if (params.containsKey("initstatus")) {
-            RequestContext rc = RequestContext.getCurrentInstance();
-            rc.execute("PF('consignmentsTable').filter();");
+        RequestContext rc = RequestContext.getCurrentInstance();
+        if (params.containsKey("initstatus")) {        	           
+            String paramStatus = params.get("initstatus");
+            this.initStatusSelect = paramStatus;
+            LOGGER.info(" -- param value: " + paramStatus);
+        }else{
+        	 this.initStatusSelect = "No filter";
         }
+        if (params.containsKey("site")) {
+        	LOGGER.info(" site param: " + params.get("site"));
+        }
+        LOGGER.info("Init filter value: " + this.initStatusSelect);
+        String at = "jQuery('div.ui-helper-hidden-accessible select').val('" + initStatusSelect +"');";
+        String at2 = "jQuery('div.ui-selectonemenu label').text('" + initStatusSelect +"');";
+        String at3 = "$(document.getElementById('form:tableStateDT:j_id_2p:filter').setAttribute('value', '" + params.get("site") + "'));";
+        if ( "z0".equals(params.get("site"))){
+        	at3 = "$(document.getElementById('form:tableStateDT:j_id_2p:filter').setAttribute('value', ''));";
+        }
+        rc.execute(at);
+        rc.execute(at2);
+        if ( params.get("site") != null){
+        	rc.execute(at3);
+        }
+        rc.execute("PF('consignmentsTable').filter();");
     }
 
     /**
@@ -172,7 +260,7 @@ public class ConsignmentView implements Serializable, CommonApp {
         setReportDateTo(localToDate(reportLocalDate));
         try {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    null, clientDetail.getPfx(), true, false);
+                    null, clientDetail.getPfx(), true, false, this.network);
         } catch (Exception e) {
             setReportDate(Date.from(datePickerSuccess.atStartOfDay(ZoneId.systemDefault()).toInstant()));
             LOGGER.error("Request consignments summaries for the new dates (calendar event) failed", e);
@@ -194,7 +282,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 
         try {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), true, false);
+                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), true, false, this.network);
             requestContext.execute("PF('consignmentsTable').clearFilters()");
         } catch (IOException st) {
             LOGGER.error("Socket time out exception, there were too many consingments probably..: " + st);
@@ -242,7 +330,7 @@ public class ConsignmentView implements Serializable, CommonApp {
                 + clientDetail.getPfx());
         try {
             consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), false, false);
+                    reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), false, false, this.network);
             retry = true;
             this.setDate(LocalDateTime.now().format(DATEFORMAT));
         } catch (Exception e) {
@@ -372,6 +460,14 @@ public class ConsignmentView implements Serializable, CommonApp {
         return Common.getStatusCssClass(thiscode);
     }
 
+    public String getNetwork() {
+		return network;
+	}
+
+	public void setNetwork(String network) {
+		this.network = network;
+	}
+	
     /**
      * @param event
      *            called from screen when user clicks (picks up from selected consignment)
@@ -379,8 +475,9 @@ public class ConsignmentView implements Serializable, CommonApp {
     public void onRowSelect(SelectEvent event) {
         try {
             FacesContext.getCurrentInstance().getExternalContext()
-                    .redirect("consignmentSnDetail.xhtml?con=" + selectedConsignment.getConsignmentReference()
-                            + "&daterange=" + consignments.getDateRange() + "&client=" + client);
+                    .redirect("consignmentSnDetail.xhtml?network=" + this.network 
+                    		+ "&con=" + selectedConsignment.getConsignmentReference()
+                            + "&daterange=" + consignments.getDateRange() + "&client=" + clientDetail.getName());
         } catch (IOException e) {
             LOGGER.error("An IO Exception happened when the row was selected", e);
         }

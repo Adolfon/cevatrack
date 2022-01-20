@@ -1,0 +1,127 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://java.sun.com/jsf/composite/aaf"	
+	xmlns:shiro="http://shiro.apache.org/tags"		
+	template="app-template.xhtml">
+
+	<ui:define name="content">
+		<p:growl />
+
+		<h:panelGroup styleClass="ceva-welcome-page">
+			<h:panelGroup layout="block" id="welcomePage"
+				styleClass="ceva-text-welcome-page">
+				<h:form id="form">
+					<p:poll  id="trips_refresh"  autoStart="true" interval="90" listener="#{sebView.init}"  update="trips" />
+					<h:panelGroup layout="block" styleClass="ui-g" style="line-height: 100%;">
+						<h:panelGroup layout="block" styleClass="d-sm-none ui-md-3 d-lg-2" style="display:table;">
+							<div style="display: flex;">
+								<span style="padding:5px;margin:3px;border-radius:7px;border:solid 4px !important;border-color:#28ff28 !important;">Early ETA</span>
+								<span class="blue_border_drop" style="padding:5px;margin:3px;border-radius:7px;">On time ETA</span>
+								<span class="red_border_drop" style="padding:5px;margin:3px;border-radius:7px;"> Late ETA </span>
+								<span class="black_border_drop" style="padding:5px;margin:3px;border-radius:7px;">No ETA </span>
+							</div>
+							<div style="display: flex;color:white;">					
+								<span class="green_filled" style="padding:5px;margin:3px;border-radius:7px;">Early ATA</span>
+								<span class="blue_filled" style="padding:5px;margin:3px;border-radius:7px;">On time ATA </span>
+								<span class="red_filled" style="padding:5px;margin:3px;border-radius:7px;">Late ATA</span>
+								<span class="black_filled" style="padding:5px;margin:3px;border-radius:7px;">Refused delivery</span>
+							</div>
+						</h:panelGroup>
+						<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-6 d-lg-8" style="line-height: 100%;">
+							<h1 id="title" style="text-align: center;"><h:outputText value="Schedule Execution Board" /></h1>
+						</h:panelGroup>
+						<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-2" style="align-self:center;line-height: 100%;">
+							<p:calendar id="datesel" styleClass="datepicker h5"
+								value="#{sebView.tripDate}"
+								pattern="dd MMM yyyy"
+								locale="en_GB" readonlyInput="true">
+								<p:ajax event="dateSelect"
+									listener="#{sebView.onDateSelect}" update="trips" />
+							</p:calendar> 							
+						</h:panelGroup>
+					</h:panelGroup>
+				
+					<div id="sn-save">
+						<h:panelGroup layout="block" styleClass="ui-g" id="trips">						
+						<c:choose>
+							<c:when test="${empty sebView.trips}">
+								<table style="margin-top:20px;">
+									<tr><td colspan="6">No data available, please try another date or refresh the page...</td></tr>
+								</table>
+							</c:when>
+	
+							<c:otherwise>		
+									<c:set var="counter" value="${0}"/>				
+									<c:forEach items="#{sebView.trips}" var="trip">										
+											<c:set var="counter" value="${counter + 1}"/>
+										<h:panelGroup layout="block" styleClass="ui-g" class="${counter % 2 == 0 ? 'row0' : 'row1'}" 
+											style="margin-top:10px;width:100%; border:solid 1px;border-radius:7px;">									
+												<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-3 d-lg-3">
+													<table style="width:100%;text-align:center;border:none;display:table-caption;border-spacing:5px 0;">
+														<tr>
+															<td style="text-decoration: underline;font-weight: bold;">Route</td>
+															<td style="text-decoration: underline;font-weight: bold;">Time</td>
+															<td style="text-decoration: underline;font-weight: bold;">Load</td> 
+														</tr>
+														<tr>
+															<td>#{trip.routeID}&#160;&#160;</td>
+															<td>#{trip.seb_dateString}&#160;&#160;</td> 
+															<td>#{trip.loadID} </td>
+														</tr>
+													</table>																												
+													<span style="text-align:center;"><b>Driver:</b> #{trip.driver}&#160;&#160;<b>Vehicle:</b> #{trip.vehicule}</span>																																																								
+						            			</h:panelGroup>
+						            			<h:panelGroup layout="block" styleClass="ui-g-12 ui-md-9 d-lg-9" style="display:flex;overflow:auto;">	
+						            				<c:forEach items="#{trip.drop}" var="drop">	
+						            				  	<div style="border:solid 1px;border-radius:7px;margin:2px;grid-auto-rows:1fr;min-width:75px;"
+						            				  		class="ui-g-3 ui-md-3 ui-lg-2  #{drop.colour}">	
+						            				  		<ui:fragment rendered="#{drop.site_name != 'Private'}">
+							            				  		<h:link outcome="consignmentSnView.xhtml">
+							            				  			<f:param name="network" value="Automotive" />
+							            				  			<f:param name="client" value="#{drop.client}" />
+																	 <f:param name="site" value="#{drop.site_id}" />
+																	 <f:param name="reportdate" value="#{sebView.tripDateString}" />
+																	 <f:param name="reportdateTo" value="#{sebView.tripDateString}" />					
+																	 <p title="Drop: #{drop.dropNumber}&#10;Client: #{drop.client}&#10;Site: #{drop.address}">
+																		 #{drop.site_name}<br/> #{drop.showedTimeString}
+																	 </p>
+																 </h:link>
+															 </ui:fragment>
+															 <ui:fragment rendered="#{drop.site_name == 'Private'}">
+															 	<p title="Drop: #{drop.dropNumber}&#10;Client: #{drop.client}&#10;Site: #{drop.address}">
+																		 #{drop.site_name}<br/> #{drop.showedTimeString}
+																	 </p>
+															 </ui:fragment>
+													 	</div>
+													</c:forEach>			              																																								
+						            			</h:panelGroup> 							           						            			
+				           				 </h:panelGroup>      		            			             			             
+					        		</c:forEach>
+				   		 	</c:otherwise>
+             			</c:choose>
+					</h:panelGroup>					
+         		 </div>
+			</h:form>
+
+		</h:panelGroup>
+	</h:panelGroup>
+</ui:define>
+
+	<ui:define name="footer">
+	  <shiro:authenticated>
+		<!-- <ui:fragment rendered="#{!neverExpires}">
+			<aaf:sessionmonitor id="sessionMonitor" />
+		</ui:fragment>  -->		
+		<ui:include src="cjf-extension/footer.xhtml" />
+		<h:outputScript library="javax.faces" name="jsf.js" />
+		<h:outputScript library="js" name="app-ajax.js" />
+		<h:outputScript library="js" name="app-script-1.js" />
+		<h:outputScript library="js" name="sn-clients.js" />
+	  </shiro:authenticated>
+	</ui:define>
+  
+</ui:composition>

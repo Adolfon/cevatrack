@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aaf="http://xmlns.jcp.org/jsf/composite/aaf" 
+	template="cjf-base/template/template_consignment_link.xhtml">
+		
+	<ui:define name="title">
+	    <title><h:outputText value="CEVATRACK"/></title>
+	    <link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}"/>
+	</ui:define>
+	
+	<ui:define name="stylesheets">		
+	    <h:outputStylesheet library="aaf" name="css/aaf.css?#{buildInfoBean.buildTime}"/>
+	    <h:outputStylesheet library="css" name="app.css?#{buildInfoBean.buildTime}" />
+	    <h:outputStylesheet library="css" name="common.css?#{buildInfoBean.buildTime}" />
+	<!--  From OLD CEVATRACK BEGIN -->    
+	    <h:outputStylesheet name="css/primefaces-override.css" /> 
+	    <h:outputStylesheet name="css/cjf-theme.css" /> <!-- set header, menu and footer background color -->
+	   
+	  <!-- <h:outputStylesheet name="aaf/css/aaf.css" />   leaving the other aaf styles   
+	    <h:outputStylesheet name="css/aaf-override.css" />  set login and password width -->
+	    <h:outputStylesheet name="css/cjf-override.css" />
+	    <h:outputStylesheet library="webjars" name="bootstrap/3.3.7-1/css/bootstrap.min-jsf.css" />
+        <h:outputStylesheet name="css/app.css" />
+       <!--  From OLD CEVATRACK END -->
+	</ui:define>
+	
+	
+	
+	<ui:define name="custom-functions">
+		<p:importConstants type="com.ceva.security.aaf.utils.AAFPermissionConstants" var="AAFPermissionConstants" />
+		<p:importConstants type="com.ceva.cevatrack.util.CJFPermissionConstants" var="CJFPermissionConstants" />
+	</ui:define>
+	
+	
+	<ui:define name="cjf_template_menubar-items">
+		<ui:include src="/cjf-extension/menubar_items_consignmentLink.xhtml"/>
+	</ui:define>
+	
+	<ui:define name="map_responsive">
+		<h:outputScript library = "js" name="map-script.js" />
+	</ui:define>
+		<ui:define name="map_responsive2">
+		<h:outputScript library = "js" name="map-script2.js" />
+	</ui:define>	
+	<!--Configure the AjaxStatus-->
+	<!-- <ui:define name="ajaxStatus">
+		
+	</ui:define> -->
+	
+	<!-- 
+	<ui:define name="bottomContent">
+		<div id="snackbar"></div>
+		<h:inputHidden id="inh_webSocketUrl" value="#{environmentInfoBean.webSocketUrl}" />
+		<h:outputScript name="js/websocket.js" />
+	</ui:define>   -->
+	
+	<!-- Change Application Logo -->
+	<ui:define name="logo">
+		<p:graphicImage library="images" name="cevaLogoNew.png" style="height:auto;"
+				alt="Ceva home" />
+	</ui:define> 
+	
+	<!-- Customize topbar Content 
+	 <ui:define name="topbar-content">
+		<p:tab title="#{lbl['rightpannel.tab.status']}"></p:tab>
+	 </ui:define> -->
+	
+</ui:composition>

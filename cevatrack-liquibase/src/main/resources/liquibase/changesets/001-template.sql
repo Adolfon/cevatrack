@@ -888,3 +888,377 @@ SELECT add_aaf_permission ('aaf_user','user_profile_edit','*','Edit User Profile
 INSERT INTO cevatrack_responsive.todo
 (id, title, description, duedate, priority, "owner", created_on, created_by, updated_on, updated_by, "version")
 VALUES(1, 'test', 'desc test', '2020-01-01 00:00:00.000', 1, 'adolfo', '2020-01-01 00:00:00.000', 'adolfo', '2020-01-01 00:00:00.000', 'adolfo', 1);
+
+--changeset adolfo.cano:001-cjf-template-db-037 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, description, display_order, display_label
+SELECT add_aaf_domain_lookup('tn_microlise', 'Microlise WS for Technet', 7, 'Microlise WS for Technet');
+SELECT add_aaf_domain_lookup('tn_site', 'TechNet web site', 7, 'TechNet web site');
+SELECT add_aaf_domain_lookup('tn_client', 'TechNet web client', 7, 'TechNet web client');
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('tn_microlise', 'tibco', 'Connections for Technet web in Microlise', 1, 'Connections for Technet web network in Microlise');
+select add_aaf_domain_action_lookup('tn_site', 'view', 'view technet web site', 1, 'view technet web site');
+select add_aaf_domain_action_lookup('tn_client', 'view', 'View technet web client', 1, 'View technet web client');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('tn_microlise', 'tibco', 'uat', 'Connects to technet UAT through tibco');
+SELECT add_aaf_permission ('tn_microlise', 'tibco', 'prod', 'Connects to technet PROD through tibco');
+SELECT add_aaf_permission ('tn_site', 'view', '*', 'View all the technet web sites');
+SELECT add_aaf_permission ('tn_client', 'view', '*', 'View all the technet web clients of a given site');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('tn_all', 'Technet network web all sites and clients');
+SELECT add_aaf_role ('tn_microlise_tibco_uat', 'Technet web connection to UAT throgh Tibco');
+SELECT add_aaf_role ('tn_microlise_tibco_prod', 'Technet web connection to PROD throgh Tibco');
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('tn_all', 'tn_client', 'view', '*');
+SELECT add_aaf_role_permission ('tn_microlise_tibco_uat', 'tn_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('tn_microlise_tibco_prod', 'tn_microlise', 'tibco', 'prod');
+
+--changeset adolfo.cano:001-cjf-template-db-038 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE technet_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+   
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Canon','CANON','Canon001.png','CANON',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Amazon','AMAZON','Amazon001.png','AMAZON',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('NHS','NHSUK','NHS001.png','NHSUK',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('BMI Healthcare','BMI','BMIHealthcare001.png','BMI',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('XEROX','XEROX','Xerox001.png','XEROX',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('COCA COLA','COKE','CocaCola001.png','COKE',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHP','RICOHP','Ricoh001.png','RICOHP',now(),'SYSTEM',now(),'SYSTEM',1);
+
+--changeset adolfo.cano:001-cjf-template-db-039 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOH','RICOH','Ricoh001.png','RICOH',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHD','RICOHD','Ricoh001.png','RICOHD',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHE','RICOHE','Ricoh001.png','RICOHE',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHR','RICOHR','Ricoh001.png','RICOHR',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('RICOHT','RICOHT','Ricoh001.png','RICOHT',now(),'SYSTEM',now(),'SYSTEM',1);
+  
+ 
+--changeset adolfo.cano:001-cjf-template-db-040 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+  SELECT add_aaf_role_permission ('tn_all', 'tn_site', 'view', '*');
+--changeset adolfo.cano:001-cjf-template-db-041 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+UPDATE technet_client SET name ='NHSUK' where prefixes = 'NHSUK';
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('NHS','NHS','NHS001.png','NHS',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-042 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Lotus','LOTPRO','Lotus.png','lotus',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-043 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+  CREATE TABLE order_lookup
+(    
+    client text COLLATE pg_catalog."default",
+    client_ref text COLLATE pg_catalog."default",
+    load_id text COLLATE pg_catalog."default",
+    load_date date,
+    order_number text COLLATE pg_catalog."default",
+    notify_method text COLLATE pg_catalog."default",
+    shipped_date timestamp with time zone,
+    ml_order_ref text COLLATE pg_catalog."default",
+    last_updated timestamp with time zone,    
+    CONSTRAINT orderlookup_unique UNIQUE (client, client_ref)
+);
+--changeset adolfo.cano:001-cjf-template-db-044 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO order_lookup (client,client_ref,load_id,load_date,order_number,notify_method,shipped_date,ml_order_ref,last_updated) VALUES 
+('NIKE','302332068','8846028','2018-04-09','NIK1616179','NONE','2018-04-09 03:53:47.000','NIKE/NIK1616179','2020-12-15 17:17:47.000')
+,('NIKE','302332049','8846028','2018-04-09','NIK1616170','NONE','2018-04-09 03:52:46.000','NIKE/NIK2860811','2020-12-14 17:11:47.000');
+--changeset adolfo.cano:001-cjf-template-db-045 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('am_microlise', 'tibco', 'Connections for Automotive web in Microlise', 1, 'Connections for Automotive web network in Microlise');
+select add_aaf_domain_action_lookup('am_site', 'view', 'view automotive web site', 1, 'view automotive web site');
+select add_aaf_domain_action_lookup('am_client', 'view', 'View automotive web client', 1, 'View automotive web client');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('am_microlise', 'tibco', 'uat', 'Connects to automotive UAT through tibco');
+SELECT add_aaf_permission ('am_microlise', 'tibco', 'prod', 'Connects to automotive PROD through tibco');
+SELECT add_aaf_permission ('am_site', 'view', '*', 'View all the automotive web sites');
+SELECT add_aaf_permission ('am_client', 'view', '*', 'View all the automotive web clients of a given site');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('am_all', 'Automotive network web all sites and clients');
+SELECT add_aaf_role ('am_microlise_tibco_uat', 'Automotive web connection to UAT throgh Tibco');
+SELECT add_aaf_role ('am_microlise_tibco_prod', 'Automotive web connection to PROD throgh Tibco');
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('am_all', 'am_client', 'view', '*');
+SELECT add_aaf_role_permission ('am_microlise_tibco_uat', 'am_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('am_microlise_tibco_prod', 'am_microlise', 'tibco', 'prod');
+--changeset adolfo.cano:001-cjf-template-db-046 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE automotive_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+   
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('BMW','BMW','BMW.png','BMW',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Land Rover','LROVER','LandRover.png','LROVER',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Jaguar','JAGUAR','Jaguar.png','JAGUAR',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('UKPN','EDF','UKPN.png','EDF',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-047 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_microlise', 'Microlise Webservice for Automotive', 7, 'Automotive Microlise', '2021-01-21 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_microlise', 'tibco', 'Connect via Tibco', 1, 'Tibco Connection', '2021-01-20 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_client', 'Automotive Client', 5, 'Automotive Client', '2020-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_site', 'Automotive Site', 5, 'Automotive Site', '2020-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_client', 'view', 'View Automotive Client', 1, 'View Automotive Client', '2021-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('am_site', 'view', 'View Automotive Site', 1, 'View Automotive Site', '2021-01-20 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+SELECT add_aaf_role_permission ('am_all', 'am_site', 'view', '*');
+--changeset adolfo.cano:001-cjf-template-db-048 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE order_lookup ADD COLUMN IF NOT EXISTS sent_to_ml timestamp with time zone;
+ALTER TABLE order_lookup ADD COLUMN IF NOT EXISTS eta timestamp with time zone;
+--changeset adolfo.cano:001-cjf-template-db-055 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE IF NOT EXISTS mailer_order (
+	load_id text NULL,
+	load_date date NULL,
+	ml_order_ref text NOT NULL,
+	client text NULL,
+	client_ref text NULL,
+	order_number text NULL,
+	notify_method text NULL,
+	delivery_date timestamptz NULL,
+	shipped_date timestamptz NULL,
+	sent_to_ml timestamptz NULL,
+	access_token text NULL,
+	earliest_booking timestamptz NULL,
+	latest_booking timestamptz NULL,
+	eta timestamptz NULL,
+	email_sent timestamptz NULL,
+	loc_name text NULL,
+	loc_addr1 text NULL,
+	loc_addr2 text NULL,
+	loc_addr3 text NULL,
+	loc_addr4 text NULL,
+	loc_postcode text NULL,
+	loc_latitude text NULL,
+	loc_longitude text NULL,
+	phone text NULL,
+	email text NULL,
+	products text NULL,
+	driver text NULL,
+	last_updated timestamptz NULL,
+	ml_site_lat text NULL,
+	ml_site_long text NULL,
+	ml_route_id text NULL,
+	ml_journey_alias text NULL,
+	ml_journey_id text NULL,
+	ml_driver_fullname text NULL,
+	ml_pta timestamptz NULL,
+	ml_site_id text NULL,
+	ml_journey_drop_id text NULL,
+	email_attempts int4 NULL DEFAULT 0,
+	email_failure_code text NULL,
+	ml_ata timestamp with time zone,
+	CONSTRAINT mailer_order_p_key PRIMARY KEY (ml_order_ref),
+	CONSTRAINT mailer_ord_unique UNIQUE (ml_order_ref),
+	CONSTRAINT mailer_tkn_unique UNIQUE (access_token)
+);
+--changeset adolfo.cano:001-cjf-template-db-050 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE healthcare_client
+(
+     id            SERIAL,
+     name         CHARACTER VARYING (50),
+     prefixes     CHARACTER VARYING (255),
+     image        CHARACTER VARYING (255),
+     aaf_instance CHARACTER VARYING (20),
+     created_on timestamp(6) with time zone NOT NULL,
+	   created_by character varying(64) NOT NULL,
+	   updated_on timestamp(6) with time zone,
+	   updated_by character varying(64),
+	   version smallint NOT NULL
+  );
+   
+INSERT INTO healthcare_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Nutricia','NUTRIC','Nutricia.png','NUTRIC',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-051 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+-- Parameters: aaf_domain_code, aaf_domain_action_code, description, display_order, display_label
+select add_aaf_domain_action_lookup('hc_microlise', 'tibco', 'Connections for Healthcare web in Microlise', 1, 'Connections for Healthcare web network in Microlise');
+select add_aaf_domain_action_lookup('hc_site', 'view', 'view Healthcare web site', 1, 'view Healthcare web site');
+select add_aaf_domain_action_lookup('hc_client', 'view', 'View Healthcare web client', 1, 'View Healthcare web client');
+-- Parameters: domain, action, instance, description
+SELECT add_aaf_permission ('hc_microlise', 'tibco', 'uat', 'Connects to healthcare UAT through tibco');
+SELECT add_aaf_permission ('hc_microlise', 'tibco', 'prod', 'Connects to healthcare PROD through tibco');
+SELECT add_aaf_permission ('hc_site', 'view', '*', 'View all the healthcare web sites');
+SELECT add_aaf_permission ('hc_client', 'view', '*', 'View all the healthcare web clients of a given site');
+-- Parameters: role_name, description
+SELECT add_aaf_role ('hc_all', 'Healthcare network web all sites and clients');
+SELECT add_aaf_role ('hc_microlise_tibco_uat', 'Healthcare web connection to UAT throgh Tibco');
+SELECT add_aaf_role ('hc_microlise_tibco_prod', 'Healthcare web connection to PROD throgh Tibco');
+-- Parameters: role_name, permission_domain, permission_action, permission_action
+SELECT add_aaf_role_permission ('hc_all', 'hc_site', 'view', '*');
+SELECT add_aaf_role_permission ('hc_all', 'hc_client', 'view', '*');
+SELECT add_aaf_role_permission ('hc_microlise_tibco_uat', 'hc_microlise', 'tibco', 'uat');
+SELECT add_aaf_role_permission ('hc_microlise_tibco_prod', 'hc_microlise', 'tibco', 'prod');
+--changeset adolfo.cano:001-cjf-template-db-052 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_microlise', 'Microlise Webservice for Healthcare', 7, 'Healthcare Microlise', '2021-08-03 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_client', 'Healthcare Client', 5, 'Healthcare Client', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_lookup
+(aaf_domain_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_site', 'Healthcare Site', 5, 'Healthcare Site', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_microlise', 'tibco', 'Connect via Tibco', 1, 'Tibco Connection', '2021-08-03 17:47:36.989', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_client', 'view', 'View Healthcare Client', 1, 'View Healthcare Client', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+INSERT INTO aaf_domain_action_lookup
+(aaf_domain_code, aaf_domain_action_code, description, display_order, display_label, created_on, created_by, updated_on, updated_by, "version")
+VALUES('hc_site', 'view', 'View Healthcare Site', 1, 'View Healthcare Site', '2021-08-03 17:47:36.953', 'SYSTEM', NULL, NULL, 1);
+--changeset adolfo.cano:001-cjf-template-db-053 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE IF NOT EXISTS mailer_client (
+	client text NOT NULL,
+	feedback_link text NULL,
+	housekeep_days int4 NULL,
+	window_eta_minus_mins int4 NULL,
+	window_eta_plus_mins int4 NULL,
+	from_email text NULL,
+	replyto_email text NULL,
+	email_link text NULL,
+	email_pre_link text NULL,
+	email_post_link text NULL,
+	email_signature text NULL,
+	web_service_group text NULL,
+	latest_notify_mins_before_window int4 NULL,
+	sms_body text NULL,
+	email_subject text NULL,
+	token_length_email int4 NULL,
+	token_length_sms int4 NULL,
+	redirect_to_test_email bool NULL,
+	test_email_recipient text NULL,
+	redirect_to_test_sms bool NULL,
+	test_sms_recipient text NULL,
+	icetrack_prefix text NULL,
+	sms_product bool NULL,
+	email_product bool NULL,
+	CONSTRAINT mailer_client_pkey PRIMARY KEY (client)
+);
+--changeset adolfo.cano:001-cjf-template-db-054 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE if not exists clients_api
+(
+	carrier_name text,
+	tracking_number numeric,
+	status text,
+	status_date timestamp with time zone,
+	revise_delivery_date timestamp with time zone,
+	original_required_date timestamp with time zone,
+	reason_code text,
+	shipment_number text,
+	customer_name text,
+	customer_address text,
+	actual_delivery_date timestamp with time zone,
+	failure_reason_code text,
+	late_reason_code text,
+	redelivery boolean,
+	failure_reason text,
+	client_id text,
+	CONSTRAINT shipping_number_pkey PRIMARY KEY (shipment_number, client_id)
+)
+--changeset adolfo.cano:001-cjf-template-db-056 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE clients_api
+	ADD COLUMN delivered_date timestamp with time zone NULL,
+	ADD COLUMN claused_date timestamp with time zone NULL;
+--changeset adolfo.cano:001-cjf-template-db-057 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+CREATE TABLE if not exists seb_order (
+	load_id text NULL,
+	scheduled_timeout timestamptz NULL,
+	seb_date date NULL,
+	route_id text NULL,
+	drop_number int4 NULL,
+	client text NULL,
+	ml_order_ref text NOT NULL,
+	loc_name text NULL,
+	loc_addr1 text NULL,
+	loc_addr2 text NULL,
+	loc_addr3 text NULL,
+	loc_addr4 text NULL,
+	loc_postcode text NULL,
+	driver text NULL,
+	vehicle text NULL,
+	last_updated timestamptz NULL,
+	last_ws_call timestamptz NULL,
+	pta timestamptz NULL,
+	ptd timestamptz NULL,
+	eta timestamptz NULL,
+	etd timestamptz NULL,
+	ata timestamptz NULL,
+	atd timestamptz NULL,
+	site_id text NULL,
+	site_name text NULL,
+	site_postcode text NULL,
+	clause_code text NULL,
+	clause_description text NULL,
+	driver_name text NULL,
+	planned_start_time timestamptz NULL,
+	actual_start_time timestamptz NULL,
+	pod_start_time timestamptz NULL,
+	journey_actual_start_time timestamptz NULL,
+	journey_id int4 NULL,
+	ml_route_id int4 NULL,
+	ml_journey_drop_id int4 NULL,
+	site_lat text NULL,
+	site_long text NULL,
+	ml_vehicle text NULL,
+	quantity_planned int4 NULL,
+	quantity_actual int4 NULL,
+	quantity_claused int4 NULL,
+	ml_status text NULL,
+	time_window_start timestamptz NULL,
+	time_window_end timestamptz NULL,
+	CONSTRAINT seb_order_pkey PRIMARY KEY (ml_order_ref)
+);
+--changeset adolfo.cano:001-cjf-template-db-058 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+SELECT add_aaf_domain_lookup('cevatrack', 'Cevatrack access to the views', 7, 'Cevatrack access to the views');
+SELECT add_aaf_domain_action_lookup('cevatrack', 'view', 'view access to cevatrack screen', 1, 'view access to cevatrack screen');
+SELECT add_aaf_permission ('cevatrack', 'view', 'SEB', 'Grant access to the SEB view');
+SELECT add_aaf_role ('access_seb', 'access to the SEB screen in cevatrack');
+SELECT add_aaf_role_permission ('access_seb', 'cevatrack', 'view', 'SEB');
+--changeset adolfo.cano:001-cjf-template-db-060 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO automotive_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Ford','FORD','Ford.png','FORD',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO healthcare_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Johnson & Johnson','JHNJHN','JJ.png','JHNJHN',now(),'SYSTEM',now(),'SYSTEM',1);
+  
+  

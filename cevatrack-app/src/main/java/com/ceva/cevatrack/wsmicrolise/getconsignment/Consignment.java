@@ -683,4 +683,32 @@ public class Consignment {
         this.consignmentHeaderInfo12 = value;
     }
 
+	@Override
+	public String toString() {
+		return "Consignment [label1=" + label1 + ", label2=" + label2 + ", label3=" + label3 + ", label4=" + label4
+				+ ", consignmentReference=" + consignmentReference + ", consignmentCustomerOrderRef="
+				+ consignmentCustomerOrderRef + ", consignmentStatus=" + consignmentStatus + ", consignmentDetails="
+				+ consignmentDetails + ", ata=" + ata + ", atd=" + atd + ", journeyDropId=" + journeyDropId + ", pta=" + pta + ", ptd=" + ptd + ", eta=" + eta
+				+ ", etd=" + etd + ", timeWindowStart=" + timeWindowStart + ", timeWindowEnd=" + timeWindowEnd
+				+ ", siteId=" + siteId + ", siteName=" + siteName + ", address1=" + address1 + ", address2=" + address2
+				+ ", address3=" + address3 + ", county=" + county + ", postCode=" + postCode + ", country=" + country
+				+ ", contactName=" + contactName + ", contactNumber=" + contactNumber + ", siteLat=" + siteLat
+				+ ", siteLong=" + siteLong + ", routeId=" + routeId + ", journeyAlias=" + journeyAlias
+				+ ", plannedStartTime=" + plannedStartTime + ", actualStartTime=" + actualStartTime + ", podStartTime="
+				+ podStartTime + ", vehicles=" + vehicles + ", drivers=" + drivers + ", siteGeoRadius=" + siteGeoRadius
+				+ ", durationOnSite=" + durationOnSite + ", journeyActualStartTime=" + journeyActualStartTime
+				+ " ,journeyActualStartTimeString: " + getJourneyActualStartTimeString()
+				+ ", isAdHoc=" + isAdHoc + ", isTranshipment=" + isTranshipment + ", clauseCode=" + clauseCode
+				+ ", parentCode=" + parentCode + ", consignmentHeaderId=" + consignmentHeaderId + ", journeyId="
+				+ journeyId + ", consignmentHeaderInfo1=" + consignmentHeaderInfo1 + ", consignmentHeaderInfo2="
+				+ consignmentHeaderInfo2 + ", consignmentHeaderInfo3=" + consignmentHeaderInfo3
+				+ ", consignmentHeaderInfo4=" + consignmentHeaderInfo4 + ", consignmentHeaderInfo5="
+				+ consignmentHeaderInfo5 + ", consignmentHeaderInfo6=" + consignmentHeaderInfo6
+				+ ", consignmentHeaderInfo7=" + consignmentHeaderInfo7 + ", consignmentHeaderInfo8="
+				+ consignmentHeaderInfo8 + ", consignmentHeaderInfo9=" + consignmentHeaderInfo9
+				+ ", consignmentHeaderInfo10=" + consignmentHeaderInfo10 + ", consignmentHeaderInfo11="
+				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + ", TimeWindowStartString: " + getTimeWindowStartString()
+				+ " , getTimeWindowEndString: " + getTimeWindowEndString() + " ,statusString: " + getStatusString() + "]";
+	}        
+
 }

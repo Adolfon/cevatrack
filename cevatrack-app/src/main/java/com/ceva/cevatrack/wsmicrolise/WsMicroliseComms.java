@@ -1,12 +1,17 @@
 package com.ceva.cevatrack.wsmicrolise;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,7 +33,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.sax.SAXSource;
+
+import javax.xml.bind.JAXBElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +58,9 @@ import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummar
 import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.FindConsignmentSummariesSoapEnvelope;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.GetConsignmentSoapEnvelope;
+
+import javax.xml.bind.JAXBElement;
+
 
 /**
  * @author brian.goodall
@@ -86,9 +99,9 @@ public class WsMicroliseComms {
      * @throws Exception
      *             for any errors found
      */
-    public static Consignment getConsignment(String consignmentRef) throws Exception {
-        LOGGER.info("WsMicroliseComms - getConsignment-starting");
-        WsMicroliseEnvironment env = new WsMicroliseEnvironment();
+    public static Consignment getConsignment(String consignmentRef, String network) throws Exception {
+        LOGGER.info("WsMicroliseComms - getConsignment-starting, params: " + consignmentRef + " ,network: " + network);
+        WsMicroliseEnvironment env = new WsMicroliseEnvironment(network);
         // String requestBody = GETCONSIGNMENT.replace("???????", consignmentRef);
         String requestBody = env.getGetConsignmentBody(consignmentRef);
         String soapAction = env.getGetConsignmentSoapAction();
@@ -112,7 +125,7 @@ public class WsMicroliseComms {
             // e.printStackTrace();
             throw new Exception("abend escalated on getConsignment", e);
         }
-        LOGGER.info("wsAutomotive - Received:" + wsresp.toString());
+        LOGGER.info("Response received: " + wsresp.toString());
         return wsresp.getGetConsignmentSoapBody().getGetConsignmentResponse().getGetConsignmentResult();
     }
 
@@ -126,7 +139,7 @@ public class WsMicroliseComms {
      *             if unable to access for any reason or duff date
      */
     public static List<ConsignmentSummary> findConsignmentSummariesForDateRange(String fromdate, String todate,
-            Boolean WS) throws Exception {
+            Boolean WS, String network) throws Exception {
         LocalDate fromlocaldate;
         LocalDate tolocaldate;
         try {
@@ -158,7 +171,7 @@ public class WsMicroliseComms {
         List<ConsignmentSummary> resp;
         try {
             resp = findConsignmentSummaries(fromlocaldate.format(FORMATTERISO) + "T00:00:00",
-                    tolocaldate.format(FORMATTERISO) + "T23:59:59", WS);
+                    tolocaldate.format(FORMATTERISO) + "T23:59:59", WS, network);
         } catch (IOException e1) {
             throw new IOException("IOException abend escalated in FindConsignmentSummariesForDateRange", e1);
         } catch (Exception e) {// Aqui IO
@@ -296,8 +309,8 @@ public class WsMicroliseComms {
                 consSum.setContactNumber(data.getContactName());
                 consSum.setCountry(data.getCountry());
                 consSum.setCounty(data.getCounty());
-                consSum.setOrderReferences((data.getOrderReferences() == null) ? null
-                        : (ArrayList<String>) data.getOrderReferences().getString());
+//                consSum.setOrderReferences((data.getOrderReferences() == null) ? null
+//                        : (ArrayList<String>) data.getOrderReferences().getString());
                 consSum.setPostCode(data.getPostCode());
                 consSum.setPta((data.getPTA() == null) ? "" : data.getPTA().toString());
                 consSum.setPta2((data.getPTA2() == null) ? "" : data.getPTA2().toString());
@@ -309,13 +322,13 @@ public class WsMicroliseComms {
         return transformResp;
     }
 
-    private static List<ConsignmentSummary> findConsignmentSummaries(String fromDate, String toDate, Boolean WS)
+    private static List<ConsignmentSummary> findConsignmentSummaries(String fromDate, String toDate, Boolean WS, String network)
             throws Exception {
         LOGGER.info("WsMicroliseComms - findConsignentSummaries-starting");
 
         WsMicroliseEnvironment env;
         if (!WS) {
-            env = new WsMicroliseEnvironment();
+            env = new WsMicroliseEnvironment(network);
         } else {
             env = new WsMicroliseEnvironment(true);
         }
@@ -363,32 +376,10 @@ public class WsMicroliseComms {
         // byte[] soapBody = (SOAPSTART + requestBody + SOAPEND).getBytes();
         byte[] soapBody = requestBody.getBytes();
 
-        // if (env.getUrl().trim().contains("https")){
-        // https = true;
-        // }
-
         // String soapAction = HEADERSOAPACTIONSTART + call;
         HttpURLConnection httpsUrlConnection = null;
-        BufferedReader in = null;
         OutputStream out = null; // This is for the request body
-        JAXBContext context;
-        try {
-            context = JAXBContext.newInstance(jaxbClass);
-        } catch (JAXBException e1) {
-            throw new Exception("JAXBException abend occurred while creating JAXB Context", e1);
-        }
-        NamespaceFilter nsf = new NamespaceFilter(null, false); // this will remove all namespaces
-        Unmarshaller u = null;
-        try {
-            u = context.createUnmarshaller();
-        } catch (JAXBException e1) {
-            throw new Exception("JAXBException abend occurred while creating JAXB Unmarshaller", e1);
-        }
-        try {
-            u.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
-        } catch (JAXBException e1) {
-            throw new Exception("JAXBException abend occurred while creating JAXB Event Handler", e1);
-        }
+       
 
         try {
             httpsUrlConnection = setUpHttpsConnection(httpsUrlConnection, env, soapAction);
@@ -402,6 +393,7 @@ public class WsMicroliseComms {
                     + httpsUrlConnection.getContentEncoding());
             // read the response
             int respcode = httpsUrlConnection.getResponseCode();
+            LOGGER.info("Response code for the WS request: " + respcode);
             switch (respcode) {
             case HttpURLConnection.HTTP_OK:
                 break; // fine, go on
@@ -416,22 +408,8 @@ public class WsMicroliseComms {
                 throw new IOException(String.valueOf(respcode));
             }
 
-            XMLReader reader = XMLReaderFactory.createXMLReader();
-            InputSource is;
-            if ("gzip".equals(httpsUrlConnection.getContentEncoding())) {
-                is = new InputSource(new GZIPInputStream(httpsUrlConnection.getInputStream()));
-            } else {
-                is = new InputSource(httpsUrlConnection.getInputStream());
-            }
-            nsf.setParent(reader); // load a reader to the filter
-
-            // Create a SAXSource specifying the filter
-            SAXSource source = new SAXSource(nsf, is);
-
-            Object o = u.unmarshal(source); // Exception here: unexpected element (uri:"", local:"string"). Expected
-                                            // elements are (none)
-            LOGGER.info("WsMicroliseComms - object has been unmarshalled");
-            return jaxbClass.cast(o);
+            return fromXMLtoObject(httpsUrlConnection, jaxbClass);
+            //return xmlToObject(httpsUrlConnection, jaxbClass, soapBody);
 
         } catch (SocketTimeoutException e1) {
             LOGGER.info("WsMicroliseComms - Socket Timeout! - throwing dummy 504 exception, " +e1.getMessage() );
@@ -443,14 +421,76 @@ public class WsMicroliseComms {
             LOGGER.info(" -- Finally block reached, cleaning resources..");
             if (out != null) {
                 out = null;
-            }
-            if (in != null) {
-                in = null;
-            }
+            }            
             httpsUrlConnection = cleanConnection(httpsUrlConnection);
         }
     }
+    
+     private static <T> T fromXMLtoObject(HttpURLConnection httpsUrlConnection, Class<T> jaxbClass) throws JAXBException, Exception{    	 
+    	 Unmarshaller u = null;   	 
+         BufferedReader in = null;
+         OutputStream out = null; // This is for the request body
+         JAXBContext context;
+    	 XMLReader reader = XMLReaderFactory.createXMLReader();
+        InputSource is;
+        try {
+            context = JAXBContext.newInstance(jaxbClass);
+        } catch (JAXBException e1) {
+            throw new Exception("JAXBException abend occurred while creating JAXB Context", e1);
+        }
+        NamespaceFilter nsf = new NamespaceFilter(null, false); // this will remove all namespaces
+        try {
+            u = context.createUnmarshaller();
+        } catch (JAXBException e1) {
+            throw new Exception("JAXBException abend occurred while creating JAXB Unmarshaller", e1);
+        }
+        try {
+            u.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
+        } catch (JAXBException e1) {
+            throw new Exception("JAXBException abend occurred while creating JAXB Event Handler", e1);
+        }
+        if ("gzip".equals(httpsUrlConnection.getContentEncoding())) {
+            is = new InputSource(new GZIPInputStream(httpsUrlConnection.getInputStream()));
+        } else {
+            is = new InputSource(httpsUrlConnection.getInputStream());
+        }
+        
+//        BufferedReader br = new BufferedReader(new InputStreamReader(readerhttp.getInputStream()));
+//        String s;
+//        LOGGER.info(" ================= Response from WS ===================");
+//        while ((s=br.readLine())!=null)
+//        {
+//               //LOGGER.info(s + "\n");
+//        	LOGGER.info(s);
+//        }
+        
+        
+        nsf.setParent(reader); // load a reader to the filter
 
+        // Create a SAXSource specifying the filter
+        SAXSource source = new SAXSource(nsf, is);
+        
+        Object o = u.unmarshal(source); // Exception here: unexpected element (uri:"", local:"string"). Expected
+                                        // elements are (none)
+        LOGGER.info("WsMicroliseComms - object has been unmarshalled");
+        return jaxbClass.cast(o);
+    }
+     
+     public static <T> T xmlToObject(HttpURLConnection httpsUrlConnection, Class<T> jaxbClass, byte[] soapBody) throws XMLStreamException, JAXBException, IOException{
+    	 LOGGER.info("WsMicroliseComms - xmlToObject method httpsUrlConnection.getContentEncoding(): "
+                 + httpsUrlConnection.getContentEncoding());
+    	 String string = new String(soapBody, StandardCharsets.UTF_8);
+    	 LOGGER.info(" --response string from the outputstream: " + string);
+         InputStream stream = new ByteArrayInputStream(string.getBytes("UTF-8"));
+         JAXBContext jaxbContext2 = JAXBContext.newInstance(jaxbClass);
+         Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
+         XMLInputFactory factory = XMLInputFactory.newInstance();
+         XMLEventReader someSource = factory.createXMLEventReader(stream);
+         JAXBElement<T> userElement =  jaxbUnmarshaller2.unmarshal(someSource, jaxbClass);
+         T responseObject = userElement.getValue();
+         return responseObject;
+     }
+     
     private static HttpURLConnection cleanConnection(HttpURLConnection httpsUrlConnection) {
         if (httpsUrlConnection != null) {
             try {
@@ -730,7 +770,7 @@ public class WsMicroliseComms {
             endDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
             LOGGER.info("-- endDate: " + endDate);
 
-            // startDate = new DatatypeFactory.newInstance().newXMLGregorianCalendar(locStartDeliveryDate.toString() ;ª
+            // startDate = new DatatypeFactory.newInstance().newXMLGregorianCalendar(locStartDeliveryDate.toString();
             // endDate = ((DatatypeFactory.newInstance().newXMLGregorianCalendar(locEndDesliveryDate.toString()) ==
             // null) ? DatatypeFactory.newInstance().newXMLGregorianCalendar("2018-10-31T23:59:59") :
             // endDate = ((DatatypeFactory.newInstance().newXMLGregorianCalendar(locEndDesliveryDate.toString()) ==

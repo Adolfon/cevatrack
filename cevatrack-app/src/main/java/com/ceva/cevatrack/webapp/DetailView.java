@@ -20,7 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ceva.cevatrack.service.AutomotiveClientService;
+import com.ceva.cevatrack.service.HealthcareClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
+import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -46,6 +49,7 @@ public class DetailView implements Serializable, CommonApp {
     private String date;
     private Boolean pollEnabled;
     private Boolean retry;
+    private String network;
 
     @ManagedProperty(value = "#{consignmentListManager}")
     public ConsignmentListManager consignmentListManager;
@@ -53,6 +57,15 @@ public class DetailView implements Serializable, CommonApp {
     @EJB
     SmartNetClientService snClientService;
 
+    @EJB
+    TechNetClientService tnClientService;
+    
+    @EJB
+    AutomotiveClientService amClientService;
+    
+    @EJB
+    HealthcareClientService hcClientService;
+    
     /**
      * called once
      */
@@ -77,25 +90,56 @@ public class DetailView implements Serializable, CommonApp {
         LOGGER.info("(init) Parameters: client: " + client + ",dateRange: " + dateRange + ",cons Ref: "
                 + consignmentReference);
         // ClientConfig cc;
-        SmartNetClientVO clientDetail;
+        SmartNetClientVO clientDetail = null;
 
-        clientDetail = snClientService.getSmartNetClient(client);
-
+        this.network = params.get("network");        
+        LOGGER.info("the network value in Consignment view is: " + network);
+        client = params.get("client");                
+        try{
+        	boolean match = false;
+        	if (client == null || network==null){
+        		throw new Exception (" -- There is no a valid network or client parameter -- ");
+        	}
+	        if (network.equalsIgnoreCase("technet")){
+	        	match = true;
+	        	LOGGER.info("technet network detected");
+	        	clientDetail = tnClientService.getTechNetClient(client);
+	        } 
+	        if (network.equalsIgnoreCase("smartnet")){
+	        	match = true;
+	        	LOGGER.info("smartnet network detected");
+	        	clientDetail = snClientService.getSmartNetClient(client);
+	        }
+	        if (network.equalsIgnoreCase("Automotive")){
+	        	match = true;
+	        	LOGGER.info("Automotive network detected");
+	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        }
+	        if (network.equalsIgnoreCase("Healthcare")){
+	        	match = true;
+	        	LOGGER.info("Automotive network detected");
+	        	clientDetail = hcClientService.getHealthcareClient(client);
+	        }
+	        if (!match || clientDetail == null){
+	        	throw new Exception (" -- There is not a valid matching network or client does not exist -- ");
+	        }
+        } catch (Exception e){
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));
+        }        
         // check that the client has access to this consignment
         if (!clientDetail.getPfx().contains(Common.getPrefix(consignmentReference))) {
             message = "Client access violation for: " + client + " con prefix" + Common.getPrefix(consignmentReference);
             return;
         }
-
         // fetch the consignment
         try {
-            consignment = consignmentListManager.getConsignmentDetail(consignmentReference);
+            consignment = consignmentListManager.getConsignmentDetail(consignmentReference,network);
             if (!StringUtils.isBlank(consignmentReference)) {
                 this.consignment.setConsignmentReference(consignmentReference);
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
             }
         } catch (Exception e) {
-            LOGGER.error("-- Problem retrieving consignment´s detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e));
+            LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
             // this message works fine
             // message = ExceptionUtils.getRootCauseMessage(e) + "... Press F5 to retry.";
             message = e.getCause().getMessage() + "... Press F5 to retry.";
@@ -119,7 +163,7 @@ public class DetailView implements Serializable, CommonApp {
         consignmentReference = this.consignment.getConsignmentReference();
         LOGGER.info(" consignmentReference from the form: " + consignmentReference);
         try {
-            consignment = consignmentListManager.getConsignmentDetail(consignmentReference);
+            consignment = consignmentListManager.getConsignmentDetail(consignmentReference,network);
             if (!StringUtils.isBlank(consignmentReference)) {
                 this.consignment.setConsignmentReference(consignmentReference);
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
@@ -138,6 +182,7 @@ public class DetailView implements Serializable, CommonApp {
                 FacesContext.getCurrentInstance().addMessage(null, msg);
                 retry = true;
             }
+            LOGGER.error("-- Error in refresh method in the DetailView: " + e.getStackTrace());
         }
     }
 

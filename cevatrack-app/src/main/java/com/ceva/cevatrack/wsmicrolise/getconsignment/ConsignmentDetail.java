@@ -174,4 +174,13 @@ public class ConsignmentDetail {
         this.consignmentHeaderId = value;
     }
 
+	@Override
+	public String toString() {
+		return "ConsignmentDetail [detailId=" + detailId + ", detailRef=" + detailRef + ", customerDetailRef="
+				+ customerDetailRef + ", parentRef=" + parentRef + ", orderRef=" + orderRef + ", description="
+				+ description + ", plannedQuantity=" + plannedQuantity + ", actualQuantity=" + actualQuantity
+				+ ", status=" + status + ", clauseDetails=" + clauseDetails + ", info1=" + info1 + ", info2=" + info2
+				+ ", info3=" + info3 + ", info4=" + info4 + ", consignmentHeaderId=" + consignmentHeaderId + "]";
+	}
+    
 }

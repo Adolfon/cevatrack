@@ -87,6 +87,13 @@ public class Common {
     }
 
     public static String getPrefix(String consignmentRef) {
-        return consignmentRef.substring(0, consignmentRef.indexOf("/"));
+    	if (consignmentRef.contains("/")){
+    		return consignmentRef.substring(0, consignmentRef.indexOf("/"));
+    	}
+    	// Made an exception for Toners because it comes with a bad format
+    	if (consignmentRef.contains("Toners")){
+    		return "Toners";
+    	}
+        return consignmentRef;
     }
 }

@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.security.Policy.Parameters;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +19,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.apache.xmlbeans.SystemProperties;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -45,37 +48,123 @@ public class WsMicroliseEnvironment {
     private static final String DIRECTPROD = "sn_microlise:direct:prod";
     private static final String DIRECTUAT = "sn_microlise:direct:uat";
     private static final String TIBCOUAT = "sn_microlise:tibco:uat";
+    private static final String TIBCOPROD = "sn_microlise:tibco:prod";
     // private static final String TIBCOPROD = "sn_microlise:tibco:prod";
-    private static final String TECHNET_DIRECT_PROD = "technet:direct:prod";
+    // This is for the web service interface, if you have this perm. you are 
+    // the WS.
+    //private static final String TECHNET_DIRECT_PROD = "technet:direct:prod";
+    private static final String TECHNETWEB_UAT = "tn_microlise:tibco:uat";
+    private static final String TECHNETWEB_PROD = "tn_microlise:tibco:prod";
+    
+    private static final String AUTOMOTIVE_WEB_UAT = "am_microlise:tibco:uat";
+    private static final String AUTOMOTIVE_WEB_PROD = "am_microlise:tibco:prod";
 
+    private static final String HEALTHCARE_WEB_UAT = "hc_microlise:tibco:uat";
+    private static final String HEALTHCARE_WEB_PROD = "hc_microlise:tibco:prod";
     /**
      * set up based on user. Based on permissions setup environment
+     * The problem arise when an user has permission en different environments
+     * at the same time
+     * and you want to grant permission based in the request or network that 
+     * he is at that moment.. with this solution he wil be accessing the WS of 
+     * the first environment condition (if) and never the other ones..
+     * So I need to introduce a parameter of what is his network and then ask if 
+     * he has permission in that network
      */
-    public WsMicroliseEnvironment() {
-        this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();
+    public WsMicroliseEnvironment(String network) {
+    	LOGGER.info(" -- starting environment, param: " + network);
+    	Map<String, String> local = null;  
+    	Properties systemProps = System.getProperties();
+    	try{
+    		this.parameters = FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap();//problem for WS
+    		LOGGER.info(" -- Existing parameters: " + parameters.size() + ", " + systemProps.getProperty("environment.code")
+    		+ ",network: " + network);
+    		if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("LOCAL")){
+    			LOGGER.info(" -- In the local environment JSF container..");
+    			local = loadCevaResponsiveXmlJAXRSProps();
+    		}
+    	}catch (Exception e){
+    		LOGGER.error(" -- FacesContext.getCurrentInstance().getExternalContext().getInitParameterMap() ---> is NULL.., charging local properties..");
+    		this.parameters = new HashMap<String, String>();
+    		local = loadCevaResponsiveXmlJAXRSProps();
+    		LOGGER.info(" -- Existing parameters after local properties loaded: " + parameters.size());
+    	}
+        if (local != null) {
+        	LOGGER.info(" -- adding local file parameters, before size: " + parameters.size());
+        	HashMap<String, String> impl = new HashMap<>(local);
+        	parameters = impl;
+        	LOGGER.info(" -- adding local file parameters, after size: " + parameters.size());
+        }
         // first of all decide the environment based on the user
         Subject currentUser = SecurityUtils.getSubject();
-        envDescription = "tibco.prod";
-        // if (currentUser.isPermitted(TIBCOPROD)) {
-        // envDescription = "tibco.prod";
-        // }
-        if (currentUser.isPermitted(DIRECTPROD)) {
-            envDescription = "direct.prod";
+        envDescription = "tibco.prod"; //by default
+        // Next time do this with a Map 
+        if (network != null && network.equalsIgnoreCase("smartnet")){
+	        if (currentUser.isPermitted(DIRECTPROD)) {
+	            envDescription = "direct.prod";
+	        }
+	        if (currentUser.isPermitted(TIBCOUAT)) {
+	            envDescription = "tibco.uat";
+	        }
+	        if (currentUser.isPermitted(DIRECTUAT)) {
+	            envDescription = "direct.uat";
+	        }	    
+	        if (currentUser.isPermitted(TIBCOPROD)) {
+	            envDescription = "tibco.prod";
+	        }
         }
-        if (currentUser.isPermitted(TIBCOUAT)) {
-            envDescription = "tibco.uat";
+        if (network != null && network.equalsIgnoreCase("technet")){
+	        if (currentUser.isPermitted(TECHNETWEB_UAT)){  //user permissions in DB (action connect)
+	        	//envDescription = "technetweb.tibco.uat"; //chain to be added to the property name in war.xml
+	        	envDescription = "technetweb.tibco.uat"; //Trying the same connection as the WS of technet --> "http://localhost:8080/cevatrack/techNet?wsdl"
+	        }
+	        if (currentUser.isPermitted(TECHNETWEB_PROD)){  
+	        	envDescription = "technetweb.tibco.prod"; 
+	        }
         }
-        if (currentUser.isPermitted(DIRECTUAT)) {
-            envDescription = "direct.uat";
+        if (network != null && network.equalsIgnoreCase("automotive")){
+	        if (currentUser.isPermitted(AUTOMOTIVE_WEB_UAT)){  //user permissions in DB (action connect)
+	        	//envDescription = "technetweb.tibco.uat"; //chain to be added to the property name in war.xml
+	        	envDescription = "automotive_web.tibco.uat"; //Trying the same connection as the WS of technet --> "http://localhost:8080/cevatrack/techNet?wsdl"
+	        }
+	        if (currentUser.isPermitted(AUTOMOTIVE_WEB_PROD)){  
+	        	envDescription = "automotive_web.tibco.prod"; 
+	        }
         }
-        if (currentUser.isPermitted(TECHNET_DIRECT_PROD)) {
-            envDescription = "technetdirect.prod";
+        if (network != null && network.equalsIgnoreCase("healthcare")){
+	        if (currentUser.isPermitted(HEALTHCARE_WEB_UAT)){  //user permissions in DB (action connect)
+	        	//envDescription = "technetweb.tibco.uat"; //chain to be added to the property name in war.xml
+	        	envDescription = "healthcare_web.tibco.uat"; //Trying the same connection as the WS of technet --> "http://localhost:8080/cevatrack/techNet?wsdl"
+	        }
+	        if (currentUser.isPermitted(HEALTHCARE_WEB_PROD)){  
+	        	envDescription = "healthcare_web.tibco.prod"; 
+	        }
         }
+        if (network != null && network.equalsIgnoreCase("HealthLink")){
+        	envDescription = "health_link.tibco.prod";
+        }
+        LOGGER.info("envinronment description selected: " + envDescription);
         setAuthorized();
         setProxied();
     }
 
-    public WsMicroliseEnvironment(Boolean WS) {
+    private Map<String, String> loadCevaResponsiveXmlJAXRSProps() {
+    	String resourceName = "nike-jaxrs-config.xml"; 
+    	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    	Properties props = new Properties();    	
+    	try {
+    		InputStream resourceStream = loader.getResourceAsStream(resourceName);
+			props.loadFromXML(resourceStream);
+		} catch (InvalidPropertiesFormatException e) {			
+			LOGGER.error("InvalidPropertiesFormatException....", e);
+		} catch (IOException e) {			
+			LOGGER.error("IOException....", e);
+		}
+    	LOGGER.info(" --- Properties resource returned");
+		return (Map) props;
+	}
+
+	public WsMicroliseEnvironment(Boolean WS) {
         // first of all decide the environment based on the user
         // Subject currentUser = SecurityUtils.getSubject();
         if (WS) {
@@ -94,12 +183,12 @@ public class WsMicroliseEnvironment {
         final Properties properties = new Properties();
         try {
             File directory = new File("./");// C:\Users\canoad\applications\neon64\eclipse\.
-            LOGGER.debug(directory.getAbsolutePath());
+            //LOGGER.debug(directory.getAbsolutePath());
             LOGGER.warn(directory.getAbsolutePath());
             // java.net.URL url = getClass().getResource("CEVAtrack-responsive.xml");//null
             // String path = "C:/Users/canoad/git/CEVAtrack-responsive/CEVAtrack-responsive-app/local_tomee/conf"
             // + "/Catalina/localhost/CEVAtrack-responsive_mod.xml";
-            String path = "C:/Users/canoad/git/cevatrack/cevatrack-app/local_tomee/conf"
+            String path = "C:/Users/canoad/git2/cevatrack/cevatrack-app/local_tomee/conf"
                     + "/Catalina/localhost/cevatrack_mod.xml";
             File file = new File(path);
             final FileInputStream in = new FileInputStream(file);
@@ -107,8 +196,10 @@ public class WsMicroliseEnvironment {
             in.close();
         } catch (FileNotFoundException fnfEx) {
             System.err.println("Could not read properties from file " + filePathAndName);
+            return null;
         } catch (IOException ioEx) {
             System.err.println("IOException encountered while reading from " + filePathAndName);
+            return null;
         }
         return (Map) properties;
     }
@@ -120,17 +211,15 @@ public class WsMicroliseEnvironment {
         // LOGGER.debug("Test Debug log --- parameters size: " + parameters.size());// Working as FINE in the log
         // LOGGER.warn("Test Warn log--- parameters size: " + parameters.size()); //WARNING
         // LOGGER.error("Test Error log--- parameters size: " + parameters.size());//SEVERE
-        // LOGGER.info("Test Info log--- parameters size: " + parameters.size());//INFO
+         LOGGER.info("-- Info in setAuthorized--- parameters size: " + parameters.size());//INFO
         // LOGGER.trace("Test Trace log--- parameters size: " + parameters.size());//NO SHOW--
-        Map<String, String> test = loadCevaResponsiveXmlProps();
-        test.putAll(parameters);
-        parameters = new HashMap<String, String>(test);
-        LOGGER.debug("parameters size: " + parameters.size());
-        LOGGER.warn("parameters size: " + parameters.size());
+        //test.putAll(parameters); //Here null pointer exception
+        //parameters = new HashMap<String, String>(test);
+        //LOGGER.warn("parameters size: " + parameters.size());
         if (parameters.containsKey(AUTHHEADER + envDescription)) {// microlise.usernamepassword. tibco.prod
             authorized = true;
         }
-        LOGGER.info("Authorization Required: " + authorized);
+        LOGGER.info("Authorization Required: " + authorized + " , for parameter: " + AUTHHEADER + envDescription);
     }
 
     /**
@@ -140,7 +229,7 @@ public class WsMicroliseEnvironment {
         if (parameters.containsKey(PROXYSERVER + envDescription)) { // microlise.proxyserver.
             proxied = true;
         }
-        LOGGER.trace("Proxy Required: {0}", Boolean.toString(proxied));
+        LOGGER.info("Proxy Required: {0}", Boolean.toString(proxied));
     }
 
     /**
@@ -155,7 +244,7 @@ public class WsMicroliseEnvironment {
             String base = parameters.get(GETCONSIGNMENTBODY + envDescription);
             return base.replace("#CONREF#", consignmentReference);// NULL?
         } catch (Exception e) {
-            throw new Exception("No body context found for getConsignment call " + envDescription);
+            throw new Exception("No body context found for getConsignment call " + envDescription,e);
         }
     }
 
@@ -173,7 +262,7 @@ public class WsMicroliseEnvironment {
             String base = parameters.get(GETCONSIGNMENTSOAPACTION + envDescription);
             return base;
         } catch (Exception e) {
-            throw new Exception("No SOAP Action context found for getConsignment call " + envDescription);
+            throw new Exception("No SOAP Action context found for getConsignment call " + envDescription,e);
         }
     }
 
@@ -188,7 +277,7 @@ public class WsMicroliseEnvironment {
      */
     public String getFindConsignmentSummariesBody(String earliestDate, String latestDate) throws Exception {
         try {
-            String base = parameters.get(FINDCONSIGNMENTSUMMARIESBODY + envDescription);
+            String base = parameters.get(FINDCONSIGNMENTSUMMARIESBODY + envDescription);// config new net
             // base = "&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
             // xmlns:fin=&quot;"
             // + "http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/FindConsignmentSummaries&quot;&gt;&lt;"
