@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -648,8 +650,9 @@ public class NikeAPI implements Serializable{
     	StringBuilder response = new StringBuilder();
     	String[] info = new String[2]; 
     	try { 
+    		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("gdcproxy.logistics.corp", 3128));
             URL url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);            
             connection.setDoOutput(true);
             connection.setInstanceFollowRedirects(false);
             connection.setRequestMethod("POST");
