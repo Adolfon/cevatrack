@@ -101,6 +101,7 @@ public class NikeAPI implements Serializable{
 	private static final DateTimeFormatter FORMATWS2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"); //2021-01-21T06:17:43.877
 	private static final String STRNIKE = "yyyy-MM-dd HH:mm:ss"; //"MM/dd/yyyy HH:mm:ss";
 	private static final DateTimeFormatter FORMATNIKE = DateTimeFormatter.ofPattern(STRNIKE);
+	private String environment = "";
 	
 //    @Inject
 //    private SmartNetClientRepository smartNetClientRepository; //OK
@@ -446,25 +447,29 @@ public class NikeAPI implements Serializable{
 				LOGGER.info(" ----------- We are in the Local environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://localhost:5432/cevatrack_v6?currentSchema=cevatrack_mix");					
 				properties.put("openjpa.ConnectionUserName", "postgres");
-				properties.put("openjpa.ConnectionPassword", "holahola");	
+				properties.put("openjpa.ConnectionPassword", "holahola");
+				this.environment = "LOCAL";
 			}
 			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-DEVL")){
 				LOGGER.info(" ----------- We are in the Development environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://iahlvlpgdb002:5432/cevatrack_responsive");	
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "cevatrack_responsive");				
+				properties.put("openjpa.ConnectionPassword", "cevatrack_responsive");
+				this.environment = "DEV";
 			}
 			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-TEST")){
 				LOGGER.info(" ----------- We are in the TEST environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://glsdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "NqHyxoHGwA56P");				
+				properties.put("openjpa.ConnectionPassword", "NqHyxoHGwA56P");
+				this.environment = "TEST";
 			}
 			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
 				LOGGER.info(" ----------- We are in the Cevatrack (PROD) environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://glpdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");	
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "LqEKbxqZvUWb");				
+				properties.put("openjpa.ConnectionPassword", "LqEKbxqZvUWb");
+				this.environment = "PROD";
 			}
 			
 			emfact = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
@@ -650,9 +655,31 @@ public class NikeAPI implements Serializable{
     	StringBuilder response = new StringBuilder();
     	String[] info = new String[2]; 
     	try { 
-    		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("gdcproxy.logistics.corp", 3128));
-            URL url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);            
+    		Proxy proxy = null;
+    		HttpURLConnection connection = null;
+    		URL url = null;
+    		url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
+    		LOGGER.info(" -- Environment configuration for the DPD call: " + this.environment);
+    		if (this.environment.equals("LOCAL")){    
+    			LOGGER.info("-- Configuring for LOCAL");
+    			//proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
+    			connection = (HttpURLConnection) url.openConnection(); 
+    		}
+    		if (this.environment.equals("DEV")){
+    			LOGGER.info("-- Configuring for DEV");
+    			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
+    			connection = (HttpURLConnection) url.openConnection(proxy);
+    		}
+    		if (this.environment.equals("TEST")){
+    			LOGGER.info("-- Configuring for TEST");
+    			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
+    			connection = (HttpURLConnection) url.openConnection(proxy);
+    		}
+    		if (this.environment.equals("PROD")){
+    			LOGGER.info("-- Configuring for PROD");
+    			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
+    			connection = (HttpURLConnection) url.openConnection(proxy);
+    		}    		                                  
             connection.setDoOutput(true);
             connection.setInstanceFollowRedirects(false);
             connection.setRequestMethod("POST");
@@ -689,6 +716,9 @@ public class NikeAPI implements Serializable{
             connection.disconnect();
             LOGGER.info(" -- HTTP Response was: " + respcode);
             LOGGER.info(" -- XML of the response is: " + response.toString());
+            //ETA test response
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>11:33</etastart><etaend>12:33</etaend><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //OUT FOR DELIVERY test response
             //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
             //LOGGER.info(" -- Test response: " + response);
         } catch(Exception e) {
@@ -698,18 +728,37 @@ public class NikeAPI implements Serializable{
     	if (!stringResponse.contains("DELIVERED")){
     		LOGGER.info(" -- The response does not include DELIVERED --");
     		if (stringResponse.contains("OUT FOR DELIVERY")){
-    			LOGGER.info(" -- The response includes OUT FOR DELIVERED --");
-    			int pos = stringResponse.indexOf("<trackingevent><date>");
-        		int pos_size = "<trackingevent><date>".length();
-        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
-        		LOGGER.info(" -- Date out for delivery: " + date_response);
-        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        		LocalDateTime ldt = LocalDateTime.parse(date_response, dtf);
-        		ldt = ldt.plusHours(2);
-        		String ldts = ldt.format(dtf);
-        		LOGGER.info(" -- ETA (2 hours): " + ldts);
-        		info[1] = ldts;
-    			return info;    			
+    			if (stringResponse.contains("<etastart>") && stringResponse.contains("<etaend>")){
+    				int pos = stringResponse.indexOf("<trackingevent><date>");
+	        		int pos_size = "<trackingevent><date>".length();
+	        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
+	        		date_response = date_response.substring(0,date_response.indexOf("T")+1);	        		
+	        		LOGGER.info(" -- Date out for delivery withot ETA: " + date_response);
+    				int eta_pos = stringResponse.indexOf("<etastart>");
+	        		int eta_pos_size = "<etastart>".length();
+	        		String eta_start_time= stringResponse.substring(eta_pos + eta_pos_size, eta_pos + eta_pos_size + 5);
+	        		LOGGER.info(" -- Eta start time: " + eta_start_time);
+	        		int etaend_pos = stringResponse.indexOf("<etaend>");
+	        		int etaend_pos_size = "<etaend>".length();
+	        		String eta_end_time= stringResponse.substring(etaend_pos + etaend_pos_size, etaend_pos + etaend_pos_size + 5);
+	        		LOGGER.info(" -- Eta end time: " + eta_end_time);
+	        		info[1] = date_response + eta_start_time + "-" + eta_end_time;
+	        		LOGGER.info("-- Returning info, out for delivery with etas: " + info[1]);
+	        		return info;
+    			}else{
+	    			LOGGER.info(" -- The response includes OUT FOR DELIVERED --");
+	    			int pos = stringResponse.indexOf("<trackingevent><date>");
+	        		int pos_size = "<trackingevent><date>".length();
+	        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
+	        		LOGGER.info(" -- Date out for delivery: " + date_response);
+	        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+	        		LocalDateTime ldt = LocalDateTime.parse(date_response, dtf);
+	        		ldt = ldt.plusHours(2);
+	        		String ldts = ldt.format(dtf);
+	        		LOGGER.info(" -- ETA (2 hours): " + ldts);
+	        		info[1] = ldts;
+	    			return info;
+    			}
     		}else{
     			LOGGER.info(" -- DPD not delivery or out for delivery situations --");
     			return null;
