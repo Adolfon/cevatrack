@@ -217,6 +217,11 @@ public class JohnsonAPI implements Serializable{
     		String devDate = ldt.format(FORMATDATE);
     		rs = rs + "\n" + "\"delivered_date\":\"" + devDate + "\",";    		
     	}
+    	if (cb.getOriginal_required_date() != null){        		
+    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getOriginal_required_date().toInstant(), londonZone);
+    		String oriDate = ldt.format(FORMATDATE);
+    		rs = rs + "\n" + "\"original_delivery_date\":\"" + oriDate + "\",";    		
+    	}
     	if (cb.getClaused_date() != null){        		
     		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getClaused_date().toInstant(), londonZone);
     		String clauDate = ldt.format(FORMATDATE);
