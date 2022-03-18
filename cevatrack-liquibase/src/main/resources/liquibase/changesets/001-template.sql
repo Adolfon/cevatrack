@@ -1268,5 +1268,6 @@ CREATE TABLE if not exists tracking_reference_suspense (
 	applied timestamptz NULL,
 	CONSTRAINT tracking_reference_suspense_pkey PRIMARY KEY (order_number)
 );
-
+--changeset adolfo.cano:001-cjf-template-db-062 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ALTER TABLE order_lookup ADD COLUMN tracking_reference text;
   

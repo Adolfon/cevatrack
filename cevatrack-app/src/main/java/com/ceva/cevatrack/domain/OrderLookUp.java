@@ -27,7 +27,14 @@ public class OrderLookUp implements Serializable{
 	Date last_updated;
 	Date sent_to_ml;
 	Date eta;
+	String tracking_reference;		
 	
+	public String getTracking_reference() {
+		return tracking_reference;
+	}
+	public void setTracking_reference(String tracking_reference) {
+		this.tracking_reference = tracking_reference;
+	}
 	public Date getEta_no_ml() {
 		return eta;
 	}

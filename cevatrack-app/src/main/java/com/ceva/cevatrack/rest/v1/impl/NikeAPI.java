@@ -261,7 +261,7 @@ public class NikeAPI implements Serializable{
     	//Case 1 not sent to Microlise yet (load date returned = shipped date as per data base script update: first shipped and load dates are same, later update only shipped date) 
     	if (responseBean.getSent_to_ml() == null || "".equals(responseBean.getSent_to_ml())){
     		//Check on the 'tracking_reference_suspense' table, if found the query to DPD
-    		String[] ATA_DPD = DPD_WS(this.id);
+    		String[] ATA_DPD = DPD_WS(this.id, consignment_dateShipped[4]);
     		if (ATA_DPD == null){
     			LOGGER.info(" -- ATA was NOT found for DPD WS --");
     			if (responseBean.getEta_no_ml() == null || "".equals(responseBean.getEta_no_ml())){
@@ -365,21 +365,21 @@ public class NikeAPI implements Serializable{
 				"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 	}
     
-	private String[] DPD_WS(String order_id) {
-		LOGGER.info(" -- DPD_WS method, parameter: " + order_id);
-		Tracking_reference_suspense trs_var = null;
-		try{
-			trs_var = (Tracking_reference_suspense) entityManager.createQuery("SELECT tr FROM Tracking_reference_suspense tr WHERE tr.order_number = ?1").
-					setParameter(1, order_id).getSingleResult();
-		}catch(Exception e){
-			LOGGER.warn(" -- The query with parameter: " + order_id + ", did not return an expected result..\n", e);
-			return null;
-		}
-		LOGGER.info(" -- DPD tracking row recovered: " + trs_var);
-		if (trs_var == null || trs_var != null && trs_var.getTracking_reference() == null || trs_var != null && "".equals(trs_var.getTracking_reference())){
+	private String[] DPD_WS(String order_id, String tracking_number) {
+		LOGGER.info(" -- DPD_WS method, parameter: " + order_id + " ,tracking number: " + tracking_number);
+//		Tracking_reference_suspense trs_var = null;
+//		try{
+//			trs_var = (Tracking_reference_suspense) entityManager.createQuery("SELECT tr FROM Tracking_reference_suspense tr WHERE tr.order_number = ?1").
+//					setParameter(1, order_id).getSingleResult();
+//		}catch(Exception e){
+//			LOGGER.warn(" -- The query with parameter: " + order_id + ", did not return an expected result..\n", e);
+//			return null;
+//		}
+//		LOGGER.info(" -- DPD tracking row recovered: " + trs_var);
+		if (tracking_number == null || "".equals(tracking_number)){
 			return null;
 		}else{
-			return getDPDInformation(trs_var.getTracking_reference());
+			return getDPDInformation(tracking_number);
 		}
 		
 	}
@@ -416,7 +416,7 @@ public class NikeAPI implements Serializable{
 				LOGGER.error(" -- Formatting exception when converting date from the data base --\n", e);
 				return null;
 			}
-			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped , sent_to_ml , eta_no_ml};
+			String[] stringRes = {OLResult.getMl_order_ref() , date_shipped , sent_to_ml , eta_no_ml, OLResult.getTracking_reference()};
 			return stringRes;
 		}else{
 			LOGGER.info("No results for the id: " + id + " matching the table..");
