@@ -271,19 +271,22 @@ public class NikeAPI implements Serializable{
     					+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
     			}	    				
     		}else{
-    			LOGGER.info(" -- ATA WAS found for DPD WS --" + ATA_DPD);
+    			LOGGER.info(" -- ATA, ETA or parcel date WAS found for DPD WS --" + ATA_DPD);
     			if (ATA_DPD[0] != null){// Delivered ATA
 	    			return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
 					+ "\", \"ATA\": \"" + ATA_DPD[0] + "\"}").build();
-    			}else{
-    				if (ATA_DPD[1] != null){//Out for delivery DPD ETA
-						return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
-						+ "\", \"ETA\": \"" + ATA_DPD[1] + "\"}").build();
-    				}else{//ATA_DPD not null but the its values are
-    					return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()
-    					+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();
-    				}    				
     			}
+				if (ATA_DPD[1] != null){//Out for delivery DPD ETA
+					return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()  
+					+ "\", \"ETA\": \"" + ATA_DPD[1] + "\"}").build();
+    			}
+				if (ATA_DPD[2] != null){//Only initial parcel data available
+					return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[2]  
+					+ "\"}").build();
+    			}
+				//ATA_DPD not null but the its values are
+				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()
+				+ "\", \"ETA\": \"" + responseBean.getEta_no_ml() + "\"}").build();    				   				    			
     		}
     	}
     	//Case 2, has been sent to Microlise
@@ -653,7 +656,7 @@ public class NikeAPI implements Serializable{
     private String[] getDPDInformation(String tracking_number){
     	LOGGER.info("-- getDPDInformation method, parameter: " + tracking_number);
     	StringBuilder response = new StringBuilder();
-    	String[] info = new String[2]; 
+    	String[] info = new String[3]; 
     	try { 
     		Proxy proxy = null;
     		HttpURLConnection connection = null;
@@ -663,6 +666,7 @@ public class NikeAPI implements Serializable{
     		if (this.environment.equals("LOCAL")){    
     			LOGGER.info("-- Configuring for LOCAL");
     			//proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
+    			url = new URL(ApplicationGlobalConfig.DPD_TEST_URI);
     			connection = (HttpURLConnection) url.openConnection(); 
     		}
     		if (this.environment.equals("DEV")){
@@ -722,6 +726,9 @@ public class NikeAPI implements Serializable{
             //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
             //LOGGER.info(" -- Test response: " + response);
             //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>155020221598468</trackingnumber><parcelnumber>15502022159846</parcelnumber><consignmentnumber>2022159829</consignmentnumber><deliveryaddress1>Sm Mark Simkin</deliveryaddress1><deliveryaddress2>The Fa</deliveryaddress2><deliverylocality>Unit B Beacon Business Park</deliverylocality><deliverycity>Weston Rd</deliverycity><deliverycounty>Stafford</deliverycounty><deliverypostcode>ST18 0WL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>1970-01-01T10:55:00+01:00</etastart><etaend>1970-01-01T11:55:00+01:00</etaend><parcelcode>15502022159846*19749</parcelcode><trackingevents><trackingevent><date>2022-01-26T09:49:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery between 10:55 - 11:55</description><locality>Stoke</locality><countrycode>GB</countrycode><etastart>10:55</etastart><etaend>11:55</etaend><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-26T04:50:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Stoke</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-26T00:09:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-25T11:35:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //Response test for parcel data retrieval
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>11:33</etastart><etaend>12:33</etaend><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //LOGGER.info("response test: " + response);
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
@@ -762,10 +769,26 @@ public class NikeAPI implements Serializable{
 	        		info[1] = ldts;
 	    			return info;
     			}
-    		}else{
-    			LOGGER.info(" -- DPD not delivery or out for delivery situations --");
-    			return null;
     		}
+    		if (stringResponse.contains("PARCEL DATA")){
+    			LOGGER.info(" -- The response includes PARCEL DATA, trying to return this date into shipped label --");
+    			try{
+	    			String[] events = stringResponse.split("trackingevent>");
+	    			String last_event = events[events.length - 1];
+	    			LOGGER.info("-- Last event string is: " + last_event);
+	    			String last_event_date = last_event.substring(last_event.indexOf("<date>") + "<date>".length(), last_event.indexOf("</date>"));
+	    			LOGGER.info("-- Last event date extracted:" + last_event_date);
+	    			last_event_date = last_event_date.replace("T", " ");
+	    			last_event_date = last_event_date.replace("Z", "");
+	    			LOGGER.info(" final format: " + last_event_date);
+	    			info[2]= last_event_date;
+	    			return info;
+    			}catch(Exception e){
+    				LOGGER.error(" -- Error extracting the parcel data -- ", e);
+    			}
+    		}
+			LOGGER.info(" -- DPD not deliveried, out for delivery or parcel data situations --");
+			return null;    		
     	}else{
     		int pos = stringResponse.indexOf("<trackingevent><date>");
     		int pos_size = "<trackingevent><date>".length();
