@@ -41,6 +41,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -54,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.OrderLookUp;
-import com.ceva.cevatrack.domain.Tracking_reference_suspense;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 //import com.ceva.cevatrack.domain.SmartNetClientTest;
 //import com.ceva.cevatrack.repository.SmartNetClientRepository;
@@ -82,6 +82,11 @@ public class NikeAPI implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String id;
 	String userppal = null; 
+	private final static int DPD_DELIVERED_CODE = 1;
+	private final static int DPD_DELIVERED_IMAGE_COPY_AVAILABLE_CODE = 65; //has the same time as delivered event
+	private final static int DPD_OUT_FOR_DELIVER_CODE = 15;
+	private final static int DPD_PARCEL_DATA_CODE = 0;
+	private final static int DPD_NO_CODE = -1;
 
 //	@Inject
 //    @PersistenceUnitName(value="generalPU")
@@ -719,87 +724,141 @@ public class NikeAPI implements Serializable{
             int respcode = connection.getResponseCode();
             connection.disconnect();
             LOGGER.info(" -- HTTP Response was: " + respcode);
+            if (respcode != 200){
+            	LOGGER.error(" No 200 http response code..");
+            	return null;
+            }
             LOGGER.info(" -- XML of the response is: " + response.toString());
             //ETA test response
             //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>11:33</etastart><etaend>12:33</etaend><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
             //OUT FOR DELIVERY test response
-            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15505360977288X</trackingnumber><parcelnumber>15505360977288</parcelnumber><consignmentnumber>5360694779</consignmentnumber><deliveryaddress1>Fanatics Supplies Ltd</deliveryaddress1><deliveryaddress2>67 Grace Road</deliveryaddress2><deliverylocality>Leicester</deliverylocality><deliverypostcode>LE2 8AD</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>1970-01-01T10:15:00+01:00</etastart><etaend>1970-01-01T11:15:00+01:00</etaend><parcelcode>15505360977288*19813</parcelcode><trackingevents><trackingevent><date>2022-03-31T06:27:00+01:00</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery between 10:15 - 11:15</description><locality>Leicester</locality><countrycode>GB</countrycode><etastart>10:15</etastart><etaend>11:15</etaend><imagekey></imagekey></trackingevent><trackingevent><date>2022-03-31T01:23:00+01:00</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Leicester</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-03-31T01:19:00+01:00</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Leicester</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-03-30T22:06:00+01:00</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-03-30T16:05:00+01:00</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
             //LOGGER.info(" -- Test response: " + response);
             //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>155020221598468</trackingnumber><parcelnumber>15502022159846</parcelnumber><consignmentnumber>2022159829</consignmentnumber><deliveryaddress1>Sm Mark Simkin</deliveryaddress1><deliveryaddress2>The Fa</deliveryaddress2><deliverylocality>Unit B Beacon Business Park</deliverylocality><deliverycity>Weston Rd</deliverycity><deliverycounty>Stafford</deliverycounty><deliverypostcode>ST18 0WL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>1970-01-01T10:55:00+01:00</etastart><etaend>1970-01-01T11:55:00+01:00</etaend><parcelcode>15502022159846*19749</parcelcode><trackingevents><trackingevent><date>2022-01-26T09:49:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery between 10:55 - 11:55</description><locality>Stoke</locality><countrycode>GB</countrycode><etastart>10:55</etastart><etaend>11:55</etaend><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-26T04:50:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Stoke</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-26T00:09:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-25T11:35:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
             //Response test for parcel data retrieval
-            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>11:33</etastart><etaend>12:33</etaend><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>11:33</etastart><etaend>12:33</etaend><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
             //LOGGER.info("response test: " + response);
+            //parcel with problems in delivery situation
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15502027343989N</trackingnumber><parcelnumber>15502027343989</parcelnumber><consignmentnumber>2027294408</consignmentnumber><deliveryaddress1>Summus Sports - Kjt</deliveryaddress1><deliveryaddress2>280 Baldwins Lane</deliveryaddress2><deliverylocality>Rickmansworth</deliverylocality><deliverypostcode>WD3 3LD</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><relabelledas>1550 8002 446 245 8</relabelledas><yellowcardnumber>35465072</yellowcardnumber><parcelcode>15502027343989*19752</parcelcode><trackingevents><trackingevent><date>2022-01-31T16:15:00Z</date><code>62</code><type>DEPOT OUTBOUND</type><description>Parcel left depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-31T11:33:00Z</date><code>53</code><type>PARCEL RECONSIGNED RTC</type><description>Parcel reconsigned for onward journey (Return To Consignor)</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-31T00:20:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-31T00:18:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-30T15:27:00Z</date><code>68</code><type>FAILED NOTIFICATION RECEIVED</type><description>Unable to deliver, notification received</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-30T15:25:00Z</date><code>58</code><type>REQUEST FURTHER INSTRUCTIONS</type><description>Further instructions requested</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-30T15:23:00Z</date><code>8</code><type>FAILED CALLING CARD</type><description>Unable to deliver, calling card left - 35465072</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey>S5^0022*19754*868*3600*41*008**1</imagekey></trackingevent><trackingevent><date>2022-01-30T07:55:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-30T02:32:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-30T02:27:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-29T12:22:00Z</date><code>8</code><type>FAILED CALLING CARD</type><description>Unable to deliver, calling card left - 12823420</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey>S5^0022*19753*667*3600*72*008**1</imagekey></trackingevent><trackingevent><date>2022-01-29T05:56:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-29T01:14:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-29T01:12:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Dunstable</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-28T22:57:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-28T10:31:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //no trackingevents
+           // response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>155020221598468</trackingnumber><parcelnumber>15502022159846</parcelnumber><consignmentnumber>2022159829</consignmentnumber><deliveryaddress1>Sm Mark Simkin</deliveryaddress1><deliveryaddress2>The Fa</deliveryaddress2><deliverylocality>Unit B Beacon Business Park</deliverylocality><deliverycity>Weston Rd</deliverycity><deliverycounty>Stafford</deliverycounty><deliverypostcode>ST18 0WL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>1970-01-01T10:55:00+01:00</etastart><etaend>1970-01-01T11:55:00+01:00</etaend><parcelcode>15502022159846*19749</parcelcode><trackingevents></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
+            //paper copy delivery test
+            //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15502022579536S</trackingnumber><parcelnumber>15502022579536</parcelnumber><consignmentnumber>2022579536</consignmentnumber><deliveryaddress1>Fitness Footwear</deliveryaddress1><deliveryaddress2>Unit 6 North Kettering Business Par</deliveryaddress2><deliverylocality>Kettering</deliverylocality><deliverypostcode>NN14 1UA</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><signedfordate>2022-01-27</signedfordate><parcelcode>15502022579536*19750</parcelcode><trackingevents><trackingevent><date>2022-01-27T15:21:00Z</date><code>65</code><type>PAPER IMAGE</type><description>Customer Authorisation image available</description><locality>Hinckley</locality><countrycode>GB</countrycode><imagekey>X^28012200001072000000016074894Y</imagekey></trackingevent><trackingevent><date>2022-01-27T15:21:00Z</date><code>1</code><type>DELIVERED</type><description>Delivered (Manifest delivery), received by ANA</description><locality>Hinckley</locality><countrycode>GB</countrycode><imagekey>P^</imagekey></trackingevent><trackingevent><date>2022-01-27T09:21:00Z</date><code>6</code><type>REDELIVERY REQUEST</type><description>Redelivery request (bookin) made for Thu 27 January 2022 at 11:00</description><locality>Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-27T05:57:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-26T22:54:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2022-01-26T11:49:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");            
         } catch(Exception e) {
-            throw new RuntimeException(e);
+            LOGGER.error(" -- Error in DPD WS call -- ", e);
+            return null;
         }
-    	String stringResponse = response.toString();
+    	String stringResponse = response.toString();    
     	stringResponse = stringResponse.substring(stringResponse.indexOf("<trackingevents>"), stringResponse.indexOf("</trackingevents>"));
+    	int code = checkLastEventCode(stringResponse);
     	LOGGER.info(" -- Response to evaluate from events: " + stringResponse);
-    	if (!stringResponse.contains("DELIVERED")){
-    		LOGGER.info(" -- The response does not include DELIVERED --");
-    		if (stringResponse.contains("OUT FOR DELIVERY")){
-    			if (stringResponse.contains("<etastart>") && stringResponse.contains("<etaend>")){
-    				int pos = stringResponse.indexOf("<trackingevent><date>");
-	        		int pos_size = "<trackingevent><date>".length();
-	        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
-	        		date_response = date_response.substring(0,date_response.indexOf("T")+1);	        		
-	        		LOGGER.info(" -- Date out for delivery withot ETA: " + date_response);
-    				int eta_pos = stringResponse.indexOf("<etastart>");
-	        		int eta_pos_size = "<etastart>".length();
-	        		String eta_start_time= stringResponse.substring(eta_pos + eta_pos_size, eta_pos + eta_pos_size + 5);
-	        		LOGGER.info(" -- Eta start time: " + eta_start_time);
-	        		int etaend_pos = stringResponse.indexOf("<etaend>");
-	        		int etaend_pos_size = "<etaend>".length();
-	        		String eta_end_time= stringResponse.substring(etaend_pos + etaend_pos_size, etaend_pos + etaend_pos_size + 5);
-	        		LOGGER.info(" -- Eta end time: " + eta_end_time);
-	        		info[1] = date_response + eta_start_time + "-" + eta_end_time;
-	        		LOGGER.info("-- Returning info, out for delivery with etas: " + info[1]);
-	        		return info;
-    			}else{
-	    			LOGGER.info(" -- The response includes OUT FOR DELIVERED --");
-	    			int pos = stringResponse.indexOf("<trackingevent><date>");
-	        		int pos_size = "<trackingevent><date>".length();
-	        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
-	        		LOGGER.info(" -- Date out for delivery: " + date_response);
-	        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-	        		LocalDateTime ldt = LocalDateTime.parse(date_response, dtf);
-	        		ldt = ldt.plusHours(2);
-	        		String ldts = ldt.format(dtf);
-	        		LOGGER.info(" -- ETA (2 hours): " + ldts);
-	        		info[1] = ldts;
-	    			return info;
-    			}
-    		}
-    		if (stringResponse.contains("PARCEL DATA")){
-    			LOGGER.info(" -- The response includes PARCEL DATA, trying to return this date into shipped label --");
-    			try{
-	    			String[] events = stringResponse.split("trackingevent>");
-	    			String last_event = events[events.length - 1];
-	    			LOGGER.info("-- Last event string is: " + last_event);
-	    			String last_event_date = last_event.substring(last_event.indexOf("<date>") + "<date>".length(), last_event.indexOf("</date>"));
-	    			LOGGER.info("-- Last event date extracted:" + last_event_date);
-	    			last_event_date = last_event_date.replace("T", " ");
-	    			last_event_date = last_event_date.replace("Z", "");
-	    			LOGGER.info(" final format: " + last_event_date);
-	    			info[2]= last_event_date;
-	    			return info;
-    			}catch(Exception e){
-    				LOGGER.error(" -- Error extracting the parcel data -- ", e);
-    			}
-    		}
-			LOGGER.info(" -- DPD not deliveried, out for delivery or parcel data situations --");
-			return null;    		
-    	}else{
+    	if (code == DPD_NO_CODE){
+    		LOGGER.info(" -- DPD not deliveried, out for delivery or parcel data situations --");
+			return null;  
+    	}
+		LOGGER.info(" -- The response does include a valid code  --");
+		if (code == DPD_OUT_FOR_DELIVER_CODE){
+			LOGGER.info(" -- Out for delivery situation --");
+			if (stringResponse.contains("<etastart>") && stringResponse.contains("<etaend>")){
+				int pos = stringResponse.indexOf("<trackingevent><date>");
+        		int pos_size = "<trackingevent><date>".length();
+        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
+        		date_response = date_response.substring(0,date_response.indexOf("T")+1);	        		
+        		LOGGER.info(" -- Date out for delivery without ETA: " + date_response);
+				int eta_pos = stringResponse.indexOf("<etastart>");
+        		int eta_pos_size = "<etastart>".length();
+        		String eta_start_time= stringResponse.substring(eta_pos + eta_pos_size, eta_pos + eta_pos_size + 5);
+        		LOGGER.info(" -- Eta start time: " + eta_start_time);
+        		int etaend_pos = stringResponse.indexOf("<etaend>");
+        		int etaend_pos_size = "<etaend>".length();
+        		String eta_end_time= stringResponse.substring(etaend_pos + etaend_pos_size, etaend_pos + etaend_pos_size + 5);
+        		LOGGER.info(" -- Eta end time: " + eta_end_time);
+        		info[1] = date_response + eta_start_time + "-" + eta_end_time;
+        		info[1] = info[1].replace("Z", "");
+        		LOGGER.info("-- Returning info, out for delivery with etas: " + info[1]);
+        		return info;
+			}else{
+    			LOGGER.info(" -- The response includes OUT FOR DELIVERED --");
+    			int pos = stringResponse.indexOf("<trackingevent><date>");
+        		int pos_size = "<trackingevent><date>".length();
+        		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
+        		LOGGER.info(" -- Date out for delivery: " + date_response);
+        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        		LocalDateTime ldt = LocalDateTime.parse(date_response, dtf);
+        		ldt = ldt.plusHours(2);
+        		String ldts = ldt.format(dtf);
+        		ldts = ldts.replace("Z", "");
+        		LOGGER.info(" -- ETA (2 hours): " + ldts);             		
+        		info[1] = ldts;
+    			return info;
+			}
+		}
+		if (code == DPD_PARCEL_DATA_CODE){
+			LOGGER.info(" -- The response includes PARCEL DATA, trying to return this date into shipped label --");
+			try{
+    			String last_event_date = stringResponse.substring(stringResponse.indexOf("<trackingevent><date>") + "<trackingevent><date>".length()
+    					, stringResponse.indexOf("</date>"));
+    			LOGGER.info("-- Last event date extracted:" + last_event_date);
+    			//last_event_date = last_event_date.replace("T", " ");
+    			last_event_date = last_event_date.replace("Z", "");
+    			LOGGER.info(" final format: " + last_event_date);
+    			info[2]= last_event_date;
+    			return info;
+			}catch(Exception e){
+				LOGGER.error(" -- Error extracting the parcel data -- ", e);
+			}
+		}			  		    	    	
+    	if (code == DPD_DELIVERED_CODE || code == DPD_DELIVERED_IMAGE_COPY_AVAILABLE_CODE){
     		int pos = stringResponse.indexOf("<trackingevent><date>");
     		int pos_size = "<trackingevent><date>".length();
     		String date_response = stringResponse.substring(pos + pos_size, pos + pos_size + 19);
     		LOGGER.info(" -- Substring result: " + date_response + " ,pos is: " + pos + ", search string lengh: " + pos_size);
-    		date_response = date_response.replace("T", " ");
     		info[0] = date_response;
     		return info;
-    	}    	
+    	}  
+    	if (stringResponse.contains("PARCEL DATA")){
+    		LOGGER.info(" -- Contains parcel data info --");
+    		String[] events = stringResponse.split("<trackingevent>");
+    		if (events.length < 2){
+    			LOGGER.info(" -- Elements lengh < 2, there are not tracking envents --");
+    			return null;
+    		}
+	    	String last_event = events[events.length-1];
+	    	String last_event_date = last_event.substring(last_event.indexOf("<date>") + "<date>".length()
+					, last_event.indexOf("</date>"));
+			LOGGER.info("-- Last event date extracted for parcel data last option:" + last_event_date);
+			if (last_event_date.contains("+")){
+				last_event_date = last_event_date.substring(0, last_event_date.indexOf("+"));
+			}
+			last_event_date = last_event_date.replace("Z", "");
+			LOGGER.info(" final format: " + last_event_date);
+			info[2]= last_event_date;
+			return info;    	
+    	}
+    	LOGGER.info(" -- DPD not deliveried, out for delivery or parcel data situations --");
+		return null;
     }    
     
+	private int checkLastEventCode(String sr) {
+		LOGGER.info("-- Checking last event code in DPD --");
+		if (StringUtils.isBlank(sr) || !sr.contains("<code>")){
+			return DPD_NO_CODE;
+		}
+		String[] events = sr.split("<trackingevent>");	
+		if (events.length < 2){
+			LOGGER.info(" -- Elements lengh < 2, there are not tracking envents --");
+			return DPD_NO_CODE;
+		}
+		LOGGER.info("events size: " + events.length);
+		for(int i= 0; i<events.length; i++){
+			LOGGER.info("array pos: " + i + "\n" + events[i]);
+		}	
+		String last_event = events[1];
+		LOGGER.info("-- Last event string is: " + last_event);
+		String last_event_code = last_event.substring(last_event.indexOf("<code>") + "<code>".length(), last_event.indexOf("</code>"));
+		LOGGER.info("-- Last event code extracted:" + last_event_code);
+		return Integer.valueOf(last_event_code.trim());
+	}
 	//Just in case you want just to compare the password obtained through a db query
 	private String encryptUsingShiroConfig(String plainText) {
 		DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
