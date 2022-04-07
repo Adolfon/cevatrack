@@ -21,6 +21,9 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.xmlbeans.SystemProperties;
 import org.slf4j.LoggerFactory;
+
+import com.ceva.cevatrack.util.ApplicationGlobalConfig;
+
 import org.slf4j.Logger;
 
 /**
@@ -142,6 +145,9 @@ public class WsMicroliseEnvironment {
         }
         if (network != null && network.equalsIgnoreCase("HealthLink")){
         	envDescription = "health_link.tibco.prod";
+        }
+        if (network != null && network.equalsIgnoreCase(ApplicationGlobalConfig.TechNetLink)){
+        	envDescription = ApplicationGlobalConfig.TechNetLink_environment_prod;
         }
         LOGGER.info("envinronment description selected: " + envDescription);
         setAuthorized();

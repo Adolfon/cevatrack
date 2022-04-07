@@ -10,4 +10,6 @@ public interface TechNetClientService {
 
     public SmartNetClientVO getTechNetClient(String clientCode);
 
+	List<SmartNetClientVO> searchTechNetClientsForLink();
+
 }

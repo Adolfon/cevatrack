@@ -4,11 +4,15 @@
 	template="app-template.xhtml">
 		
 		<ui:define name="content">
-		    <h2>Sorry, there was an error in the application, please contact support if the problem persist</h2>
-	    	<p>Error message:  #{error-message-nutricia}</p>
+		    <h2>
+		    	<h:outputText value="Sorry, there was an error in the application, please contact support if the problem persist" rendered = "#{empty error_msg}"/>		    	
+		    </h2>
+	    	<p>
+	    		<h:outputText value="Error message: #{error_msg}" rendered = "#{not empty error_msg}"/>
+	    	</p>	    	
 			<br></br>
 			<div style = "padding-top:3%;">
-				<h:link  value=" Go Home" outcome="home"/>
+				<h:link  value=" Go Home" outcome="/home.xhtml"/>
 			</div>
 		</ui:define>
 		

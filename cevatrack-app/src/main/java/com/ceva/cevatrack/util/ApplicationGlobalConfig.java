@@ -2,8 +2,10 @@ package com.ceva.cevatrack.util;
 
 public class ApplicationGlobalConfig {
 	
-	public final static String GoogleMapsAPIKey ="AIzaSyCQalgzQEH3zeLOh3JIuM6bv7-uKWgeWHU";
-	public final static String GoogleMapsAPIKey2 ="AIzaSyDQoq0zlLhdLwOQNvQO48kGAVcHOTWz97E";
+	public final static String GoogleMapsAPIKey ="AIzaSyCQalgzQEH3zeLOh3JIuM6bv7-uKWgeWHU";//For Nutricia
+	public final static String GoogleMapsAPIKey2 = "AIzaSyDQoq0zlLhdLwOQNvQO48kGAVcHOTWz97E";//For TechNET
+	public final static String TechNetLink = "TechNetLink";//For TechNET
+	public final static String TechNetLink_environment_prod = "technet_link.tibco.prod";//For TechNET
 	/* SEB */
 	public final static String secret = "Private"; //update also seb.xhtml link fragment
 	/*DPD*/

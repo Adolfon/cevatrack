@@ -45,5 +45,10 @@ public class TechNetClientServiceImpl implements TechNetClientService {
         return searchTechNetClients().stream().filter(client -> clientName.equals(client.getName())).findAny()
                 .orElse(null);
     }
+    
+    public List<SmartNetClientVO> searchTechNetClientsForLink() {        
+        List<TechNetClient> matchingSmartNetClients = techNetClientRepository.findAll();        
+        return techNetClientTransformer.transformToVO(matchingSmartNetClients);
+    }
 
 }
