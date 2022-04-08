@@ -1270,4 +1270,11 @@ CREATE TABLE if not exists tracking_reference_suspense (
 );
 --changeset adolfo.cano:001-cjf-template-db-062 failOnError:false splitStatements:false logicalFilePath:001-template.sql
 ALTER TABLE order_lookup ADD COLUMN tracking_reference text;
-  
+--changeset adolfo.cano:001-cjf-template-db-063 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+ delete from smartnet_client where name = 'Gap';
+ delete from smartnet_client where name = 'Whitworths';
+ delete from smartnet_client where name = 'Continental';
+ delete from smartnet_client where name = 'British Gypsum Sherburn';
+ INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('The Body Shop','BDYDTS','BS.png','bodyshop',now(),'SYSTEM',now(),'SYSTEM',1);
+ 
