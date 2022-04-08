@@ -111,7 +111,7 @@ public class DetailViewLink implements Serializable {
         	goToError("Parameter missing");
         	return;
         }           
-        client = "Nutricia"; //Nutricia from "Health care medicine" network      
+        client = "Nutricia"; //Nutricia from "Health care medicine" network  
         if (linkService == null){
         	LOGGER.error(" -- linkService EJB not available (null) --");
         	goToError("There was a technical problem. \n Please contact support. \nSorry for the inconvenience");
@@ -133,8 +133,8 @@ public class DetailViewLink implements Serializable {
         	goToError("Not enough information error");
         	return;
         }
-        //Dedicated view for the link
-        this.network = "HealthLink";        
+        //Dedicated view for the link and special permission for retrieving consignment.
+        this.network = "HealthLink";     
         LOGGER.info("the network value is: " + network);                         
         // fetch the consignment
         try {
@@ -208,7 +208,7 @@ public class DetailViewLink implements Serializable {
 
 	private void goToError(String error) {
     	try {
-    		SessionManager.getSession().setAttribute("error-message-nutricia", error);
+    		SessionManager.getSession().setAttribute("error_msg", error);
 			FacesContext.getCurrentInstance().getExternalContext().redirect("error.xhtml");
 		} catch (IOException e) {
 			LOGGER.error("-- Error redirecting: ", e);

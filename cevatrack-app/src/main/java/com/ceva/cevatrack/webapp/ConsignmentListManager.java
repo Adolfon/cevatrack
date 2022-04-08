@@ -19,6 +19,7 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 //import com.ceva.cevatrack.vo.TechNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
@@ -316,13 +317,13 @@ public class ConsignmentListManager {
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
             	throw new Exception("-- The consignment was not retrieved and it is null --");
             }
-            if (!network.equalsIgnoreCase("HealthLink")){
-            	currentUser = SecurityUtils.getSubject();
-            }else{
-            	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK
-            	LOGGER.info(" -- HealthLind detected --");
-                return consignment;	  
+            if (network.equalsIgnoreCase("HealthLink") || network.equalsIgnoreCase(ApplicationGlobalConfig.TechNetLink)){
+            	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK same as Technet link
+            	LOGGER.info(" -- HealthLink or TechNetLink detected --");
+                return consignment;
             }
+        	LOGGER.info(" -- Going to secure the subject for network: " + network + " --");
+        	currentUser = SecurityUtils.getSubject();
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
             if (network.equalsIgnoreCase("smartnet")){
 	            if (currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(SN_SITE + consignment.getSiteId())) {
