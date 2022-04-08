@@ -748,7 +748,11 @@ public class NikeAPI implements Serializable{
             LOGGER.error(" -- Error in DPD WS call -- ", e);
             return null;
         }
-    	String stringResponse = response.toString();    
+    	String stringResponse = response.toString();  
+    	if (!stringResponse.contains("<trackingevents>")){
+    		LOGGER.error("-- The response does not contain tracking events --");
+    		return null;
+    	}
     	stringResponse = stringResponse.substring(stringResponse.indexOf("<trackingevents>"), stringResponse.indexOf("</trackingevents>"));
     	int code = checkLastEventCode(stringResponse);
     	LOGGER.info(" -- Response to evaluate from events: " + stringResponse);
