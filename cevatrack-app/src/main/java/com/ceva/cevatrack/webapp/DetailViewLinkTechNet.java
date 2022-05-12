@@ -214,8 +214,8 @@ public class DetailViewLinkTechNet implements Serializable {
 		     LocalDateTime ldt_start = LocalDateTime.parse(consignment2.getEta(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		     LocalDateTime ldt_end = LocalDateTime.parse(consignment2.getEta(),  DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		     //ZoneId defaultZone = TimeZone.getTimeZone("Europe/London").toZoneId();
-	    	 ldt_start = ldt_start.minusMinutes(30);
-	    	 ldt_end = ldt_end.plusMinutes(30);
+	    	 ldt_start = ldt_start.minusMinutes(60);
+	    	 ldt_end = ldt_end.plusMinutes(60);
 		     this.windowStart = ldt_start.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
 		     this.windowEnd = ldt_end.format(DateTimeFormatter.ofPattern("dd MMM hh:mm a"));
     	}catch(Exception e){
