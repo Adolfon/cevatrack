@@ -4,8 +4,11 @@ public class ApplicationGlobalConfig {
 	
 	public final static String GoogleMapsAPIKey ="AIzaSyCQalgzQEH3zeLOh3JIuM6bv7-uKWgeWHU";//For Nutricia
 	public final static String GoogleMapsAPIKey2 = "AIzaSyDQoq0zlLhdLwOQNvQO48kGAVcHOTWz97E";//For TechNET
+	public final static String GoogleMapsAPIKey3 = "AIzaSyDYp5dH4HBJkSIU6-vjTHHTZ9grWdNerp4";//For Baxter
 	public final static String TechNetLink = "TechNetLink";//For TechNET
+	public final static String BaxterLink = "BaxterLink";
 	public final static String TechNetLink_environment_prod = "technet_link.tibco.prod";//For TechNET
+	public final static String Baxter_environment_prod = "baxter_link.tibco.prod";
 	/* SEB */
 	public final static String secret = "Private"; //update also seb.xhtml link fragment
 	/*DPD*/

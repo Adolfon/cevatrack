@@ -87,5 +87,8 @@
 <Parameter name ="microlise.url.technet_link.tibco.prod" value="https://integration-eu.logistics.corp/MicroliseTechNET" override="false"/>
 <Parameter name ="microlise.body.getconsignment.technet_link.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-TechNET-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.soapapaction.getconsignment.technet_link.tibco.prod" value="GetConsignment" override="false"/>
-	
+<!-- ================================= BAXTER LINK CONFIGURATION ===============================================  -->
+<Parameter name ="microlise.url.baxter_link.tibco.prod" value="https://integration-eu.logistics.corp/MicroliseHealthcareEquipment" override="false"/>
+<Parameter name ="microlise.body.getconsignment.baxter_link.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareEquipment-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.baxter_link.tibco.prod" value="GetConsignment" override="false"/>	
 
