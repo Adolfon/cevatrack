@@ -317,7 +317,8 @@ public class ConsignmentListManager {
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
             	throw new Exception("-- The consignment was not retrieved and it is null --");
             }
-            if (network.equalsIgnoreCase("HealthLink") || network.equalsIgnoreCase(ApplicationGlobalConfig.TechNetLink)){
+            if (network.equalsIgnoreCase("HealthLink") || network.equalsIgnoreCase(ApplicationGlobalConfig.TechNetLink) 
+            		|| network.equalsIgnoreCase(ApplicationGlobalConfig.BaxterLink)){
             	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK same as Technet link
             	LOGGER.info(" -- HealthLink or TechNetLink detected --");
                 return consignment;

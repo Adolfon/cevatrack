@@ -149,6 +149,9 @@ public class WsMicroliseEnvironment {
         if (network != null && network.equalsIgnoreCase(ApplicationGlobalConfig.TechNetLink)){
         	envDescription = ApplicationGlobalConfig.TechNetLink_environment_prod;
         }
+        if (network != null && network.equalsIgnoreCase(ApplicationGlobalConfig.BaxterLink)){
+        	envDescription = ApplicationGlobalConfig.Baxter_environment_prod;
+        }
         LOGGER.info("envinronment description selected: " + envDescription);
         setAuthorized();
         setProxied();
