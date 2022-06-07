@@ -29,8 +29,7 @@ public class WebBrowserCache2 implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         log.info(" -- Custom WebBrowserCache2 Web filter for cLS.xhtml starts --");
-        HttpServletRequest request = (HttpServletRequest) req;
-        
+        HttpServletRequest request = (HttpServletRequest) req;        
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(true);
         String param = request.getParameter("t");
@@ -38,7 +37,6 @@ public class WebBrowserCache2 implements Filter {
         		"\n response: " + response.getHeaderNames() + " ,URI: " + request.getRequestURI() + " ,paramagter: " + param);        
         response.sendRedirect("cLS.xhtml?t=" + param);
         //chain.doFilter(req, res);
-
     }
 
     @Override
