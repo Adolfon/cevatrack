@@ -12,416 +12,117 @@
 		<p:growl />
 		<div id="special_map_container" class="ceva-welcome-page">
 			<div class="ceva-panel-welcome-page"></div>
-			<div id="welcomePage" class="ceva-text-welcome-page">
+			<div id="welcomePage" class="ceva-text-welcome-page">			
 			  <ui:fragment rendered="#{baxterDetailLink.showMap}">							
 				<div id="map" style="width: 100%; height: 600px;text-align:center;">
-					<h:graphicImage id="map_image_view" style="padding-bottom:10px;" value="http://maps.googleapis.com/maps/api/staticmap?size=600x600&amp;maptype=roadmap&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Van_Icon2.png|#{baxterDetailLink.vehicule_loc}&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Location_Map_Icon.png|#{baxterDetailLink.place_loc}&amp;style=feature:poi|visibility:off&amp;key=#{baxterDetailLink.apiKey}"/>					 	
+					<h:graphicImage id="map_image_view" style="padding-bottom:10px;" value="http://maps.googleapis.com/maps/api/staticmap?size=600x600&amp;maptype=roadmap&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Van_Icon2.png|#{baxterDetailLink.vehicule_loc}&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Location_Map_Icon.png|#{baxterDetailLink.place_loc}&amp;style=feature:poi|visibility:off&amp;key=#{baxterDetailLink.apiKey}"/>
 				</div>
 			  </ui:fragment>							  
-			 <ui:insert name="map_responsive" />
-			
+			<ui:insert name="map_responsive" />
 				<h:form id="form">				  
 					<p:growl id="growl" showDetail="true" />
 					
-					<p:panel id="toggleable-header" header="Consignment #{baxterDetailLink.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+			<p:panel id="toggleable-header" header="Consignment #{baxterDetailLink.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
 	          <div class="ui-g">
-		           <div class="ui-g-12 ui-md-4 ui-lg-3">
+		         <div class="ui-g-12 ui-md-4 ui-lg-3">
 		              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
 		                <div class="panel-heading">Reference</div>
 		                <div class="panel-body">#{baxterDetailLink.consignment.consignmentReference}</div>
 		              </div>
-	             </div>
-		           <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentCustomerOrderRef}">
-                  <div class="ui-g-12 ui-md-4 ui-lg-2">
-			              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-			                <div class="panel-heading">Order</div>
-			                <div class="panel-body2">#{baxterDetailLink.consignment.consignmentCustomerOrderRef}</div>
-			              </div>
-		              </div>
-	              </ui:fragment>
+	             </div>		           		           
                 <div class="ui-g-12 ui-md-3 ui-lg-2">
 		              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
 		                <div class="panel-heading">Status</div>
 		                <div class="panel-body">#{baxterDetailLink.consignment.statusString}</div>
 		              </div>
-	              </div>
-	              <ui:fragment rendered="#{! empty baxterDetailLink.consignment.clauseCode}">
-                 <div class="ui-g-12 ui-md-4 ui-lg-2">
-                    <div class="panel field-panel panel-danger">
-                      <div class="panel-heading">Clause Code</div>
-                      <div class="panel-body">#{baxterDetailLink.consignment.clauseCode}</div>
-                    </div>
-                  </div>
-                </ui:fragment>
-                <ui:fragment rendered="#{! empty baxterDetailLink.consignment.parentCode}">
-                  <div class="ui-g-12 ui-md-4 ui-lg-2">
-                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                      <div class="panel-heading">Parent Code</div>
-                      <div class="panel-body">#{baxterDetailLink.consignment.parentCode}</div>
-                    </div>
-                  </div>
-                </ui:fragment>
-	              <div class="ui-g-12 ui-md-3 ui-lg-2">
+	            </div>
+	            <ui:fragment rendered="#{baxterDetailLink.consignment.statusString != 'To be delivered' and not empty baxterDetailLink.feedBack_URL}">
+		            <div class="ui-g-12 ui-md-4 ui-lg-3">
+			              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+			                <div class="panel-heading">How did we do?</div>
+			                <div class="panel-body">
+			                	Click <a target="_blank" href="#{baxterDetailLink.feedBack_URL}"><b><u> here </u></b></a> to rate our service</div>
+			              </div>
+		             </div>	  
+	            </ui:fragment>            
+            </div>
+          </p:panel>          		  
+		  
+		  <ui:fragment rendered="#{(! empty baxterDetailLink.consignment.ataString and baxterDetailLink.consignment.statusString != 'To be delivered') or 
+		  	(! empty baxterDetailLink.consignment.etaString and baxterDetailLink.consignment.statusString == 'To be delivered') or 		  	 
+		  	(! empty baxterDetailLink.windowStart and ! empty baxterDetailLink.windowEnd and baxterDetailLink.consignment.statusString == 'To be delivered')
+		  		or (baxterDetailLink.consignment.siteGeoRadius != 0) or (! empty baxterDetailLink.consignment.journeyActualStartTimeString)}">		  			  			
+	          <p:panel id="toggleable-timings" header="Visit Details" toggleable="true" widgetVar="accordian_timings" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	            <div class="ui-g">
+	             <ui:fragment rendered="#{! empty baxterDetailLink.consignment.ataString or (not empty baxterDetailLink.consignment.etaString) and (baxterDetailLink.consignment.statusString != 'To be delivered')}">
+	              <div class="ui-g-12 ui-md-4 ui-lg-3">
 		              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-		                <div class="panel-heading">Header ID</div>
-		                <div class="panel-body">#{baxterDetailLink.consignment.consignmentHeaderId}</div>
-		              </div>
-	              </div>
-
-                <ui:fragment rendered="#{baxterDetailLink.consignment.isAdHoc != 0}">
-                  <div class="ui-g-12 ui-md-3 ui-lg-2">
-		                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-		                  <div class="panel-heading">Adhoc</div>
-		                  <div class="panel-body">#{baxterDetailLink.consignment.isAdHoc == 1}</div>
-		                </div>
-	                </div>
-                </ui:fragment>
-                <ui:fragment rendered="#{baxterDetailLink.consignment.isTranshipment != 0}">
-                  <div class="ui-g-12 ui-md-3 ui-lg-2">
-		                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-		                  <div class="panel-heading">Transhipment</div>
-		                  <div class="panel-body">#{baxterDetailLink.consignment.isTranshipment == 1}</div>
-		                </div>
-	                </div>
-                </ui:fragment>
-                <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo1
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo2)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo3)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo4)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo5)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo6)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo7)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo8)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo9)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo10)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo11)
-                            .concat(baxterDetailLink.consignment.consignmentHeaderInfo12)
-                            }">
-                  <div class="ui-g-12 ui-md-4 ui-lg-3">
-	                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                    <div class="panel-heading">Info</div>
-		                    <div class="panel-body">
-		                     <ul class="list-unstyled">
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo1}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo1}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo2}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo2}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo3}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo3}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo4}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo4}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo5}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo5}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo6}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo6}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo7}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo7}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo8}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo8}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo9}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo9}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo10}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo10}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo11}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo11}</li>
-	                        </ui:fragment>
-	                        <ui:fragment rendered="#{! empty baxterDetailLink.consignment.consignmentHeaderInfo12}">
-	                          <li>#{baxterDetailLink.consignment.consignmentHeaderInfo12}</li>
-	                        </ui:fragment>
-	                      </ul>
-	                    </div>
-	                  </div>
-                  </div>
-                </ui:fragment>
-            </div>
-          </p:panel>
-
-          <p:panel id="toggleable-site" header="Site Details for Delivery / Collection" toggleable="true" widgetVar="accordian_site" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
-            <div class="ui-g">
-                <div class="ui-g-12 ui-md-5 ui-lg-3">
-	                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                  <div class="panel-heading">Site ID</div>
-	                  <div class="panel-body">#{baxterDetailLink.consignment.siteId}</div>
-                  </div>
-                </div>
-                <ui:fragment rendered="#{! empty baxterDetailLink.consignment.siteName}">
-	                <div class="ui-g-12 ui-md-7 ui-lg-3">
-                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                    <div class="panel-heading">Site</div>
-	                    <div class="panel-body">#{baxterDetailLink.consignment.siteName}</div>
-	                  </div>
-                  </div>
-                </ui:fragment>
-                <ui:fragment rendered="#{! empty baxterDetailLink.consignment.contactName}">
-	                <div class="ui-g-12 ui-md-4 ui-lg-3">
-		                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-		                  <div class="panel-heading">Contact</div>
-		                  <div class="panel-body">#{baxterDetailLink.consignment.contactName}</div>
-		                </div>
-	                </div>
-                </ui:fragment>
-                <ui:fragment rendered="#{! empty baxterDetailLink.consignment.contactNumber}">
-                  <div class="ui-g-12 ui-md-4 ui-lg-3">
-	                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                    <div class="panel-heading">Contact Number</div>
-	                    <div class="panel-body">#{baxterDetailLink.consignment.contactNumber}</div>
-	                  </div>
-                  </div>
-                </ui:fragment>
-                <div class="ui-g-12 ui-md-4 ui-lg-3">
-	                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                  <div class="panel-heading">Address</div>
-	                  <div class="panel-body">
-		                  <ul class="list-unstyled">
-			                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.address1}">
-			                    <li>#{baxterDetailLink.consignment.address1}</li>
-			                  </ui:fragment>
-			                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.address2}">
-			                    <li>#{baxterDetailLink.consignment.address2}</li>
-			                  </ui:fragment>
-			                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.address3}">
-			                    <li>#{baxterDetailLink.consignment.address3}</li>
-			                  </ui:fragment>
-			                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.county}">
-			                    <li>#{baxterDetailLink.consignment.county}</li>
-			                  </ui:fragment>
-			                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.postCode}">
-			                    <li>#{baxterDetailLink.consignment.postCode}</li>
-			                  </ui:fragment>
-			                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.country}">
-			                    <li>#{baxterDetailLink.consignment.country}</li>
-			                  </ui:fragment>
-		                  </ul>
-	                  </div>
-                  </div>
-                </div>
-                <div class="ui-g-12 ui-md-6 ui-lg-4">
-                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                    <div class="panel-heading">Coordinates</div>
-                    <div class="panel-body">
-	                  <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                      <div class="panel-heading">Latitude</div>
-	                      <div class="panel-body">#{baxterDetailLink.consignment.siteLat}</div>
-	                    </div>
-	                  </div>
-	                  <div class="ui-g-12 ui-md-6 ui-lg-6 panel-default">
-	                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                      <div class="panel-heading">Longitude</div>
-	                      <div class="panel-body">#{baxterDetailLink.consignment.siteLong}</div>
-	                    </div>
-	                  </div>
-	                  <div class="ui-g-12 ui-md-12 ui-lg-4">
-                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                        <div class="panel-body">
-                          <a target="_blank" href="https://www.google.com/maps/search/#{baxterDetailLink.consignment.siteLat},#{baxterDetailLink.consignment.siteLong}/@#{baxterDetailLink.consignment.siteLat},#{baxterDetailLink.consignment.siteLong},10z">
-                          Google Maps
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-	                </div>
-                </div>
-               </div>
-            </div>
-          </p:panel>
-
-
-          <p:panel id="toggleable-timings" header="Visit Details" toggleable="true" widgetVar="accordian_timings" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
-            <div class="ui-g">
-              
-              <div class="ui-g-12 ui-md-4 ui-lg-3">
-	              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                <div class="panel-heading">Arrival</div>
-	                <div class="panel-body">
-	                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.ptaString}">
-		                  <div class="ui-g-12 ui-md-6 ui-lg-6">
-		                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-		                      <div class="panel-heading">Planned</div>
-		                      <div class="panel-body">#{baxterDetailLink.consignment.ptaString}</div>
+		                <div class="panel-heading">Arrival</div>
+		                <div class="panel-body">                 
+		                  <ui:fragment rendered="#{(not empty baxterDetailLink.consignment.etaString) and (baxterDetailLink.consignment.statusString != 'To be delivered')}">
+		                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+		                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+		                        <div class="panel-heading">Estimated</div>
+		                        <div class="panel-body">#{baxterDetailLink.consignment.etaString}</div>
+		                      </div>
 		                    </div>
-		                  </div>
-	                  </ui:fragment>
-	                  <ui:fragment rendered="#{empty baxterDetailLink.consignment.ataString}">
-	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                        <div class="panel-heading">Estimated</div>
-	                        <div class="panel-body">#{baxterDetailLink.consignment.etaString}</div>
+		                  </ui:fragment>
+		                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.ataString}">
+		                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+		                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+		                        <div class="panel-heading">Actual</div>
+		                        <div class="panel-body">#{baxterDetailLink.consignment.ataString}</div>
+		                      </div>
+		                    </div>
+		                  </ui:fragment>
+		                </div>
+		              </div>
+	              	</div>                                                
+	             </ui:fragment>
+	             <ui:fragment rendered="#{baxterDetailLink.consignment.statusString == 'To be delivered' }">	 
+	               <ui:fragment rendered="#{! empty baxterDetailLink.windowStart and ! empty baxterDetailLink.windowEnd}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Window</div>
+	                    <div class="panel-body">
+	                      <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                        <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+	                          <div class="panel-heading">Start</div>
+	                          <div class="panel-body">#{baxterDetailLink.windowStart}</div>
+	                        </div>
+	                      </div>
+	                      <div class="ui-g-12 ui-md-6 ui-lg-6 panel-default">
+	                        <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+	                          <div class="panel-heading">End</div>
+	                          <div class="panel-body">#{baxterDetailLink.windowEnd}</div>
+	                        </div>
 	                      </div>
 	                    </div>
-	                  </ui:fragment>
-	                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.ataString}">
-	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                        <div class="panel-heading">Actual</div>
-	                        <div class="panel-body">#{baxterDetailLink.consignment.ataString}</div>
-	                      </div>
-	                    </div>
-	                  </ui:fragment>
+	                  </div>
 	                </div>
-	              </div>
-              </div>
-                 
-                 
-              <div class="ui-g-12 ui-md-4 ui-lg-3">       
-	              <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                <div class="panel-heading">Departure</div>
-	                <div class="panel-body">
-	                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.ptdString}">
-	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                        <div class="panel-heading">Planned</div>
-	                        <div class="panel-body">#{baxterDetailLink.consignment.ptdString}</div>
-	                      </div>
-	                    </div>
-	                  </ui:fragment>
-	                  <ui:fragment rendered="#{empty baxterDetailLink.consignment.atdString}">
-	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                        <div class="panel-heading">Estimated</div>
-	                        <div class="panel-body">#{baxterDetailLink.consignment.etdString}</div>
-	                      </div>
-	                    </div>
-	                  </ui:fragment>
-	                  <ui:fragment rendered="#{! empty baxterDetailLink.consignment.atdString}">
-	                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                        <div class="panel-heading">Actual</div>
-	                        <div class="panel-body">#{baxterDetailLink.consignment.atdString}</div>
-	                      </div>
-	                    </div>
-	                  </ui:fragment>
+	     			</ui:fragment>
+	             </ui:fragment>
+	              
+	              <ui:fragment rendered="#{baxterDetailLink.consignment.siteGeoRadius != 0}">
+	                <div class="ui-g-12 ui-md-2 ui-lg-1">
+	                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Geo Radius</div>
+	                    <div class="panel-body">#{baxterDetailLink.consignment.siteGeoRadius}</div>
+	                  </div>
 	                </div>
-	              </div>
-              </div>
-              
-              <ui:fragment rendered="#{! empty baxterDetailLink.consignment.timeWindowStartString.concat(baxterDetailLink.consignment.timeWindowEndString)}">
-                <div class="ui-g-12 ui-md-4 ui-lg-3">
-                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                    <div class="panel-heading">Window</div>
-                    <div class="panel-body">
-                      <div class="ui-g-12 ui-md-6 ui-lg-6">
-                        <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                          <div class="panel-heading">Start</div>
-                          <div class="panel-body">#{baxterDetailLink.consignment.timeWindowStartString}</div>
-                        </div>
-                      </div>
-                      <div class="ui-g-12 ui-md-6 ui-lg-6 panel-default">
-                        <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                          <div class="panel-heading">End</div>
-                          <div class="panel-body">#{baxterDetailLink.consignment.timeWindowEndString}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ui:fragment>
-              
-              <ui:fragment rendered="#{baxterDetailLink.consignment.durationOnSiteMins > 0}">
-                <div class="ui-g-12 ui-md-2 ui-lg-1">
-                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                    <div class="panel-heading">Minutes on Site</div>
-                    <div class="panel-body">#{baxterDetailLink.consignment.durationOnSiteMins}</div>
-                  </div>
-                </div>
-              </ui:fragment>
-              <ui:fragment rendered="#{baxterDetailLink.consignment.siteGeoRadius > 0}">
-                <div class="ui-g-12 ui-md-2 ui-lg-1">
-                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                    <div class="panel-heading">Geo Radius</div>
-                    <div class="panel-body">#{baxterDetailLink.consignment.siteGeoRadius}</div>
-                  </div>
-                </div>
-              </ui:fragment>
-              <ui:fragment rendered="#{! empty baxterDetailLink.consignment.journeyActualStartTimeString}">
-                <div class="ui-g-12 ui-md-2 ui-lg-2">
-                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                    <div class="panel-heading">At Site</div>
-                    <div class="panel-body">#{baxterDetailLink.consignment.journeyActualStartTimeString}</div>
-                  </div>
-                </div>
-              </ui:fragment>
-              <div class="ui-g-12 ui-md-2 ui-lg-1">
-                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                  <div class="panel-heading">Drop Id</div>
-                  <div class="panel-body">#{baxterDetailLink.consignment.journeyDropId}</div>
-                </div>
-              </div>
-            </div>
-          </p:panel>
-
-
-          <p:panel id="toggleable-journey" header="Journey Information" toggleable="true" widgetVar="accordian_journey" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
-            <div class="ui-g">
-               
-              <div class="ui-g-12 ui-md-2 ui-lg-2">
-                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                  <div class="panel-heading">Journey Id</div>
-                  <div class="panel-body">#{baxterDetailLink.consignment.journeyId}</div>
-                </div>
-              </div>
-               
-              <div class="ui-g-12 ui-md-2 ui-lg-2">
-                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                  <div class="panel-heading">Route Id</div>
-                  <div class="panel-body">#{baxterDetailLink.consignment.routeId}</div>
-                </div>
-              </div>
-                   
-              <ui:fragment rendered="#{! empty baxterDetailLink.consignment.journeyAlias}">    
-	              <div class="ui-g-12 ui-md-2 ui-lg-2">
-	                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                  <div class="panel-heading">Journey Alias</div>
-	                  <div class="panel-body">#{baxterDetailLink.consignment.journeyAlias}</div>
+	              </ui:fragment>
+	              <ui:fragment rendered="#{! empty baxterDetailLink.consignment.journeyActualStartTimeString}">
+	                <div class="ui-g-12 ui-md-2 ui-lg-2">
+	                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">At Site</div>
+	                    <div class="panel-body">#{baxterDetailLink.consignment.journeyActualStartTimeString}</div>
+	                  </div>
 	                </div>
-	              </div>
-              </ui:fragment>
-                    
-              <ui:fragment rendered="#{! empty baxterDetailLink.consignment.podStartTimeString}">
-                <div class="ui-g-12 ui-md-2 ui-lg-2">
-                  <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                    <div class="panel-heading">PoD Start</div>
-                    <div class="panel-body">#{baxterDetailLink.consignment.podStartTimeString}</div>
-                  </div>
-                </div>
-              </ui:fragment>      
-                    
-              <div class="ui-g-12 ui-md-4 ui-lg-4">
-                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                  <div class="panel-heading">Start Time</div>
-                  <div class="panel-body">
-                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                        <div class="panel-heading">Planned</div>
-                        <div class="panel-body">#{baxterDetailLink.consignment.plannedStartTimeString}</div>
-                      </div>
-                    </div>
-                    <div class="ui-g-12 ui-md-6 ui-lg-6">
-                      <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                        <div class="panel-heading">Actual</div>
-                        <div class="panel-body">#{baxterDetailLink.consignment.actualStartTimeString}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-
-            </div>
-          </p:panel>
-
-
+	              </ui:fragment>
+	            </div>
+	          </p:panel>
+          </ui:fragment> 
+          
           <ui:fragment id="fragmentSignatory" rendered="#{baxterDetailLink.consignment.signatory.length() + baxterDetailLink.consignment.signatory.length() > 0}">
 	          <p:panel id="toggleable-pod" header="Signature" toggleable="true" widgetVar="accordian_pod" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
 	            <div class="ui-g">
@@ -449,122 +150,32 @@
 	          </p:panel>
           </ui:fragment>
 
-          <ui:fragment id="fragmentVehicles" rendered="#{baxterDetailLink.consignment.vehicles.size() > 0}">
+          <ui:fragment id="fragmentVehicles" rendered="#{baxterDetailLink.consignment.vehicles.size() gt 0}">
             <p:panel id="toggleable-vehicles" header="Vehicles" toggleable="true" widgetVar="accordian_vehicles" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
               <c:forEach var="veh" items="#{baxterDetailLink.consignment.vehicles}">
 		            <div class="ui-g">
 		               
 		              <div class="ui-g-12 ui-md-12 ui-lg-12">
 		                <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-		                  <div class="panel-heading">Vehicle: #{veh.displayName}</div>
-		                  <div class="panel-body">
-		                    <div class="ui-g-12 ui-md-3 ui-lg-3">
-			                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-			                      <div class="panel-heading">Name</div>
-			                      <div class="panel-body">#{veh.displayName}</div>
-			                    </div>
-			                  </div>
-			                  <ui:fragment rendered="! empty #{veh.lastLocation}">
-				                  <div class="ui-g-12 ui-md-3 ui-lg-3">
-	                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                            <div class="panel-heading">Last Location</div>
-	                            <div class="panel-body">#{veh.lastLocation}</div>
-	                          </div>
-	                        </div>
-                        </ui:fragment>
-                        <ui:fragment rendered="#{veh.lastContactLat > 0.0}">
-	                        <div class="ui-g-12 ui-md-6 ui-lg-6">
-	                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                            <div class="panel-heading">Last Contact</div>
-	                            
-	                            <div class="panel-body">
-				                        <div class="ui-g-12 ui-md-6 ui-lg-4">
-				                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-				                            <div class="panel-heading">Latitude</div>
-				                            <div class="panel-body">#{veh.lastContactLat}</div>
-				                          </div>
-				                        </div>
-				                        
-				                        <div class="ui-g-12 ui-md-6 ui-lg-4">
-				                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-				                            <div class="panel-heading">Longitude</div>
-				                            <div class="panel-body">#{veh.lastContactLong}</div>
-				                          </div>
-				                        </div>
-				                        
-				                        <div class="ui-g-12 ui-md-12 ui-lg-4">			                               
-			                                 <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">			                                			                                
-			                                  <div class="panel-body">
-			                                    <a target="_blank" href="https://www.google.com/maps/dir/#{veh.lastContactLat},#{veh.lastContactLong}/#{baxterDetailLink.consignment.siteLat},#{baxterDetailLink.consignment.siteLong}/@#{veh.lastContactLat},#{veh.lastContactLong},9z">
-			                                    Google Maps
-			                                    </a>
-			                                  </div>
-			                                 </div>  
-			                                			                                
-	                              	 	</div>
-	                              
-	                            </div>
-	                          </div>
-	                        </div>
-                        </ui:fragment>
-		                  </div>
+		                  <div class="panel-heading">Vehicle: #{veh.displayName}</div>		                  
 		                </div>
 		              </div>
 		            </div>
               </c:forEach>
 	          </p:panel>
-	        </ui:fragment>
-
-          <ui:fragment id="fragmentDrivers" rendered="#{baxterDetailLink.consignment.drivers.size() > 0}">
-            <p:panel id="toggleable-drivers" header="Drivers" toggleable="true" widgetVar="accordian_drivers" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
-              <c:forEach var="drv" items="#{baxterDetailLink.consignment.drivers}">
-                <div class="ui-g">
-                   
-                  <div class="ui-g-12 ui-md-12 ui-lg-12">
-                    <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                      <div class="panel-heading">Driver: #{drv.displayName}</div>
-                      <div class="panel-body">
-                        <div class="ui-g-12 ui-md-3 ui-lg-3">
-                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-                            <div class="panel-heading">Name</div>
-                            <div class="panel-body">#{drv.displayName}</div>
-                          </div>
-                        </div>
-                        <ui:fragment rendered="! empty #{drv.fullName}">
-                          <div class="ui-g-12 ui-md-3 ui-lg-5">
-	                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                            <div class="panel-heading">Full Name</div>
-	                            <div class="panel-body">#{drv.fullName}</div>
-	                          </div>
-	                        </div>
-                        </ui:fragment>
-                        <ui:fragment rendered="! empty #{drv.fullName}">
-	                        <div class="ui-g-12 ui-md-3 ui-lg-4">
-	                          <div class="panel field-panel panel-#{baxterDetailLink.consignment.statusCssClass}">
-	                            <div class="panel-heading">Contact Number</div>
-	                            <div class="panel-body">#{drv.contactNumber}</div>
-	                          </div>
-	                        </div>
-                        </ui:fragment>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </c:forEach>
-            </p:panel>
-          </ui:fragment>
+	        </ui:fragment>         
           
           
-          <ui:fragment id="fragmentConsignment" rendered="#{baxterDetailLink.consignment.consignmentDetails.size() > 0}">
+          <ui:fragment id="fragmentConsignment" rendered="#{baxterDetailLink.consignment.consignmentDetails.size() gt 0}">
 	          <p:panel id="toggleable-contents" header="Contents" toggleable="true" widgetVar="accordian_contents" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
               <c:forEach var="item" items="#{baxterDetailLink.consignment.consignmentDetails}">
-                <div class="ui-g">
-                   
+			   <ui:fragment rendered="#{not empty item.customerDetailRef}">
+                <div class="ui-g">                  
                   <div class="ui-g-12 ui-md-12 ui-lg-12">
                     <div class="panel field-panel panel-#{item.statusCssClass}">
                       <div class="panel-heading">Item: #{item.detailRef}</div>
                       <div class="panel-body">
-                        <ui:fragment rendered="! empty #{item.customerDetailRef}">
+                        <ui:fragment rendered="#{not empty item.customerDetailRef}">
                           <div class="ui-g-12 ui-md-4 ui-lg-3">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">Reference</div>
@@ -572,7 +183,7 @@
                             </div>
                           </div>
                         </ui:fragment>
-                        <ui:fragment rendered="! empty #{item.parentRef}">
+                        <ui:fragment rendered="#{! empty item.parentRef}">
                           <div class="ui-g-12 ui-md-4 ui-lg-3">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">Part of</div>
@@ -580,7 +191,7 @@
                             </div>
                           </div>
                         </ui:fragment>
-                        <ui:fragment rendered="! empty #{item.description}">
+                        <ui:fragment rendered="#{! empty item.description}">
                           <div class="ui-g-12 ui-md-6 ui-lg-6">
                             <div class="panel field-panel panel-#{item.statusCssClass}">
                               <div class="panel-heading">Description</div>
@@ -604,7 +215,7 @@
 					                        <div class="panel-body">#{item.plannedQuantity}</div>
 					                      </div>
 					                    </div>
-					                    <ui:fragment rendered="#{item.actualQuantity > 0}">
+					                    <ui:fragment rendered="#{item.actualQuantity gt 0}">
 						                    <div class="ui-g-12 ui-md-6 ui-lg-6">
 						                      <div class="panel field-panel panel-#{item.statusCssClass}">
 						                        <div class="panel-heading">Actual</div>
@@ -616,41 +227,7 @@
 					                </div>
 					              </div>
 					              
-                        <ui:fragment rendered="! empty #{item.info1}">
-                          <div class="ui-g-12 ui-md-6 ui-lg-4">
-                            <div class="panel field-panel panel-#{item.statusCssClass}">
-                              <div class="panel-heading">#{baxterDetailLink.consignment.label1}</div>
-                              <div class="panel-body">#{item.info1}</div>
-                            </div>
-                          </div>
-                        </ui:fragment>
-				                        
-                        <ui:fragment rendered="! empty #{item.info2}">
-                          <div class="ui-g-12 ui-md-6 ui-lg-4">
-                            <div class="panel field-panel panel-#{item.statusCssClass}">
-                              <div class="panel-heading">#{baxterDetailLink.consignment.label2}</div>
-                              <div class="panel-body">#{item.info2}</div>
-                            </div>
-                          </div>
-                        </ui:fragment>
-                                                
-                        <ui:fragment rendered="! empty #{item.info3}">
-                          <div class="ui-g-12 ui-md-6 ui-lg-4">
-                            <div class="panel field-panel panel-#{item.statusCssClass}">
-                              <div class="panel-heading">#{baxterDetailLink.consignment.label3}</div>
-                              <div class="panel-body">#{item.info3}</div>
-                            </div>
-                          </div>
-                        </ui:fragment>
-                                                
-                        <ui:fragment rendered="! empty #{item.info4}">
-                          <div class="ui-g-12 ui-md-6 ui-lg-4">
-                            <div class="panel field-panel panel-#{item.statusCssClass}">
-                              <div class="panel-heading">#{baxterDetailLink.consignment.label4}</div>
-                              <div class="panel-body">#{item.info4}</div>
-                            </div>
-                          </div>
-                        </ui:fragment>	
+                        
                         
                         <c:forEach var="cld" items="#{item.clauseDetails}">
 				                   
@@ -670,7 +247,7 @@
                                     <div class="panel-body">#{cld.clauseDescription}</div>
                                   </div>
                                 </div>
-                                <ui:fragment rendered="! empty #{cld.parentCode}">
+                                <ui:fragment rendered="#{! empty cld.parentCode}">
 	                                <div class="ui-g-12 ui-md-8 ui-lg-1">
 	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
 	                                    <div class="panel-heading">Parent Code</div>
@@ -678,7 +255,7 @@
 	                                  </div>
 	                                </div>
                                 </ui:fragment>
-                                <ui:fragment rendered="! empty #{cld.parentClauseDescription}">
+                                <ui:fragment rendered="#{! empty cld.parentClauseDescription}">
 	                                <div class="ui-g-12 ui-md-8 ui-lg-5">
 	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
 	                                    <div class="panel-heading">Parent Description</div>
@@ -700,6 +277,7 @@
                     </div>
                   </div>
                 </div>
+                </ui:fragment>
               </c:forEach>
 	          </p:panel>
           </ui:fragment>
