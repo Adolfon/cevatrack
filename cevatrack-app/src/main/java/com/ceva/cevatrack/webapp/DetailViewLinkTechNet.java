@@ -188,11 +188,11 @@ public class DetailViewLinkTechNet implements Serializable {
     }
 
     private boolean isTechNetClient(String client2) {
-    	if (client2 == null || "".endsWith(client2)){
+    	if (client2 == null || "".equals(client2)){
     		return false;
     	}
     	List<SmartNetClientVO> techclients = techNetService.searchTechNetClientsForLink();
-    	long clients = techclients.stream().filter(e -> e.getName().equalsIgnoreCase(client2)).count();
+    	long clients = techclients.stream().filter(e -> e.getPrefixes().equalsIgnoreCase(client2)).count();
     	LOGGER.info("-Number of clients for client: " + client2 + " is: " + clients);
     	if (clients == 1){
     		return true;
