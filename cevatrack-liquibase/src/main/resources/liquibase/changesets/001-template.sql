@@ -1277,4 +1277,11 @@ ALTER TABLE order_lookup ADD COLUMN tracking_reference text;
  delete from smartnet_client where name = 'British Gypsum Sherburn';
  INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('The Body Shop','BDYDTS','BS.png','bodyshop',now(),'SYSTEM',now(),'SYSTEM',1);
- 
+--changeset adolfo.cano:001-cjf-template-db-064 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('REGENCY','REGENC','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Hill Rom','HILLRO','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Pitney','PITNEY','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+  
