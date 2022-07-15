@@ -1288,4 +1288,9 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
   UPDATE technet_client SET image = 'HillRom.png' WHERE prefixes='HILLRO';
   UPDATE technet_client SET image = 'Pitney_1.png' WHERE prefixes='PITNEY';
   UPDATE technet_client SET image = 'Regency.png' WHERE prefixes='REGENC';
-   
+--changeset adolfo.cano:001-cjf-template-db-066 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('FAGOR','FAGOR','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('XDOA','XDOA','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+  
