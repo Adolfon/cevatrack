@@ -8,20 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.ceva.cevatrack.service.P44Service;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
-//import com.ceva.cevatrack.vo.TechNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseEnvironment;
 import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummary;
@@ -34,6 +32,8 @@ import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 @ManagedBean(name = "consignmentListManager")
 @ApplicationScoped
 public class ConsignmentListManager {
+	@EJB
+	P44Service p44;	
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsignmentListManager.class);
     private Map<String, DatedConsignmentList> consignmentStore;
     private static final String SN_SITE = "sn_site:view:";
@@ -309,9 +309,14 @@ public class ConsignmentListManager {
      */
     public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
     	LOGGER.info( "-- getConsignmentDetail parameters: "+ consignmentReference + ",network: " + network);
-        Consignment consignment;
-        Subject currentUser = null;        
+        Consignment consignment = null;
+        Subject currentUser = null;
+        
         try {
+        	consignment = retrive_p44_consignment(consignmentReference);
+        	if (consignment != null){
+        		return consignment;
+        	}
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
             if (consignment == null){
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
@@ -353,7 +358,17 @@ public class ConsignmentListManager {
         }
     }
 
-    private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(Consignment consignment) {
+    /*
+     * Check and retrieves if exists a project 44 consinment from the database
+     */
+    private Consignment retrive_p44_consignment(String consignmentReference) {
+    	LOGGER.info(" -- reference p44 to query: " + consignmentReference);
+		//P44Service p44 = new P44ServiceImpl();//NPE			
+    	LOGGER.info(" EJB service: " + p44);
+		return p44.getConsignment(consignmentReference);
+	}
+
+	private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(Consignment consignment) {
         if (!StringUtils.isBlank((CharSequence) consignment.getAtaString()) &&
         // consignment.getStatusString().trim().equalsIgnoreCase("Pending")){
                 consignment.getConsignmentStatus() == 78) {

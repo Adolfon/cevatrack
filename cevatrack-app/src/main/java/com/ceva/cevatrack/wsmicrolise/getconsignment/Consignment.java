@@ -1,16 +1,10 @@
 
 package com.ceva.cevatrack.wsmicrolise.getconsignment;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-
 import com.ceva.cevatrack.wsmicrolise.Common;
 
 /**
@@ -688,7 +682,8 @@ public class Consignment {
 		return "Consignment [label1=" + label1 + ", label2=" + label2 + ", label3=" + label3 + ", label4=" + label4
 				+ ", consignmentReference=" + consignmentReference + ", consignmentCustomerOrderRef="
 				+ consignmentCustomerOrderRef + ", consignmentStatus=" + consignmentStatus + ", consignmentDetails="
-				+ consignmentDetails + ", ata=" + ata + ", atd=" + atd + ", journeyDropId=" + journeyDropId + ", pta=" + pta + ", ptd=" + ptd + ", eta=" + eta
+				+ consignmentDetails + ", ata=" + ata + ", atd=" + atd + ", signatory=" + signatory + ", signature="
+				+ signature + ", journeyDropId=" + journeyDropId + ", pta=" + pta + ", ptd=" + ptd + ", eta=" + eta
 				+ ", etd=" + etd + ", timeWindowStart=" + timeWindowStart + ", timeWindowEnd=" + timeWindowEnd
 				+ ", siteId=" + siteId + ", siteName=" + siteName + ", address1=" + address1 + ", address2=" + address2
 				+ ", address3=" + address3 + ", county=" + county + ", postCode=" + postCode + ", country=" + country
@@ -697,7 +692,6 @@ public class Consignment {
 				+ ", plannedStartTime=" + plannedStartTime + ", actualStartTime=" + actualStartTime + ", podStartTime="
 				+ podStartTime + ", vehicles=" + vehicles + ", drivers=" + drivers + ", siteGeoRadius=" + siteGeoRadius
 				+ ", durationOnSite=" + durationOnSite + ", journeyActualStartTime=" + journeyActualStartTime
-				+ " ,journeyActualStartTimeString: " + getJourneyActualStartTimeString()
 				+ ", isAdHoc=" + isAdHoc + ", isTranshipment=" + isTranshipment + ", clauseCode=" + clauseCode
 				+ ", parentCode=" + parentCode + ", consignmentHeaderId=" + consignmentHeaderId + ", journeyId="
 				+ journeyId + ", consignmentHeaderInfo1=" + consignmentHeaderInfo1 + ", consignmentHeaderInfo2="
@@ -707,8 +701,7 @@ public class Consignment {
 				+ ", consignmentHeaderInfo7=" + consignmentHeaderInfo7 + ", consignmentHeaderInfo8="
 				+ consignmentHeaderInfo8 + ", consignmentHeaderInfo9=" + consignmentHeaderInfo9
 				+ ", consignmentHeaderInfo10=" + consignmentHeaderInfo10 + ", consignmentHeaderInfo11="
-				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + ", TimeWindowStartString: " + getTimeWindowStartString()
-				+ " , getTimeWindowEndString: " + getTimeWindowEndString() + " ,statusString: " + getStatusString() + "]";
-	}        
+				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";
+	}
 
 }

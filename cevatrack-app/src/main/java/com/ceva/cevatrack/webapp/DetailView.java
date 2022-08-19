@@ -85,7 +85,7 @@ public class DetailView implements Serializable, CommonApp {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         pollEnabled = new Boolean(false);
         client = params.get("client");
-        dateRange = params.get("daterange");
+        dateRange = params.get("daterange");//null
         consignmentReference = params.get("con");
         LOGGER.info("(init) Parameters: client: " + client + ",dateRange: " + dateRange + ",cons Ref: "
                 + consignmentReference);
@@ -125,6 +125,7 @@ public class DetailView implements Serializable, CommonApp {
 	        }
         } catch (Exception e){
         	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));
+        	return;
         }        
         // check that the client has access to this consignment
         if (!clientDetail.getPfx().contains(Common.getPrefix(consignmentReference))) {

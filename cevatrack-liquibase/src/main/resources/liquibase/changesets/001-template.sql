@@ -1293,4 +1293,120 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
   VALUES ('FAGOR','FAGOR','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
 INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('XDOA','XDOA','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+--changeset adolfo.cano:001-cjf-template-db-067 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+  create table if not exists p44_consignments (
+      label1 text NULL,
+      label2  text NULL,
+      label3 text NULL,
+      label4 text NULL,
+      consignmentReference text NOT NULL,
+      consignmentCustomerOrderRef text NULL,
+      consignmentStatus smallint NULL,
+  --   ArrayList<ConsignmentDetail> consignmentDetails text NULL,
+      ata text NULL,
+      atd text NULL,
+      signatory text NULL,
+      signature text NULL,
+      journeyDropId integer NULL,
+      pta text NULL,
+      ptd text NULL,
+      eta text NULL,
+      etd text NULL,
+      timeWindowStart text NULL,
+      timeWindowEnd text NULL,
+      siteId text NULL,
+      siteName text NULL,
+      address1 text NULL,
+      address2 text NULL,
+      address3 text NULL,
+      county text NULL,
+      postCode text NULL,
+      country text NULL,
+      contactName text NULL,
+      contactNumber text NULL,
+      siteLat oid NULL,
+      siteLong oid NULL,
+      routeId text NULL,
+      journeyAlias text NULL,
+      plannedStartTime text NULL,
+      actualStartTime text NULL,
+      podStartTime text NULL,
+  --   ArrayList<Vehicle> vehicles text NULL,
+  --   ArrayList<Driver> drivers text NULL,
+     siteGeoRadius integer NULL,
+     durationOnSite float8 NULL,
+     journeyActualStartTime text NULL,
+     isAdHoc int2 NULL,
+     isTranshipment int2 NULL,
+     clauseCode text NULL,
+     parentCode text NULL,
+     consignmentHeaderId int4 NULL,
+     journeyId int4 NULL,
+     consignmentHeaderInfo1 text NULL,
+     consignmentHeaderInfo2 text NULL,
+     consignmentHeaderInfo3 text NULL,
+     consignmentHeaderInfo4 text NULL,
+     consignmentHeaderInfo5 text NULL,
+     consignmentHeaderInfo6 text NULL,
+     consignmentHeaderInfo7 text NULL,
+     consignmentHeaderInfo8 text NULL,
+     consignmentHeaderInfo9 text NULL,
+     consignmentHeaderInfo10 text NULL,
+     consignmentHeaderInfo11 text NULL,
+     consignmentHeaderInfo12 text null,
+     CONSTRAINT consignmentReference_pkey PRIMARY KEY (consignmentReference)
+	);	
+  create table if not exists p44_consignment_detail(	 
+     detailRef text NOT NULL,
+     customerDetailRef text NULL,
+     parentRef text NULL,
+     orderRef text NULL,
+     description text NULL,
+     plannedQuantity INTEGER NULL,
+     actualQuantity INTEGER NULL,
+     status SMALLINT,
+  --  protected ArrayList<ClausedConsignmentDetail> clauseDetails text NULL,
+     info1 text NULL,
+     info2 text NULL,
+     info3 text NULL,
+     info4 text NULL,
+     consignmentHeaderId INTEGER null,
+     consignmentReference text NOT NULL,
+     UNIQUE(detailRef),
+     CONSTRAINT consignmentReference_fk FOREIGN KEY(consignmentReference)
+	          REFERENCES p44_consignments(consignmentReference) ON DELETE cascade	 
+	);
+	 create table if not exists p44_claused_consignment_detail(
+	 parentCode text NULL,
+	 parentClauseDescription text NULL,
+	 clauseCode text NOT NULL,
+	 clauseDescription text NULL,
+	 clausedQuantity int4 NULL,
+	 consignmentDetailRef text NOT NULL,
+	 UNIQUE(clauseCode),
+	 CONSTRAINT consignmentDetailRef_fk FOREIGN KEY(consignmentDetailRef)
+	          REFERENCES p44_consignment_detail(detailRef) ON DELETE CASCADE 
+	);
+	create table if not exists p44_consignment_vehicle(
+		displayName text,
+	    lastLocation text NULL,
+	    lastContactLat float4 NULL,
+	    lastContactLong float4 NULL,
+	    journeyId int4 NULL,
+		consignmentReference text NOT NULL,
+		UNIQUE(displayName),
+     CONSTRAINT consignmentReference_fk FOREIGN KEY(consignmentReference)
+	          REFERENCES p44_consignments(consignmentReference) ON DELETE CASCADE
+	);	
+	create table if not exists p44_consignment_driver(
+	 displayName text,
+	 fullName text NULL,
+	 contactNumber text NULL,
+	 journeyId int4 null,
+	 consignmentReference text NOT NULL,
+	 UNIQUE(displayName),
+     CONSTRAINT consignmentReference_fk FOREIGN KEY(consignmentReference)
+	          REFERENCES p44_consignments(consignmentReference) ON DELETE CASCADE
+	);	
+	
   
