@@ -146,7 +146,7 @@ public class DetailViewLink implements Serializable {
         }
         if (consignment == null){
         	LOGGER.warn(" -- Consignment not available ");
-        	goToError("Sorry, the information is not availalbre righ now, please try again later");
+        	goToError("Sorry, the information is not available righ now, please try again later");
         	return;
         }    
         LOGGER.info(" -- Consingment recovered details: " + consignment);
