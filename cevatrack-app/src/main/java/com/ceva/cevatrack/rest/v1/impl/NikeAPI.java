@@ -1,5 +1,7 @@
 package com.ceva.cevatrack.rest.v1.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -17,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 //import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 //import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 //import javax.ws.rs.Produces;
@@ -42,6 +46,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -55,11 +60,20 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.OrderLookUp;
+import com.ceva.cevatrack.rest.v1.impl.data.PlayerListType;
+import com.ceva.cevatrack.rest.v1.impl.data.PlayerType;
+import com.ceva.cevatrack.rest.v1.impl.data.PlayerType2;
+import com.ceva.cevatrack.rest.v1.impl.data.PlayerType3;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 //import com.ceva.cevatrack.domain.SmartNetClientTest;
 //import com.ceva.cevatrack.repository.SmartNetClientRepository;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /*
  * Input Pack List number from Nike
@@ -87,6 +101,9 @@ public class NikeAPI implements Serializable{
 	private final static int DPD_OUT_FOR_DELIVER_CODE = 15;
 	private final static int DPD_PARCEL_DATA_CODE = 0;
 	private final static int DPD_NO_CODE = -1;
+	private final static int DPD_RTC_CODE = 53;
+	private final static int DPD_FAILING_CALLING_CARD_ONCE_CODE = 8;
+	private final static int DPD_FAILING_CALLING_CARD_TWICE_CODE = -8;
 
 //	@Inject
 //    @PersistenceUnitName(value="generalPU")
@@ -132,13 +149,95 @@ public class NikeAPI implements Serializable{
 	 */
 	@GET
     @Path("/getDPDTestInfo")	
-	@Produces(MediaType.APPLICATION_XML) 
+	@Produces(MediaType.APPLICATION_XML + "; charset=UTF-8") //Test this charset notation
 	public Response getDPDTestInfo(){
 		LOGGER.info("--- Method for testing the DPD web service called..");
 		getDPDInformation("15501550604980K");
 		LOGGER.info(" -- And now the getDPDInformation_jaxb method.. --");		
 		return Response.status(200).entity("The request was successfully executed").build();
 	}
+	/*
+	 * Error--> No message body reader has been found for class com.ceva.cevatrack.rest.v1.impl.data.PlayerType, ContentType: application/json
+	 * check this out--> https://stackoverflow.com/questions/48690701/cxf-restful-no-message-body-reader-has-been-found-for-request-class-contenttyp
+	 */
+//	@POST
+//    @Path("/insertTestInfo")	
+//	@Consumes({MediaType.APPLICATION_XML})
+//	@Produces(MediaType.APPLICATION_JSON) 
+//	public Response insertTestInfo(PlayerType info){
+//		LOGGER.info("--- Method for testing the input of information in JSON form ---");
+//		LOGGER.info(" -- -- Player: " + info);
+//		return Response.status(200).entity("The request was successfully executed").build();
+//	}
+	
+	@POST
+    @Path("/insertTestInfo")	
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces(MediaType.APPLICATION_JSON) 
+	public Response insertTestInfo(String info){
+		LOGGER.info("--- Method for testing the input of information in JSON form ---");
+		ObjectMapper objectMapper = new ObjectMapper();
+		PlayerType3 player = null;
+		try {
+			LOGGER.info(" -- Converting input String into a class --");
+			player = objectMapper.readValue(info, PlayerType3.class);
+		} catch (JsonParseException e) {
+			LOGGER.info(" Error 1 JsonParseException ",e);
+		} catch (JsonMappingException e) {
+			LOGGER.info(" Error 2 JsonMappingException ",e);
+		} catch (IOException e) {
+			LOGGER.info(" Error 3 IOException ",e);
+		}
+		LOGGER.info(" -- -- Player name: " + player.getName());
+		LOGGER.info(" -- Converting object to String --");
+		String result = null;
+		try {
+			result = objectMapper.writeValueAsString(player);
+		} catch (JsonGenerationException e) {
+			LOGGER.error(" -- Error 4 JsonGenerationException ", e);
+		} catch (JsonMappingException e) {
+			LOGGER.error(" -- Error 5 JsonMappingException ", e);
+		} catch (IOException e) {
+			LOGGER.error(" -- Error 6 IOException ", e);
+		}
+		LOGGER.info(" result: " + result);
+		String playerJsonArray = 
+				  "[{ \"color\" : \"Black\", \"type\" : \"BMW\" }, { \"color\" : \"Red\", \"type\" : \"FIAT\" }]";
+				try {
+					List<PlayerType3> listCar = objectMapper.readValue(playerJsonArray, new TypeReference<List<PlayerType3>>(){});
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		
+		return Response.status(200).entity("The request was successfully executed, object: " + result).build();
+	}
+	
+//	@POST
+//    @Path("/insertTestInfo")	
+//	@Consumes({MediaType.APPLICATION_JSON})
+//	@Produces(MediaType.APPLICATION_JSON) 
+//	public Response insertTestInfo(PlayerType2 info){
+//		LOGGER.info("--- Method for testing the input of information in JSON form ---");
+//		LOGGER.info(" -- -- Player json: " + info);
+//		return Response.status(200).entity("The request was successfully executed: \n" + info).build();
+//	}
+//	private void createService(Class<?> serviceClass, String address, Object serviceImpl) {
+//	    JAXRSServerFactoryBean srvFactory = new JAXRSServerFactoryBean();
+//	    srvFactory.setServiceClass(serviceClass);
+//	    srvFactory.setAddress("/rest"+address);
+//	    srvFactory.setServiceBean(serviceImpl);
+//	    srvFactory.getInInterceptors().add(new CustomInInterceptor());
+//	    srvFactory.getOutInterceptors().add(new CustomOutInterceptor());
+//	    srvFactory.setProvider(new JacksonJsonProvider());
+//	    srvFactory.create();
+//	}
 	/*
 	 * It returns the info for the Pack List Number passed as a parameter
 	 */
@@ -268,7 +367,7 @@ public class NikeAPI implements Serializable{
     		//Check on the 'tracking_reference_suspense' table, if found the query to DPD
     		String[] ATA_DPD = DPD_WS(this.id, consignment_dateShipped[4]);
     		if (ATA_DPD == null){
-    			LOGGER.info(" -- ATA was NOT found for DPD WS --");
+    			LOGGER.info(" -- initial PARCEL info was NOT found for DPD WS, could be an error --");
     			if (responseBean.getEta_no_ml() == null || "".equals(responseBean.getEta_no_ml())){
     				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped() + "\"}").build();
     			}else{
@@ -277,7 +376,7 @@ public class NikeAPI implements Serializable{
     			}	    				
     		}else{
     			LOGGER.info(" -- ATA, ETA or parcel date WAS found for DPD WS --" + ATA_DPD);
-    			if (ATA_DPD[0] != null){// Delivered ATA
+    			if (ATA_DPD[0] != null){// Delivered ATA as a last code
 	    			return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
 					+ "\", \"ATA\": \"" + ATA_DPD[0] + "\"}").build();
     			}
@@ -285,9 +384,24 @@ public class NikeAPI implements Serializable{
 					return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
 					+ "\", \"ETA\": \"" + ATA_DPD[1] + "\"}").build();
     			}
-				if (ATA_DPD[2] != null){//Only initial parcel data available
-					return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[2]  
-					+ "\"}").build();
+    			if (ATA_DPD[6] != null){// PARCEL RECONSIGNED RTC
+    				String ATA = "Return in progress";
+    				return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
+    						+ "\", \"ATA\": \"" + ATA + "\"}").build();
+    			}
+    			if (ATA_DPD[5] != null){// FAILED CALLING CARD STRING TWICE//TEST OK
+    				String ATA = "Delivery Failed. Contact Nike";
+    				return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
+    						+ "\", \"ATA\": \"" + ATA + "\"}").build();
+    			}
+    			if (ATA_DPD[4] != null){//FAILED CALLING CARD STRING ONCE
+    				String ETA = "Delivery Failed. Awaiting Second Attempt";
+    				return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
+    						+ "\", \"ETA\": \"" + ETA + "\"}").build();
+    			}
+				if (ATA_DPD[2] != null){//Initial parcel data available or other info but before OUt for delivery or any errors
+					return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
+					+ "\", \"ETA\": \"" + "Awaiting ETA Confirmation" + "\"}").build();
     			}
 				//ATA_DPD not null but most likely there is a problem with the delivery
 				return Response.ok().entity("{ " + "\"shipped\": \"" + responseBean.getDate_shipped()
@@ -661,7 +775,7 @@ public class NikeAPI implements Serializable{
     private String[] getDPDInformation(String tracking_number){
     	LOGGER.info("-- getDPDInformation method, parameter: " + tracking_number);
     	StringBuilder response = new StringBuilder();
-    	String[] info = new String[4]; 
+    	String[] info = new String[7]; 
     	try { 
     		Proxy proxy = null;
     		HttpURLConnection connection = null;
@@ -727,7 +841,7 @@ public class NikeAPI implements Serializable{
             if (respcode != 200){
             	LOGGER.error(" No 200 http response code..");
             	return null;
-            }
+            }            
             LOGGER.info(" -- XML of the response is: " + response.toString());
             //ETA test response
             //response = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><trackingresponse><trackingdetails><trackingdetail><trackingnumber>15501343768532Y</trackingnumber><parcelnumber>15501343768532</parcelnumber><consignmentnumber>1343545927</consignmentnumber><deliveryaddress1>Chris Robshaw</deliveryaddress1><deliveryaddress2>Fruit Fields Farm Five Oaks Road</deliveryaddress2><deliverylocality>West Sussex</deliverylocality><deliverypostcode>RH13 0RL</deliverypostcode><deliverycountrycode>GB</deliverycountrycode><etastart>11:33</etastart><etaend>12:33</etaend><signedfordate>2021-12-08</signedfordate><parcelcode>15501343768532*19700</parcelcode><trackingevents><trackingevent><date>2021-12-08T07:03:00Z</date><code>15</code><type>OUT FOR DELIVERY</type><description>On vehicle for delivery</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-08T03:47:00Z</date><code>4</code><type>CONFIRMED AT DEPOT</type><description>Confirmed at depot</description><locality>Crawley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T21:20:00Z</date><code>9</code><type>HUB SCAN</type><description>Confirmed at Hub</description><locality>Hub 4 - Hinckley</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent><trackingevent><date>2021-12-07T15:48:00Z</date><code>0</code><type>PARCEL DATA</type><description>Customer data received</description><locality>Sheffield</locality><countrycode>GB</countrycode><imagekey></imagekey></trackingevent></trackingevents></trackingdetail></trackingdetails></trackingresponse>");
@@ -749,6 +863,9 @@ public class NikeAPI implements Serializable{
             return null;
         }
     	String stringResponse = response.toString();  
+        // TEST=============
+//    	stringResponse = ApplicationGlobalConfig.TEST_RESPONSE;
+        // TEST=============
     	if (!stringResponse.contains("<trackingevents>")){
     		LOGGER.error("-- The response does not contain tracking events --");
     		return null;
@@ -762,6 +879,11 @@ public class NikeAPI implements Serializable{
     	}
 		LOGGER.info(" -- The response does include a valid code  --");
     	info[3] = retrieveInitialParcelDate(stringResponse);
+		//No matter what is the last event, if we have "Parcel Reconsigned RTC" in the response.
+    	if (stringResponse.contains("PARCEL RECONSIGNED RTC")){
+    		info[6] = "DPD_FAILING_CALLING_CARD_TWICE";
+    		return info;
+    	}
 		if (code == DPD_OUT_FOR_DELIVER_CODE){
 			LOGGER.info(" -- Out for delivery situation --");
 			if (stringResponse.contains("<etastart>") && stringResponse.contains("<etaend>")){
@@ -801,16 +923,7 @@ public class NikeAPI implements Serializable{
 		if (code == DPD_PARCEL_DATA_CODE){
 			LOGGER.info(" -- The response includes PARCEL DATA, trying to return this date into shipped label --");
 			try{
-    			String last_event_date = stringResponse.substring(stringResponse.indexOf("<trackingevent><date>") + "<trackingevent><date>".length()
-    					, stringResponse.indexOf("</date>"));
-    			LOGGER.info("-- Last event date extracted:" + last_event_date);
-    			//last_event_date = last_event_date.replace("T", " ");
-    			if (last_event_date.contains("+")){
-    				last_event_date = last_event_date.substring(0, last_event_date.indexOf("+"));    					
-    			}
-    			last_event_date = last_event_date.replace("Z", "");
-    			LOGGER.info(" final format: " + last_event_date);
-    			info[2]= last_event_date;
+				info[2] = retrieveInitialParcelDate(stringResponse);
     			return info;
 			}catch(Exception e){
 				LOGGER.error(" -- Error extracting the parcel data -- ", e);
@@ -824,23 +937,36 @@ public class NikeAPI implements Serializable{
     		info[0] = date_response;
     		return info;
     	}  
+    	//We have received twice "Failed - Calling Card’
+    	if (2 == StringUtils.countMatches(stringResponse, "FAILED CALLING CARD")){
+    		info[5] = "DPD_FAILING_CALLING_CARD_TWICE";
+    		return info;
+    	}
+    	//We have received once "Failed - Calling Card’
+    	if (1 == StringUtils.countMatches(stringResponse, "FAILED CALLING CARD")){
+    		info[4] = "DPD_FAILING_CALLING_CARD_ONCE";
+    		return info;
+    	}
     	if (stringResponse.contains("PARCEL DATA")){
-    		LOGGER.info(" -- Contains parcel data info but it is not the last event, likely problem with the delivery --");
+    		LOGGER.info(" -- Contains parcel data info but it is not the last event, not out for delivery yet --");
     		String[] events = stringResponse.split("<trackingevent>");
     		if (events.length < 2){
     			LOGGER.info(" -- Elements lengh < 2, there are not tracking envents --");
     			return null;
     		}
-	    	String last_event = events[events.length-1];
-	    	String last_event_date = last_event.substring(last_event.indexOf("<date>") + "<date>".length()
-					, last_event.indexOf("</date>"));
-			LOGGER.info("-- Last event date extracted for parcel data last option:" + last_event_date);
-			if (last_event_date.contains("+")){
-				last_event_date = last_event_date.substring(0, last_event_date.indexOf("+"));
+    		if (events.length > 2){
+    			LOGGER.info("Number of events: " + events.length + " ,last event: " + events[events.length - 1] + " and before: " + events[events.length - 2]);
+    		}
+	    	String first_event = events[events.length-1];//The biggest number is the first event
+	    	String first_event_date = first_event.substring(first_event.indexOf("<date>") + "<date>".length()
+					, first_event.indexOf("</date>"));
+			LOGGER.info("-- Last event date extracted for parcel data last option:" + first_event_date);
+			if (first_event_date.contains("+")){
+				first_event_date = first_event_date.substring(0, first_event_date.indexOf("+"));
 			}
-			last_event_date = last_event_date.replace("Z", "");
-			LOGGER.info(" final format: " + last_event_date);
-			info[2]= last_event_date;
+			first_event_date = first_event_date.replace("Z", "");
+			LOGGER.info(" final format: " + first_event_date);
+			info[2]= first_event_date; //actually Parcel data date (first event)
 			return info;    	
     	}
     	LOGGER.info(" -- DPD not deliveried, out for delivery or parcel data situations --");
@@ -850,24 +976,41 @@ public class NikeAPI implements Serializable{
 	private String retrieveInitialParcelDate(String stringResponse) {
 		if (stringResponse.contains("PARCEL DATA")){
     		LOGGER.info(" -- Contains parcel data info --");
-    		String[] events = stringResponse.split("<trackingevent>");
+    		String[] events = stringResponse.split("<trackingevent>");    		
     		if (events.length < 2){
     			LOGGER.info(" -- Elements lengh < 2, there are not tracking envents --");
     			return null;
     		}
-	    	String last_event = events[events.length-1];
-	    	String last_event_date = last_event.substring(last_event.indexOf("<date>") + "<date>".length()
-					, last_event.indexOf("</date>"));
-			LOGGER.info("-- Last event date extracted for parcel data last option:" + last_event_date);
-			if (last_event_date.contains("+")){
-				last_event_date = last_event_date.substring(0, last_event_date.indexOf("+"));
+	    	String first_event = events[events.length-1];
+	    	String first_event_date = first_event.substring(first_event.indexOf("<date>") + "<date>".length()
+					, first_event.indexOf("</date>"));
+			LOGGER.info("-- Last event date extracted for parcel data last option:" + first_event_date);
+			if (first_event_date.contains("+")){
+				first_event_date = first_event_date.substring(0, first_event_date.indexOf("+"));
 			}
-			last_event_date = last_event_date.replace("Z", "");
-			LOGGER.info(" final format: " + last_event_date);
-			return last_event_date;    	
+			first_event_date = first_event_date.replace("Z", "");
+			LOGGER.info(" final format: " + first_event_date);
+			//LOGGER.info(" -- The real last event is: " + events[1] + " ,and its date is: " + getEventDate(events[1]));
+			LOGGER.info("event date: " + getEventDate(first_event) + " ,equals? " + first_event_date);
+			return first_event_date;    	
     	}
 		LOGGER.warn("-- It does not include PARCEL DATA string --");
 		return "";
+	}
+	
+	String getEventDate(String event){
+		if (event == null || "".equals(event) || !event.contains("<date>")){
+			return "";
+		}
+		String last_event_date = event.substring(event.indexOf("<date>") + "<date>".length()
+				, event.indexOf("</date>"));
+		LOGGER.info("-- Last event date extracted from event method:" + last_event_date);
+		if (last_event_date.contains("+")){
+			last_event_date = last_event_date.substring(0, last_event_date.indexOf("+"));
+		}
+		last_event_date = last_event_date.replace("Z", "");
+		LOGGER.info(" final format: " + last_event_date);
+		return last_event_date; 
 	}
 	
 	private int checkLastEventCode(String sr) {
@@ -877,7 +1020,7 @@ public class NikeAPI implements Serializable{
 		}
 		String[] events = sr.split("<trackingevent>");	
 		if (events.length < 2){
-			LOGGER.info(" -- Elements lengh < 2, there are not tracking envents --");
+			LOGGER.info(" -- Elements lengh < 2, there are not tracking events --");
 			return DPD_NO_CODE;
 		}
 		LOGGER.info("events size: " + events.length);
