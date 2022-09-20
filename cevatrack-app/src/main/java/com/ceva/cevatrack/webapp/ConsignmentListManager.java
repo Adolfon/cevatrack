@@ -270,7 +270,7 @@ public class ConsignmentListManager {
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(AM_SITE + con.getSiteId())).collect(Collectors.toList()));
         }
-        if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that´s why the consignments are not being added...
+        if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that is why the consignments are not being added...
         	if (currentUser.isPermitted(HC_GLOBAL)){
         		return source;
         	}

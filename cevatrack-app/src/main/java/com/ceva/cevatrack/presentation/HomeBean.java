@@ -23,7 +23,7 @@ public class HomeBean  implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	/**
-	 * Access to the different application´s view through permissions 
+	 * Access to the different application view through permissions 
 	 */
 	
 	private String name;

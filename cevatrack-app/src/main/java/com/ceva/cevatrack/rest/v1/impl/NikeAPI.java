@@ -60,9 +60,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.OrderLookUp;
-import com.ceva.cevatrack.rest.v1.impl.data.PlayerListType;
-import com.ceva.cevatrack.rest.v1.impl.data.PlayerType;
-import com.ceva.cevatrack.rest.v1.impl.data.PlayerType2;
 import com.ceva.cevatrack.rest.v1.impl.data.PlayerType3;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 //import com.ceva.cevatrack.domain.SmartNetClientTest;
@@ -937,12 +934,12 @@ public class NikeAPI implements Serializable{
     		info[0] = date_response;
     		return info;
     	}  
-    	//We have received twice "Failed - Calling Card’
+    	//We have received twice "Failed - Calling Card"
     	if (2 == StringUtils.countMatches(stringResponse, "FAILED CALLING CARD")){
     		info[5] = "DPD_FAILING_CALLING_CARD_TWICE";
     		return info;
     	}
-    	//We have received once "Failed - Calling Card’
+    	//We have received once "Failed - Calling Card"
     	if (1 == StringUtils.countMatches(stringResponse, "FAILED CALLING CARD")){
     		info[4] = "DPD_FAILING_CALLING_CARD_ONCE";
     		return info;
