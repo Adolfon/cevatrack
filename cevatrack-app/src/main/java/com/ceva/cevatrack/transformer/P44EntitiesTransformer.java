@@ -79,7 +79,11 @@ public class P44EntitiesTransformer {
 		cons.setAtd(obj.getAtd());
 		cons.setClauseCode(obj.getClausecode());
 		cons.setConsignmentCustomerOrderRef(obj.getConsignmentcustomerorderref());
-		cons.setConsignmentHeaderId(obj.getConsignmentheaderid());
+		if (obj.getConsignmentheaderid() == null){
+			cons.setConsignmentHeaderId(0);
+		}else{
+			cons.setConsignmentHeaderId(obj.getConsignmentheaderid());
+		}		
 		cons.setConsignmentHeaderInfo1(obj.getConsignmentheaderinfo1());
 		cons.setConsignmentHeaderInfo2(obj.getConsignmentHeaderInfo2());
 		cons.setConsignmentHeaderInfo3(obj.getConsignmentHeaderInfo3());
@@ -105,8 +109,16 @@ public class P44EntitiesTransformer {
 		cons.setIsTranshipment(obj.getIstranshipment());
 		cons.setJourneyActualStartTime(obj.getJourneyactualstarttime());
 		cons.setJourneyAlias(obj.getJourneyalias());
-		cons.setJourneyDropId(obj.getJourneydropId());
-		cons.setJourneyId(obj.getJourneyid());
+		if (obj.getJourneydropId() == null){
+			cons.setJourneyDropId(0);
+		}else{
+			cons.setJourneyDropId(obj.getJourneydropId());
+		}
+		if (obj.getJourneyid() == null){
+			cons.setJourneyId(0);
+		}else{
+			cons.setJourneyId(obj.getJourneyid());
+		}		
 		cons.setLabel1(obj.getLabel1());
 		cons.setLabel2(obj.getLabel2());
 		cons.setLabel3(obj.getLabel3());
@@ -120,7 +132,11 @@ public class P44EntitiesTransformer {
 		cons.setRouteId(obj.getRouteid());
 		cons.setSignatory(obj.getSignatory());
 		cons.setSignature(obj.getSignature());
-		cons.setSiteGeoRadius(obj.getSitegeoradius());
+		if (obj.getSitegeoradius() == null){
+			cons.setSiteGeoRadius(0);
+		}else{
+			cons.setSiteGeoRadius(obj.getSitegeoradius());
+		}		
 		cons.setSiteId(obj.getSiteid());
 		cons.setSiteLat(obj.getSitelat());
 		cons.setSiteLong(obj.getSitelong());

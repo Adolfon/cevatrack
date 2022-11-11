@@ -30,7 +30,7 @@ public abstract class P44_Claused_Details_Repository extends AbstractFullEntityR
     	if (ccdetails == null){
     		return null;
     	}
-    	LOG.info("-- Claused consignment details found: " + ccdetails.size() + " ,first: " + ccdetails.get(0));    	 	    	
+    	LOG.info("-- Claused consignment details found: " + ccdetails.size());//    	 	    	
     	return ccdetails;
     }
 }
