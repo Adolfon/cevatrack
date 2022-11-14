@@ -150,7 +150,7 @@ public class BaxterDetailLink implements Serializable {
         	return;
         }    
         LOGGER.info(" -- Consingment recovered details: " + consignment);
-        this.feedBack_URL = linkService.getURL_rate_link("NUTRIC");    
+        this.feedBack_URL = linkService.getURL_rate_link("BAXTER");    
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         modifyConsignmentVisitWindow(consignment);
         for(ConsignmentDetail con: consignment.getConsignmentDetails()){

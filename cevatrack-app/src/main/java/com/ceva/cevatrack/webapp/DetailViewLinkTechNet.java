@@ -156,7 +156,15 @@ public class DetailViewLinkTechNet implements Serializable {
         	return;
         }    
         LOGGER.info(" -- Consingment recovered details: " + consignment);
-        this.feedBack_URL = linkService.getURL_rate_link("NUTRIC");   
+        String client;
+        if (consignment != null && consignment.getConsignmentReference() != null && 
+        		!consignment.getConsignmentReference().equals("") && consignment.getConsignmentReference().contains("/")){
+        	client = consignment.getConsignmentReference().substring(0, consignment.getConsignmentReference().indexOf("/"));
+        }else{
+        	client = "default";
+        }        
+        LOGGER.info("Client for the feedback link is: " + client);
+        this.feedBack_URL = linkService.getURL_rate_link(client);   
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         modifyConsignmentVisitWindow(consignment);
         for(ConsignmentDetail con: consignment.getConsignmentDetails()){
