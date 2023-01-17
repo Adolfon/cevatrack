@@ -1293,7 +1293,7 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
   VALUES ('FAGOR','FAGOR','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
 INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('XDOA','XDOA','blank.png','',now(),'SYSTEM',now(),'SYSTEM',1);
---changeset adolfo.cano:001-cjf-template-db-067 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+--changeset adolfo.cano:001-cjf-template-db-068 failOnError:true splitStatements:false logicalFilePath:001-template.sql
   create table if not exists p44_consignments (
       label1 text NULL,
       label2  text NULL,
@@ -1324,8 +1324,8 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
       country text NULL,
       contactName text NULL,
       contactNumber text NULL,
-      siteLat oid NULL,
-      siteLong oid NULL,
+      siteLat float8 NULL,
+      siteLong float8 NULL,
       routeId text NULL,
       journeyAlias text NULL,
       plannedStartTime text NULL,
@@ -1336,8 +1336,8 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
      siteGeoRadius integer NULL,
      durationOnSite float8 NULL,
      journeyActualStartTime text NULL,
-     isAdHoc int2 NULL,
-     isTranshipment int2 NULL,
+     isAdHoc boolean NULL,
+     isTranshipment boolean NULL,
      clauseCode text NULL,
      parentCode text NULL,
      consignmentHeaderId int4 NULL,
@@ -1409,4 +1409,9 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 	          REFERENCES p44_consignments(consignmentReference) ON DELETE CASCADE
 	);	
 	
+  --changeset adolfo.cano:001-cjf-template-db-069 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('CB Heating','CBHEAT','CBheating.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('OVE','OVE','OVE.png','',now(),'SYSTEM',now(),'SYSTEM',1);
   
