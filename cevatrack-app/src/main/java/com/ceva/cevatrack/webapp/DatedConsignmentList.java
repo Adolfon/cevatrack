@@ -1,16 +1,5 @@
 package com.ceva.cevatrack.webapp;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.faces.model.SelectItem;
-
-import org.apache.shiro.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +7,13 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.faces.model.SelectItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //import com.ceva.cevatrack.wsdl.types.findconsignmentsummaries.ConsignmentSummary;
 import com.ceva.cevatrack.wsmicrolise.Common;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
@@ -114,6 +109,7 @@ public class DatedConsignmentList {
         try {
             consignmentSummaries = WsMicroliseComms.findConsignmentSummariesForDateRange(fromDate.format(FORMATTER),
                     toDate.format(FORMATTER), WS, network);
+            LOGGER.info(" -- Consignments recovered from Microlise: " + consignmentSummaries.size());
         } catch (IOException e1) {
             throw new IOException("IOException error in remote server communication is escalating", e1);
         } catch (Exception e) { // Exception but cause IOException

@@ -782,7 +782,8 @@ public class NikeAPI implements Serializable{
     		if (this.environment.equals("LOCAL")){    
     			LOGGER.info("-- Configuring for LOCAL");
     			//proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
-    			url = new URL(ApplicationGlobalConfig.DPD_TEST_URI);
+    			//only read access, and the test url does not work anymore..
+    			url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
     			connection = (HttpURLConnection) url.openConnection(); 
     		}
     		if (this.environment.equals("DEV")){

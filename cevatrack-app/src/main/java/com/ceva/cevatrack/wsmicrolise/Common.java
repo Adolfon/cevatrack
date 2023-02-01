@@ -36,7 +36,14 @@ public class Common {
             }
             try {
                 // LOG.info("-- from xml to parse: " + fromXml + " ,formatter: " + FORMATTERMS); //Too much Log..
-                LocalDateTime ldt = LocalDateTime.parse(fromXml, FORMATTERMS);
+            	LocalDateTime ldt;
+            	if (fromXml.contains(".")){
+            		LOG.info(" -- A dot was in the date string to format ... --");
+            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+            		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
+            	}else{
+            		ldt = LocalDateTime.parse(fromXml, FORMATTERMS);
+            	}
                 return ldt.format(formatter);
             } catch (Exception e) {
                 LOG.error(" -- Problem formating date: " + fromXml + " formatters : " + FORMATTERMS + " , " + formatter,
@@ -53,6 +60,8 @@ public class Common {
      */
     public static String getStatusDescription(short status) {
         switch (status) {
+        case 0:
+        	return "Unknown";
         case 67:
             return "Delivered";
         case 78:

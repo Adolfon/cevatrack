@@ -2,6 +2,8 @@ package com.ceva.cevatrack.webapp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +19,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.ceva.cevatrack.domain.Consignment44;
 import com.ceva.cevatrack.service.P44Service;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
@@ -94,7 +98,9 @@ public class ConsignmentListManager {
         LOGGER.info(" -- Prefixes to filter from the database: " + prefixCountsDB.toString());
         // We're all set up to count now...
         try {
-            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false, network);
+            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false, network, p44Consignments(fromYyyymmdd,toYyyymmdd, network));
+            // This gerenerates duplicates
+            //WsConsignmentSummaries.getConsignmentSummaries().addAll(p44Consignments(fromYyyymmdd,toYyyymmdd, network));
         } catch (IOException io) {
             throw new IOException("IO Error accessing WsConsignmentSummaries Consignment List", io);
         } catch (Exception e) {
@@ -128,7 +134,22 @@ public class ConsignmentListManager {
         return resp;
     }
 
-    /**
+
+	private Collection<ConsignmentSummary> p44Consignments(String fromYyyymmdd, String toYyyymmdd,
+			String network) {
+        if (StringUtils.isEmpty(toYyyymmdd)) {
+        	LOGGER.info(" toYyyymmdd parameter was null, setting it to the fromYyyymmdd one.. ");
+            toYyyymmdd = fromYyyymmdd;
+        }
+		LOGGER.info(" -- Querying P44 consignments with dates, from: " + fromYyyymmdd + " , to: " + toYyyymmdd );	
+		//Collection<Consignment44> col = p44.getListConsignmentsByDate(fromYyyymmdd, toYyyymmdd);		
+		Collection<ConsignmentSummary> col = p44.getListConsignmentsByDateToCS(fromYyyymmdd, toYyyymmdd);
+		LOGGER.info(" The collection has " + col.size() + " items ");
+		//Collection<ConsignmentSummary> colect = new ArrayList<ConsignmentSummary>(col);		
+		return col;		
+	}
+
+	/**
      * @param fromYyyymmdd
      *            from date
      * @param toYyyymmdd
@@ -146,7 +167,7 @@ public class ConsignmentListManager {
         DatedConsignmentList parent;
         List<ConsignmentSummary> respList = new ArrayList<ConsignmentSummary>();
         try {
-            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS, network);
+            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS, network, p44Consignments(fromYyyymmdd,toYyyymmdd, network));
         } catch (IOException e1) {
             throw new IOException("IOExcpetion accessing Parent Consignment List", e1);
         } catch (Exception e) {
@@ -173,7 +194,7 @@ public class ConsignmentListManager {
      *             if unable to generate one
      */
     public DatedConsignmentList getConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd, Boolean cache,
-            Boolean WS, String network) throws Exception {
+            Boolean WS, String network, Collection<ConsignmentSummary> p44) throws Exception {
     	LOGGER.info(" -- Received parameters: " + fromYyyymmdd + ", toYyyymmdd: " + toYyyymmdd + " ,cache: " + cache);
         housekeep(); // Erase old consignments
         String listKey;
@@ -200,16 +221,22 @@ public class ConsignmentListManager {
                 }
             }
         }
-
         try {
             DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS, network);
             // Fix Status from Pending to Delivered when the consignment arrival date is present            
-            LOGGER.info("Consignment store size before put: " + consignmentStore.size());
+            LOGGER.info("Consignment store (cache) size before put: " + consignmentStore.size());
             if (dcl.getConsignmentSummaries() == null){
             	LOGGER.info( " --------it is null");
             }else{
-            	LOGGER.info( " --------it is not null, size: " + dcl.getConsignmentSummaries().size());            	
+            	LOGGER.info( " --------it is not null, size: " + dcl.getConsignmentSummaries().size()); 
+            	if (p44 != null){
+            		dcl.getConsignmentSummaries().addAll(p44);
+            	}else{
+            		LOGGER.warn(" -- P44 was null, no adding P44 consignments.. --");
+            	}
+            	LOGGER.info("-- After adding the P44 from the Cevatrack database, size: " + dcl.getConsignmentSummaries().size());
             	consignmentStore.put(listKey, dcl);
+            	LOGGER.info("-- The new cache position has been added correctly, new size: " + consignmentStore.size());
             	fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
             }
             

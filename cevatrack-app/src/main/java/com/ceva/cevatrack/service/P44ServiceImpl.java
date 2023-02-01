@@ -1,7 +1,12 @@
 package com.ceva.cevatrack.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +23,7 @@ import com.ceva.cevatrack.repository.P44_Claused_Details_Repository;
 import com.ceva.cevatrack.repository.P44_Details_Repository;
 import com.ceva.cevatrack.repository.P44_Repository;
 import com.ceva.cevatrack.transformer.P44EntitiesTransformer;
+import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummary;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.ClausedConsignmentDetail;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.ConsignmentDetail;
@@ -73,5 +79,90 @@ public class P44ServiceImpl implements P44Service{
 	    log.info(" -- Consignment created: " + cvo);
 	    return cvo;
     }
+    
+    public List<Consignment44> getListConsignmentsByDate(Date stDate, Date edDate){
+    	return p44.getConsingmentByDate(stDate, edDate);
+    }
+    
+    public List<Consignment44> getListConsignmentsByDate(String stDate, String edDate){
+    	DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    	DateTimeFormatter FORMATDATES = DateTimeFormatter.ofPattern("yyyyMMdd");
+    	//DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH);
+    	LocalDate fromDate = LocalDate.parse(stDate, FORMATDATES);
+    	LocalDate untilDate = LocalDate.parse(edDate, FORMATDATES);
+    	ZoneId londonZone = TimeZone.getTimeZone("Europe/London").toZoneId();
+    	Date datefrm = Date.from(fromDate.atStartOfDay(londonZone).toInstant());
+    	Date dateuntil = Date.from(untilDate.atStartOfDay(londonZone).toInstant());
+    	return p44.getConsingmentByDate(datefrm, dateuntil);
+    }
+    
+    public List<ConsignmentSummary> getListConsignmentsByDateToCS(String stDate, String edDate){
+    	List<Consignment44> res = this.getListConsignmentsByDate(stDate, edDate);
+    	return c44ToCS(res);
+    }
+
+	private List<ConsignmentSummary> c44ToCS(List<Consignment44> res) {
+		log.info(" -- Converting a list of consignment44 type to ConsignmentSummary type ..");
+		if (res == null){
+			log.warn(" the parameter was null ");
+			return null;
+		}
+		ArrayList<ConsignmentSummary> result = new ArrayList<>();
+		ConsignmentSummary item;
+		for (Consignment44 ele: res){
+			Consignment cons = this.getConsignment(ele.getConsignmentreference());
+			log.info(" -- Consignment successfully recovered: " + cons);
+			item = new ConsignmentSummary();
+			if (ele.getSitename() != null){
+				item.setSiteName(ele.getSitename());
+			}
+			if (ele.getSiteid() !=null){
+				item.setSiteId(ele.getSiteid());
+			}
+			if (ele.getPta() != null){
+				item.setPta2(ele.getPta());
+			}
+			if (cons.getPtaString() != null){
+				item.setPta(cons.getPtaString());
+			}
+			if (ele.getPostcode() != null){
+				item.setPostCode(ele.getPostcode());
+			}
+			//item.setOrderReferences(ele.getConsignmentcustomerorderref());
+			if (ele.getCounty() != null){
+				item.setCounty(ele.getCounty());
+			}
+			if (ele.getCountry() != null){
+				item.setCountry(ele.getCountry());
+			}
+			if (ele.getContactnumber() != null){
+				item.setContactNumber(ele.getContactnumber());
+			}
+			if (ele.getContactname() != null){
+				item.setContactName(ele.getContactname());
+			}			
+			item.setConsignmentStatus(cons.getConsignmentStatus());			
+			if (ele.getConsignmentreference() != null){
+				item.setConsignmentReference(ele.getConsignmentreference());
+			}
+			if (ele.getConsignmentheaderid() != null){
+				item.setConsignmentHeaderId(ele.getConsignmentheaderid());
+			}
+			if (ele.getAta() != null){
+				item.setAta(ele.getAta());
+			}
+			if (ele.getAddress3() != null){
+				item.setAddress3(ele.getAddress3());
+			}
+			if (ele.getAddress2() != null){
+				item.setAddress2(ele.getAddress2());
+			}
+			if (ele.getAddress1() != null){
+				item.setAddress3(ele.getAddress3());
+			}
+			result.add(item);
+		}				
+		return result;
+	}
     	
 }

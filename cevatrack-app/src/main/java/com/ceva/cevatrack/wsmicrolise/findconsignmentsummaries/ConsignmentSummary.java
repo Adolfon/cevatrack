@@ -3,6 +3,12 @@ package com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries;
 
 import java.time.format.DateTimeFormatter;
 import javax.xml.bind.annotation.XmlElement;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ceva.cevatrack.technet.ws.WebServiceTechNetImpl;
 import com.ceva.cevatrack.wsmicrolise.Common;
 
 /**
@@ -30,6 +36,7 @@ public class ConsignmentSummary {
     protected int consignmentHeaderId;
     // DD/MM/YYY HH:MM
     private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm ");
+    private static final Logger LOG = LoggerFactory.getLogger(ConsignmentSummary.class);
 
     /**
      * @return is complex due to bug in web service - erroneous blank at char 16
@@ -89,6 +96,7 @@ public class ConsignmentSummary {
     }
 
     public String getPtaString() {
+    	LOG.info("-- pta: " + pta);
         return Common.formatDate(pta, FORMATTERDEFAULT, null, pta);
     }
 
@@ -102,7 +110,11 @@ public class ConsignmentSummary {
     }
 
     public String getAtaString() {
-        return Common.formatDate(ata, FORMATTERDEFAULT, null, ata);
+    	if (!StringUtils.isBlank(ata)){
+    		return Common.formatDate(ata, FORMATTERDEFAULT, null, ata);
+    	}else{
+    		return "";
+    	}
     }
 
     @XmlElement(name = "PTA2")

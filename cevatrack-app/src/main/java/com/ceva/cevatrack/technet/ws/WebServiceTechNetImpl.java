@@ -122,7 +122,7 @@ public class WebServiceTechNetImpl implements WebServiceTechNet {
         com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.FindConsignmentSummariesResponse response = new com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.FindConsignmentSummariesResponse();
         try {
             wsConsignments = clm.getConsignmentSummaries(fromlocaldate.format(FORMATTERYYYYMMDD),
-                    tolocaldate.format(FORMATTERYYYYMMDD), true, true, "");
+                    tolocaldate.format(FORMATTERYYYYMMDD), true, true, "", null);
         } catch (Exception e) {
             LOGGER.error("-- There was an Exception retrieving consignment summaries --", e);
         }
