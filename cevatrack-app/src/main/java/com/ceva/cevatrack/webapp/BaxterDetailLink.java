@@ -177,6 +177,9 @@ public class BaxterDetailLink implements Serializable {
         }else{
         	this.showMap = true;
         }
+        //Required by client: Temporarily hide the map
+        LOGGER.info(" -- no map for baxter as per client reqs (feb 1st 2023) --");
+        this.showMap = false;
         vehicule_loc = vlat + " ," + vlong;
         LOGGER.info(" -- Number of vehicules was: " + consignment.getVehicles().size() + " ,consignment recovered successfully, vehicule location is: " + vehicule_loc);
     }
