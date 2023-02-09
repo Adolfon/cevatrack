@@ -1,5 +1,7 @@
 package com.ceva.cevatrack.service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -109,6 +111,8 @@ public class P44ServiceImpl implements P44Service{
 		}
 		ArrayList<ConsignmentSummary> result = new ArrayList<>();
 		ConsignmentSummary item;
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
 		for (Consignment44 ele: res){
 			Consignment cons = this.getConsignment(ele.getConsignmentreference());
 			log.info(" -- Consignment successfully recovered: " + cons);
@@ -120,7 +124,7 @@ public class P44ServiceImpl implements P44Service{
 				item.setSiteId(ele.getSiteid());
 			}
 			if (ele.getPta() != null){
-				item.setPta2(ele.getPta());
+				item.setPta2(df.format(ele.getPta()));
 			}
 			if (cons.getPtaString() != null){
 				item.setPta(cons.getPtaString());
@@ -149,7 +153,7 @@ public class P44ServiceImpl implements P44Service{
 				item.setConsignmentHeaderId(ele.getConsignmentheaderid());
 			}
 			if (ele.getAta() != null){
-				item.setAta(ele.getAta());
+				item.setAta(df.format(ele.getAta()));
 			}
 			if (ele.getAddress3() != null){
 				item.setAddress3(ele.getAddress3());

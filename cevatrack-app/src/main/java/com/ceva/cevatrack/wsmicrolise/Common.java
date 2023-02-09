@@ -1,8 +1,9 @@
 package com.ceva.cevatrack.wsmicrolise;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ public class Common {
     private static final Logger LOG = LoggerFactory.getLogger(Common.class);
     private static final DateTimeFormatter FORMATTERMS = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
+    private static final DateTimeFormatter OUTPUTFORMAT = DateTimeFormatter.ofPattern("dd/MM/yy hh:mm");
 
     /**
      * @param fromXml
@@ -25,26 +27,66 @@ public class Common {
      * @param invalidString
      *            straing to replace invalid dates
      * @return the result
+     * Method that converts the incoming String format (there are several ones) to the output formatter (OUTPUTFORMAT)
      */
     public static String formatDate(String fromXml, DateTimeFormatter formatter, String blankString,
             String invalidString) {
+    	LOG.info(" Formatting date: " + fromXml + " ,with format: " + formatter);
+    	if (fromXml == null){
+    		LOG.warn(" -- parameter fromXml was null, returning empty String.. --");
+    		return "";
+    	}
+    	LocalDateTime ldt;
         if (fromXml.equals("0001-01-01T00:00:00")) {
             return blankString;
         } else {
             if (formatter == null) {
                 formatter = FORMATTERDEFAULT;
             }
-            try {
-                // LOG.info("-- from xml to parse: " + fromXml + " ,formatter: " + FORMATTERMS); //Too much Log..
-            	LocalDateTime ldt;
-            	if (fromXml.contains(".")){
-            		LOG.info(" -- A dot was in the date string to format ... --");
+            try {                          	
+            	if (fromXml.contains(".")){            		
+            		//LOG.info(" -- A dot was in the date string to format ... --");
             		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
             		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
+            		String formattedDateTime = ldt.format(OUTPUTFORMAT);
+            		//LOG.info(" --Returning: " + formattedDateTime);
+            		return formattedDateTime;
             	}else{
-            		ldt = LocalDateTime.parse(fromXml, FORMATTERMS);
+            		if (fromXml.contains("T")){
+            			//LOG.info("-- String contains a T: " + fromXml);
+            			ldt = LocalDateTime.parse(fromXml, FORMATTERMS);
+            			String formattedDateTime = ldt.format(OUTPUTFORMAT);
+                		//LOG.info(" -- Returning: " + formattedDateTime);
+            			return formattedDateTime;
+            		}else{
+            		    if (fromXml.contains("AM") || fromXml.contains("PM")){
+            		    	DateTimeFormatter FORMATDATENOTA = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
+            		    	ldt = LocalDateTime.parse(fromXml, FORMATDATENOTA);
+            		    	String formattedDateTime = ldt.format(OUTPUTFORMAT);
+            		    	//LOG.info(" -- The returning string date would be: " + formattedDateTime);
+            		    	return formattedDateTime;
+            		    }
+            		    if(fromXml.contains("-") ){
+	                		DateTimeFormatter FORMATDATENOT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	            			ldt = LocalDateTime.parse(fromXml, FORMATDATENOT);
+            		    	String formattedDateTime = ldt.format(OUTPUTFORMAT);
+            		    	//LOG.info(" -- The returning string date is: " + formattedDateTime);
+	            			return formattedDateTime;
+            		    }
+            		    if(fromXml.contains("/") ){
+	                		DateTimeFormatter FORMATDATENOT = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
+	            			ldt = LocalDateTime.parse(fromXml, FORMATDATENOT);
+            		    	String formattedDateTime = ldt.format(OUTPUTFORMAT);
+            		    	//LOG.info(" -- The returning string date is: " + formattedDateTime);
+	            			return formattedDateTime;
+            		    }
+            		}
             	}
-                return ldt.format(formatter);
+            	LOG.info(" -- none of the options before applied, gonna apply the parameter formatter: " + formatter);
+            	ldt = LocalDateTime.parse(fromXml, formatter);
+            	String formattedDateTime = ldt.format(OUTPUTFORMAT);
+            	LOG.info(" -- returning: " + formattedDateTime);
+                return formattedDateTime;
             } catch (Exception e) {
                 LOG.error(" -- Problem formating date: " + fromXml + " formatters : " + FORMATTERMS + " , " + formatter,
                         e);
