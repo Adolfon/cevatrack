@@ -213,6 +213,7 @@ public class ConsignmentListManager {
         listKey = env.getEnvDescription() + fromYyyymmdd + toYyyymmdd;
         LOGGER.info(" -- The listkey value is: " + listKey);
         LOGGER.info(" The cache value is: " + cache);
+        cache = false; // I need to debug
         if (cache) {
             if (consignmentStore.containsKey(listKey)) {
                 if (consignmentStore.get(listKey).isCurrent()) {
@@ -225,12 +226,15 @@ public class ConsignmentListManager {
             DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS, network);
             // Fix Status from Pending to Delivered when the consignment arrival date is present            
             LOGGER.info("Consignment store (cache) size before put: " + consignmentStore.size());
-            if (dcl.getConsignmentSummaries() == null){
-            	LOGGER.info( " --------it is null");
+            if (dcl == null || dcl.getConsignmentSummaries() == null){
+            	LOGGER.error( " --------dcl is null");
+            	throw new Exception(" -- DatedConsignmentList returned null -- ");
             }else{
-            	LOGGER.info( " --------it is not null, size: " + dcl.getConsignmentSummaries().size()); 
+            	LOGGER.info( " --------dcl is not null, size: " + dcl.getConsignmentSummaries().size()); 
             	if (p44 != null){
+            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());
             		dcl.getConsignmentSummaries().addAll(p44);
+            		LOGGER.info(" -- Total number of consignments after the merge: " + dcl.getConsignmentSummaries().size());
             	}else{
             		LOGGER.warn(" -- P44 was null, no adding P44 consignments.. --");
             	}

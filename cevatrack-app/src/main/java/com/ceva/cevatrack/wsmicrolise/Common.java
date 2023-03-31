@@ -43,7 +43,15 @@ public class Common {
             if (formatter == null) {
                 formatter = FORMATTERDEFAULT;
             }
-            try {                          	
+            try {   
+            	if ((fromXml.contains(".")) && (fromXml.contains("T"))){
+            		//2023-03-30T07:14:25.623' could not be parsed at index 10
+            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss.SSS");
+            		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
+            		String formattedDateTime = ldt.format(OUTPUTFORMAT);
+            		//LOG.info(" --Returning: " + formattedDateTime);
+            		return formattedDateTime;
+            	}
             	if (fromXml.contains(".")){            		
             		//LOG.info(" -- A dot was in the date string to format ... --");
             		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
@@ -82,7 +90,7 @@ public class Common {
             		    }
             		}
             	}
-            	LOG.info(" -- none of the options before applied, gonna apply the parameter formatter: " + formatter);
+            	LOG.warn(" -- none of the options before applied, gonna apply the parameter formatter: " + formatter);
             	ldt = LocalDateTime.parse(fromXml, formatter);
             	String formattedDateTime = ldt.format(OUTPUTFORMAT);
             	LOG.info(" -- returning: " + formattedDateTime);

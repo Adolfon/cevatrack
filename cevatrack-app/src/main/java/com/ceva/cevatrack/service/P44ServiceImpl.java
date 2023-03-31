@@ -113,7 +113,7 @@ public class P44ServiceImpl implements P44Service{
 		ConsignmentSummary item;
 		String pattern = "yyyy-MM-dd HH:mm:ss";
 		DateFormat df = new SimpleDateFormat(pattern);
-		for (Consignment44 ele: res){
+		for (Consignment44 ele: res){			
 			Consignment cons = this.getConsignment(ele.getConsignmentreference());
 			log.info(" -- Consignment successfully recovered: " + cons);
 			item = new ConsignmentSummary();
@@ -163,9 +163,10 @@ public class P44ServiceImpl implements P44Service{
 			}
 			if (ele.getAddress1() != null){
 				item.setAddress3(ele.getAddress3());
-			}
+			}			
 			result.add(item);
-		}				
+		}	
+		log.info(" -- Consignment Summary items converted or returned: " + result.size());
 		return result;
 	}
     	
