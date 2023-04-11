@@ -46,11 +46,17 @@ public class ConsignmentSummary {
     	if ("LOTPRO".equals(consignmentReference.substring(0,6))){
     		if ("L02".equals(consignmentReference.substring(7,10)) || "RED".equals(consignmentReference.substring(7,10)) 
     				&& !"REDARCH".equals(consignmentReference.substring(7,14))){
+    			LOG.warn(" ------ Special conversion 1 for the XML has been done for the consignment reference: " + this.consignmentReference);
     			return consignmentReference.replaceAll("\\s", "");
-    		}
+    		}    		
     		return consignmentReference;
     	}    	
+    	if (consignmentReference.length() == 17){
+    		LOG.warn(" ---- The consignment has exactly 17 characteres so it is longer than 17, no special conversion at this point..");
+    		return consignmentReference;
+    	}
         if (consignmentReference.length() > 16) {
+        	LOG.warn(" ------ Special conversion 2 for the XML has been done for the consignment reference: " + this.consignmentReference);
             return consignmentReference.substring(0, 16) + consignmentReference.substring(17);
         }
         return consignmentReference;
