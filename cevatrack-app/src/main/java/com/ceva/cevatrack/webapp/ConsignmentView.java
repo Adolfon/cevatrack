@@ -2,7 +2,6 @@ package com.ceva.cevatrack.webapp;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.SocketTimeoutException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -157,7 +156,8 @@ public class ConsignmentView implements Serializable, CommonApp {
         this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         this.network = params.get("network");        
         LOGGER.info("the network value in Consignment view is: " + network);
-        client = params.get("client");                
+        client = params.get("client");    
+        LOGGER.info("-- The client from the param is: " + client);
         try{
         	boolean oneSelected = false;
         	if (client == null || network==null){
@@ -209,9 +209,11 @@ public class ConsignmentView implements Serializable, CommonApp {
                 reportLocalDateTo = LocalDate.parse(reportDateTo, FORMATTER);
             }
             if (clientDetail == null){
+            	LOGGER.info(" -- Client detail was null...");
             	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
                         null, new ArrayList<String>(), true, false, this.network);
             }else{
+            	LOGGER.info(" -- Client detail was NOT null...");
             	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
                         null, clientDetail.getPfx(), true, false, this.network);
             }
@@ -266,6 +268,17 @@ public class ConsignmentView implements Serializable, CommonApp {
             LOGGER.error("Request consignments summaries for the new dates (calendar event) failed", e);
         }
         LOGGER.info(" -- Data successfully retrieved for the new selected date: " + reportLocalDate);
+        if (consignments != null){
+			consignments.getConsignmentSummaries().stream().filter((r) -> {
+				if ("CWNRAD/9020520468".equals(r.getConsignmentReference())){
+					LOGGER.info(" -- The reference: CWNRAD/9020520468 was found in the returning collection..");
+					return true;
+				} else{		
+					LOGGER.info(r.getConsignmentReference());
+					return false;
+				}			
+			}).collect(Collectors.toList());
+        }
         datePickerSuccess = reportLocalDate;
         datePickerSuccessTo = reportLocalDate;
     }

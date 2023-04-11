@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -79,6 +80,9 @@ public class P44ServiceImpl implements P44Service{
 	    List<Vehicle44> vehicles = p44.getVehicles(ref);	
 	    Consignment cvo = P44EntitiesTransformer.getViewConsignment(consignment, cdv, drivers, vehicles);
 	    log.info(" -- Consignment created: " + cvo);
+	    log.info(" ============================================================================================================");
+	    log.info(" ============================================================================================================");
+	    log.info(" ============================================================================================================");
 	    return cvo;
     }
     
@@ -100,14 +104,23 @@ public class P44ServiceImpl implements P44Service{
     
     public List<ConsignmentSummary> getListConsignmentsByDateToCS(String stDate, String edDate){
     	List<Consignment44> res = this.getListConsignmentsByDate(stDate, edDate);
-    	return c44ToCS(res);
+    	List<ConsignmentSummary> result = null;
+		try {
+			result = c44ToCS(res);
+		} catch (Exception e) {
+			log.error(" -------- Conversion error ----------------",e);
+		}
+    	return result;
     }
 
-	private List<ConsignmentSummary> c44ToCS(List<Consignment44> res) {
+	private List<ConsignmentSummary> c44ToCS(List<Consignment44> res) throws Exception{
 		log.info(" -- Converting a list of consignment44 type to ConsignmentSummary type ..");
 		if (res == null){
 			log.warn(" the parameter was null ");
 			return null;
+		}
+		for (Consignment44 ele: res){	
+			log.info(ele.getConsignmentreference() + ", the other ref: " + ele.getConsignmentcustomerorderref());
 		}
 		ArrayList<ConsignmentSummary> result = new ArrayList<>();
 		ConsignmentSummary item;
@@ -164,9 +177,26 @@ public class P44ServiceImpl implements P44Service{
 			if (ele.getAddress1() != null){
 				item.setAddress3(ele.getAddress3());
 			}			
+			log.info(" ---- consignment added: " + item.getConsignmentReference());
+			log.info(" -- number result before: " + result.size());
 			result.add(item);
+			log.info(" -- number result after element: " + result.size());
 		}	
-		log.info(" -- Consignment Summary items converted or returned: " + result.size());
+		log.info(" -- Consignment Summary items converted or returned: " + result.size() + ", from the input: " + res.size() + "\n result: \n");
+		//Not here same input number than output number..
+		result.stream().forEach(content -> {
+			log.info(content.getConsignmentReference() + "\n");
+        });
+		 if (result != null){
+				result.stream().filter((r) -> {
+					if ("CWNRAD/9020520468".equals(r.getConsignmentReference())){
+						log.info(" -- The reference: CWNRAD/9020520468 was found in the returning collection..");
+						return true;
+					} else{							
+						return false;
+					}			
+				}).collect(Collectors.toList());
+	        }		
 		return result;
 	}
     	

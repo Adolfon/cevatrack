@@ -132,6 +132,9 @@ public abstract class P44_Repository extends AbstractFullEntityRepository<Consig
         		return null;
         	}
           LOG.info(" -- Result of the query, size: " + cons.size());
+          for (int i= 0; i<cons.size()-1; i++){
+        	  LOG.info(" -- number: " + i + " reference: " + cons.get(i).getConsignmentreference());
+          }
           return cons; 
         }
         catch(NoResultException nre){

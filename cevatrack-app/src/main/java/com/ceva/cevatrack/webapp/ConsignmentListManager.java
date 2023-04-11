@@ -233,6 +233,10 @@ public class ConsignmentListManager {
             	LOGGER.info( " --------dcl is not null, size: " + dcl.getConsignmentSummaries().size()); 
             	if (p44 != null){
             		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());
+            		/// DEBUGGING THE RESULT..
+            		p44.forEach(p -> {
+    					LOGGER.info(p.getConsignmentReference() + "\n");
+    	            });
             		dcl.getConsignmentSummaries().addAll(p44);
             		LOGGER.info(" -- Total number of consignments after the merge: " + dcl.getConsignmentSummaries().size());
             	}else{
@@ -242,8 +246,7 @@ public class ConsignmentListManager {
             	consignmentStore.put(listKey, dcl);
             	LOGGER.info("-- The new cache position has been added correctly, new size: " + consignmentStore.size());
             	fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
-            }
-            
+            }            
             LOGGER.info("Consignment store after put: " + consignmentStore.size() + ",key: " + listKey
                     + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size() + " WS?: " + WS);
             return getUserConsignmentList(dcl, currentUser, WS, network);
@@ -277,15 +280,19 @@ public class ConsignmentListManager {
 //        }
         LOGGER.info(" -- Starting method: getUserConsignmentList, network: " + network);
         if (WS && currentUser.isPermitted(TECHNET_SITE)){
+        	LOGGER.info(" -- Returning via WS route..");
         	return source;
         }        
         DatedConsignmentList dcl = new DatedConsignmentList(source); //here dcl = 0 but source = 989 elements...(starts with 0)
         if(network.equalsIgnoreCase("smartnet")){
         	if (currentUser.isPermitted(SN_GLOBAL)){
+        		LOGGER.info(" -- SN_GLOBAL permission granted, returning source..");
         		return source;
         	}
+        	LOGGER.info(" --- Not global permission in smartnet, filtering sites, before: " + source.getConsignmentSummaries().size());
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(SN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- Smartnet after filtering user permissions: " + source.getConsignmentSummaries().size());
         }        
         if(network.equalsIgnoreCase("technet")){
         	if (currentUser.isPermitted(TN_GLOBAL)){
@@ -293,13 +300,15 @@ public class ConsignmentListManager {
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(TN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- After filtering Technet: " + source.getConsignmentSummaries().size());
         }           
         if(network.equalsIgnoreCase("automotive")){
         	if (currentUser.isPermitted(AM_GLOBAL)){
-        		return source;
+        		return source;        	
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(AM_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- After filtering Automobile: " + source.getConsignmentSummaries().size());
         }
         if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that is why the consignments are not being added...
         	if (currentUser.isPermitted(HC_GLOBAL)){
@@ -307,7 +316,9 @@ public class ConsignmentListManager {
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(HC_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- After filtering healthcare: " + source.getConsignmentSummaries().size());
         } 
+        LOGGER.info(" -- Total consignments returned: " + source.getConsignmentSummaries().size());
         return dcl;
     }
 

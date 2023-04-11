@@ -193,6 +193,7 @@ public class P44EntitiesTransformer {
 		}else{
 			log.info("--time window start was null");
 		}
+		log.info(" -- the final consignment returned is: " + cons);
 		return cons;
 	}
 	
