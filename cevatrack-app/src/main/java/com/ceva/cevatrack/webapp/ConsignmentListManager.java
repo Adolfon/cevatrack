@@ -213,7 +213,6 @@ public class ConsignmentListManager {
         listKey = env.getEnvDescription() + fromYyyymmdd + toYyyymmdd;
         LOGGER.info(" -- The listkey value is: " + listKey);
         LOGGER.info(" The cache value is: " + cache);
-        cache = false; // I need to debug
         if (cache) {
             if (consignmentStore.containsKey(listKey)) {
                 if (consignmentStore.get(listKey).isCurrent()) {
@@ -232,17 +231,12 @@ public class ConsignmentListManager {
             }else{
             	LOGGER.info( " --------dcl is not null, size: " + dcl.getConsignmentSummaries().size()); 
             	if (p44 != null){
-            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());
-            		/// DEBUGGING THE RESULT..
-            		p44.forEach(p -> {
-    					LOGGER.info(p.getConsignmentReference() + "\n");
-    	            });
+            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());            		
             		dcl.getConsignmentSummaries().addAll(p44);
             		LOGGER.info(" -- Total number of consignments after the merge: " + dcl.getConsignmentSummaries().size());
             	}else{
             		LOGGER.warn(" -- P44 was null, no adding P44 consignments.. --");
-            	}
-            	LOGGER.info("-- After adding the P44 from the Cevatrack database, size: " + dcl.getConsignmentSummaries().size());
+            	}            	
             	consignmentStore.put(listKey, dcl);
             	LOGGER.info("-- The new cache position has been added correctly, new size: " + consignmentStore.size());
             	fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
@@ -296,6 +290,7 @@ public class ConsignmentListManager {
         }        
         if(network.equalsIgnoreCase("technet")){
         	if (currentUser.isPermitted(TN_GLOBAL)){
+        		LOGGER.info(" -- TN_GLOBAL permission granted, returning source..");
         		return source;
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
@@ -304,6 +299,7 @@ public class ConsignmentListManager {
         }           
         if(network.equalsIgnoreCase("automotive")){
         	if (currentUser.isPermitted(AM_GLOBAL)){
+        		LOGGER.info(" -- AM_GLOBAL permission granted, returning source..");
         		return source;        	
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
@@ -312,6 +308,7 @@ public class ConsignmentListManager {
         }
         if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that is why the consignments are not being added...
         	if (currentUser.isPermitted(HC_GLOBAL)){
+        		LOGGER.info(" -- HC_GLOBAL permission granted, returning source..");
         		return source;
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()

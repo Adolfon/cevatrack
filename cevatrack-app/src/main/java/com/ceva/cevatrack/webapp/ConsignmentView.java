@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -269,15 +268,7 @@ public class ConsignmentView implements Serializable, CommonApp {
         }
         LOGGER.info(" -- Data successfully retrieved for the new selected date: " + reportLocalDate);
         if (consignments != null){
-			consignments.getConsignmentSummaries().stream().filter((r) -> {
-				if ("CWNRAD/9020520468".equals(r.getConsignmentReference())){
-					LOGGER.info(" -- The reference: CWNRAD/9020520468 was found in the returning collection..");
-					return true;
-				} else{		
-					LOGGER.info(r.getConsignmentReference());
-					return false;
-				}			
-			}).collect(Collectors.toList());
+        	LOGGER.info("--Retrieved consignments: " + consignments.getConsignmentSummaries().size());
         }
         datePickerSuccess = reportLocalDate;
         datePickerSuccessTo = reportLocalDate;

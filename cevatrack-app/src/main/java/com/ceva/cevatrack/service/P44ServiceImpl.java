@@ -81,8 +81,6 @@ public class P44ServiceImpl implements P44Service{
 	    Consignment cvo = P44EntitiesTransformer.getViewConsignment(consignment, cdv, drivers, vehicles);
 	    log.info(" -- Consignment created: " + cvo);
 	    log.info(" ============================================================================================================");
-	    log.info(" ============================================================================================================");
-	    log.info(" ============================================================================================================");
 	    return cvo;
     }
     
@@ -108,7 +106,7 @@ public class P44ServiceImpl implements P44Service{
 		try {
 			result = c44ToCS(res);
 		} catch (Exception e) {
-			log.error(" -------- Conversion error ----------------",e);
+			log.error(" -------- Conversion error ----------------", e);
 		}
     	return result;
     }
@@ -118,9 +116,6 @@ public class P44ServiceImpl implements P44Service{
 		if (res == null){
 			log.warn(" the parameter was null ");
 			return null;
-		}
-		for (Consignment44 ele: res){	
-			log.info(ele.getConsignmentreference() + ", the other ref: " + ele.getConsignmentcustomerorderref());
 		}
 		ArrayList<ConsignmentSummary> result = new ArrayList<>();
 		ConsignmentSummary item;
@@ -182,21 +177,7 @@ public class P44ServiceImpl implements P44Service{
 			result.add(item);
 			log.info(" -- number result after element: " + result.size());
 		}	
-		log.info(" -- Consignment Summary items converted or returned: " + result.size() + ", from the input: " + res.size() + "\n result: \n");
-		//Not here same input number than output number..
-		result.stream().forEach(content -> {
-			log.info(content.getConsignmentReference() + "\n");
-        });
-		 if (result != null){
-				result.stream().filter((r) -> {
-					if ("CWNRAD/9020520468".equals(r.getConsignmentReference())){
-						log.info(" -- The reference: CWNRAD/9020520468 was found in the returning collection..");
-						return true;
-					} else{							
-						return false;
-					}			
-				}).collect(Collectors.toList());
-	        }		
+		log.info(" -- Consignment Summary items converted or returned: " + result.size() + ", from the input: " + res.size());	
 		return result;
 	}
     	
