@@ -46,20 +46,22 @@ public class ConsignmentSummary {
     	if ("LOTPRO".equals(consignmentReference.substring(0,6))){
     		if ("L02".equals(consignmentReference.substring(7,10)) || "RED".equals(consignmentReference.substring(7,10)) 
     				&& !"REDARCH".equals(consignmentReference.substring(7,14))){
-    			String ori = consignmentReference;
+    			String ori = new String(consignmentReference);
     			String str = consignmentReference.replaceAll("\\s", "");
     			LOG.warn(" ------ Special conversion 1 reference: " + ori + ", returning: " + str);
     			return str;
     		}    		
     		return consignmentReference;
-    	}    	
-    	if (consignmentReference.length() == 17){
-    		LOG.warn(" ---- ------ Special conversion 3, ref: " + this.consignmentReference + ", returning: " + consignmentReference.trim());
-    		return consignmentReference.trim();
+    	}       	    	
+    	if (consignmentReference.length() == 17){    
+    		String cr = new String(consignmentReference).replaceAll("\\s", "");
+    		LOG.warn(" ---- ------ Special conversion 3, ref: " + this.consignmentReference + ", returning: " + cr);
+    		return cr;
     	}
         if (consignmentReference.length() > 16) {
-        	LOG.warn(" ------ Special conversion 2 reference: " + this.consignmentReference + ", returning: " + consignmentReference.substring(0, 16) + consignmentReference.substring(17));
-            return consignmentReference.substring(0, 16) + consignmentReference.substring(17);
+        	String cr = new String(consignmentReference).replaceAll("\\s", "");
+        	LOG.warn(" ------ Special conversion 2 reference: " + this.consignmentReference + ", returning: " + cr);
+            return cr;
         }
         return consignmentReference;
     }
