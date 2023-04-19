@@ -150,7 +150,7 @@ public class ClientView implements Serializable, CommonApp {
 			 }  
              LOGGER.info(" -- the number of clients recovered from the data base are: " + configs.size());
         }catch (Exception e){
-        	LOGGER.error(" error trying recovering database table for clients: " + e.getStackTrace());
+        	LOGGER.error(" error trying recovering database table for clients: ", e);
         }
                 
         reportLocalDate = LocalDate.now();

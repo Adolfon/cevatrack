@@ -117,7 +117,7 @@ public class DetailView implements Serializable, CommonApp {
 	        }
 	        if (network.equalsIgnoreCase("Healthcare")){
 	        	match = true;
-	        	LOGGER.info("Automotive network detected");
+	        	LOGGER.info("Healthcare network detected");
 	        	clientDetail = hcClientService.getHealthcareClient(client);
 	        }
 	        if (!match || clientDetail == null){

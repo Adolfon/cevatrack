@@ -41,8 +41,8 @@ public class TechNetClientServiceImpl implements TechNetClientService {
     }
 
     @Override
-    public SmartNetClientVO getTechNetClient(String clientName) {
-        return searchTechNetClients().stream().filter(client -> clientName.equals(client.getName())).findAny()
+    public SmartNetClientVO getTechNetClient(String prefix) {
+        return searchTechNetClients().stream().filter(client -> prefix.equals(client.getPrefixes())).findAny()
                 .orElse(null);
     }
     

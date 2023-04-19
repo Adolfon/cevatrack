@@ -50,7 +50,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 
     private DatedConsignmentList consignments;
     private String message = "";
-    private String client;
+    private String client,prefix;
     private ConsignmentSummary selectedConsignment;
     private List<ConsignmentSummary> filteredSnConsignments;
     private LocalDate reportLocalDate;
@@ -155,27 +155,29 @@ public class ConsignmentView implements Serializable, CommonApp {
         this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         this.network = params.get("network");        
         LOGGER.info("the network value in Consignment view is: " + network);
+        prefix = params.get("prefix");   
         client = params.get("client");    
-        LOGGER.info("-- The client from the param is: " + client);
+        LOGGER.info("-- The client from the param is: " + client + ",its prefix is: " + prefix);
         try{
         	boolean oneSelected = false;
-        	if (client == null || network==null){
-        		throw new Exception (" -- There is no a valid network or client parameter -- ");
+        	if (network==null || prefix == null){
+        		//throw new Exception (" -- There is no a valid network or client parameter -- ");
+        		LOGGER.error("-- There is no a valid network or client parameter --");
         	}
 	        if (network.equalsIgnoreCase("technet")){
 	        	LOGGER.info("technet network detected");
 	        	oneSelected = true;
-	        	clientDetail = tnClientService.getTechNetClient(client);
+	        	clientDetail = tnClientService.getTechNetClient(prefix);
 	        } 
 	        if (network.equalsIgnoreCase("smartnet")){
 	        	LOGGER.info("smartnet network detected");
 	        	oneSelected = true;
-	        	clientDetail = snClientService.getSmartNetClient(client);
+	        	clientDetail = snClientService.getSmartNetClient(prefix);
 	        }
 	        if (network.equalsIgnoreCase("Automotive")){
 	        	LOGGER.info("Automotive network detected");
 	        	oneSelected = true;
-	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        	clientDetail = amClientService.getAutomotiveClient(prefix);
 	        	if (clientDetail == null){
 	        		clientDetail = amClientService.getAutomotiveClientByAAFName(client);
 	        	}
@@ -183,7 +185,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 	        if (network.equalsIgnoreCase("Healthcare")){
 	        	LOGGER.info("Health network detected");
 	        	oneSelected = true;
-	        	clientDetail = hcClientService.getHealthcareClient(client);
+	        	clientDetail = hcClientService.getHealthcareClient(prefix);
 	        }
 	        if (!oneSelected){
 	        	throw new Exception (" -- There was not a valid network selected -- ");

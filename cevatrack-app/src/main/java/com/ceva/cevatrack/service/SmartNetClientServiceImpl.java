@@ -44,8 +44,8 @@ public class SmartNetClientServiceImpl implements SmartNetClientService {
     }
 
     @Override
-    public SmartNetClientVO getSmartNetClient(String clientName) {
-        return searchSmartNetClient().stream().filter(client -> clientName.equals(client.getName())).findAny()
+    public SmartNetClientVO getSmartNetClient(String prefix) {
+        return searchSmartNetClient().stream().filter(client -> prefix.equals(client.getPrefixes())).findAny()
                 .orElse(null);
     }
 
