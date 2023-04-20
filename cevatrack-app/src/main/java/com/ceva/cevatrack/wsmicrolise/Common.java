@@ -47,46 +47,47 @@ public class Common {
             try {   
             	if ((fromXml.contains(".")) && (fromXml.contains("T"))){
             		//2023-03-30T07:14:25.623' could not be parsed at index 10
-            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss.SSS");
+                	//2023-04-20T06:11:26.353
+            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("uuuu-MM-ddTHH:mm:ss.SSS");
             		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
             		String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		//LOG.info(" --Returning: " + formattedDateTime);
+            		LOG.info(" --(.T)Returning: " + formattedDateTime);
             		return formattedDateTime;
             	}
             	if (fromXml.contains(".")){            		
             		//LOG.info(" -- A dot was in the date string to format ... --");
-            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss.SSS");
             		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
             		String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		//LOG.info(" --Returning: " + formattedDateTime);
+            		LOG.info(" --(.)Returning: " + formattedDateTime);
             		return formattedDateTime;
             	}else{
             		if (fromXml.contains("T")){
             			//LOG.info("-- String contains a T: " + fromXml);
             			ldt = LocalDateTime.parse(fromXml, FORMATTERMS);
             			String formattedDateTime = ldt.format(OUTPUTFORMAT);
-                		//LOG.info(" -- Returning: " + formattedDateTime);
+                		LOG.info(" --(T)Returning: " + formattedDateTime);
             			return formattedDateTime;
             		}else{
             		    if (fromXml.contains("AM") || fromXml.contains("PM")){
             		    	DateTimeFormatter FORMATDATENOTA = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
             		    	ldt = LocalDateTime.parse(fromXml, FORMATDATENOTA);
             		    	String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		    	//LOG.info(" -- The returning string date would be: " + formattedDateTime);
+            		    	LOG.info(" --(AMPM) The returning string date would be: " + formattedDateTime);
             		    	return formattedDateTime;
             		    }
             		    if(fromXml.contains("-") ){
-	                		DateTimeFormatter FORMATDATENOT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	                		DateTimeFormatter FORMATDATENOT = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 	            			ldt = LocalDateTime.parse(fromXml, FORMATDATENOT);
             		    	String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		    	//LOG.info(" -- The returning string date is: " + formattedDateTime);
+            		    	LOG.info(" --(-) The returning string date is: " + formattedDateTime);
 	            			return formattedDateTime;
             		    }
             		    if(fromXml.contains("/") ){
-	                		DateTimeFormatter FORMATDATENOT = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
+	                		DateTimeFormatter FORMATDATENOT = DateTimeFormatter.ofPattern("dd/MM/uu HH:mm");
 	            			ldt = LocalDateTime.parse(fromXml, FORMATDATENOT);
             		    	String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		    	//LOG.info(" -- The returning string date is: " + formattedDateTime);
+            		    	LOG.info(" -- (/)The returning string date is: " + formattedDateTime);
 	            			return formattedDateTime;
             		    }
             		}

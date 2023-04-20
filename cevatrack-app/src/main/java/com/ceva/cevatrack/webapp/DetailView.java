@@ -131,7 +131,7 @@ public class DetailView implements Serializable, CommonApp {
 	        	throw new Exception (" -- There is not a valid matching network or client does not exist -- ");
 	        }
         } catch (Exception e){
-        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- ", e);
         	return;
         }        
         // check that the client has access to this consignment
