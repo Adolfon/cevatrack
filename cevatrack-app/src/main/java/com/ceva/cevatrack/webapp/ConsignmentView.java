@@ -50,7 +50,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 
     private DatedConsignmentList consignments;
     private String message = "";
-    private String client,prefix;
+    private String client,prefix,con;
     private ConsignmentSummary selectedConsignment;
     private List<ConsignmentSummary> filteredSnConsignments;
     private LocalDate reportLocalDate;
@@ -155,7 +155,12 @@ public class ConsignmentView implements Serializable, CommonApp {
         this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         this.network = params.get("network");        
         LOGGER.info("the network value in Consignment view is: " + network);
-        prefix = params.get("prefix");   
+        prefix = params.get("prefix");
+        con = params.get("con");  
+        if (prefix == null & con != null){
+        	LOG.info("-- Prefix was null, building it from param con --");
+        	prefix = new String(con.substring(0, con.indexOf("/")));
+        }
         client = params.get("client");    
         LOGGER.info("-- The client from the param is: " + client + ",its prefix is: " + prefix);
         try{
