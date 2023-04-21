@@ -15,7 +15,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.openjpa.lib.log.Log;
+//import org.apache.openjpa.lib.log.Log;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
