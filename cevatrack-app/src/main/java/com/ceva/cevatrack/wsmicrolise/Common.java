@@ -16,6 +16,48 @@ public class Common {
     private static final DateTimeFormatter FORMATTERMS = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
     private static final DateTimeFormatter OUTPUTFORMAT = DateTimeFormatter.ofPattern("dd/MM/yy hh:mm");
+    
+    private static String fixMicroSecondsWhitT(String xml){
+    	//2023-04-20T06:11:26.353
+    	DateTimeFormatter FORMATDATE = FORMATTERDEFAULT;
+    	if ("2023-04-20T06:11:26.353".length() == xml.length()){
+    		LOG.info(" 3 digits");
+    		FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    	}
+    	if ("2023-04-20T06:11:26.35".length() == xml.length()){
+    		LOG.info(" 2 digits");
+    		FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SS");
+    	}
+    	if ("2023-04-20T06:11:26.3".length() == xml.length()){
+    		LOG.info(" 1 digit");
+    		FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S");
+    	}
+    	LocalDateTime ldt = LocalDateTime.parse(xml, FORMATDATE);
+		String formattedDateTime = ldt.format(OUTPUTFORMAT);
+		LOG.info(" --Returning: " + formattedDateTime);
+		return formattedDateTime;
+    }
+    
+    private static String fixMicroSecondsWhitoutT(String xml){
+    	//2023-04-20 06:11:26.353
+    	DateTimeFormatter FORMATDATE = FORMATTERDEFAULT;
+    	if ("2023-04-20 06:11:26.353".length() == xml.length()){
+    		LOG.info(" 3 digits");
+    		FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    	}
+    	if ("2023-04-20 06:11:26.35".length() == xml.length()){
+    		LOG.info(" 2 digits");
+    		FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS");
+    	}
+    	if ("2023-04-20 06:11:26.3".length() == xml.length()){
+    		LOG.info(" 1 digit");
+    		FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+    	}
+    	LocalDateTime ldt = LocalDateTime.parse(xml, FORMATDATE);
+		String formattedDateTime = ldt.format(OUTPUTFORMAT);
+		LOG.info(" --Returning: " + formattedDateTime);
+		return formattedDateTime;
+    }
 
     /**
      * @param fromXml
@@ -46,22 +88,13 @@ public class Common {
             }
             try {   
             	if ((fromXml.contains(".")) && (fromXml.contains("T"))){
-            		//2023-03-30T07:14:25.623' could not be parsed at index 10
-                	//2023-04-20T06:11:26.353
-            		LOG.info("(.)&&(T) ---inside");
-            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
-            		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
-            		String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		LOG.info(" --(.T)Returning: " + formattedDateTime);
-            		return formattedDateTime;
+            		//2023-03-30T07:14:25.623' could not be parsed at index 10                	
+            		LOG.info("(.)&&(T) ---inside");            		
+            		return fixMicroSecondsWhitT(fromXml);
             	}
             	if (fromXml.contains(".")){            		
-            		LOG.info(" -- A dot was in the date string to format ... --");
-            		DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-            		ldt = LocalDateTime.parse(fromXml, FORMATDATE);
-            		String formattedDateTime = ldt.format(OUTPUTFORMAT);
-            		LOG.info(" --(.)Returning: " + formattedDateTime);
-            		return formattedDateTime;
+            		LOG.info(" -- A dot was in the date string to format ... --");            		
+            		return fixMicroSecondsWhitoutT(fromXml);
             	}else{
             		if (fromXml.contains("T")){
             			LOG.info("-- String contains a T: " + fromXml);
