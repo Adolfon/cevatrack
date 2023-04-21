@@ -15,6 +15,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.openjpa.lib.log.Log;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -231,8 +232,9 @@ public class ConsignmentListManager {
             }else{
             	LOGGER.info( " --------dcl is not null, size: " + dcl.getConsignmentSummaries().size()); 
             	if (p44 != null){
-            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());            		
-            		dcl.getConsignmentSummaries().addAll(p44);
+            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());
+            		
+            		dcl.getConsignmentSummaries().addAll(addP44ConsignmentsWithoutDups(dcl.getConsignmentSummaries(),p44));
             		LOGGER.info(" -- Total number of consignments after the merge: " + dcl.getConsignmentSummaries().size());
             	}else{
             		LOGGER.warn(" -- P44 was null, no adding P44 consignments.. --");
@@ -257,7 +259,22 @@ public class ConsignmentListManager {
         }
     }
 
-    private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(DatedConsignmentList dcl) {
+    /*
+     * Add a P44 consignment if does not exist already from microlise
+     */
+    private Collection<? extends ConsignmentSummary> addP44ConsignmentsWithoutDups(
+			List<ConsignmentSummary> consignmentSummaries, Collection<ConsignmentSummary> p442) {
+    	List<ConsignmentSummary> result = new ArrayList<>();
+    	for (ConsignmentSummary p44:p442){
+    		if(!consignmentSummaries.contains(p44)){
+    			result.add(p44);
+    		}
+    	}
+    	LOGGER.info(" -- added P44: " + result);
+		return result;
+	}
+
+	private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(DatedConsignmentList dcl) {
         dcl.getConsignmentSummaries().stream().filter(obj -> !StringUtils.isBlank((CharSequence) obj.getAtaString()) &&
         // obj.getStatusString().trim().equalsIgnoreCase("Pending"))
                 obj.getConsignmentStatus() == 78).forEach(obj -> {
@@ -351,12 +368,16 @@ public class ConsignmentListManager {
         Consignment consignment = null;
         Subject currentUser = null;
         
-        try {
-        	consignment = retrive_p44_consignment(consignmentReference);
-        	if (consignment != null){
-        		return consignment;
-        	}
+        try {        	
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
+            if (consignment == null){
+            	LOGGER.warn("-- Could not recover consignment: " + consignmentReference + " ,from Microlise, trying from P44..");
+	            consignment = retrive_p44_consignment(consignmentReference);
+	        	if (consignment != null){
+	        		LOGGER.info(" -- P44 consignment recovered!");
+	        		return consignment;
+	        	}
+            }
             if (consignment == null){
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
             	throw new Exception("-- The consignment was not retrieved and it is null --");
