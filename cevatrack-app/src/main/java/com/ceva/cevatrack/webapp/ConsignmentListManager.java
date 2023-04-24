@@ -3,7 +3,6 @@ package com.ceva.cevatrack.webapp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,13 +14,10 @@ import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import org.apache.commons.lang3.StringUtils;
-//import org.apache.openjpa.lib.log.Log;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.ceva.cevatrack.domain.Consignment44;
 import com.ceva.cevatrack.service.P44Service;
 import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
@@ -260,19 +256,33 @@ public class ConsignmentListManager {
     }
 
     /*
-     * Add a P44 consignment if does not exist already from microlise
+     * Add a P44 consignment if does not exist already from microlise and mark it
      */
     private Collection<? extends ConsignmentSummary> addP44ConsignmentsWithoutDups(
 			List<ConsignmentSummary> consignmentSummaries, Collection<ConsignmentSummary> p442) {
+    	if (p442 == null){
+    		return consignmentSummaries;
+    	}
+    	if (consignmentSummaries == null){
+    		return p442;
+    	}
+    	LOGGER.info(" -- Starting no dups consignments method,  Microlise consignments: " + consignmentSummaries.size() +", p44: "+ p442.size() + ", -- ");
     	List<ConsignmentSummary> result = new ArrayList<>();
     	for (ConsignmentSummary p44:p442){
-    		if(!consignmentSummaries.contains(p44)){
-    			result.add(p44);
-    		}
-    	}
-    	LOGGER.info(" -- added P44: " + result);
-		return result;
-	}
+    		consignmentSummaries.forEach(e -> {
+    			if(!p44.getConsignmentReference().equalsIgnoreCase(e.getConsignmentReference())){
+    				LOGGER.info(" --- Adding no duplicated P44 consignment to the Microlise list: " + p44.getConsignmentReference());    				
+    				result.add(p44);
+    			}else{
+    				LOGGER.warn(" -- Duplicate detected and marked!, ref: " + e.getConsignmentReference());
+    				e.setConsignmentHeaderId(-7);
+    			}
+    		});    			
+    	}//for
+    	
+    	return result;
+    }
+    	
 
 	private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(DatedConsignmentList dcl) {
         dcl.getConsignmentSummaries().stream().filter(obj -> !StringUtils.isBlank((CharSequence) obj.getAtaString()) &&
