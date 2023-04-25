@@ -373,18 +373,28 @@ public class ConsignmentListManager {
      */
     public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
     	LOGGER.info( "-- getConsignmentDetail parameters: "+ consignmentReference + ",network: " + network);
-        Consignment consignment = null;
+        Consignment consignment,cs44 = null, result = null;
         Subject currentUser = null;
         
         try {        	
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
-            if (consignment == null){
-            	LOGGER.warn("-- Could not recover consignment: " + consignmentReference + " ,from Microlise, trying from P44..");
-	            consignment = retrive_p44_consignment(consignmentReference);
-	        	if (consignment != null){
-	        		LOGGER.info(" -- P44 consignment recovered!");
-	        		return consignment;
+            //Consignment is null or has not ETA and ATA
+            if (consignment == null || consignment != null && (consignment.getAta() == null && consignment.getEta() == null)){
+            	LOGGER.warn("-- Could not recover consignment: " + consignmentReference + " ,from Microlise or has not ETA and ATA, trying from P44..");
+	            cs44 = retrive_p44_consignment(consignmentReference);	   
+	            if (cs44 != null && cs44.getAta() != null && cs44.getEta() == null ||
+	        			cs44 != null && cs44.getAta() == null && cs44.getEta() !=null){
+	        		LOGGER.info(" -- P44 consignment recovered and has ATA or ETA!");   
+	        		result = cs44;
 	        	}
+            }
+            if (consignment == null && cs44 != null){
+            	LOGGER.info(" -- No response from Microlise but from P44 --");
+            	consignment = cs44;
+            }
+            if (result != null){
+            	LOGGER.info(" -- Microlise response does not have ETA and ATA but P44 response does --");
+            	consignment = result;
             }
             if (consignment == null){
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
