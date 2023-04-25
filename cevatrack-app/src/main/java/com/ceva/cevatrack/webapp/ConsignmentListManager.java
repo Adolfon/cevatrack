@@ -228,9 +228,10 @@ public class ConsignmentListManager {
             }else{
             	LOGGER.info( " --------dcl is not null, size: " + dcl.getConsignmentSummaries().size()); 
             	if (p44 != null){
-            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());
-            		
-            		dcl.getConsignmentSummaries().addAll(addP44ConsignmentsWithoutDups(dcl.getConsignmentSummaries(),p44));
+            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());            		
+            		List<ConsignmentSummary> consignmentSummaries = addP44ConsignmentsWithoutDups(dcl.getConsignmentSummaries(),p44);
+            		dcl.getConsignmentSummaries().clear();
+            		dcl.getConsignmentSummaries().addAll(consignmentSummaries);
             		LOGGER.info(" -- Total number of consignments after the merge: " + dcl.getConsignmentSummaries().size());
             	}else{
             		LOGGER.warn(" -- P44 was null, no adding P44 consignments.. --");
@@ -256,31 +257,24 @@ public class ConsignmentListManager {
     }
 
     /*
-     * Add a P44 consignment if does not exist already from microlise and mark it
+     * Add a P44 consignment if does not exist already from microlise and remove the duplicates
      */
-    private Collection<? extends ConsignmentSummary> addP44ConsignmentsWithoutDups(
+    private List<ConsignmentSummary> addP44ConsignmentsWithoutDups(
 			List<ConsignmentSummary> consignmentSummaries, Collection<ConsignmentSummary> p442) {
+    	LOGGER.info(" -- Starting method addP44ConsignmentsWithoutDups --");
     	if (p442 == null){
     		return consignmentSummaries;
-    	}
-    	if (consignmentSummaries == null){
-    		return p442;
-    	}
+    	}    
     	LOGGER.info(" -- Starting no dups consignments method,  Microlise consignments: " + consignmentSummaries.size() +", p44: "+ p442.size() + ", -- ");
-    	List<ConsignmentSummary> result = new ArrayList<>();
-    	for (ConsignmentSummary p44:p442){
-    		consignmentSummaries.forEach(e -> {
-    			if(!p44.getConsignmentReference().equalsIgnoreCase(e.getConsignmentReference())){
-    				LOGGER.info(" --- Adding no duplicated P44 consignment to the Microlise list: " + p44.getConsignmentReference());    				
-    				result.add(p44);
-    			}else{
-    				LOGGER.warn(" -- Duplicate detected and marked!, ref: " + e.getConsignmentReference());
-    				e.setConsignmentHeaderId(-7);
-    			}
-    		});    			
-    	}//for
-    	
-    	return result;
+    	List<ConsignmentSummary> result = new ArrayList<>(p442);
+    	LOGGER.info(" -- result after addding p44 cons: " + result.size());
+    	result.addAll(consignmentSummaries);
+    	LOGGER.info(" -- result after addding Microlise cons: " + result.size());
+    	List<ConsignmentSummary> listWithoutDuplicates = result.stream()
+    		     .distinct()
+    		     .collect(Collectors.toList());    	
+    	LOGGER.info(" --- List without duplicates size: " + listWithoutDuplicates.size());
+    	return listWithoutDuplicates;
     }
     	
 
