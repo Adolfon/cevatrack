@@ -25,6 +25,10 @@ import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseEnvironment;
 import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummary;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.Comparator.comparing;
+import java.util.TreeSet;
 
 /**
  * @author brian.goodall
@@ -270,11 +274,11 @@ public class ConsignmentListManager {
     	LOGGER.info(" -- result after addding p44 cons: " + result.size());
     	result.addAll(consignmentSummaries);
     	LOGGER.info(" -- result after addding Microlise cons: " + result.size());
-    	List<ConsignmentSummary> listWithoutDuplicates = result.stream()
-    		     .distinct()
-    		     .collect(Collectors.toList());    	
-    	LOGGER.info(" --- List without duplicates size: " + listWithoutDuplicates.size());
-    	return listWithoutDuplicates;
+    	List<ConsignmentSummary> usersDistinctByRef = result.stream().collect(
+                collectingAndThen(toCollection(() ->
+                   new TreeSet<>(comparing(ConsignmentSummary::getConsignmentReference))), ArrayList::new));    	    
+    	LOGGER.info(" --- List without duplicates size: " + usersDistinctByRef.size());
+    	return usersDistinctByRef;
     }
     	
 
