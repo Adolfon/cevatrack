@@ -390,6 +390,7 @@ public class ConsignmentListManager {
 	            if (cs44 != null){
 	            	LOGGER.info(" -- Consignment 44 ATA: " + cs44.getAta() + ",ATA String: " + cs44.getAtaString() + ",ETA: " + cs44.getEta() 
 	            	+ " ,ETA string: " + cs44.getEtaString());
+	            	cs44.setConsignmentHeaderInfo12("p44");
 	            }
 	            if (cs44 != null && !StringUtils.isBlank(cs44.getAtaString()) && StringUtils.isBlank(cs44.getEtaString()) ||
 	        			cs44 != null && StringUtils.isBlank(cs44.getAtaString()) && !StringUtils.isBlank(cs44.getEtaString())){
