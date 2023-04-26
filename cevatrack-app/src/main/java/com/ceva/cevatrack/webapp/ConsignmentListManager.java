@@ -378,12 +378,20 @@ public class ConsignmentListManager {
         
         try {        	
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
+            if (consignment != null){
+            	LOGGER.info(" -- consignment not null, ETA: " + consignment.getAta() + ", ATA string: " + consignment.getAtaString() 
+            		+ ",ETA string: " + consignment.getEtaString());
+            }
             //Consignment is null or has not ETA and ATA
-            if (consignment == null || consignment != null && (consignment.getAta() == null && consignment.getEta() == null)){
+            if (consignment == null || consignment != null && (consignment.getAtaString() == null && consignment.getEtaString() == null)){
             	LOGGER.warn("-- Could not recover consignment: " + consignmentReference + " ,from Microlise or has not ETA and ATA, trying from P44..");
-	            cs44 = retrive_p44_consignment(consignmentReference);	   
-	            if (cs44 != null && cs44.getAta() != null && cs44.getEta() == null ||
-	        			cs44 != null && cs44.getAta() == null && cs44.getEta() !=null){
+	            cs44 = retrive_p44_consignment(consignmentReference);	
+	            if (cs44 != null){
+	            	LOGGER.info(" -- Consignment 44 ATA: " + cs44.getAta() + ",ATA String: " + cs44.getAtaString() + ",ETA: " + cs44.getEta() 
+	            	+ " ,ETA string: " + cs44.getEtaString());
+	            }
+	            if (cs44 != null && cs44.getAtaString() != null && cs44.getEtaString() == null ||
+	        			cs44 != null && cs44.getAtaString() == null && cs44.getEtaString() !=null){
 	        		LOGGER.info(" -- P44 consignment recovered and has ATA or ETA!");   
 	        		result = cs44;
 	        	}
