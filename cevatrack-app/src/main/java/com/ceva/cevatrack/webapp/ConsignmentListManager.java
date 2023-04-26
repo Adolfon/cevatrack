@@ -383,15 +383,16 @@ public class ConsignmentListManager {
             		+ ",ETA string: " + consignment.getEtaString());
             }
             //Consignment is null or has not ETA and ATA
-            if (consignment == null || consignment != null && (consignment.getAtaString() == null && consignment.getEtaString() == null)){
+            if (consignment == null || consignment != null && (StringUtils.isBlank(consignment.getAtaString()) &&
+            		StringUtils.isBlank(consignment.getEtaString()))){
             	LOGGER.warn("-- Could not recover consignment: " + consignmentReference + " ,from Microlise or has not ETA and ATA, trying from P44..");
 	            cs44 = retrive_p44_consignment(consignmentReference);	
 	            if (cs44 != null){
 	            	LOGGER.info(" -- Consignment 44 ATA: " + cs44.getAta() + ",ATA String: " + cs44.getAtaString() + ",ETA: " + cs44.getEta() 
 	            	+ " ,ETA string: " + cs44.getEtaString());
 	            }
-	            if (cs44 != null && cs44.getAtaString() != null && cs44.getEtaString() == null ||
-	        			cs44 != null && cs44.getAtaString() == null && cs44.getEtaString() !=null){
+	            if (cs44 != null && !StringUtils.isBlank(cs44.getAtaString()) && StringUtils.isBlank(cs44.getEtaString()) ||
+	        			cs44 != null && StringUtils.isBlank(cs44.getAtaString()) && !StringUtils.isBlank(cs44.getEtaString())){
 	        		LOGGER.info(" -- P44 consignment recovered and has ATA or ETA!");   
 	        		result = cs44;
 	        	}
