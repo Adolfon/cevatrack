@@ -511,7 +511,7 @@ public class Consignment {
      * @return only if different to actual arrival. I think this is geo-fence arrival.
      */
     public String getJourneyActualStartTimeString() {
-        if (journeyActualStartTime.equals(ata)) {
+        if (journeyActualStartTime == null || journeyActualStartTime.equals(ata)) {
             return null;
         }
         return Common.formatDate(journeyActualStartTime, null, null, journeyActualStartTime);

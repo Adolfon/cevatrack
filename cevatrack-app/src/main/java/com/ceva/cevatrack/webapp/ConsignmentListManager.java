@@ -390,12 +390,11 @@ public class ConsignmentListManager {
 	            if (cs44 != null){
 	            	LOGGER.info(" -- Consignment 44 ATA: " + cs44.getAta() + ",ATA String: " + cs44.getAtaString() + ",ETA: " + cs44.getEta() 
 	            	+ " ,ETA string: " + cs44.getEtaString());
-	            	cs44.setConsignmentHeaderInfo12("p44");
 	            }
 	            if (cs44 != null && !StringUtils.isBlank(cs44.getAtaString()) && StringUtils.isBlank(cs44.getEtaString()) ||
 	        			cs44 != null && StringUtils.isBlank(cs44.getAtaString()) && !StringUtils.isBlank(cs44.getEtaString())){
 	        		LOGGER.info(" -- P44 consignment recovered and has ATA or ETA!");   
-	        		result = cs44;
+	        		result = cs44;	        		
 	        	}
             }
             if (consignment == null && cs44 != null){
@@ -419,6 +418,7 @@ public class ConsignmentListManager {
         	LOGGER.info(" -- Going to secure the subject for network: " + network + " --");
         	currentUser = SecurityUtils.getSubject();
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
+            LOGGER.info(" -- consignment 44 is: " + consignment);
             if (network.equalsIgnoreCase("smartnet")){
 	            if (currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(SN_SITE + consignment.getSiteId())) {
 	                return consignment;
