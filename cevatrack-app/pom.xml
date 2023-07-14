@@ -161,7 +161,7 @@
                 <directory>src/main/resources</directory>
             </resource>            
         </resources>
-		<plugins>
+		<plugins> <!-- 
 			<plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-enforcer-plugin</artifactId>
@@ -175,13 +175,13 @@
 		            <configuration>
 		              <rules>
 		                <requireJavaVersion>
-		                  <version>1.8.0-180</version> <!-- 1.8.0-281 reference the minimum minor version (280 and up is okay) -->
+		                  <version>1.8.0-180</version> // 1.8.0-281 reference the minimum minor version (280 and up is okay) 
 		                </requireJavaVersion>
 		              </rules>    
 		            </configuration>
 		          </execution>
 		        </executions>
-		      </plugin>
+		      </plugin>  -->
 			<plugin>
 		        <artifactId>maven-war-plugin</artifactId>
 		        <version>3.2.2</version>

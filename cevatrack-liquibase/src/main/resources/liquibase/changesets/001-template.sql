@@ -1414,8 +1414,7 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
   VALUES ('CB Heating','CBHEAT','CBheating.png','',now(),'SYSTEM',now(),'SYSTEM',1);
 INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('OVE','OVE','OVE.png','',now(),'SYSTEM',now(),'SYSTEM',1);
-  
- --changeset adolfo.cano:001-cjf-template-db-070 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
+  --changeset adolfo.cano:001-cjf-template-db-070 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
   create table if not exists ml_image (
 	load_id text NULL,
 	order_number text NOT NULL,
