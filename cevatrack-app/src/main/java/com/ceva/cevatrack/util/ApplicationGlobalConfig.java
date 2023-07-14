@@ -19,6 +19,13 @@ public class ApplicationGlobalConfig {
 	public final static String DEV_PROXY_1 ="10.245.12.18";
 	public final static String DEV_PROXY_2 ="10.245.12.19";
 	public final static int DEV_PROXY_PORT = 3128;
+	/*TECHNET IMAGES WEB SERVICE*/
+	public final static String IMG_TEST_URI ="https://uat.microlise.com/CEVA_TechNET/TMCWEBSERVICE/GetImage.ashx?username=image&id=";
+	public final static String IMG_TEST_USER ="Technet";
+	public final static String IMG_TEST_PWS ="CEVA";
+	public final static String IMG_PROD_USER ="NOT AVAILABLE AT THE MOMENT";
+	public final static String IMG_PROD_PWS ="NOT AVAILABLE AT THE MOMENT";
+	public final static String IMG_PROD_URI ="NOT AVAILABLE AT THE MOMENT";
 	// REsult = OK = {
 //	   "shipped": "2022-01-28T10:31:00",
 //	   "ATA": "Return in progress"

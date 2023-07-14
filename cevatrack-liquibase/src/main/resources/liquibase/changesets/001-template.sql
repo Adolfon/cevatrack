@@ -1415,3 +1415,20 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('OVE','OVE','OVE.png','',now(),'SYSTEM',now(),'SYSTEM',1);
   
+ --changeset adolfo.cano:001-cjf-template-db-070 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
+  create table if not exists ml_image (
+	load_id text NULL,
+	order_number text NOT NULL,
+	journey_alias text NULL,
+	call_sequence text NULL,
+	actual_call_sequence text NULL,
+	activity_name text NOT NULL,
+	activity_image_no text NULL,
+	activity_start timestamptz NULL,
+	activity_end timestamptz NULL,
+	created_timestamp timestamptz NULL,
+	updated_timestamp timestamptz NULL,
+	CONSTRAINT ml_image_pkey PRIMARY KEY (order_number, activity_name, activity_image_no)
+	);
+			
+  
