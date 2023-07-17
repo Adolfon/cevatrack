@@ -26,6 +26,12 @@ public class ApplicationGlobalConfig {
 	public final static String IMG_PROD_USER ="NOT AVAILABLE AT THE MOMENT";
 	public final static String IMG_PROD_PWS ="NOT AVAILABLE AT THE MOMENT";
 	public final static String IMG_PROD_URI ="NOT AVAILABLE AT THE MOMENT";
+	public final static String IMG_TEST_PROXY_URL = "euixvlprx002.logistics.corp";
+	public final static String IMG_TEST_PROXY_PORT = "3128";
+	public final static String IMG_TEST_PROXY_USR_PSW = "Technet:CEVA";
+	public final static String IMG_PROD_PROXY_URL = "euixvlprx002.logistics.corp";
+	public final static String IMG_PROD_PROXY_PORT = "3128";
+	public final static String IMG_PROD_PROXY_USR_PSW = "Technet:CEVA";
 	// REsult = OK = {
 //	   "shipped": "2022-01-28T10:31:00",
 //	   "ATA": "Return in progress"

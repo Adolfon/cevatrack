@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +37,8 @@ public class WSMicroliseImage {
 	private static String user = null;
 	private static String psw = null;
 	private static String url_env = null;
-	
+	private static Proxy proxy = null;
+	private static boolean hasProxy = false;
 	
 	public WSMicroliseImage(){
 		Log.info("-- Creating object");
@@ -45,18 +48,42 @@ public class WSMicroliseImage {
 	public static void initEnvironment(){
 		Properties systemProps = System.getProperties();		
 		if (systemProps.get("environment.code") != null){
-			if (!systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
-				Log.info(" ----------- We are NOT in the Production environment --> " + systemProps.get("environment.code"));//OK
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
+				Log.info(" ----------- We are in the Production environment --> " + systemProps.get("environment.code"));//OK
 				user = ApplicationGlobalConfig.IMG_TEST_USER;
 				psw = ApplicationGlobalConfig.IMG_TEST_PWS;
-				url_env = ApplicationGlobalConfig.IMG_TEST_URI;				
+				url_env = ApplicationGlobalConfig.IMG_TEST_URI;		
+				hasProxy = true;
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
 				//this.environment = "LOCAL";
-			}else{
-				Log.info(" ----------- We INDEED are in the Production environment --> " + systemProps.get("environment.code"));//OK
-				user = ApplicationGlobalConfig.IMG_PROD_USER;
-				psw = ApplicationGlobalConfig.IMG_PROD_PWS;
-				url_env = ApplicationGlobalConfig.IMG_PROD_URI;
+			}
+			
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("LOCAL")){	
+				Log.info(" ----------- We INDEED are in the LOCAL environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.IMG_TEST_USER;
+				psw = ApplicationGlobalConfig.IMG_TEST_PWS;
+				url_env = ApplicationGlobalConfig.IMG_TEST_URI;	
+				hasProxy = false;
 			}				
+			
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-DEVL")){
+				Log.info(" ----------- We INDEED are in the DEVELOPMENT environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.IMG_TEST_USER;
+				psw = ApplicationGlobalConfig.IMG_TEST_PWS;
+				url_env = ApplicationGlobalConfig.IMG_TEST_URI;
+				hasProxy = true;
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
+			}
+			
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-TEST")){
+				Log.info(" ----------- We INDEED are in the TEST environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.IMG_TEST_USER;
+				psw = ApplicationGlobalConfig.IMG_TEST_PWS;
+				url_env = ApplicationGlobalConfig.IMG_TEST_URI;
+				hasProxy = true;
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
+			}
+						
 		}
 	}
 
@@ -80,10 +107,16 @@ public class WSMicroliseImage {
 			Log.info("URL = " + url_env + imageRef);
 			url = new URL(url_env + imageRef);
 			URLConnection uc = url.openConnection();
-			Log.info(" -- WS 1");			
 			uc.setRequestProperty ("Authorization", basicAuth);
+			if (hasProxy){
+				Log.info("-- It has proxy..");
+				httpURLConnection = (HttpsURLConnection) url.openConnection(proxy);
+			}else{
+				httpURLConnection = (HttpsURLConnection) url.openConnection();
+			}
+			Log.info(" -- WS 1");						
 			// Set up the connection object (https://stackoverflow.com/questions/9943351/httpsurlconnection-and-keep-alive)
-			httpURLConnection = (HttpsURLConnection) url.openConnection();
+			//httpURLConnection = (HttpsURLConnection) url.openConnection();
 			//httpURLConnection.setSSLSocketFactory(sc.getSocketFactory());
 			//httpURLConnection.setSSLSocketFactory(new SSLSocketFactoryExtended()); // <- provide support for old TLS uklsf003
 			httpURLConnection.setRequestMethod("GET");

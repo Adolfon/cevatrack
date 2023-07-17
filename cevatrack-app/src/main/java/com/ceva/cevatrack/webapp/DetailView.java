@@ -204,7 +204,11 @@ public class DetailView implements Serializable, CommonApp {
     		beanp.setActivity_image_no(photo.getActivity_image_no());
     		beanp.setActivity_name(photo.getActivity_name());
     		beanp.setPhoto(ressPhoto);
-    		photos.add(beanp);    		
+    		if (ressPhoto != null){
+    			photos.add(beanp);
+    		}else{
+    			LOG.error("-- Photo was not retreived, null..");
+    		}
     	}    	
 		
 	}
