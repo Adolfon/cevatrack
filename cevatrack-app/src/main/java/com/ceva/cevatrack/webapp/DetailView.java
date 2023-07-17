@@ -54,7 +54,17 @@ public class DetailView implements Serializable, CommonApp {
     private Boolean pollEnabled;
     private Boolean retry;
     private String network;
-    private ArrayList<MicrolisePhotoVO> photos = null;
+    private Boolean existPhotos = false;
+    
+    public Boolean getExistPhotos() {
+		return existPhotos;
+	}
+
+	public void setExistPhotos(Boolean existPhotos) {
+		this.existPhotos = existPhotos;
+	}
+
+	private ArrayList<MicrolisePhotoVO> photos = null;
     
 
     public ArrayList<MicrolisePhotoVO> getPhotos() {
@@ -171,10 +181,18 @@ public class DetailView implements Serializable, CommonApp {
             }
             LOGGER.info(" -- Final content, vehicles: " + consignment.getVehicles().size() + ", drivers: " + consignment.getDrivers().size() + 
             		", cons details: " + consignment.getConsignmentDetails().size());
-            if (network.equalsIgnoreCase("technet")){
-            	LOGGER.info("-- Looking on Technet network for associated consignment reference photos");
-            	retrieve_microlise_photos(consignmentReference);
-            }
+//            if (network.equalsIgnoreCase("technet")){
+//            	LOGGER.info("-- Looking on Technet network for associated consignment reference photos");
+//            	retrieve_microlise_photos(consignmentReference);
+//            }
+            ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>) mpsService.getPhotoRef(consignmentReference);
+        	if (beansP != null){
+        		LOG.info("-- Recovered photos: " + beansP.size());
+        		this.existPhotos = true;
+        	}else{
+        		this.existPhotos = false;
+        		LOG.warn("-- There are no photos for reference: " + consignmentReference);
+        	}
         } catch (Exception e) {
             LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
             // this message works fine
@@ -183,6 +201,24 @@ public class DetailView implements Serializable, CommonApp {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Communication Error", getMessage());
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
+    }
+    
+    
+    public void paintPhotos(){
+    	LOGGER.info("-- Paint photos has been called..");
+    	if (this.network.equalsIgnoreCase("technet")){
+    		ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>) mpsService.getPhotoRef(consignmentReference);
+        	if (beansP != null){
+        		LOG.info("-- Recovered photos: " + beansP.size());
+        		this.existPhotos = true;
+        	}else{
+        		this.existPhotos = false;
+        		LOG.warn("-- There are no photos for reference: " + consignmentReference);
+        	}
+        	LOGGER.info("-- Looking on Technet network for associated consignment reference photos");
+        	retrieve_microlise_photos(this.consignmentReference);        	
+        }
+    	LOGGER.info("-- Paint photos finished correctly..");
     }
 
     private void retrieve_microlise_photos(String consignmentReference) {

@@ -16,6 +16,12 @@
 			<div id="welcomePage" class="ceva-text-welcome-page">
 			
 				<h:form id="form">
+				
+				<ui:fragment id="fragmentPhotosCommand" rendered="#{dtDetailView.existPhotos}">
+					<p:remoteCommand autoRun="true" action="#{dtDetailView.paintPhotos}"
+	                         update="form:toggleable-photos" name="longRunningInit"/>
+                 </ui:fragment>
+                         
 				  <p:poll  id="poll"  autoStart="false" interval="30" listener="#{dtDetailView.refresh}" widgetVar="poll" update="menuform:serverDate,toggleable-header,toggleable-site,toggleable-timings,toggleable-journey,fragmentSignatory,fragmentVehicles,fragmentDrivers,fragmentConsignment" />
 					<p:growl id="growl" showDetail="true" />
 					
@@ -27,6 +33,10 @@
 		                <div class="panel-body">#{dtDetailView.consignment.consignmentReference}</div>
 		              </div>
 	             </div>
+	             
+	             
+	             
+	             
 		           <ui:fragment rendered="#{! empty dtDetailView.consignment.consignmentCustomerOrderRef}">
                   <div class="ui-g-12 ui-md-4 ui-lg-2">
 			              <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
