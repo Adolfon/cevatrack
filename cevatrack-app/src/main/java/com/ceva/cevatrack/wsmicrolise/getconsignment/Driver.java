@@ -50,4 +50,11 @@ public class Driver {
         this.journeyId = value;
     }
 
+	@Override
+	public String toString() {
+		return "Driver [displayName=" + displayName + ", fullName=" + fullName + ", contactNumber=" + contactNumber
+				+ ", journeyId=" + journeyId + "]";
+	}
+    
+
 }

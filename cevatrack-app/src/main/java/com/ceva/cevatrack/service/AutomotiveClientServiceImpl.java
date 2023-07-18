@@ -50,8 +50,8 @@ public class AutomotiveClientServiceImpl implements AutomotiveClientService {
     }
 
     @Override
-    public SmartNetClientVO getAutomotiveClient(String clientName) {
-        return searchAutomotiveClient().stream().filter(client -> clientName.equals(client.getName())).findAny()
+    public SmartNetClientVO getAutomotiveClient(String prefix) {
+        return searchAutomotiveClient().stream().filter(client -> prefix.equals(client.getPrefixes())).findAny()
                 .orElse(null);
     }
     

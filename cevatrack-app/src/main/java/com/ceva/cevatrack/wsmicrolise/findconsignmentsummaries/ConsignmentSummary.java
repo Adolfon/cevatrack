@@ -3,6 +3,12 @@ package com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries;
 
 import java.time.format.DateTimeFormatter;
 import javax.xml.bind.annotation.XmlElement;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ceva.cevatrack.technet.ws.WebServiceTechNetImpl;
 import com.ceva.cevatrack.wsmicrolise.Common;
 
 /**
@@ -30,6 +36,7 @@ public class ConsignmentSummary {
     protected int consignmentHeaderId;
     // DD/MM/YYY HH:MM
     private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm ");
+    private static final Logger LOG = LoggerFactory.getLogger(ConsignmentSummary.class);
 
     /**
      * @return is complex due to bug in web service - erroneous blank at char 16
@@ -39,12 +46,22 @@ public class ConsignmentSummary {
     	if ("LOTPRO".equals(consignmentReference.substring(0,6))){
     		if ("L02".equals(consignmentReference.substring(7,10)) || "RED".equals(consignmentReference.substring(7,10)) 
     				&& !"REDARCH".equals(consignmentReference.substring(7,14))){
-    			return consignmentReference.replaceAll("\\s", "");
-    		}
+    			String ori = new String(consignmentReference);
+    			String str = consignmentReference.replaceAll("\\s", "");
+    			LOG.warn(" ------ Special conversion 1 reference: " + ori + ", returning: " + str);
+    			return str;
+    		}    		
     		return consignmentReference;
-    	}    	
+    	}       	    	
+    	if (consignmentReference.length() == 17){    
+    		String cr = new String(consignmentReference).replaceAll("\\s", "");
+    		LOG.warn(" ---- ------ Special conversion 3, ref: " + this.consignmentReference + ", returning: " + cr);
+    		return cr;
+    	}
         if (consignmentReference.length() > 16) {
-            return consignmentReference.substring(0, 16) + consignmentReference.substring(17);
+        	String cr = new String(consignmentReference).replaceAll("\\s", "");
+        	LOG.warn(" ------ Special conversion 2 reference: " + this.consignmentReference + ", returning: " + cr);
+            return cr;
         }
         return consignmentReference;
     }
@@ -89,6 +106,7 @@ public class ConsignmentSummary {
     }
 
     public String getPtaString() {
+    	LOG.info("-- pta: " + pta);
         return Common.formatDate(pta, FORMATTERDEFAULT, null, pta);
     }
 
@@ -102,7 +120,11 @@ public class ConsignmentSummary {
     }
 
     public String getAtaString() {
-        return Common.formatDate(ata, FORMATTERDEFAULT, null, ata);
+    	if (!StringUtils.isBlank(ata)){
+    		return Common.formatDate(ata, FORMATTERDEFAULT, null, ata);
+    	}else{
+    		return "";
+    	}
     }
 
     @XmlElement(name = "PTA2")

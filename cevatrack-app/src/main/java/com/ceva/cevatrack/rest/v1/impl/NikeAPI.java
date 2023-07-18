@@ -381,7 +381,8 @@ public class NikeAPI implements Serializable{
 					return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
 					+ "\", \"ETA\": \"" + ATA_DPD[1] + "\"}").build();
     			}
-    			if (ATA_DPD[6] != null){// PARCEL RECONSIGNED RTC
+    			if (ATA_DPD[6] != null){// PARCEL RECONSIGNED RTC OR ANY CODE 53 
+    									//LIKE FOR EXAMPLE PARCEL RECONSIGNED
     				String ATA = "Return in progress";
     				return Response.ok().entity("{ " + "\"shipped\": \"" + ATA_DPD[3]  
     						+ "\", \"ATA\": \"" + ATA + "\"}").build();
@@ -782,7 +783,8 @@ public class NikeAPI implements Serializable{
     		if (this.environment.equals("LOCAL")){    
     			LOGGER.info("-- Configuring for LOCAL");
     			//proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
-    			url = new URL(ApplicationGlobalConfig.DPD_TEST_URI);
+    			//only read access, and the test url does not work anymore..
+    			url = new URL(ApplicationGlobalConfig.DPD_PROD_URI);
     			connection = (HttpURLConnection) url.openConnection(); 
     		}
     		if (this.environment.equals("DEV")){
@@ -874,11 +876,16 @@ public class NikeAPI implements Serializable{
     		LOGGER.info(" -- DPD not deliveried, out for delivery or parcel data situations --");
 			return null;  
     	}
-		LOGGER.info(" -- The response does include a valid code  --");
+		LOGGER.info(" -- The response does include a valid code (" + code + ") --" );
     	info[3] = retrieveInitialParcelDate(stringResponse);
 		//No matter what is the last event, if we have "Parcel Reconsigned RTC" in the response.
     	if (stringResponse.contains("PARCEL RECONSIGNED RTC")){
     		info[6] = "DPD_FAILING_CALLING_CARD_TWICE";
+    		return info;
+    	}
+    	//We have that RTC or not RTC, parcel reconsigned is code 53
+    	if (code == DPD_RTC_CODE ){
+    		info[6] = "PARCEL_RECONSIGNED";
     		return info;
     	}
 		if (code == DPD_OUT_FOR_DELIVER_CODE){

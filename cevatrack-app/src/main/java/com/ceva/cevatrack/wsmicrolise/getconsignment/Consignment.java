@@ -3,6 +3,8 @@ package com.ceva.cevatrack.wsmicrolise.getconsignment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -509,7 +511,7 @@ public class Consignment {
      * @return only if different to actual arrival. I think this is geo-fence arrival.
      */
     public String getJourneyActualStartTimeString() {
-        if (journeyActualStartTime.equals(ata)) {
+        if (journeyActualStartTime == null || journeyActualStartTime.equals(ata)) {
             return null;
         }
         return Common.formatDate(journeyActualStartTime, null, null, journeyActualStartTime);
@@ -679,7 +681,7 @@ public class Consignment {
 
 	@Override
 	public String toString() {
-		return "Consignment [label1=" + label1 + ", label2=" + label2 + ", label3=" + label3 + ", label4=" + label4
+		String v1 = "Consignment [label1=" + label1 + ", label2=" + label2 + ", label3=" + label3 + ", label4=" + label4
 				+ ", consignmentReference=" + consignmentReference + ", consignmentCustomerOrderRef="
 				+ consignmentCustomerOrderRef + ", consignmentStatus=" + consignmentStatus + ", consignmentDetails="
 				+ consignmentDetails + ", ata=" + ata + ", atd=" + atd + ", signatory=" + signatory + ", signature="
@@ -701,7 +703,10 @@ public class Consignment {
 				+ ", consignmentHeaderInfo7=" + consignmentHeaderInfo7 + ", consignmentHeaderInfo8="
 				+ consignmentHeaderInfo8 + ", consignmentHeaderInfo9=" + consignmentHeaderInfo9
 				+ ", consignmentHeaderInfo10=" + consignmentHeaderInfo10 + ", consignmentHeaderInfo11="
-				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";
+				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";				
+		String v2 = "\nVehicles: " + vehicles.stream().map(Object::toString).collect(Collectors.joining(","));
+		String v3 = "\nDrivers: " + drivers.stream().map(Object::toString).collect(Collectors.joining(","));
+		return v1 + v2 + v3;		
 	}
 
 }

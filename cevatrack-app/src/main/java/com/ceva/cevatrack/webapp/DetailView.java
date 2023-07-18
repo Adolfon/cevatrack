@@ -43,7 +43,7 @@ public class DetailView implements Serializable, CommonApp {
     private Consignment consignment;
     private String client;
     private String dateRange;
-    private String consignmentReference;
+    private String consignmentReference,prefix;
     private String message;
     // AutoRefresh
     private String date;
@@ -87,6 +87,13 @@ public class DetailView implements Serializable, CommonApp {
         client = params.get("client");
         dateRange = params.get("daterange");//null
         consignmentReference = params.get("con");
+        if (consignmentReference == null){
+        	LOGGER.error(" -- No consignment reference has been passed as a parameter --");
+        }else{
+        	LOG.info(" -- consignment is not null --");
+        	prefix = new String(consignmentReference.substring(0, consignmentReference.indexOf("/")));
+        	LOG.info(" -- prefix is: " + prefix);
+        }
         LOGGER.info("(init) Parameters: client: " + client + ",dateRange: " + dateRange + ",cons Ref: "
                 + consignmentReference);
         // ClientConfig cc;
@@ -97,34 +104,34 @@ public class DetailView implements Serializable, CommonApp {
         client = params.get("client");                
         try{
         	boolean match = false;
-        	if (client == null || network==null){
+        	if (prefix == null || network==null){
         		throw new Exception (" -- There is no a valid network or client parameter -- ");
         	}
 	        if (network.equalsIgnoreCase("technet")){
 	        	match = true;
 	        	LOGGER.info("technet network detected");
-	        	clientDetail = tnClientService.getTechNetClient(client);
+	        	clientDetail = tnClientService.getTechNetClient(prefix);
 	        } 
 	        if (network.equalsIgnoreCase("smartnet")){
 	        	match = true;
 	        	LOGGER.info("smartnet network detected");
-	        	clientDetail = snClientService.getSmartNetClient(client);
+	        	clientDetail = snClientService.getSmartNetClient(prefix);
 	        }
 	        if (network.equalsIgnoreCase("Automotive")){
 	        	match = true;
 	        	LOGGER.info("Automotive network detected");
-	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        	clientDetail = amClientService.getAutomotiveClient(prefix);
 	        }
 	        if (network.equalsIgnoreCase("Healthcare")){
 	        	match = true;
-	        	LOGGER.info("Automotive network detected");
-	        	clientDetail = hcClientService.getHealthcareClient(client);
+	        	LOGGER.info("Healthcare network detected");
+	        	clientDetail = hcClientService.getHealthcareClient(prefix);
 	        }
 	        if (!match || clientDetail == null){
 	        	throw new Exception (" -- There is not a valid matching network or client does not exist -- ");
 	        }
         } catch (Exception e){
-        	LOGGER.error(" -- Error in DB service obtaining clients details -- " + ExceptionUtils.getFullStackTrace(e));
+        	LOGGER.error(" -- Error in DB service obtaining clients details -- ", e);
         	return;
         }        
         // check that the client has access to this consignment
@@ -139,6 +146,8 @@ public class DetailView implements Serializable, CommonApp {
                 this.consignment.setConsignmentReference(consignmentReference);
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
             }
+            LOGGER.info(" -- Final content, vehicles: " + consignment.getVehicles().size() + ", drivers: " + consignment.getDrivers().size() + 
+            		", cons details: " + consignment.getConsignmentDetails().size());
         } catch (Exception e) {
             LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
             // this message works fine

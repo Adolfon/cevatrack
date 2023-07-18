@@ -74,6 +74,7 @@
 													<f:param name="network" value="#{dtClientView.network}" />
 													<f:param name="site" value="z0" />
 													<f:param name="client" value="#{client.clientConfig.name}" />
+													<f:param name="prefix" value="#{client.clientConfig.prefixes}" />
 													<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 													<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
 								                	#{client.clientConfig.name}
@@ -87,6 +88,7 @@
 					                  	<f:param name="network" value="#{dtClientView.network}" />
 					                  	<f:param name="site" value="z0" />
 										<f:param name="client" value="#{client.clientConfig.name}" />
+										<f:param name="prefix" value="#{client.clientConfig.prefixes}" />
 										<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 										<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
 						                  <p:graphicImage class="signatureimg" library="images" name="#{client.clientConfig.image}" />
@@ -110,6 +112,7 @@
 							                                	<f:param name="network" value="#{dtClientView.network}" />
 							                                	<f:param name="site" value="z0" />
 																<f:param name="client" value="#{client.clientConfig.name}" />
+																<f:param name="prefix" value="#{client.clientConfig.prefixes}" />
 																<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 																<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
 							                              		<f:param name="initstatus" value="#{dtClientView.getStatusDescription(entry.key)}"/>								                               
@@ -121,6 +124,7 @@
 						                                  	<f:param name="network" value="#{dtClientView.network}" />
 						                                  	<f:param name="site" value="z0" />
 															<f:param name="client" value="#{client.clientConfig.name}" />
+															<f:param name="prefix" value="#{client.clientConfig.prefixes}" />
 															<f:param name="reportdate" value="#{dtClientView.reportDateString}" />
 															<f:param name="reportdateTo" value="#{dtClientView.reportDateStringTo}" />
 						                              		<f:param name="initstatus" value="#{dtClientView.getStatusDescription(entry.key)}"/>

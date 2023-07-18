@@ -2,6 +2,7 @@ package com.ceva.cevatrack.webapp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,10 @@ import com.ceva.cevatrack.wsmicrolise.WsMicroliseComms;
 import com.ceva.cevatrack.wsmicrolise.WsMicroliseEnvironment;
 import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummary;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.Comparator.comparing;
+import java.util.TreeSet;
 
 /**
  * @author brian.goodall
@@ -94,7 +99,9 @@ public class ConsignmentListManager {
         LOGGER.info(" -- Prefixes to filter from the database: " + prefixCountsDB.toString());
         // We're all set up to count now...
         try {
-            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false, network);
+            WsConsignmentSummaries = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, true, false, network, p44Consignments(fromYyyymmdd,toYyyymmdd, network));
+            // This gerenerates duplicates
+            //WsConsignmentSummaries.getConsignmentSummaries().addAll(p44Consignments(fromYyyymmdd,toYyyymmdd, network));
         } catch (IOException io) {
             throw new IOException("IO Error accessing WsConsignmentSummaries Consignment List", io);
         } catch (Exception e) {
@@ -128,7 +135,22 @@ public class ConsignmentListManager {
         return resp;
     }
 
-    /**
+
+	private Collection<ConsignmentSummary> p44Consignments(String fromYyyymmdd, String toYyyymmdd,
+			String network) {
+        if (StringUtils.isEmpty(toYyyymmdd)) {
+        	LOGGER.info(" toYyyymmdd parameter was null, setting it to the fromYyyymmdd one.. ");
+            toYyyymmdd = fromYyyymmdd;
+        }
+		LOGGER.info(" -- Querying P44 consignments with dates, from: " + fromYyyymmdd + " , to: " + toYyyymmdd );	
+		//Collection<Consignment44> col = p44.getListConsignmentsByDate(fromYyyymmdd, toYyyymmdd);		
+		Collection<ConsignmentSummary> col = p44.getListConsignmentsByDateToCS(fromYyyymmdd, toYyyymmdd);
+		LOGGER.info(" The collection has " + col.size() + " items ");
+		//Collection<ConsignmentSummary> colect = new ArrayList<ConsignmentSummary>(col);		
+		return col;		
+	}
+
+	/**
      * @param fromYyyymmdd
      *            from date
      * @param toYyyymmdd
@@ -146,7 +168,7 @@ public class ConsignmentListManager {
         DatedConsignmentList parent;
         List<ConsignmentSummary> respList = new ArrayList<ConsignmentSummary>();
         try {
-            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS, network);
+            parent = getConsignmentSummaries(fromYyyymmdd, toYyyymmdd, cache, WS, network, p44Consignments(fromYyyymmdd,toYyyymmdd, network));
         } catch (IOException e1) {
             throw new IOException("IOExcpetion accessing Parent Consignment List", e1);
         } catch (Exception e) {
@@ -173,7 +195,7 @@ public class ConsignmentListManager {
      *             if unable to generate one
      */
     public DatedConsignmentList getConsignmentSummaries(String fromYyyymmdd, String toYyyymmdd, Boolean cache,
-            Boolean WS, String network) throws Exception {
+            Boolean WS, String network, Collection<ConsignmentSummary> p44) throws Exception {
     	LOGGER.info(" -- Received parameters: " + fromYyyymmdd + ", toYyyymmdd: " + toYyyymmdd + " ,cache: " + cache);
         housekeep(); // Erase old consignments
         String listKey;
@@ -200,19 +222,28 @@ public class ConsignmentListManager {
                 }
             }
         }
-
         try {
             DatedConsignmentList dcl = new DatedConsignmentList(fromYyyymmdd, toYyyymmdd, WS, network);
             // Fix Status from Pending to Delivered when the consignment arrival date is present            
-            LOGGER.info("Consignment store size before put: " + consignmentStore.size());
-            if (dcl.getConsignmentSummaries() == null){
-            	LOGGER.info( " --------it is null");
+            LOGGER.info("Consignment store (cache) size before put: " + consignmentStore.size());
+            if (dcl == null || dcl.getConsignmentSummaries() == null){
+            	LOGGER.error( " --------dcl is null");
+            	throw new Exception(" -- DatedConsignmentList returned null -- ");
             }else{
-            	LOGGER.info( " --------it is not null, size: " + dcl.getConsignmentSummaries().size());            	
+            	LOGGER.info( " --------dcl is not null, size: " + dcl.getConsignmentSummaries().size()); 
+            	if (p44 != null){
+            		LOGGER.info(" -- adding p44 consignments (size: " + p44.size() + ") to the Microlise ones, size: " + dcl.getConsignmentSummaries().size());            		
+            		List<ConsignmentSummary> consignmentSummaries = addP44ConsignmentsWithoutDups(dcl.getConsignmentSummaries(),p44);
+            		dcl.getConsignmentSummaries().clear();
+            		dcl.getConsignmentSummaries().addAll(consignmentSummaries);
+            		LOGGER.info(" -- Total number of consignments after the merge: " + dcl.getConsignmentSummaries().size());
+            	}else{
+            		LOGGER.warn(" -- P44 was null, no adding P44 consignments.. --");
+            	}            	
             	consignmentStore.put(listKey, dcl);
+            	LOGGER.info("-- The new cache position has been added correctly, new size: " + consignmentStore.size());
             	fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(dcl);
-            }
-            
+            }            
             LOGGER.info("Consignment store after put: " + consignmentStore.size() + ",key: " + listKey
                     + ", DatedConsignmentList size: " + dcl.getConsignmentSummaries().size() + " WS?: " + WS);
             return getUserConsignmentList(dcl, currentUser, WS, network);
@@ -229,7 +260,29 @@ public class ConsignmentListManager {
         }
     }
 
-    private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(DatedConsignmentList dcl) {
+    /*
+     * Add a P44 consignment if does not exist already from microlise and remove the duplicates
+     */
+    private List<ConsignmentSummary> addP44ConsignmentsWithoutDups(
+			List<ConsignmentSummary> consignmentSummaries, Collection<ConsignmentSummary> p442) {
+    	LOGGER.info(" -- Starting method addP44ConsignmentsWithoutDups --");
+    	if (p442 == null){
+    		return consignmentSummaries;
+    	}    
+    	LOGGER.info(" -- Starting no dups consignments method,  Microlise consignments: " + consignmentSummaries.size() +", p44: "+ p442.size() + ", -- ");
+    	List<ConsignmentSummary> result = new ArrayList<>(p442);
+    	LOGGER.info(" -- result after addding p44 cons: " + result.size());
+    	result.addAll(consignmentSummaries);
+    	LOGGER.info(" -- result after addding Microlise cons: " + result.size());
+    	List<ConsignmentSummary> usersDistinctByRef = result.stream().collect(
+                collectingAndThen(toCollection(() ->
+                   new TreeSet<>(comparing(ConsignmentSummary::getConsignmentReference))), ArrayList::new));    	    
+    	LOGGER.info(" --- List without duplicates size: " + usersDistinctByRef.size());
+    	return usersDistinctByRef;
+    }
+    	
+
+	private void fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(DatedConsignmentList dcl) {
         dcl.getConsignmentSummaries().stream().filter(obj -> !StringUtils.isBlank((CharSequence) obj.getAtaString()) &&
         // obj.getStatusString().trim().equalsIgnoreCase("Pending"))
                 obj.getConsignmentStatus() == 78).forEach(obj -> {
@@ -246,37 +299,48 @@ public class ConsignmentListManager {
 //        }
         LOGGER.info(" -- Starting method: getUserConsignmentList, network: " + network);
         if (WS && currentUser.isPermitted(TECHNET_SITE)){
+        	LOGGER.info(" -- Returning via WS route..");
         	return source;
         }        
         DatedConsignmentList dcl = new DatedConsignmentList(source); //here dcl = 0 but source = 989 elements...(starts with 0)
         if(network.equalsIgnoreCase("smartnet")){
         	if (currentUser.isPermitted(SN_GLOBAL)){
+        		LOGGER.info(" -- SN_GLOBAL permission granted, returning source..");
         		return source;
         	}
+        	LOGGER.info(" --- Not global permission in smartnet, filtering sites, before: " + source.getConsignmentSummaries().size());
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(SN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- Smartnet after filtering user permissions: " + source.getConsignmentSummaries().size());
         }        
         if(network.equalsIgnoreCase("technet")){
         	if (currentUser.isPermitted(TN_GLOBAL)){
+        		LOGGER.info(" -- TN_GLOBAL permission granted, returning source..");
         		return source;
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(TN_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- After filtering Technet: " + source.getConsignmentSummaries().size());
         }           
         if(network.equalsIgnoreCase("automotive")){
         	if (currentUser.isPermitted(AM_GLOBAL)){
-        		return source;
+        		LOGGER.info(" -- AM_GLOBAL permission granted, returning source..");
+        		return source;        	
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(AM_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- After filtering Automobile: " + source.getConsignmentSummaries().size());
         }
         if(network.equalsIgnoreCase("healthcare")){ //It is not entering here!!! that is why the consignments are not being added...
         	if (currentUser.isPermitted(HC_GLOBAL)){
+        		LOGGER.info(" -- HC_GLOBAL permission granted, returning source..");
         		return source;
         	}
         	dcl.getConsignmentSummaries().addAll(source.getConsignmentSummaries().stream()
                     .filter(con -> currentUser.isPermitted(HC_SITE + con.getSiteId())).collect(Collectors.toList()));
+        	LOGGER.info(" -- After filtering healthcare: " + source.getConsignmentSummaries().size());
         } 
+        LOGGER.info(" -- Total consignments returned: " + source.getConsignmentSummaries().size());
         return dcl;
     }
 
@@ -309,15 +373,38 @@ public class ConsignmentListManager {
      */
     public Consignment getConsignmentDetail(String consignmentReference, String network) throws Exception {
     	LOGGER.info( "-- getConsignmentDetail parameters: "+ consignmentReference + ",network: " + network);
-        Consignment consignment = null;
+        Consignment consignment,cs44 = null, result = null;
         Subject currentUser = null;
         
-        try {
-        	consignment = retrive_p44_consignment(consignmentReference);
-        	if (consignment != null){
-        		return consignment;
-        	}
+        try {        	
             consignment = WsMicroliseComms.getConsignment(consignmentReference, network);
+            if (consignment != null){
+            	LOGGER.info(" -- consignment not null, ETA: " + consignment.getAta() + ", ATA string: " + consignment.getAtaString() 
+            		+ ",ETA string: " + consignment.getEtaString());
+            }
+            //Consignment is null or has not ETA and ATA
+            if (consignment == null || consignment != null && (StringUtils.isBlank(consignment.getAtaString()) &&
+            		StringUtils.isBlank(consignment.getEtaString()))){
+            	LOGGER.warn("-- Could not recover consignment: " + consignmentReference + " ,from Microlise or has not ETA and ATA, trying from P44..");
+	            cs44 = retrive_p44_consignment(consignmentReference);	
+	            if (cs44 != null){
+	            	LOGGER.info(" -- Consignment 44 ATA: " + cs44.getAta() + ",ATA String: " + cs44.getAtaString() + ",ETA: " + cs44.getEta() 
+	            	+ " ,ETA string: " + cs44.getEtaString());
+	            }
+	            if (cs44 != null && !StringUtils.isBlank(cs44.getAtaString()) && StringUtils.isBlank(cs44.getEtaString()) ||
+	        			cs44 != null && StringUtils.isBlank(cs44.getAtaString()) && !StringUtils.isBlank(cs44.getEtaString())){
+	        		LOGGER.info(" -- P44 consignment recovered and has ATA or ETA!");   
+	        		result = cs44;	        		
+	        	}
+            }
+            if (consignment == null && cs44 != null){
+            	LOGGER.info(" -- No response from Microlise but from P44 --");
+            	consignment = cs44;
+            }
+            if (result != null){
+            	LOGGER.info(" -- Microlise response does not have ETA and ATA but P44 response does --");
+            	consignment = result;
+            }
             if (consignment == null){
             	LOGGER.error(" -- The consignment was not retrieved and it is null --");
             	throw new Exception("-- The consignment was not retrieved and it is null --");
@@ -331,6 +418,7 @@ public class ConsignmentListManager {
         	LOGGER.info(" -- Going to secure the subject for network: " + network + " --");
         	currentUser = SecurityUtils.getSubject();
             fixStatusPendingToDeliveredWhenArrivalTimeIsPresent(consignment);
+            LOGGER.info(" -- consignment 44 is: " + consignment);
             if (network.equalsIgnoreCase("smartnet")){
 	            if (currentUser.isPermitted(SN_GLOBAL) || currentUser.isPermitted(SN_SITE + consignment.getSiteId())) {
 	                return consignment;

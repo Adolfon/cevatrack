@@ -1,5 +1,7 @@
 package com.ceva.cevatrack.transformer;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,14 +71,26 @@ public class P44EntitiesTransformer {
 			dvehicle.add(P44EntitiesTransformer.getViewVehicle(vehicle));
 		}
 		log.info(" -- Vehicles added: " + dvehicle.size());
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
 		cons.setVehicles(dvehicle);		
 		//Now the root fields of Consignment
-		cons.setActualStartTime(obj.getActualstarttime());
+		if (obj.getActualstarttime() != null){
+			cons.setActualStartTime(df.format(obj.getActualstarttime()));
+		}
 		cons.setAddress1(obj.getAddress1());
 		cons.setAddress2(obj.getAddress2());
 		cons.setAddress3(obj.getAddress3());
-		cons.setAta(obj.getAta());
-		cons.setAtd(obj.getAtd());
+		if (obj.getAta() != null){
+			cons.setAta(df.format(obj.getAta()));
+		}else{
+			log.info(" -- Ata was null -- ");
+		}
+		if (obj.getAtd() != null){
+			cons.setAtd(df.format(obj.getAtd()));
+		}else{
+			log.info(" -- Atd was null --");
+		}
 		cons.setClauseCode(obj.getClausecode());
 		cons.setConsignmentCustomerOrderRef(obj.getConsignmentcustomerorderref());
 		if (obj.getConsignmentheaderid() == null){
@@ -103,11 +117,23 @@ public class P44EntitiesTransformer {
 		cons.setCountry(obj.getCountry());
 		cons.setCounty(obj.getCounty());
 		cons.setDurationOnSite(obj.getDurationonsite());
-		cons.setEta(obj.getEta());
-		cons.setEtd(obj.getEtd());
+		if (obj.getEta() != null){
+			cons.setEta(df.format(obj.getEta()));
+		}else{
+			log.info("-- Eta was null --");
+		}
+		if (obj.getEtd() != null){
+			cons.setEtd(df.format(obj.getEtd()));
+		}else{
+			log.info(" -- Etd was null --");
+		}
 		cons.setIsAdHoc(obj.getIsadhoc());
 		cons.setIsTranshipment(obj.getIstranshipment());
-		cons.setJourneyActualStartTime(obj.getJourneyactualstarttime());
+		if (obj.getJourneyactualstarttime() != null){
+			cons.setJourneyActualStartTime(df.format(obj.getJourneyactualstarttime()));
+		}else{
+			log.info("-- Journey actual start time was null -- ");
+		}
 		cons.setJourneyAlias(obj.getJourneyalias());
 		if (obj.getJourneydropId() == null){
 			cons.setJourneyDropId(0);
@@ -124,11 +150,27 @@ public class P44EntitiesTransformer {
 		cons.setLabel3(obj.getLabel3());
 		cons.setLabel4(obj.getLabel4());
 		cons.setParentCode(obj.getParentcode());
-		cons.setPlannedStartTime(obj.getPlannedstarttime());
-		cons.setPodStartTime(obj.getPodstarttime());
+		if (obj.getPlannedstarttime() != null){
+			cons.setPlannedStartTime(df.format(obj.getPlannedstarttime()));
+		}else{
+			log.info(" -- planned start time was null --");
+		}
+		if (obj.getPodstarttime() != null){
+			cons.setPodStartTime(df.format(obj.getPodstarttime()));
+		}else{
+			log.info(" -- pod start time was null ");
+		}
 		cons.setPostCode(obj.getPostcode());
-		cons.setPta(obj.getPta());
-		cons.setPtd(obj.getPtd());
+		if (obj.getPta() != null){
+			cons.setPta(df.format(obj.getPta()));
+		}else{
+			log.info("-- Pta was null --");
+		}
+		if (obj.getPtd() != null){
+			cons.setPtd(df.format(obj.getPtd()));
+		}else{
+			log.info("-- Ptd was null");
+		}
 		cons.setRouteId(obj.getRouteid());
 		cons.setSignatory(obj.getSignatory());
 		cons.setSignature(obj.getSignature());
@@ -141,8 +183,17 @@ public class P44EntitiesTransformer {
 		cons.setSiteLat(obj.getSitelat());
 		cons.setSiteLong(obj.getSitelong());
 		cons.setSiteName(obj.getSitename());
-		cons.setTimeWindowEnd(obj.getTimewindowend());
-		cons.setTimeWindowStart(obj.getTimewindowstart());				
+		if (obj.getTimewindowend() != null){
+			cons.setTimeWindowEnd(df.format(obj.getTimewindowend()));
+		}else{
+			log.info("-- time window end was null --");
+		}
+		if (obj.getTimewindowstart() != null){
+			cons.setTimeWindowStart(df.format(obj.getTimewindowstart()));
+		}else{
+			log.info("--time window start was null");
+		}
+		log.info(" -- the final consignment returned is: " + cons);
 		return cons;
 	}
 	

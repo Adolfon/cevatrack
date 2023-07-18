@@ -60,4 +60,10 @@ public class Vehicle {
         this.journeyId = value;
     }
 
+	@Override
+	public String toString() {
+		return "Vehicle [displayName=" + displayName + ", lastLocation=" + lastLocation + ", lastContactLat="
+				+ lastContactLat + ", lastContactLong=" + lastContactLong + ", journeyId=" + journeyId + "]";
+	}
+
 }

@@ -1,6 +1,12 @@
 package com.ceva.cevatrack.repository;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.persistence.NoResultException;
 
@@ -91,4 +97,49 @@ public abstract class P44_Repository extends AbstractFullEntityRepository<Consig
     	}
     	return vehicles;
     }
+    /*
+     * Get the consignments between startDate and endDate
+     */
+    public List<Consignment44> getConsingmentByDate(Date startDate, Date endDate) {
+    	LOG.info(" -- search consingment44 method --");
+        try {
+        	DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        	ZoneId londonZone = TimeZone.getTimeZone("Europe/London").toZoneId();
+        	LocalDateTime ldt = LocalDateTime.ofInstant(startDate.toInstant(), londonZone);
+        	//SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        	String frmDate = ldt.format(FORMATDATE);
+        	String enDate = ldt.format(FORMATDATE); 
+        	enDate = enDate.substring(0, 10) + " 23:59:59";
+        	Calendar c1 = Calendar.getInstance(),c2 = Calendar.getInstance();
+        	c1.setTime(startDate);
+        	c2.setTime(endDate);
+        	c1.set(Calendar.HOUR,0);
+        	c1.set(Calendar.MINUTE, 0);
+        	c1.set(Calendar.SECOND, 0);
+        	c2.set(Calendar.HOUR,23);
+        	c2.set(Calendar.MINUTE, 59);
+        	c2.set(Calendar.SECOND, 59);        	
+        	frmDate = frmDate.substring(0, 10) + " 00:00:00";             	
+        	LOG.info(" -- From date str: " + frmDate + " ,endDate str: " + enDate + " \n-- Date formats from: " + startDate + " ,end: " + endDate
+        			+ "\nCalendar format, start: " + c1.getTime() + " ,end:" + c2.getTime());
+        	List<Consignment44> cons = (List<Consignment44>) entityManager().createQuery("SELECT c FROM Consignment44 c WHERE c.pta BETWEEN :stDate AND :edDate")
+        			.setParameter("stDate", c1.getTime())
+        				.setParameter("edDate", c2.getTime())
+        					.getResultList();
+        	if (cons == null){ 
+        		LOG.warn(" -- The result was null --");
+        		return null;
+        	}
+          LOG.info(" -- Result of the query, size: " + cons.size());
+          return cons; 
+        }
+        catch(NoResultException nre){
+          LOG.warn(" -- The query to consingment data base did not return any result");
+          return null;
+        }
+        catch (Exception e) {
+          LOG.error(" -- Error executing consingment record date search with start date: " + startDate + " ,end date: " + endDate, e);
+          return null;
+        }
+      }
 }

@@ -2,7 +2,6 @@ package com.ceva.cevatrack.webapp;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.SocketTimeoutException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -52,7 +50,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 
     private DatedConsignmentList consignments;
     private String message = "";
-    private String client;
+    private String client,prefix,con;
     private ConsignmentSummary selectedConsignment;
     private List<ConsignmentSummary> filteredSnConsignments;
     private LocalDate reportLocalDate;
@@ -157,26 +155,34 @@ public class ConsignmentView implements Serializable, CommonApp {
         this.params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         this.network = params.get("network");        
         LOGGER.info("the network value in Consignment view is: " + network);
-        client = params.get("client");                
+        prefix = params.get("prefix");
+        con = params.get("con");  
+        if (prefix == null & con != null){
+        	LOG.info("-- Prefix was null, building it from param con --");
+        	prefix = new String(con.substring(0, con.indexOf("/")));
+        }
+        client = params.get("client");    
+        LOGGER.info("-- The client from the param is: " + client + ",its prefix is: " + prefix);
         try{
         	boolean oneSelected = false;
-        	if (client == null || network==null){
-        		throw new Exception (" -- There is no a valid network or client parameter -- ");
+        	if (network==null || prefix == null){
+        		//throw new Exception (" -- There is no a valid network or client parameter -- ");
+        		LOGGER.error("-- There is no a valid network or client parameter --");
         	}
 	        if (network.equalsIgnoreCase("technet")){
 	        	LOGGER.info("technet network detected");
 	        	oneSelected = true;
-	        	clientDetail = tnClientService.getTechNetClient(client);
+	        	clientDetail = tnClientService.getTechNetClient(prefix);
 	        } 
 	        if (network.equalsIgnoreCase("smartnet")){
 	        	LOGGER.info("smartnet network detected");
 	        	oneSelected = true;
-	        	clientDetail = snClientService.getSmartNetClient(client);
+	        	clientDetail = snClientService.getSmartNetClient(prefix);
 	        }
 	        if (network.equalsIgnoreCase("Automotive")){
 	        	LOGGER.info("Automotive network detected");
 	        	oneSelected = true;
-	        	clientDetail = amClientService.getAutomotiveClient(client);
+	        	clientDetail = amClientService.getAutomotiveClient(prefix);
 	        	if (clientDetail == null){
 	        		clientDetail = amClientService.getAutomotiveClientByAAFName(client);
 	        	}
@@ -184,7 +190,7 @@ public class ConsignmentView implements Serializable, CommonApp {
 	        if (network.equalsIgnoreCase("Healthcare")){
 	        	LOGGER.info("Health network detected");
 	        	oneSelected = true;
-	        	clientDetail = hcClientService.getHealthcareClient(client);
+	        	clientDetail = hcClientService.getHealthcareClient(prefix);
 	        }
 	        if (!oneSelected){
 	        	throw new Exception (" -- There was not a valid network selected -- ");
@@ -209,9 +215,11 @@ public class ConsignmentView implements Serializable, CommonApp {
                 reportLocalDateTo = LocalDate.parse(reportDateTo, FORMATTER);
             }
             if (clientDetail == null){
+            	LOGGER.info(" -- Client detail was null...");
             	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
                         null, new ArrayList<String>(), true, false, this.network);
             }else{
+            	LOGGER.info(" -- Client detail was NOT null...");
             	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
                         null, clientDetail.getPfx(), true, false, this.network);
             }
@@ -266,6 +274,9 @@ public class ConsignmentView implements Serializable, CommonApp {
             LOGGER.error("Request consignments summaries for the new dates (calendar event) failed", e);
         }
         LOGGER.info(" -- Data successfully retrieved for the new selected date: " + reportLocalDate);
+        if (consignments != null){
+        	LOGGER.info("--Retrieved consignments: " + consignments.getConsignmentSummaries().size());
+        }
         datePickerSuccess = reportLocalDate;
         datePickerSuccessTo = reportLocalDate;
     }
