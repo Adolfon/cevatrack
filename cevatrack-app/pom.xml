@@ -20,6 +20,8 @@
 		<warName>cevatrack</warName>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    	<maven.compiler.target>1.8</maven.compiler.target>
+    	<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 
 	<dependencies>
@@ -27,6 +29,11 @@
 			<groupId>org.primefaces</groupId>
 			<artifactId>harmony-theme</artifactId>
 			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.omnifaces</groupId>
+		    <artifactId>omnifaces</artifactId>
+		    <version>2.7.23</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -154,7 +161,27 @@
                 <directory>src/main/resources</directory>
             </resource>            
         </resources>
-		<plugins>
+		<plugins> <!-- 
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-enforcer-plugin</artifactId>
+		        <version>3.3.0</version>
+		        <executions>
+		          <execution>
+		            <id>enforce-java</id>
+		            <goals>
+		              <goal>enforce</goal>
+		            </goals>
+		            <configuration>
+		              <rules>
+		                <requireJavaVersion>
+		                  <version>1.8.0-180</version> // 1.8.0-281 reference the minimum minor version (280 and up is okay) 
+		                </requireJavaVersion>
+		              </rules>    
+		            </configuration>
+		          </execution>
+		        </executions>
+		      </plugin>  -->
 			<plugin>
 		        <artifactId>maven-war-plugin</artifactId>
 		        <version>3.2.2</version>

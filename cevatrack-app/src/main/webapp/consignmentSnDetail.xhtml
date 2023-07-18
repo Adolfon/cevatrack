@@ -5,6 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" 
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:shiro="http://shiro.apache.org/tags"	
+	xmlns:o="http://omnifaces.org/ui"
 	template="app-template_detailRefresh.xhtml">
 	
 	<ui:define name="content">
@@ -706,6 +707,29 @@
               </c:forEach>
 	          </p:panel>
           </ui:fragment>
+          
+           <ui:fragment id="fragmentPhotos" rendered="#{dtDetailView.photos.size() > 0}">
+            <p:panel id="toggleable-photos" header="Photos" toggleable="true" widgetVar="accordian_photos" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+              <c:forEach var="bph" items="#{dtDetailView.photos}">
+                <div class="ui-g">
+                   
+                  <div class="ui-g-12 ui-md-12 ui-lg-12">
+                    <div class="panel field-panel panel-#{dtDetailView.consignment.statusCssClass}">
+                      <div class="panel-heading">Photo description: #{bph.activity_name}</div>
+                      <div class="panel-body">
+                      	 <div class="ui-g-12 ui-md-12 ui-lg-12">
+							<o:graphicImage class="ui-g-12 ui-md-12 ui-lg-12" value="#{bph.photo}" dataURI="true" />
+						</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </c:forEach>
+            </p:panel>
+          </ui:fragment>
+          
+          
+          
 		</h:form>
 	</div>
    </div>

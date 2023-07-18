@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -22,11 +23,14 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.service.AutomotiveClientService;
 import com.ceva.cevatrack.service.HealthcareClientService;
+import com.ceva.cevatrack.service.MicrolisePhotoService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
 import com.ceva.cevatrack.util.CommonApp;
+import com.ceva.cevatrack.vo.MicrolisePhotoVO;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
+import com.ceva.cevatrack.wsmicrolise.WSMicroliseImage;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
 
 /**
@@ -50,9 +54,22 @@ public class DetailView implements Serializable, CommonApp {
     private Boolean pollEnabled;
     private Boolean retry;
     private String network;
+    private ArrayList<MicrolisePhotoVO> photos = null;
+    
 
-    @ManagedProperty(value = "#{consignmentListManager}")
+    public ArrayList<MicrolisePhotoVO> getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(ArrayList<MicrolisePhotoVO> photos) {
+		this.photos = photos;
+	}
+
+	@ManagedProperty(value = "#{consignmentListManager}")
     public ConsignmentListManager consignmentListManager;
+    
+    @EJB
+    MicrolisePhotoService mpsService;
 
     @EJB
     SmartNetClientService snClientService;
@@ -64,7 +81,7 @@ public class DetailView implements Serializable, CommonApp {
     AutomotiveClientService amClientService;
     
     @EJB
-    HealthcareClientService hcClientService;
+    HealthcareClientService hcClientService; 
     
     /**
      * called once
@@ -86,13 +103,19 @@ public class DetailView implements Serializable, CommonApp {
         pollEnabled = new Boolean(false);
         client = params.get("client");
         dateRange = params.get("daterange");//null
-        consignmentReference = params.get("con");
-        if (consignmentReference == null){
-        	LOGGER.error(" -- No consignment reference has been passed as a parameter --");
-        }else{
-        	LOG.info(" -- consignment is not null --");
-        	prefix = new String(consignmentReference.substring(0, consignmentReference.indexOf("/")));
-        	LOG.info(" -- prefix is: " + prefix);
+        try{
+	        consignmentReference = params.get("con");
+	        if (consignmentReference == null){
+	        	LOGGER.error(" -- No consignment reference has been passed as a parameter --");
+	        	throw new Exception("-- No consignment reference passed as a parameter..");	        	  	
+	        }else{
+	        	LOG.info(" -- consignment is not null --");
+	        	prefix = new String(consignmentReference.substring(0, consignmentReference.indexOf("/")));
+	        	LOG.info(" -- prefix is: " + prefix);
+	        }
+        }catch (Exception e){
+        	LOGGER.error("-- Error retrieving the consignment param.. ", e);
+        	return;
         }
         LOGGER.info("(init) Parameters: client: " + client + ",dateRange: " + dateRange + ",cons Ref: "
                 + consignmentReference);
@@ -148,6 +171,10 @@ public class DetailView implements Serializable, CommonApp {
             }
             LOGGER.info(" -- Final content, vehicles: " + consignment.getVehicles().size() + ", drivers: " + consignment.getDrivers().size() + 
             		", cons details: " + consignment.getConsignmentDetails().size());
+            if (network.equalsIgnoreCase("technet")){
+            	LOGGER.info("-- Looking on Technet network for associated consignment reference photos");
+            	retrieve_microlise_photos(consignmentReference);
+            }
         } catch (Exception e) {
             LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
             // this message works fine
@@ -158,7 +185,35 @@ public class DetailView implements Serializable, CommonApp {
         }
     }
 
-    public void changePoll() {
+    private void retrieve_microlise_photos(String consignmentReference) {
+    	this.photos = new ArrayList<>();
+    	//ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>) mpsService.getPhotoRef("RICOHT/230629/11");
+    	ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>) mpsService.getPhotoRef(consignmentReference);
+    	if (beansP != null){
+    		LOG.info("-- Recovered photos: " + beansP.size());
+    	}else{
+    		LOG.warn("-- There are no photos for reference: " + consignmentReference);
+    	}
+    	MicrolisePhotoVO beanp = null;
+    	LOG.info(" -- Orders beans recovered: " + beansP.size());  
+    	WSMicroliseImage ws = new WSMicroliseImage();
+    	for (MicrolisePhotoVO photo:beansP){
+    		LOG.info("photo bean recovered: " + photo.toString());
+    		byte[] ressPhoto = WSMicroliseImage.callWS(photo.getActivity_image_no());
+    		beanp = new MicrolisePhotoVO();
+    		beanp.setActivity_image_no(photo.getActivity_image_no());
+    		beanp.setActivity_name(photo.getActivity_name());
+    		beanp.setPhoto(ressPhoto);
+    		if (ressPhoto != null){
+    			photos.add(beanp);
+    		}else{
+    			LOG.error("-- Photo was not retreived, null..");
+    		}
+    	}    	
+		
+	}
+
+	public void changePoll() {
         if (this.pollEnabled) {
             this.pollEnabled = false;
             LOGGER.info("pollEnabled = " + getPollEnabled());
