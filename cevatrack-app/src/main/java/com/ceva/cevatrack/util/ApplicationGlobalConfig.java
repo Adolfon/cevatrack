@@ -23,9 +23,9 @@ public class ApplicationGlobalConfig {
 	public final static String IMG_TEST_URI ="https://uat.microlise.com/CEVA_TechNET/TMCWEBSERVICE/GetImage.ashx?username=image&id=";
 	public final static String IMG_TEST_USER ="Technet";
 	public final static String IMG_TEST_PWS ="CEVA";
-	public final static String IMG_PROD_USER ="NOT AVAILABLE AT THE MOMENT";
-	public final static String IMG_PROD_PWS ="NOT AVAILABLE AT THE MOMENT";
-	public final static String IMG_PROD_URI ="NOT AVAILABLE AT THE MOMENT";
+	public final static String IMG_PROD_USER ="Technet";
+	public final static String IMG_PROD_PWS ="CEVA";
+	public final static String IMG_PROD_URI ="https://live.microlise.com/CEVA_TechNET/TMCWEBSERVICE/GetImage.ashx?username=image&id=";
 	public final static String IMG_TEST_PROXY_URL = "euixvlprx002.logistics.corp";
 	public final static String IMG_TEST_PROXY_PORT = "3128";
 	public final static String IMG_TEST_PROXY_USR_PSW = "Technet:CEVA";

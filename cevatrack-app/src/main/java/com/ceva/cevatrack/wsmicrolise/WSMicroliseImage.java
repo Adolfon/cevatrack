@@ -50,9 +50,9 @@ public class WSMicroliseImage {
 		if (systemProps.get("environment.code") != null){
 			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
 				Log.info(" ----------- We are in the Production environment --> " + systemProps.get("environment.code"));//OK
-				user = ApplicationGlobalConfig.IMG_TEST_USER;
-				psw = ApplicationGlobalConfig.IMG_TEST_PWS;
-				url_env = ApplicationGlobalConfig.IMG_TEST_URI;		
+				user = ApplicationGlobalConfig.IMG_PROD_USER;
+				psw = ApplicationGlobalConfig.IMG_PROD_PWS;
+				url_env = ApplicationGlobalConfig.IMG_PROD_URI;		
 				hasProxy = true;
 				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
 				//this.environment = "LOCAL";
