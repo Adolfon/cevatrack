@@ -149,7 +149,7 @@ public class WSMicroliseImage {
 				}
 				return null;
 			} else {
-				Log.info("-- WEBSERVICE CODE: " + respCode + " ,SUCCESS: " + resp);
+				Log.info("-- WEBSERVICE SUCCESS: " + resp);
 				try (InputStream str = httpURLConnection.getInputStream()) {
 					// String result = new BufferedReader(new
 					// InputStreamReader(str))
@@ -157,6 +157,9 @@ public class WSMicroliseImage {
 					finalResultbytes = returnFromStream(str);
 					if (finalResultbytes != null){
 						Log.info("-- Result WS returned: " + finalResultbytes.length);
+						if (finalResultbytes.length == 0){
+							Log.warn("-- ===== WARNING THE WS DID NOT RETURN ANY PHOTO FOR REFERENCE: " + imageRef);
+						}
 					}
 					return finalResultbytes;
 				}
