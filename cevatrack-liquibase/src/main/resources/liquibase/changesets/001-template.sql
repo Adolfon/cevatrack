@@ -1430,4 +1430,15 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 	CONSTRAINT ml_image_pkey PRIMARY KEY (order_number, activity_name, activity_image_no)
 	);
 			
+	--changeset adolfo.cano:001-cjf-template-db-071 failOnError:true splitStatements:false logicalFilePath:001-template.sql 
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('SNAP ON','SNAPON','SnapOn.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('TECHNE','TECHNE','CEVA_TECHNE.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('FLYING','FLYING','Flying_Tiger.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('SOTUK','SOTUK','SnapOn.png','',now(),'SYSTEM',now(),'SYSTEM',1);
+INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('QUAD','QUAD','QUAD.png','',now(),'SYSTEM',now(),'SYSTEM',1);
   
