@@ -1442,3 +1442,6 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('QUAD','QUAD','QUAD.png','',now(),'SYSTEM',now(),'SYSTEM',1);
   
+--changeset adolfo.cano:001-cjf-template-db-072 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+  delete from smartnet_client where prefixes ='LOTPRO' or prefixes = 'BENTL' or prefixes = 'CONTI' or prefixes = 'BGYPSH';
+  
