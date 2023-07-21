@@ -1445,3 +1445,18 @@ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, cre
 --changeset adolfo.cano:001-cjf-template-db-072 failOnError:true splitStatements:false logicalFilePath:001-template.sql
   delete from smartnet_client where prefixes ='LOTPRO' or prefixes = 'BENTL' or prefixes = 'CONTI' or prefixes = 'BGYPSH';
   
+--changeset adolfo.cano:001-cjf-template-db-073 failOnError:true splitStatements:false logicalFilePath:001-template.sql  
+  UPDATE smartnet_client SET aaf_instance = 'flying' WHERE name = 'flying';
+  UPDATE technet_client SET aaf_instance = 'SNAPON' WHERE prefixes = 'SNAPON';
+  UPDATE technet_client SET aaf_instance = 'TECHNE' WHERE prefixes = 'TECHNE';
+  UPDATE technet_client SET aaf_instance = 'QUAD' WHERE prefixes = 'QUAD';
+  DELETE from technet_client where prefixes='SOTUK';
+  UPDATE technet_client SET aaf_instance = 'PITNEY' WHERE prefixes = 'PITNEY';
+  UPDATE technet_client SET aaf_instance = 'REGENC' WHERE prefixes = 'REGENC';
+  UPDATE technet_client SET aaf_instance = 'FAGOR' WHERE prefixes = 'FAGOR';
+  UPDATE technet_client SET aaf_instance = 'XDOA' WHERE prefixes = 'XDOA';
+  UPDATE technet_client SET aaf_instance = 'CBHEAT' WHERE prefixes = 'CBHEAT';
+  UPDATE technet_client SET aaf_instance = 'OVE' WHERE prefixes = 'OVE';
+  UPDATE technet_client SET aaf_instance = 'HILLRO' WHERE prefixes = 'HILLRO';
+  
+  
