@@ -217,11 +217,11 @@ public class ConsignmentView implements Serializable, CommonApp {
             if (clientDetail == null){
             	LOGGER.info(" -- Client detail was null...");
             	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                        null, new ArrayList<String>(), true, false, this.network);
+            			reportLocalDateTo.format(FORMATTER), new ArrayList<String>(), true, false, this.network);
             }else{
             	LOGGER.info(" -- Client detail was NOT null...");
             	consignments = consignmentListManager.getFilteredConsignmentSummaries(reportLocalDate.format(FORMATTER),
-                        null, clientDetail.getPfx(), true, false, this.network);
+            			reportLocalDateTo.format(FORMATTER), clientDetail.getPfx(), true, false, this.network);
             }
             
         } catch (Exception e) {
