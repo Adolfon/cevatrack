@@ -94,7 +94,7 @@ public class DetailView implements Serializable, CommonApp {
                 return;
             }
         } catch (IOException e1) {
-            LOGGER.error(" -- There is not user in the session when calling DetailView class ", e1);
+            LOGGER.error(" -- There is not User in the session when calling DetailView class.. ", e1);
             return;
         }
         retry = true;
