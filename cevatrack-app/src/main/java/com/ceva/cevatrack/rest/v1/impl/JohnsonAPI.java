@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.ClientsAPI;
+import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 
 /*
  * Input Reference number from Johnson
@@ -57,6 +58,7 @@ import com.ceva.cevatrack.domain.ClientsAPI;
 public class JohnsonAPI implements Serializable{
 			
 	private static final long serialVersionUID = 1L;
+	private static int NUMBER_TIMES_CONNECTION_USED = 0;
 	private String id;
 	String userppal = null; 
 
@@ -169,7 +171,7 @@ public class JohnsonAPI implements Serializable{
 	    		}
 	    			    		
 			}catch(Exception e){
-				LOGGER.warn(" -- The user query with ppal: " + this.userppal + ", did not return an expected result..", e);
+				LOGGER.error(" -- The user query with ppal: " + this.userppal + ", did not return an expected result..", e);
 				return 2;
 			}   
     	}else{
@@ -255,9 +257,20 @@ public class JohnsonAPI implements Serializable{
 	
 	private int createEntityManager() {
 		if (this.entityManager != null && entityManager.isOpen()){
-			LOGGER.warn(" -- The entity manager was already created..");
-			return 0;
+			if (NUMBER_TIMES_CONNECTION_USED < ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION){
+				LOGGER.warn(" -- The entity manager was already created..");
+				NUMBER_TIMES_CONNECTION_USED ++;
+				LOGGER.info(" -- Times that the connection has been re-used is: " + NUMBER_TIMES_CONNECTION_USED
+						+ ", the limit is: " + ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION);
+				return 0;
+			}else{
+				//Close entity manager (clean resources)
+				entityManager.clear(); // it cleans the cache, forcing new queries
+				entityManager.close();
+			}
 		}
+		NUMBER_TIMES_CONNECTION_USED = 0;
+		LOGGER.info(" -- Number of times connection reused reached the limit, setting to 0 now: " + NUMBER_TIMES_CONNECTION_USED);
 		int result = -1; 
 		EntityManagerFactory emfact = null;
 		Properties systemProps = System.getProperties();//OK
