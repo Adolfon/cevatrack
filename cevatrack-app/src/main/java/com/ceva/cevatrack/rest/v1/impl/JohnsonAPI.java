@@ -172,6 +172,8 @@ public class JohnsonAPI implements Serializable{
 	    			    		
 			}catch(Exception e){
 				LOGGER.error(" -- The user query with ppal: " + this.userppal + ", did not return an expected result..", e);
+				LOGGER.info("-- Number of times that the connection was reused: " + NUMBER_TIMES_CONNECTION_USED + ", enforcing renew..");
+				NUMBER_TIMES_CONNECTION_USED = ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION + 1;
 				return 2;
 			}   
     	}else{
