@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
-
 import javax.inject.Inject;
 //import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
@@ -29,7 +28,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.mgt.DefaultSecurityManager;
@@ -158,7 +156,7 @@ public class JohnsonAPI implements Serializable{
 	    		if (user.getIsLocked() || !user.getIsActive()){
 	    			return 4;
 	    		}
-	    		if (user.getIncorrectLoginAttempts() > 3){
+	    		if (user.getIncorrectLoginAttempts() > 4){
 	    			return 4;
 	    		}
 	    		if (comparePlainTextToEncrypted(pass,user.getPassword())){
@@ -388,25 +386,52 @@ public class JohnsonAPI implements Serializable{
 					setParameter(1, userName).getSingleResult();
 			LOGGER.info(" -- user recovered: " + user);
 			//entityManager.getTransaction().commit();
+			//entityManager.flush();
 			if (user == null){
 				LOGGER.info(" -- User was not found so the users name is incorrect..");
 				return;
-			}			
-			entityManager.getTransaction().begin();
-			int attempts = user.getIncorrectLoginAttempts() + 1;
-			entityManager.createQuery("UPDATE AAFUser4Nike us SET us.incorrectLoginAttempts = ?1 WHERE us.userPrincipal = ?2").
-					setParameter(1, attempts).
+			}	
+			try{
+				LOGGER.info("--here");
+				entityManager.getTransaction().begin();//For writing query	
+				int attempts = user.getIncorrectLoginAttempts() + 1;
+				entityManager.createQuery("UPDATE AAFUser4Nike us SET us.incorrectLoginAttempts = ?1 WHERE us.userPrincipal = ?2").
+						setParameter(1, attempts).
+						setParameter(2, userName).executeUpdate();
+				entityManager.getTransaction().commit();	
+				if (entityManager != null && entityManager.isOpen()){
+					//entityManager.flush();			//Transaction Exception
+					entityManager.clear(); //Make changes in DB
+				}else{
+					LOGGER.info("-- Not open 1..");
+				}
+				LOGGER.info("-- Attempts are: " + attempts + ", is true?: " + (attempts > 3));
+				if (attempts > 3){
+					LOGGER.warn("-- Number of attempts is 4, locking the user: " + userName);
+					entityManager.getTransaction().begin();
+					LOGGER.info("-- Before ok.." + entityManager.getTransaction().isActive());
+					entityManager.createQuery("UPDATE AAFUser4Nike us SET us.isLocked = ?1 WHERE us.userPrincipal = ?2").
+					setParameter(1, true).
 					setParameter(2, userName).executeUpdate();
-			if (attempts > 3){
-				entityManager.createQuery("UPDATE AAFUser4Nike us SET us.isLocked = ?1 WHERE us.userPrincipal = ?2").
-				setParameter(1, true).
-				setParameter(2, userName).executeUpdate();
+					entityManager.getTransaction().commit();
+					if (entityManager != null && entityManager.isOpen()){
+						//entityManager.flush();			//----------
+						entityManager.clear();
+					}else{
+						LOGGER.info("-- Not open 2..");
+					}
+				}							
+				//entityManager.clear(); //It is the only thing that makes it refresh on DB for this kind of query TODO improve the solution with other type of query (persist)
+				LOGGER.info(" -- user after cleanning: " + user);
+				LOGGER.info(" -- Number of incorrect attempts for user: " + userName + ", = " + attempts);
+			}catch(Exception e){
+				LOGGER.error(" -- There was an error in the transaction: ",e);
+				if (entityManager.getTransaction().isActive()){					
+					entityManager.getTransaction().rollback();
+					entityManager.clear();
+					LOGGER.warn("-- The transaction was rolled back..");
+				}
 			}
-			entityManager.flush();
-			entityManager.getTransaction().commit();
-			entityManager.clear(); //It is the only thing that makes it refresh on DB for this kind of query TODO improve the solution with other type of query (persist)
-			LOGGER.info(" -- user after cleanning: " + user);
-			LOGGER.info(" -- Number of incorrect attempts for user: " + userName + ", = " + attempts);    		
 		}else{
 			LOGGER.error(" -- Entitiy manager was not created successfully..");
 		}
