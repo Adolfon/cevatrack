@@ -1470,4 +1470,7 @@ DELETE from technet_client where prefixes='VIBRAN';
 INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('Vibrant Foods','VIBRAN','VIBRAN.png','',now(),'SYSTEM',now(),'SYSTEM',1);
   
+--changeset adolfo.cano:001-cjf-template-db-076 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+ UPDATE automotive_client SET aaf_instance = 'JAGLR' WHERE prefixes = 'JAGLR';
+ 
   
