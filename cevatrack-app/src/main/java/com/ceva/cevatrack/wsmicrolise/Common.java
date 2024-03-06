@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory;
 public class Common {
     private static final Logger LOG = LoggerFactory.getLogger(Common.class);
     private static final DateTimeFormatter FORMATTERMS = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
-    private static final DateTimeFormatter OUTPUTFORMAT = DateTimeFormatter.ofPattern("dd/MM/yy hh:mm");
+    //private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
+    private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd MMM HH:mm");
+//    private static final DateTimeFormatter OUTPUTFORMAT = DateTimeFormatter.ofPattern("dd/MM/yy hh:mm");
+    private static final DateTimeFormatter OUTPUTFORMAT = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
     
     private static String fixMicroSecondsWhitT(String xml){
     	//2023-04-20T06:11:26.353
