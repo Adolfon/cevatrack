@@ -30,6 +30,7 @@ import com.ceva.cevatrack.service.AutomotiveClientService;
 import com.ceva.cevatrack.service.HealthcareClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
+import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -202,7 +203,7 @@ public class ConsignmentView implements Serializable, CommonApp {
         reportLocalDateTo = reportLocalDate; // init the date to the 'from date'
 
         maxLocalDate = reportLocalDate.minusDays(0L);
-        minLocalDate = reportLocalDate.minusDays(30L);
+        minLocalDate = reportLocalDate.minusDays(ApplicationGlobalConfig.MIN_DATE_CALENDAR);
         maxLocalDateTo = LocalDate.now();
         try {
             // default to today's consignments for this client if not on parameter string

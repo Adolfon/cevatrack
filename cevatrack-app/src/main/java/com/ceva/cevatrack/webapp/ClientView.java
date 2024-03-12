@@ -30,6 +30,7 @@ import com.ceva.cevatrack.service.AutomotiveClientService;
 import com.ceva.cevatrack.service.HealthcareClientService;
 import com.ceva.cevatrack.service.SmartNetClientService;
 import com.ceva.cevatrack.service.TechNetClientService;
+import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 import com.ceva.cevatrack.util.CommonApp;
 import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
@@ -158,7 +159,7 @@ public class ClientView implements Serializable, CommonApp {
         this.maxLocalDateTo = LocalDate.now().plusDays(INTERVAL_DAYS);
         // setMaxDateTo(localToDate(LocalDate.now().plusDays(INTERVAL_DAYS)));
         maxLocalDate = reportLocalDate.minusDays(0L);
-        minLocalDate = reportLocalDate.minusDays(30L);
+        minLocalDate = reportLocalDate.minusDays(ApplicationGlobalConfig.MIN_DATE_CALENDAR);
         try {        	
             LOGGER.info(" -- Updating the Datepicker dates.. ");
             sclients = consignmentListManager.getPortfolioStats(reportLocalDate.format(FORMATTER), null, configs, network);
