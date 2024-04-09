@@ -9,13 +9,13 @@ import com.ceva.cevatrack.vo.TodoVO;
 @Named
 public class TodoEventListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TodoEventListener.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TodoEventListener.class);
 
-    public void addTodoEvent(@Observes @Add TodoVO todoVo) {
-        LOGGER.info("Event Listener: Todo - " + todoVo.getDescription() + " added");
-    }
+  public void addTodoEvent(@Observes @Add TodoVO todoVo) {
+    LOGGER.info("Event Listener: Todo - " + todoVo.getDescription() + " added");
+  }
 
-    public void updateTodoEvent(@Observes @Update TodoVO todoVo) {
-        LOGGER.info("Event Listener: Todo - " + todoVo.getDescription() + " updated");
-    }
+  public void updateTodoEvent(@Observes @Update TodoVO todoVo) {
+    LOGGER.info("Event Listener: Todo - " + todoVo.getDescription() + " updated");
+  }
 }

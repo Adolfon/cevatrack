@@ -8,16 +8,16 @@ package com.ceva.cevatrack.exception;
  */
 public class NoSuchObjectException extends Exception {
 
+  /**
+   * Default Constructor.
+   */
+  public NoSuchObjectException() {
     /**
-     * Default Constructor.
+     * Zero Parameter Constructor
      */
-    public NoSuchObjectException() {
-        /**
-         * Zero Parameter Constructor
-         */
-    }
+  }
 
-    public NoSuchObjectException(String message) {
-        super(message);
-    }
+  public NoSuchObjectException(String message) {
+    super(message);
+  }
 }

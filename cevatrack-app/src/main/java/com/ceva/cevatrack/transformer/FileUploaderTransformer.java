@@ -5,6 +5,6 @@ import com.ceva.cevatrack.domain.FileUploader;
 import com.ceva.cevatrack.vo.FileUploaderVO;
 
 public interface FileUploaderTransformer extends AbstractEntityTransformer<FileUploader> {
-    /** converts vo to entity. */
-    public FileUploader transformToFileUploader(FileUploaderVO fileUploader);
+  /** converts vo to entity. */
+  public FileUploader transformToFileUploader(FileUploaderVO fileUploader);
 }

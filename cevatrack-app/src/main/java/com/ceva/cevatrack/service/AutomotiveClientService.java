@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface AutomotiveClientService {
 
-    public List<SmartNetClientVO> searchAutomotiveClient();
+  public List<SmartNetClientVO> searchAutomotiveClient();
 
-    public SmartNetClientVO getAutomotiveClient(String clientName);
-    
-    public SmartNetClientVO getAutomotiveClientByAAFName(String clientName);
+  public SmartNetClientVO getAutomotiveClient(String clientName);
+
+  public SmartNetClientVO getAutomotiveClientByAAFName(String clientName);
 
 }

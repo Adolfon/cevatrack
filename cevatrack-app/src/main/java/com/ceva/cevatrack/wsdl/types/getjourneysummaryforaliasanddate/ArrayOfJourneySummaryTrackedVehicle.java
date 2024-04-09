@@ -30,38 +30,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArrayOfJourneySummaryTrackedVehicle", propOrder = { "journeySummaryTrackedVehicle" })
+@XmlType(name = "ArrayOfJourneySummaryTrackedVehicle", propOrder = {"journeySummaryTrackedVehicle"})
 public class ArrayOfJourneySummaryTrackedVehicle {
 
-    @XmlElement(name = "JourneySummaryTrackedVehicle", nillable = true)
-    protected List<JourneySummaryTrackedVehicle> journeySummaryTrackedVehicle;
+  @XmlElement(name = "JourneySummaryTrackedVehicle", nillable = true)
+  protected List<JourneySummaryTrackedVehicle> journeySummaryTrackedVehicle;
 
-    /**
-     * Gets the value of the journeySummaryTrackedVehicle property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
-     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
-     * the journeySummaryTrackedVehicle property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getJourneySummaryTrackedVehicle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link JourneySummaryTrackedVehicle }
-     * 
-     * 
-     */
-    public List<JourneySummaryTrackedVehicle> getJourneySummaryTrackedVehicle() {
-        if (journeySummaryTrackedVehicle == null) {
-            journeySummaryTrackedVehicle = new ArrayList<JourneySummaryTrackedVehicle>();
-        }
-        return this.journeySummaryTrackedVehicle;
+  /**
+   * Gets the value of the journeySummaryTrackedVehicle property.
+   * 
+   * <p>
+   * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+   * modification you make to the returned list will be present inside the JAXB object. This is why
+   * there is not a <CODE>set</CODE> method for the journeySummaryTrackedVehicle property.
+   * 
+   * <p>
+   * For example, to add a new item, do as follows:
+   * 
+   * <pre>
+   * getJourneySummaryTrackedVehicle().add(newItem);
+   * </pre>
+   * 
+   * 
+   * <p>
+   * Objects of the following type(s) are allowed in the list {@link JourneySummaryTrackedVehicle }
+   * 
+   * 
+   */
+  public List<JourneySummaryTrackedVehicle> getJourneySummaryTrackedVehicle() {
+    if (journeySummaryTrackedVehicle == null) {
+      journeySummaryTrackedVehicle = new ArrayList<JourneySummaryTrackedVehicle>();
     }
+    return this.journeySummaryTrackedVehicle;
+  }
 
 }

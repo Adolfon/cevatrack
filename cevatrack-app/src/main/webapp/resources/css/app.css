@@ -478,4 +478,55 @@ html.progress, html.progress * {
 .row1 {
   background-color: aliceblue; }
 
+/* =========== DROP BOXES STYLES =================*/
+/* early eta for ‘to be delivered’ orders */
+.green_border_drop {
+  border: solid 4px !important;
+  border-color: #28ff28 !important; }
+
+/* on time eta for ‘to be delivered’ orders */
+.blue_border_drop {
+  border: solid 4px !important;
+  border-color: #1188ff !important; }
+
+/*late eta for ‘to be delivered’ orders*/
+.red_border_drop {
+  border: solid 4px !important;
+  border-color: red !important; }
+
+/*if there is no eta for the consignment */
+.black_border_drop {
+  border: solid 4px !important;
+  border-color: black !important; }
+
+/*early actual delivery time for ‘delivered’ orders*/
+.green_filled {
+  background-color: #00a600; }
+
+.green_filled p {
+  color: white; }
+
+/*on time actual delivery time for ‘delivered’ orders*/
+.blue_filled {
+  background-color: #0b7cfb; }
+
+.blue_filled p {
+  color: white; }
+
+/*late actual delivery time for ‘delivered’ orders*/
+.red_filled {
+  background-color: red; }
+
+.red_filled p {
+  color: white; }
+
+/*refused delivery*/
+.black_filled {
+  background-color: black; }
+
+.black_filled p {
+  color: white; }
+
+/* default drop style*/
+
 /*# sourceMappingURL=../../../../../target/css/app.css.map */

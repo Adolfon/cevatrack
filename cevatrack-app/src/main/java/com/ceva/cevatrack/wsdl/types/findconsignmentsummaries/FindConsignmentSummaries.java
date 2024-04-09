@@ -28,31 +28,30 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "consignmentFilter" })
+@XmlType(name = "", propOrder = {"consignmentFilter"})
 @XmlRootElement(name = "FindConsignmentSummaries")
 public class FindConsignmentSummaries {
 
-    protected ConsignmentFilter consignmentFilter;
+  protected ConsignmentFilter consignmentFilter;
 
-    /**
-     * Gets the value of the consignmentFilter property.
-     * 
-     * @return possible object is {@link ConsignmentFilter }
-     * 
-     */
-    public ConsignmentFilter getConsignmentFilter() {
-        return consignmentFilter;
-    }
+  /**
+   * Gets the value of the consignmentFilter property.
+   * 
+   * @return possible object is {@link ConsignmentFilter }
+   * 
+   */
+  public ConsignmentFilter getConsignmentFilter() {
+    return consignmentFilter;
+  }
 
-    /**
-     * Sets the value of the consignmentFilter property.
-     * 
-     * @param value
-     *            allowed object is {@link ConsignmentFilter }
-     * 
-     */
-    public void setConsignmentFilter(ConsignmentFilter value) {
-        this.consignmentFilter = value;
-    }
+  /**
+   * Sets the value of the consignmentFilter property.
+   * 
+   * @param value allowed object is {@link ConsignmentFilter }
+   * 
+   */
+  public void setConsignmentFilter(ConsignmentFilter value) {
+    this.consignmentFilter = value;
+  }
 
 }

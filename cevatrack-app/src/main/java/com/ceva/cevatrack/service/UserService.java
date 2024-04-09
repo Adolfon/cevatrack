@@ -11,11 +11,11 @@ import com.ceva.cevatrack.vo.AppUserVO;
  */
 public interface UserService {
 
-    public AppUserVO createUser(AppUserVO todo);
+  public AppUserVO createUser(AppUserVO todo);
 
-    public AppUserVO updateUser(AppUserVO todo);
+  public AppUserVO updateUser(AppUserVO todo);
 
-    public List<AppUserVO> searchUser();
+  public List<AppUserVO> searchUser();
 
-    public boolean deleteUser(AppUserVO todo);
+  public boolean deleteUser(AppUserVO todo);
 }

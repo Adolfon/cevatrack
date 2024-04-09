@@ -38,121 +38,122 @@ import com.ceva.cevatrack.vo.FileVO;
 @ViewScoped
 public class FileNavigatorBean extends CJFBaseBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private TreeNode root;
+  private static final long serialVersionUID = 1L;
+  private TreeNode root;
 
-    private TreeNode selectedFile;
+  private TreeNode selectedFile;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileNavigatorBean.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(FileNavigatorBean.class);
 
-    @Inject
-    @ConfigProperty(key = "file.navigator.directories")
-    private String fileNavigatorDirectory;
+  @Inject
+  @ConfigProperty(key = "file.navigator.directories")
+  private String fileNavigatorDirectory;
 
-    @PostConstruct
-    public void init() {
-        root = createFileTree();
-    }
+  @PostConstruct
+  public void init() {
+    root = createFileTree();
+  }
 
-    /**
-     * Creates TreeTable with the list of files of the given Directories.
-     * 
-     */
-    public TreeNode createFileTree() {
-        TreeNode root = new DefaultTreeNode(new FileVO("Files", "", "Folder", ""), null);
-        String[] directories = fileNavigatorDirectory.split(";");
-        DateTimeFormatter newPattern = DateTimeFormatter.ofPattern(getUserProfileDateFormat());
-        LocalDate today = LocalDate.now();
-        for (String directory : directories) {
+  /**
+   * Creates TreeTable with the list of files of the given Directories.
+   * 
+   */
+  public TreeNode createFileTree() {
+    TreeNode root = new DefaultTreeNode(new FileVO("Files", "", "Folder", ""), null);
+    String[] directories = fileNavigatorDirectory.split(";");
+    DateTimeFormatter newPattern = DateTimeFormatter.ofPattern(getUserProfileDateFormat());
+    LocalDate today = LocalDate.now();
+    for (String directory : directories) {
 
-            String folderName = StringUtils.substringAfterLast(directory, File.separator);
-            TreeNode tree = new DefaultTreeNode(new FileVO(folderName, "", "", ""), root);
-            File folder = new File(directory);
+      String folderName = StringUtils.substringAfterLast(directory, File.separator);
+      TreeNode tree = new DefaultTreeNode(new FileVO(folderName, "", "", ""), root);
+      File folder = new File(directory);
 
-            for (File file : folder.listFiles()) {
+      for (File file : folder.listFiles()) {
 
-                if (file.isDirectory()) {
+        if (file.isDirectory()) {
 
-                    TreeNode fileTree = new DefaultTreeNode(new FileVO(file.getName(), "", "", file.getAbsolutePath()),
-                            tree);
+          TreeNode fileTree =
+              new DefaultTreeNode(new FileVO(file.getName(), "", "", file.getAbsolutePath()), tree);
 
-                    File subFolder = new File(file.getPath());
-                    for (File fileOfSubFolder : subFolder.listFiles()) {
-                        new DefaultTreeNode("FileVO",
-                                new FileVO(fileOfSubFolder.getName(), today.format(newPattern),
-                                        String.valueOf(fileOfSubFolder.length()), fileOfSubFolder.getAbsolutePath()),
-                                fileTree);
-                    }
-                } else {
-                    new DefaultTreeNode("FileVO", new FileVO(file.getName(), today.format(newPattern),
-                            String.valueOf(file.length()), file.getAbsolutePath()), tree);
-                }
-            }
+          File subFolder = new File(file.getPath());
+          for (File fileOfSubFolder : subFolder.listFiles()) {
+            new DefaultTreeNode("FileVO",
+                new FileVO(fileOfSubFolder.getName(), today.format(newPattern),
+                    String.valueOf(fileOfSubFolder.length()), fileOfSubFolder.getAbsolutePath()),
+                fileTree);
+          }
+        } else {
+          new DefaultTreeNode("FileVO", new FileVO(file.getName(), today.format(newPattern),
+              String.valueOf(file.length()), file.getAbsolutePath()), tree);
         }
-        return root;
+      }
     }
+    return root;
+  }
 
-    /**
-     * Displays entire file content without tailing functionality.
-     */
-    public void displayFileContent(String filePath) {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
-        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+  /**
+   * Displays entire file content without tailing functionality.
+   */
+  public void displayFileContent(String filePath) {
+    FacesContext facesContext = FacesContext.getCurrentInstance();
+    ExternalContext externalContext = facesContext.getExternalContext();
+    HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 
-        Path path = Paths.get(filePath);
+    Path path = Paths.get(filePath);
+    try {
+      List<String> contents = Files.readAllLines(path);
+      contents.stream().forEach(content -> {
         try {
-            List<String> contents = Files.readAllLines(path);
-            contents.stream().forEach(content -> {
-                try {
-                    response.getWriter().println(content);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            facesContext.responseComplete();
+          response.getWriter().println(content);
         } catch (IOException e) {
-            e.printStackTrace();
-            LOGGER.error("Could not load the file", e.getMessage());
+          throw new RuntimeException(e);
         }
-
+      });
+      facesContext.responseComplete();
+    } catch (IOException e) {
+      e.printStackTrace();
+      LOGGER.error("Could not load the file", e.getMessage());
     }
 
-    /**
-     * Gets the selectedFile in the FileNavigator.
-     * 
-     * @return
-     */
-    public String getFilePath(String filePath) {
-        String encodedFilePath = null;
-        try {
-            encodedFilePath = URLEncoder.encode(
-                    Base64.getEncoder().encodeToString(filePath.replace(File.separator, "_").getBytes()), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+  }
 
-        return "file?faces-redirect=true&filePath=" + encodedFilePath;
+  /**
+   * Gets the selectedFile in the FileNavigator.
+   * 
+   * @return
+   */
+  public String getFilePath(String filePath) {
+    String encodedFilePath = null;
+    try {
+      encodedFilePath = URLEncoder.encode(
+          Base64.getEncoder().encodeToString(filePath.replace(File.separator, "_").getBytes()),
+          "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
 
-    public TreeNode getRoot() {
-        return root;
-    }
+    return "file?faces-redirect=true&filePath=" + encodedFilePath;
+  }
 
-    public TreeNode getSelectedFile() {
-        return selectedFile;
-    }
+  public TreeNode getRoot() {
+    return root;
+  }
 
-    public void setSelectedFile(TreeNode selectedFile) {
-        this.selectedFile = selectedFile;
-    }
+  public TreeNode getSelectedFile() {
+    return selectedFile;
+  }
 
-    public String getFileNavigatorDirectory() {
-        return fileNavigatorDirectory;
-    }
+  public void setSelectedFile(TreeNode selectedFile) {
+    this.selectedFile = selectedFile;
+  }
 
-    public void setFileNavigatorDirectory(String fileNavigatorDirectory) {
-        this.fileNavigatorDirectory = fileNavigatorDirectory;
-    }
+  public String getFileNavigatorDirectory() {
+    return fileNavigatorDirectory;
+  }
+
+  public void setFileNavigatorDirectory(String fileNavigatorDirectory) {
+    this.fileNavigatorDirectory = fileNavigatorDirectory;
+  }
 }

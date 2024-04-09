@@ -13,19 +13,19 @@ import com.ceva.cevatrack.vo.FileUploaderVO;
  */
 @Singleton
 public class FileUploaderTransformerImpl extends AbstractEntityTransformerImpl<FileUploader>
-        implements FileUploaderTransformer {
+    implements FileUploaderTransformer {
 
-    @Override
-    public FileUploader transformToFileUploader(FileUploaderVO fileUploaderVO) {
-        if (fileUploaderVO == null) {
-            return null;
-        }
-        FileUploader fileUploader = new FileUploader();
-        fileUploader.setId(fileUploaderVO.getId());
-        fileUploader.setTodoId(fileUploaderVO.getToDoId());
-        fileUploader.setFileName(fileUploaderVO.getFileName());
-        fileUploader.setContentType(fileUploaderVO.getContentType());
-        return fileUploader;
+  @Override
+  public FileUploader transformToFileUploader(FileUploaderVO fileUploaderVO) {
+    if (fileUploaderVO == null) {
+      return null;
     }
+    FileUploader fileUploader = new FileUploader();
+    fileUploader.setId(fileUploaderVO.getId());
+    fileUploader.setTodoId(fileUploaderVO.getToDoId());
+    fileUploader.setFileName(fileUploaderVO.getFileName());
+    fileUploader.setContentType(fileUploaderVO.getContentType());
+    return fileUploader;
+  }
 
 }

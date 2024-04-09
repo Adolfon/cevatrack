@@ -17,14 +17,14 @@ import com.ceva.cevatrack.vo.AppUserVO;
 @ViewScoped
 public class CJFUserController extends AAFUserManagementBean {
 
-    @EJB
-    private UserService userservice;
+  @EJB
+  private UserService userservice;
 
-    @Override
-    protected void onCreateUserSuccess() {
+  @Override
+  protected void onCreateUserSuccess() {
 
-        AppUserVO user = new AppUserVO();
-        user.setAAFUser(super.user);
-        userservice.createUser(user);
-    }
+    AppUserVO user = new AppUserVO();
+    user.setAAFUser(super.user);
+    userservice.createUser(user);
+  }
 }

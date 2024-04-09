@@ -36,171 +36,164 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JourneySummarySystemEvent", propOrder = { "ruleID", "eventDateTime", "eventDescription", "displayName",
-        "eventLatitude", "eventLocation", "eventLongitude" })
+@XmlType(name = "JourneySummarySystemEvent", propOrder = {"ruleID", "eventDateTime",
+    "eventDescription", "displayName", "eventLatitude", "eventLocation", "eventLongitude"})
 public class JourneySummarySystemEvent {
 
-    @XmlElement(name = "RuleID")
-    protected String ruleID;
-    @XmlElement(name = "EventDateTime", required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar eventDateTime;
-    @XmlElement(name = "EventDescription")
-    protected String eventDescription;
-    @XmlElement(name = "DisplayName")
-    protected String displayName;
-    @XmlElement(name = "EventLatitude")
-    protected Double eventLatitude;
-    @XmlElement(name = "EventLocation")
-    protected String eventLocation;
-    @XmlElement(name = "EventLongitude")
-    protected Double eventLongitude;
+  @XmlElement(name = "RuleID")
+  protected String ruleID;
+  @XmlElement(name = "EventDateTime", required = true)
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar eventDateTime;
+  @XmlElement(name = "EventDescription")
+  protected String eventDescription;
+  @XmlElement(name = "DisplayName")
+  protected String displayName;
+  @XmlElement(name = "EventLatitude")
+  protected Double eventLatitude;
+  @XmlElement(name = "EventLocation")
+  protected String eventLocation;
+  @XmlElement(name = "EventLongitude")
+  protected Double eventLongitude;
 
-    /**
-     * Gets the value of the ruleID property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getRuleID() {
-        return ruleID;
-    }
+  /**
+   * Gets the value of the ruleID property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getRuleID() {
+    return ruleID;
+  }
 
-    /**
-     * Sets the value of the ruleID property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setRuleID(String value) {
-        this.ruleID = value;
-    }
+  /**
+   * Sets the value of the ruleID property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setRuleID(String value) {
+    this.ruleID = value;
+  }
 
-    /**
-     * Gets the value of the eventDateTime property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getEventDateTime() {
-        return eventDateTime;
-    }
+  /**
+   * Gets the value of the eventDateTime property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getEventDateTime() {
+    return eventDateTime;
+  }
 
-    /**
-     * Sets the value of the eventDateTime property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setEventDateTime(XMLGregorianCalendar value) {
-        this.eventDateTime = value;
-    }
+  /**
+   * Sets the value of the eventDateTime property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setEventDateTime(XMLGregorianCalendar value) {
+    this.eventDateTime = value;
+  }
 
-    /**
-     * Gets the value of the eventDescription property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getEventDescription() {
-        return eventDescription;
-    }
+  /**
+   * Gets the value of the eventDescription property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getEventDescription() {
+    return eventDescription;
+  }
 
-    /**
-     * Sets the value of the eventDescription property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setEventDescription(String value) {
-        this.eventDescription = value;
-    }
+  /**
+   * Sets the value of the eventDescription property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setEventDescription(String value) {
+    this.eventDescription = value;
+  }
 
-    /**
-     * Gets the value of the displayName property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
+  /**
+   * Gets the value of the displayName property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    /**
-     * Sets the value of the displayName property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setDisplayName(String value) {
-        this.displayName = value;
-    }
+  /**
+   * Sets the value of the displayName property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setDisplayName(String value) {
+    this.displayName = value;
+  }
 
-    /**
-     * Gets the value of the eventLatitude property.
-     * 
-     * @return possible object is {@link Double }
-     * 
-     */
-    public Double getEventLatitude() {
-        return eventLatitude;
-    }
+  /**
+   * Gets the value of the eventLatitude property.
+   * 
+   * @return possible object is {@link Double }
+   * 
+   */
+  public Double getEventLatitude() {
+    return eventLatitude;
+  }
 
-    /**
-     * Sets the value of the eventLatitude property.
-     * 
-     * @param value
-     *            allowed object is {@link Double }
-     * 
-     */
-    public void setEventLatitude(Double value) {
-        this.eventLatitude = value;
-    }
+  /**
+   * Sets the value of the eventLatitude property.
+   * 
+   * @param value allowed object is {@link Double }
+   * 
+   */
+  public void setEventLatitude(Double value) {
+    this.eventLatitude = value;
+  }
 
-    /**
-     * Gets the value of the eventLocation property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getEventLocation() {
-        return eventLocation;
-    }
+  /**
+   * Gets the value of the eventLocation property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getEventLocation() {
+    return eventLocation;
+  }
 
-    /**
-     * Sets the value of the eventLocation property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setEventLocation(String value) {
-        this.eventLocation = value;
-    }
+  /**
+   * Sets the value of the eventLocation property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setEventLocation(String value) {
+    this.eventLocation = value;
+  }
 
-    /**
-     * Gets the value of the eventLongitude property.
-     * 
-     * @return possible object is {@link Double }
-     * 
-     */
-    public Double getEventLongitude() {
-        return eventLongitude;
-    }
+  /**
+   * Gets the value of the eventLongitude property.
+   * 
+   * @return possible object is {@link Double }
+   * 
+   */
+  public Double getEventLongitude() {
+    return eventLongitude;
+  }
 
-    /**
-     * Sets the value of the eventLongitude property.
-     * 
-     * @param value
-     *            allowed object is {@link Double }
-     * 
-     */
-    public void setEventLongitude(Double value) {
-        this.eventLongitude = value;
-    }
+  /**
+   * Sets the value of the eventLongitude property.
+   * 
+   * @param value allowed object is {@link Double }
+   * 
+   */
+  public void setEventLongitude(Double value) {
+    this.eventLongitude = value;
+  }
 
 }

@@ -10,14 +10,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Envelope", namespace = "http://schemas.xmlsoap.org/soap/envelope/")
 public class GetJourneySummaryForAliasAndDateSoapEnvelope {
 
-    protected GetJourneySummaryForAliasAndDateSoapBody getJourneySummaryForAliasAndDateSoapBody;
+  protected GetJourneySummaryForAliasAndDateSoapBody getJourneySummaryForAliasAndDateSoapBody;
 
-    @XmlElement(name = "Body", namespace = "http://schemas.xmlsoap.org/soap/envelope/")
-    public GetJourneySummaryForAliasAndDateSoapBody getGetJourneySummaryForAliasAndDateSoapBody() {
-        return getJourneySummaryForAliasAndDateSoapBody;
-    }
+  @XmlElement(name = "Body", namespace = "http://schemas.xmlsoap.org/soap/envelope/")
+  public GetJourneySummaryForAliasAndDateSoapBody getGetJourneySummaryForAliasAndDateSoapBody() {
+    return getJourneySummaryForAliasAndDateSoapBody;
+  }
 
-    public void setGetJourneySummaryForAliasAndDateSoapBody(GetJourneySummaryForAliasAndDateSoapBody value) {
-        this.getJourneySummaryForAliasAndDateSoapBody = value;
-    }
+  public void setGetJourneySummaryForAliasAndDateSoapBody(
+      GetJourneySummaryForAliasAndDateSoapBody value) {
+    this.getJourneySummaryForAliasAndDateSoapBody = value;
+  }
 }

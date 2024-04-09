@@ -2,16 +2,16 @@ package com.ceva.cevatrack.domain;
 
 import java.io.Serializable;
 
-public class NameId implements Serializable{
-  
+public class NameId implements Serializable {
+
   private String client_id;
   private String shipment_number;
-  
+
   public NameId(String clientid, String shipmentnumber) {
     this.client_id = clientid;
     this.shipment_number = shipmentnumber;
   }
-  
+
   public NameId() {
     super();
   }
@@ -45,7 +45,7 @@ public class NameId implements Serializable{
     } else if (!shipment_number.equals(other.shipment_number))
       return false;
     return true;
-  }    
+  }
 
 }
 

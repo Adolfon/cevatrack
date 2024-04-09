@@ -7,11 +7,12 @@ import com.ceva.security.aaf.transformer.AbstractEntityTransformer;
 
 
 public interface TechNetClientTransformer extends AbstractEntityTransformer<TechNetClient> {
-    public SmartNetClientVO transformToVO(TechNetClient smartNetClient);
+  public SmartNetClientVO transformToVO(TechNetClient smartNetClient);
 
-    public List<SmartNetClientVO> transformToVO(List<TechNetClient> smartNetClients);
+  public List<SmartNetClientVO> transformToVO(List<TechNetClient> smartNetClients);
 
-    public TechNetClient transformToSmartNetClient(SmartNetClientVO smartNetClient);
+  public TechNetClient transformToSmartNetClient(SmartNetClientVO smartNetClient);
 
-    public void convertToSmartNetClient(SmartNetClientVO smartNetClientVO, TechNetClient smartNetClient);
+  public void convertToSmartNetClient(SmartNetClientVO smartNetClientVO,
+      TechNetClient smartNetClient);
 }

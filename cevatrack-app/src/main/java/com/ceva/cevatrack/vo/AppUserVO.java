@@ -11,14 +11,14 @@ import com.ceva.security.aaf.vo.AAFUserVO;
  */
 public class AppUserVO implements Serializable {
 
-    private AAFUserVO maafUser;
+  private AAFUserVO maafUser;
 
-    public AAFUserVO getAAFUser() {
-        return maafUser;
-    }
+  public AAFUserVO getAAFUser() {
+    return maafUser;
+  }
 
-    public void setAAFUser(AAFUserVO maafUser) {
-        this.maafUser = maafUser;
-    }
+  public void setAAFUser(AAFUserVO maafUser) {
+    this.maafUser = maafUser;
+  }
 
 }

@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface HealthcareClientService {
 
-    public List<SmartNetClientVO> searchHealthcareClient();
+  public List<SmartNetClientVO> searchHealthcareClient();
 
-    public SmartNetClientVO getHealthcareClient(String clientName);
+  public SmartNetClientVO getHealthcareClient(String clientName);
 
 }

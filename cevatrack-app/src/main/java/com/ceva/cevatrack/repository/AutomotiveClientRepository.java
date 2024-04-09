@@ -8,10 +8,11 @@ import org.apache.deltaspike.data.api.Repository;
 
 
 @Repository(forEntity = AutomotiveClient.class)
-public abstract class AutomotiveClientRepository extends AbstractFullEntityRepository<AutomotiveClient, Long> {
+public abstract class AutomotiveClientRepository
+    extends AbstractFullEntityRepository<AutomotiveClient, Long> {
 
-    public abstract Optional<SmartNetClient> findByName(String name);
+  public abstract Optional<SmartNetClient> findByName(String name);
 
-    public abstract Optional<SmartNetClient> findByInstance(String instance);
+  public abstract Optional<SmartNetClient> findByInstance(String instance);
 
 }

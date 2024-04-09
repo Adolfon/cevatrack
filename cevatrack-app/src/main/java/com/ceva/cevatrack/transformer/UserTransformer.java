@@ -12,12 +12,12 @@ import com.ceva.cevatrack.vo.AppUserVO;
  *
  */
 public interface UserTransformer extends AbstractEntityTransformer<User> {
-    public AppUserVO transformToVO(User todo);
+  public AppUserVO transformToVO(User todo);
 
-    public List<AppUserVO> transformToVO(List<User> users);
+  public List<AppUserVO> transformToVO(List<User> users);
 
-    public User transformToUser(AppUserVO todo);
+  public User transformToUser(AppUserVO todo);
 
-    public void convertToUser(AppUserVO userVo, User user);
+  public void convertToUser(AppUserVO userVo, User user);
 
 }

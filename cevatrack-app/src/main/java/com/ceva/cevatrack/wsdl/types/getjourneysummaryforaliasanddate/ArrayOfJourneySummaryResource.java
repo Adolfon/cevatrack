@@ -30,38 +30,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArrayOfJourneySummaryResource", propOrder = { "journeySummaryResource" })
+@XmlType(name = "ArrayOfJourneySummaryResource", propOrder = {"journeySummaryResource"})
 public class ArrayOfJourneySummaryResource {
 
-    @XmlElement(name = "JourneySummaryResource", nillable = true)
-    protected List<JourneySummaryResource> journeySummaryResource;
+  @XmlElement(name = "JourneySummaryResource", nillable = true)
+  protected List<JourneySummaryResource> journeySummaryResource;
 
-    /**
-     * Gets the value of the journeySummaryResource property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
-     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
-     * the journeySummaryResource property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getJourneySummaryResource().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link JourneySummaryResource }
-     * 
-     * 
-     */
-    public List<JourneySummaryResource> getJourneySummaryResource() {
-        if (journeySummaryResource == null) {
-            journeySummaryResource = new ArrayList<JourneySummaryResource>();
-        }
-        return this.journeySummaryResource;
+  /**
+   * Gets the value of the journeySummaryResource property.
+   * 
+   * <p>
+   * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+   * modification you make to the returned list will be present inside the JAXB object. This is why
+   * there is not a <CODE>set</CODE> method for the journeySummaryResource property.
+   * 
+   * <p>
+   * For example, to add a new item, do as follows:
+   * 
+   * <pre>
+   * getJourneySummaryResource().add(newItem);
+   * </pre>
+   * 
+   * 
+   * <p>
+   * Objects of the following type(s) are allowed in the list {@link JourneySummaryResource }
+   * 
+   * 
+   */
+  public List<JourneySummaryResource> getJourneySummaryResource() {
+    if (journeySummaryResource == null) {
+      journeySummaryResource = new ArrayList<JourneySummaryResource>();
     }
+    return this.journeySummaryResource;
+  }
 
 }

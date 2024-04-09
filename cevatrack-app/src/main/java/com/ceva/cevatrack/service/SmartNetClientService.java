@@ -9,8 +9,8 @@ import java.util.List;
  */
 public interface SmartNetClientService {
 
-    public List<SmartNetClientVO> searchSmartNetClient();
+  public List<SmartNetClientVO> searchSmartNetClient();
 
-    public SmartNetClientVO getSmartNetClient(String clientCode);
+  public SmartNetClientVO getSmartNetClient(String clientCode);
 
 }

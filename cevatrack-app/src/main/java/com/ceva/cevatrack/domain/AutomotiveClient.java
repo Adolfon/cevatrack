@@ -19,85 +19,79 @@ import com.ceva.framework.domain.AbstractEntity;
 @Access(AccessType.FIELD)
 @Table(name = "automotive_client")
 public class AutomotiveClient extends AbstractEntity<Long> implements Serializable {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String name;
-    private String prefixes;
-    private String image;
-    @Column(name = "aaf_instance")
-    private String aafInstance;
+  private String name;
+  private String prefixes;
+  private String image;
+  @Column(name = "aaf_instance")
+  private String aafInstance;
 
-    public AutomotiveClient() {
-    }
+  public AutomotiveClient() {}
 
-    /**
-     * @param id
-     *            is the id
-     * @param name
-     *            is the client name
-     * @param prefixes
-     *            is the list of microlise consignment prefixes delimited by bar
-     * @param image
-     *            is the png name
-     * @param aafInstance
-     *            is the aaf secured instance
-     */
-    public AutomotiveClient(Long id, String name, String prefixes, String image, String aafInstance) {
-        this.name = name;
-        this.prefixes = prefixes;
-        this.image = image;
-        this.aafInstance = aafInstance;
-    }
+  /**
+   * @param id is the id
+   * @param name is the client name
+   * @param prefixes is the list of microlise consignment prefixes delimited by bar
+   * @param image is the png name
+   * @param aafInstance is the aaf secured instance
+   */
+  public AutomotiveClient(Long id, String name, String prefixes, String image, String aafInstance) {
+    this.name = name;
+    this.prefixes = prefixes;
+    this.image = image;
+    this.aafInstance = aafInstance;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getPrefixes() {
-        return prefixes;
-    }
+  public String getPrefixes() {
+    return prefixes;
+  }
 
-    public void setPrefixes(String prefixes) {
-        this.prefixes = prefixes;
-    }
+  public void setPrefixes(String prefixes) {
+    this.prefixes = prefixes;
+  }
 
-    public String getImage() {
-        return image;
-    }
+  public String getImage() {
+    return image;
+  }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+  public void setImage(String image) {
+    this.image = image;
+  }
 
-    public String getAafInstance() {
-        return aafInstance;
-    }
+  public String getAafInstance() {
+    return aafInstance;
+  }
 
-    public void setAafInstance(String aafInstance) {
-        this.aafInstance = aafInstance;
-    }
+  public void setAafInstance(String aafInstance) {
+    this.aafInstance = aafInstance;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	@Override
-	public String toString() {
-		return "AutomotiveClient [id=" + id + ", name=" + name + ", prefixes=" + prefixes + ", image=" + image
-				+ ", aafInstance=" + aafInstance + "]";
-	}
+  @Override
+  public String toString() {
+    return "AutomotiveClient [id=" + id + ", name=" + name + ", prefixes=" + prefixes + ", image="
+        + image + ", aafInstance=" + aafInstance + "]";
+  }
 
-    
+
 }

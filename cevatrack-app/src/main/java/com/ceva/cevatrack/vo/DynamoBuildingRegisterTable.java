@@ -1,8 +1,9 @@
 package com.ceva.cevatrack.vo;
 
 public class DynamoBuildingRegisterTable {
-  
-  private String Id, CevaLocation, EntryDate, EntryTime,ExitDate, ExitTime, EmpFirstName, EmpLastTime, CevaDeviceId, FireGroup, FireAssemblyPoint; 
+
+  private String Id, CevaLocation, EntryDate, EntryTime, ExitDate, ExitTime, EmpFirstName,
+      EmpLastTime, CevaDeviceId, FireGroup, FireAssemblyPoint;
   private Boolean IsAppointment;
 
   public String getId() {
@@ -86,7 +87,7 @@ public class DynamoBuildingRegisterTable {
   }
 
   public String getFireAssemblyPoint() {
-      return FireAssemblyPoint;    
+    return FireAssemblyPoint;
   }
 
   public void setFireAssemblyPoint(String fireAssemblyPoint) {
@@ -102,12 +103,14 @@ public class DynamoBuildingRegisterTable {
   }
 
   @Override
-  public String toString(){
-    return " Id: " + getId() + ", Ceva Location: " + getCevaLocation() + "\n Entry date: " + getEntryDate() + ", Entry time: " 
-        + getEntryTime() + ", Exit date: " + getExitDate() + ", Exit time: " + getExitTime() + " \n First Name: " + getEmpFirstName() +
-        ", Last Time: " + getEmpLastTime() + ", Ceva device Id: " + getCevaDeviceId() + ", Fire group: " + getFireGroup() + 
-        " \n Fire Assembly point: " + getFireAssemblyPoint() + ", is an appointment?: " + getIsAppointment();
+  public String toString() {
+    return " Id: " + getId() + ", Ceva Location: " + getCevaLocation() + "\n Entry date: "
+        + getEntryDate() + ", Entry time: " + getEntryTime() + ", Exit date: " + getExitDate()
+        + ", Exit time: " + getExitTime() + " \n First Name: " + getEmpFirstName() + ", Last Time: "
+        + getEmpLastTime() + ", Ceva device Id: " + getCevaDeviceId() + ", Fire group: "
+        + getFireGroup() + " \n Fire Assembly point: " + getFireAssemblyPoint()
+        + ", is an appointment?: " + getIsAppointment();
   }
-  
-  
+
+
 }

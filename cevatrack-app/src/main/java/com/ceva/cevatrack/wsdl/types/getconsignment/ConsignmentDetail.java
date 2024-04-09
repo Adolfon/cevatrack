@@ -42,330 +42,321 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConsignmentDetail", propOrder = { "detailID", "detailRef", "customerDetailRef", "parentRef",
-        "orderRef", "description", "plannedQuantity", "actualQuantity", "status", "clauseDetails", "info1", "info2",
-        "info3", "info4", "consignmentHeaderID" })
+@XmlType(name = "ConsignmentDetail",
+    propOrder = {"detailID", "detailRef", "customerDetailRef", "parentRef", "orderRef",
+        "description", "plannedQuantity", "actualQuantity", "status", "clauseDetails", "info1",
+        "info2", "info3", "info4", "consignmentHeaderID"})
 public class ConsignmentDetail {
 
-    @XmlElement(name = "DetailID")
-    protected int detailID;
-    @XmlElement(name = "DetailRef")
-    protected String detailRef;
-    @XmlElement(name = "CustomerDetailRef")
-    protected String customerDetailRef;
-    @XmlElement(name = "ParentRef")
-    protected String parentRef;
-    @XmlElement(name = "OrderRef")
-    protected String orderRef;
-    @XmlElement(name = "Description")
-    protected String description;
-    @XmlElement(name = "PlannedQuantity")
-    protected int plannedQuantity;
-    @XmlElement(name = "ActualQuantity")
-    protected int actualQuantity;
-    @XmlElement(name = "Status")
-    protected short status;
-    @XmlElement(name = "ClauseDetails")
-    protected ArrayOfClausedConsignmentDetail clauseDetails;
-    @XmlElement(name = "Info1")
-    protected String info1;
-    @XmlElement(name = "Info2")
-    protected String info2;
-    @XmlElement(name = "Info3")
-    protected String info3;
-    @XmlElement(name = "Info4")
-    protected String info4;
-    @XmlElement(name = "ConsignmentHeaderID")
-    protected int consignmentHeaderID;
+  @XmlElement(name = "DetailID")
+  protected int detailID;
+  @XmlElement(name = "DetailRef")
+  protected String detailRef;
+  @XmlElement(name = "CustomerDetailRef")
+  protected String customerDetailRef;
+  @XmlElement(name = "ParentRef")
+  protected String parentRef;
+  @XmlElement(name = "OrderRef")
+  protected String orderRef;
+  @XmlElement(name = "Description")
+  protected String description;
+  @XmlElement(name = "PlannedQuantity")
+  protected int plannedQuantity;
+  @XmlElement(name = "ActualQuantity")
+  protected int actualQuantity;
+  @XmlElement(name = "Status")
+  protected short status;
+  @XmlElement(name = "ClauseDetails")
+  protected ArrayOfClausedConsignmentDetail clauseDetails;
+  @XmlElement(name = "Info1")
+  protected String info1;
+  @XmlElement(name = "Info2")
+  protected String info2;
+  @XmlElement(name = "Info3")
+  protected String info3;
+  @XmlElement(name = "Info4")
+  protected String info4;
+  @XmlElement(name = "ConsignmentHeaderID")
+  protected int consignmentHeaderID;
 
-    /**
-     * Gets the value of the detailID property.
-     * 
-     */
-    public int getDetailID() {
-        return detailID;
-    }
+  /**
+   * Gets the value of the detailID property.
+   * 
+   */
+  public int getDetailID() {
+    return detailID;
+  }
 
-    /**
-     * Sets the value of the detailID property.
-     * 
-     */
-    public void setDetailID(int value) {
-        this.detailID = value;
-    }
+  /**
+   * Sets the value of the detailID property.
+   * 
+   */
+  public void setDetailID(int value) {
+    this.detailID = value;
+  }
 
-    /**
-     * Gets the value of the detailRef property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getDetailRef() {
-        return detailRef;
-    }
+  /**
+   * Gets the value of the detailRef property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getDetailRef() {
+    return detailRef;
+  }
 
-    /**
-     * Sets the value of the detailRef property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setDetailRef(String value) {
-        this.detailRef = value;
-    }
+  /**
+   * Sets the value of the detailRef property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setDetailRef(String value) {
+    this.detailRef = value;
+  }
 
-    /**
-     * Gets the value of the customerDetailRef property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getCustomerDetailRef() {
-        return customerDetailRef;
-    }
+  /**
+   * Gets the value of the customerDetailRef property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getCustomerDetailRef() {
+    return customerDetailRef;
+  }
 
-    /**
-     * Sets the value of the customerDetailRef property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setCustomerDetailRef(String value) {
-        this.customerDetailRef = value;
-    }
+  /**
+   * Sets the value of the customerDetailRef property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setCustomerDetailRef(String value) {
+    this.customerDetailRef = value;
+  }
 
-    /**
-     * Gets the value of the parentRef property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getParentRef() {
-        return parentRef;
-    }
+  /**
+   * Gets the value of the parentRef property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getParentRef() {
+    return parentRef;
+  }
 
-    /**
-     * Sets the value of the parentRef property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setParentRef(String value) {
-        this.parentRef = value;
-    }
+  /**
+   * Sets the value of the parentRef property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setParentRef(String value) {
+    this.parentRef = value;
+  }
 
-    /**
-     * Gets the value of the orderRef property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getOrderRef() {
-        return orderRef;
-    }
+  /**
+   * Gets the value of the orderRef property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getOrderRef() {
+    return orderRef;
+  }
 
-    /**
-     * Sets the value of the orderRef property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setOrderRef(String value) {
-        this.orderRef = value;
-    }
+  /**
+   * Sets the value of the orderRef property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setOrderRef(String value) {
+    this.orderRef = value;
+  }
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getDescription() {
-        return description;
-    }
+  /**
+   * Gets the value of the description property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getDescription() {
+    return description;
+  }
 
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
+  /**
+   * Sets the value of the description property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setDescription(String value) {
+    this.description = value;
+  }
 
-    /**
-     * Gets the value of the plannedQuantity property.
-     * 
-     */
-    public int getPlannedQuantity() {
-        return plannedQuantity;
-    }
+  /**
+   * Gets the value of the plannedQuantity property.
+   * 
+   */
+  public int getPlannedQuantity() {
+    return plannedQuantity;
+  }
 
-    /**
-     * Sets the value of the plannedQuantity property.
-     * 
-     */
-    public void setPlannedQuantity(int value) {
-        this.plannedQuantity = value;
-    }
+  /**
+   * Sets the value of the plannedQuantity property.
+   * 
+   */
+  public void setPlannedQuantity(int value) {
+    this.plannedQuantity = value;
+  }
 
-    /**
-     * Gets the value of the actualQuantity property.
-     * 
-     */
-    public int getActualQuantity() {
-        return actualQuantity;
-    }
+  /**
+   * Gets the value of the actualQuantity property.
+   * 
+   */
+  public int getActualQuantity() {
+    return actualQuantity;
+  }
 
-    /**
-     * Sets the value of the actualQuantity property.
-     * 
-     */
-    public void setActualQuantity(int value) {
-        this.actualQuantity = value;
-    }
+  /**
+   * Sets the value of the actualQuantity property.
+   * 
+   */
+  public void setActualQuantity(int value) {
+    this.actualQuantity = value;
+  }
 
-    /**
-     * Gets the value of the status property.
-     * 
-     */
-    public short getStatus() {
-        return status;
-    }
+  /**
+   * Gets the value of the status property.
+   * 
+   */
+  public short getStatus() {
+    return status;
+  }
 
-    /**
-     * Sets the value of the status property.
-     * 
-     */
-    public void setStatus(short value) {
-        this.status = value;
-    }
+  /**
+   * Sets the value of the status property.
+   * 
+   */
+  public void setStatus(short value) {
+    this.status = value;
+  }
 
-    /**
-     * Gets the value of the clauseDetails property.
-     * 
-     * @return possible object is {@link ArrayOfClausedConsignmentDetail }
-     * 
-     */
-    public ArrayOfClausedConsignmentDetail getClauseDetails() {
-        return clauseDetails;
-    }
+  /**
+   * Gets the value of the clauseDetails property.
+   * 
+   * @return possible object is {@link ArrayOfClausedConsignmentDetail }
+   * 
+   */
+  public ArrayOfClausedConsignmentDetail getClauseDetails() {
+    return clauseDetails;
+  }
 
-    /**
-     * Sets the value of the clauseDetails property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfClausedConsignmentDetail }
-     * 
-     */
-    public void setClauseDetails(ArrayOfClausedConsignmentDetail value) {
-        this.clauseDetails = value;
-    }
+  /**
+   * Sets the value of the clauseDetails property.
+   * 
+   * @param value allowed object is {@link ArrayOfClausedConsignmentDetail }
+   * 
+   */
+  public void setClauseDetails(ArrayOfClausedConsignmentDetail value) {
+    this.clauseDetails = value;
+  }
 
-    /**
-     * Gets the value of the info1 property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getInfo1() {
-        return info1;
-    }
+  /**
+   * Gets the value of the info1 property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getInfo1() {
+    return info1;
+  }
 
-    /**
-     * Sets the value of the info1 property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setInfo1(String value) {
-        this.info1 = value;
-    }
+  /**
+   * Sets the value of the info1 property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setInfo1(String value) {
+    this.info1 = value;
+  }
 
-    /**
-     * Gets the value of the info2 property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getInfo2() {
-        return info2;
-    }
+  /**
+   * Gets the value of the info2 property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getInfo2() {
+    return info2;
+  }
 
-    /**
-     * Sets the value of the info2 property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setInfo2(String value) {
-        this.info2 = value;
-    }
+  /**
+   * Sets the value of the info2 property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setInfo2(String value) {
+    this.info2 = value;
+  }
 
-    /**
-     * Gets the value of the info3 property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getInfo3() {
-        return info3;
-    }
+  /**
+   * Gets the value of the info3 property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getInfo3() {
+    return info3;
+  }
 
-    /**
-     * Sets the value of the info3 property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setInfo3(String value) {
-        this.info3 = value;
-    }
+  /**
+   * Sets the value of the info3 property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setInfo3(String value) {
+    this.info3 = value;
+  }
 
-    /**
-     * Gets the value of the info4 property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getInfo4() {
-        return info4;
-    }
+  /**
+   * Gets the value of the info4 property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getInfo4() {
+    return info4;
+  }
 
-    /**
-     * Sets the value of the info4 property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setInfo4(String value) {
-        this.info4 = value;
-    }
+  /**
+   * Sets the value of the info4 property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setInfo4(String value) {
+    this.info4 = value;
+  }
 
-    /**
-     * Gets the value of the consignmentHeaderID property.
-     * 
-     */
-    public int getConsignmentHeaderID() {
-        return consignmentHeaderID;
-    }
+  /**
+   * Gets the value of the consignmentHeaderID property.
+   * 
+   */
+  public int getConsignmentHeaderID() {
+    return consignmentHeaderID;
+  }
 
-    /**
-     * Sets the value of the consignmentHeaderID property.
-     * 
-     */
-    public void setConsignmentHeaderID(int value) {
-        this.consignmentHeaderID = value;
-    }
+  /**
+   * Sets the value of the consignmentHeaderID property.
+   * 
+   */
+  public void setConsignmentHeaderID(int value) {
+    this.consignmentHeaderID = value;
+  }
 
 }

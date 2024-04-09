@@ -29,54 +29,52 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JourneySummaryResponse", propOrder = { "journeySummary", "errorDescription" })
+@XmlType(name = "JourneySummaryResponse", propOrder = {"journeySummary", "errorDescription"})
 public class JourneySummaryResponse {
 
-    @XmlElement(name = "JourneySummary")
-    protected JourneySummary journeySummary;
-    @XmlElement(name = "ErrorDescription")
-    protected String errorDescription;
+  @XmlElement(name = "JourneySummary")
+  protected JourneySummary journeySummary;
+  @XmlElement(name = "ErrorDescription")
+  protected String errorDescription;
 
-    /**
-     * Gets the value of the journeySummary property.
-     * 
-     * @return possible object is {@link JourneySummary }
-     * 
-     */
-    public JourneySummary getJourneySummary() {
-        return journeySummary;
-    }
+  /**
+   * Gets the value of the journeySummary property.
+   * 
+   * @return possible object is {@link JourneySummary }
+   * 
+   */
+  public JourneySummary getJourneySummary() {
+    return journeySummary;
+  }
 
-    /**
-     * Sets the value of the journeySummary property.
-     * 
-     * @param value
-     *            allowed object is {@link JourneySummary }
-     * 
-     */
-    public void setJourneySummary(JourneySummary value) {
-        this.journeySummary = value;
-    }
+  /**
+   * Sets the value of the journeySummary property.
+   * 
+   * @param value allowed object is {@link JourneySummary }
+   * 
+   */
+  public void setJourneySummary(JourneySummary value) {
+    this.journeySummary = value;
+  }
 
-    /**
-     * Gets the value of the errorDescription property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getErrorDescription() {
-        return errorDescription;
-    }
+  /**
+   * Gets the value of the errorDescription property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getErrorDescription() {
+    return errorDescription;
+  }
 
-    /**
-     * Sets the value of the errorDescription property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setErrorDescription(String value) {
-        this.errorDescription = value;
-    }
+  /**
+   * Sets the value of the errorDescription property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setErrorDescription(String value) {
+    this.errorDescription = value;
+  }
 
 }

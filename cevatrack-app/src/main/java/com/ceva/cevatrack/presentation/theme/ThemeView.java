@@ -14,29 +14,28 @@ import javax.inject.Named;
 @SessionScoped
 public class ThemeView implements Serializable {
 
-    private String color;
+  private String color;
 
-    public String getColor() {
-        return color;
+  public String getColor() {
+    return color;
+  }
+
+  public void setColor(String color) {
+    this.color = color;
+  }
+
+  /**
+   * Set Color.
+   * 
+   * @param color theme color
+   */
+  public void change(String color) {
+    if (color.equals("green")) {
+      this.color = null;
+    } else {
+      this.color = "-" + color;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    /**
-     * Set Color.
-     * 
-     * @param color
-     *            theme color
-     */
-    public void change(String color) {
-        if (color.equals("green")) {
-            this.color = null;
-        } else {
-            this.color = "-" + color;
-        }
-
-    }
+  }
 
 }

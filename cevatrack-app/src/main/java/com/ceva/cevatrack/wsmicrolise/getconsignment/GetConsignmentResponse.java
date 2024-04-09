@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 public class GetConsignmentResponse {
 
-    protected Consignment getConsignmentResult;
+  protected Consignment getConsignmentResult;
 
-    // @XmlElement(name = "GetConsignmentResult", namespace = "http://microlise.com/TMC")
-    @XmlElement(name = "GetConsignmentResult")
-    public Consignment getGetConsignmentResult() {
-        return getConsignmentResult;
-    }
+  // @XmlElement(name = "GetConsignmentResult", namespace = "http://microlise.com/TMC")
+  @XmlElement(name = "GetConsignmentResult")
+  public Consignment getGetConsignmentResult() {
+    return getConsignmentResult;
+  }
 
-    public void setGetConsignmentResult(Consignment value) {
-        this.getConsignmentResult = value;
-    }
+  public void setGetConsignmentResult(Consignment value) {
+    this.getConsignmentResult = value;
+  }
 
 }

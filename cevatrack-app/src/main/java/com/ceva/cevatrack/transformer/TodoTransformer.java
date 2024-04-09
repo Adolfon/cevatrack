@@ -12,16 +12,16 @@ import com.ceva.cevatrack.vo.TodoVO;
  *
  */
 public interface TodoTransformer extends AbstractEntityTransformer<Todo> {
-    /** converts entity to vo. */
-    public TodoVO transformToVO(Todo todo);
+  /** converts entity to vo. */
+  public TodoVO transformToVO(Todo todo);
 
-    /** converts entity list to vo list. */
-    public List<TodoVO> transformToVO(List<Todo> users);
+  /** converts entity list to vo list. */
+  public List<TodoVO> transformToVO(List<Todo> users);
 
-    /** converts vo to entity. */
-    public Todo transformToTodo(TodoVO todo);
+  /** converts vo to entity. */
+  public Todo transformToTodo(TodoVO todo);
 
-    /** converts vo to entity. */
-    public void convertToTodo(TodoVO todoVo, Todo todo);
+  /** converts vo to entity. */
+  public void convertToTodo(TodoVO todoVo, Todo todo);
 
 }

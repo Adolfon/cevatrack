@@ -32,62 +32,63 @@ import javax.inject.Named;
 @ApplicationScoped
 public class ThemeBean {
 
-    private List<SelectItem> themes;
+  private List<SelectItem> themes;
 
-    /**
-     * init.
-     */
-    @PostConstruct
-    public void init() {
-        themes = new ArrayList<SelectItem>();
-        themes.add(new SelectItem("cjf", "CJF"));
-        createThemeGroups();
-    }
+  /**
+   * init.
+   */
+  @PostConstruct
+  public void init() {
+    themes = new ArrayList<SelectItem>();
+    themes.add(new SelectItem("cjf", "CJF"));
+    createThemeGroups();
+  }
 
-    private void addThemesToGroup(SelectItemGroup group, String themeName) {
-        group.setSelectItems(new SelectItem[] { new SelectItem(themeName, group.getLabel() + " - Colored"),
-                new SelectItem(themeName + "-light", group.getLabel() + " - Light"),
-                new SelectItem(themeName + "-dark", group.getLabel() + " - Dark") });
-        themes.add(group);
-    }
+  private void addThemesToGroup(SelectItemGroup group, String themeName) {
+    group.setSelectItems(
+        new SelectItem[] {new SelectItem(themeName, group.getLabel() + " - Colored"),
+            new SelectItem(themeName + "-light", group.getLabel() + " - Light"),
+            new SelectItem(themeName + "-dark", group.getLabel() + " - Dark")});
+    themes.add(group);
+  }
 
-    private void createThemeGroups() {
-        addThemesToGroup(new SelectItemGroup("Absolution"), "absolution");
-        addThemesToGroup(new SelectItemGroup("Rebirth"), "rebirth");
-        addThemesToGroup(new SelectItemGroup("Hope"), "hope");
-        addThemesToGroup(new SelectItemGroup("Bliss"), "bliss");
-        addThemesToGroup(new SelectItemGroup("Grace"), "grace");
-        addThemesToGroup(new SelectItemGroup("Dusk"), "dusk");
-        addThemesToGroup(new SelectItemGroup("Navy"), "navy");
-        addThemesToGroup(new SelectItemGroup("Infinity"), "infinity");
-        addThemesToGroup(new SelectItemGroup("Fate"), "fate");
-        addThemesToGroup(new SelectItemGroup("Ruby"), "ruby");
-        addThemesToGroup(new SelectItemGroup("Comfort"), "comfort");
-        addThemesToGroup(new SelectItemGroup("Faith"), "faith");
-        addThemesToGroup(new SelectItemGroup("Violet"), "violet");
-        addThemesToGroup(new SelectItemGroup("Honor"), "honor");
-        addThemesToGroup(new SelectItemGroup("Rebel"), "rebel");
-        addThemesToGroup(new SelectItemGroup("Vanity"), "vanity");
-        addThemesToGroup(new SelectItemGroup("Valor"), "valor");
-        addThemesToGroup(new SelectItemGroup("Merit"), "merit");
-        addThemesToGroup(new SelectItemGroup("Esprit"), "esprit");
-        addThemesToGroup(new SelectItemGroup("Concord"), "concord");
-        addThemesToGroup(new SelectItemGroup("Dulce"), "dulce");
-        addThemesToGroup(new SelectItemGroup("Royal"), "royal");
-        addThemesToGroup(new SelectItemGroup("Hazel"), "hazel");
-        addThemesToGroup(new SelectItemGroup("Essence"), "essence");
-        addThemesToGroup(new SelectItemGroup("Eternity"), "eternity");
-        addThemesToGroup(new SelectItemGroup("Clarity"), "clarity");
-        addThemesToGroup(new SelectItemGroup("Solace"), "solace");
-        addThemesToGroup(new SelectItemGroup("Joy"), "joy");
-        addThemesToGroup(new SelectItemGroup("Purity"), "purity");
-        addThemesToGroup(new SelectItemGroup("Euclid"), "euclid");
-        addThemesToGroup(new SelectItemGroup("Elegance"), "elegance");
-        addThemesToGroup(new SelectItemGroup("Tranquil"), "tranquil");
-    }
+  private void createThemeGroups() {
+    addThemesToGroup(new SelectItemGroup("Absolution"), "absolution");
+    addThemesToGroup(new SelectItemGroup("Rebirth"), "rebirth");
+    addThemesToGroup(new SelectItemGroup("Hope"), "hope");
+    addThemesToGroup(new SelectItemGroup("Bliss"), "bliss");
+    addThemesToGroup(new SelectItemGroup("Grace"), "grace");
+    addThemesToGroup(new SelectItemGroup("Dusk"), "dusk");
+    addThemesToGroup(new SelectItemGroup("Navy"), "navy");
+    addThemesToGroup(new SelectItemGroup("Infinity"), "infinity");
+    addThemesToGroup(new SelectItemGroup("Fate"), "fate");
+    addThemesToGroup(new SelectItemGroup("Ruby"), "ruby");
+    addThemesToGroup(new SelectItemGroup("Comfort"), "comfort");
+    addThemesToGroup(new SelectItemGroup("Faith"), "faith");
+    addThemesToGroup(new SelectItemGroup("Violet"), "violet");
+    addThemesToGroup(new SelectItemGroup("Honor"), "honor");
+    addThemesToGroup(new SelectItemGroup("Rebel"), "rebel");
+    addThemesToGroup(new SelectItemGroup("Vanity"), "vanity");
+    addThemesToGroup(new SelectItemGroup("Valor"), "valor");
+    addThemesToGroup(new SelectItemGroup("Merit"), "merit");
+    addThemesToGroup(new SelectItemGroup("Esprit"), "esprit");
+    addThemesToGroup(new SelectItemGroup("Concord"), "concord");
+    addThemesToGroup(new SelectItemGroup("Dulce"), "dulce");
+    addThemesToGroup(new SelectItemGroup("Royal"), "royal");
+    addThemesToGroup(new SelectItemGroup("Hazel"), "hazel");
+    addThemesToGroup(new SelectItemGroup("Essence"), "essence");
+    addThemesToGroup(new SelectItemGroup("Eternity"), "eternity");
+    addThemesToGroup(new SelectItemGroup("Clarity"), "clarity");
+    addThemesToGroup(new SelectItemGroup("Solace"), "solace");
+    addThemesToGroup(new SelectItemGroup("Joy"), "joy");
+    addThemesToGroup(new SelectItemGroup("Purity"), "purity");
+    addThemesToGroup(new SelectItemGroup("Euclid"), "euclid");
+    addThemesToGroup(new SelectItemGroup("Elegance"), "elegance");
+    addThemesToGroup(new SelectItemGroup("Tranquil"), "tranquil");
+  }
 
-    public List<SelectItem> getThemes() {
-        return themes;
-    }
+  public List<SelectItem> getThemes() {
+    return themes;
+  }
 
 }

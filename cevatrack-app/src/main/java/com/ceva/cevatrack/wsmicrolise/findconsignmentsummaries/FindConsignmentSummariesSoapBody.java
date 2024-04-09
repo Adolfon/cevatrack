@@ -7,15 +7,15 @@ import javax.xml.bind.annotation.XmlElement;
  *
  */
 public class FindConsignmentSummariesSoapBody {
-    protected FindConsignmentSummariesResponse findConsignmentSummariesResponse;
+  protected FindConsignmentSummariesResponse findConsignmentSummariesResponse;
 
-    // @XmlElement(name = "FindConsignmentSummariesResponse", namespace = "http://microlise.com/TMC")
-    @XmlElement(name = "FindConsignmentSummariesResponse")
-    public FindConsignmentSummariesResponse getFindConsignmentSummariesResponse() {
-        return findConsignmentSummariesResponse;
-    }
+  // @XmlElement(name = "FindConsignmentSummariesResponse", namespace = "http://microlise.com/TMC")
+  @XmlElement(name = "FindConsignmentSummariesResponse")
+  public FindConsignmentSummariesResponse getFindConsignmentSummariesResponse() {
+    return findConsignmentSummariesResponse;
+  }
 
-    public void setFindConsignmentSummariesResponse(FindConsignmentSummariesResponse value) {
-        this.findConsignmentSummariesResponse = value;
-    }
+  public void setFindConsignmentSummariesResponse(FindConsignmentSummariesResponse value) {
+    this.findConsignmentSummariesResponse = value;
+  }
 }

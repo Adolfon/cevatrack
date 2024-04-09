@@ -3,11 +3,9 @@ package com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries;
 
 import java.time.format.DateTimeFormatter;
 import javax.xml.bind.annotation.XmlElement;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.ceva.cevatrack.technet.ws.WebServiceTechNetImpl;
 import com.ceva.cevatrack.wsmicrolise.Common;
 
@@ -16,227 +14,231 @@ import com.ceva.cevatrack.wsmicrolise.Common;
  *
  */
 public class ConsignmentSummary {
-	
-    protected String consignmentReference;
-    protected short consignmentStatus;
-    protected ArrayOfString orderReferences;
-    protected String pta;
-    protected String ata;
-    protected String pta2;
-    protected String siteId;
-    protected String siteName;
-    protected String address1;
-    protected String address2;
-    protected String address3;
-    protected String county;
-    protected String postCode;
-    protected String country;
-    protected String contactName;
-    protected String contactNumber;
-    protected int consignmentHeaderId;
-    // DD/MM/YYY HH:MM
-    private static final DateTimeFormatter FORMATTERDEFAULT = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm ");
-    private static final Logger LOG = LoggerFactory.getLogger(ConsignmentSummary.class);
 
-    /**
-     * @return is complex due to bug in web service - erroneous blank at char 16
-     */
-    @XmlElement(name = "ConsignmentReference")
-    public String getConsignmentReference() {
-    	if ("LOTPRO".equals(consignmentReference.substring(0,6))){
-    		if ("L02".equals(consignmentReference.substring(7,10)) || "RED".equals(consignmentReference.substring(7,10)) 
-    				&& !"REDARCH".equals(consignmentReference.substring(7,14))){
-    			String ori = new String(consignmentReference);
-    			String str = consignmentReference.replaceAll("\\s", "");
-    			LOG.warn(" ------ Special conversion 1 reference: " + ori + ", returning: " + str);
-    			return str;
-    		}    		
-    		return consignmentReference;
-    	}       	    	
-    	if (consignmentReference.length() == 17){    
-    		String cr = new String(consignmentReference).replaceAll("\\s", "");
-    		LOG.warn(" ---- ------ Special conversion 3, ref: " + this.consignmentReference + ", returning: " + cr);
-    		return cr;
-    	}
-        if (consignmentReference.length() > 16) {
-        	String cr = new String(consignmentReference).replaceAll("\\s", "");
-        	LOG.warn(" ------ Special conversion 2 reference: " + this.consignmentReference + ", returning: " + cr);
-            return cr;
-        }
-        return consignmentReference;
-    }
+  protected String consignmentReference;
+  protected short consignmentStatus;
+  protected ArrayOfString orderReferences;
+  protected String pta;
+  protected String ata;
+  protected String pta2;
+  protected String siteId;
+  protected String siteName;
+  protected String address1;
+  protected String address2;
+  protected String address3;
+  protected String county;
+  protected String postCode;
+  protected String country;
+  protected String contactName;
+  protected String contactNumber;
+  protected int consignmentHeaderId;
+  // DD/MM/YYY HH:MM
+  private static final DateTimeFormatter FORMATTERDEFAULT =
+      DateTimeFormatter.ofPattern("dd/MM/yy HH:mm ");
+  private static final Logger LOG = LoggerFactory.getLogger(ConsignmentSummary.class);
 
-    public void setConsignmentReference(String value) {
-        this.consignmentReference = value;
+  /**
+   * @return is complex due to bug in web service - erroneous blank at char 16
+   */
+  @XmlElement(name = "ConsignmentReference")
+  public String getConsignmentReference() {
+    if ("LOTPRO".equals(consignmentReference.substring(0, 6))) {
+      if ("L02".equals(consignmentReference.substring(7, 10))
+          || "RED".equals(consignmentReference.substring(7, 10))
+              && !"REDARCH".equals(consignmentReference.substring(7, 14))) {
+        String ori = new String(consignmentReference);
+        String str = consignmentReference.replaceAll("\\s", "");
+        LOG.warn(" ------ Special conversion 1 reference: " + ori + ", returning: " + str);
+        return str;
+      }
+      return consignmentReference;
     }
+    if (consignmentReference.length() == 17) {
+      String cr = new String(consignmentReference).replaceAll("\\s", "");
+      LOG.warn(" ---- ------ Special conversion 3, ref: " + this.consignmentReference
+          + ", returning: " + cr);
+      return cr;
+    }
+    if (consignmentReference.length() > 16) {
+      String cr = new String(consignmentReference).replaceAll("\\s", "");
+      LOG.warn(" ------ Special conversion 2 reference: " + this.consignmentReference
+          + ", returning: " + cr);
+      return cr;
+    }
+    return consignmentReference;
+  }
 
-    public String getPrefix() {
-        return Common.getPrefix(getConsignmentReference());
-    }
+  public void setConsignmentReference(String value) {
+    this.consignmentReference = value;
+  }
 
-    @XmlElement(name = "ConsignmentStatus")
-    public short getConsignmentStatus() {
-        return consignmentStatus;
-    }
+  public String getPrefix() {
+    return Common.getPrefix(getConsignmentReference());
+  }
 
-    public void setConsignmentStatus(short value) {
-        this.consignmentStatus = value;
-    }
+  @XmlElement(name = "ConsignmentStatus")
+  public short getConsignmentStatus() {
+    return consignmentStatus;
+  }
 
-    public String getStatusString() {
-        return Common.getStatusDescription(consignmentStatus);
-    }
+  public void setConsignmentStatus(short value) {
+    this.consignmentStatus = value;
+  }
 
-    @XmlElement(name = "OrderReferences")
-    public ArrayOfString getOrderReferences() {
-        return orderReferences;
-    }
+  public String getStatusString() {
+    return Common.getStatusDescription(consignmentStatus);
+  }
 
-    public void setOrderReferences(ArrayOfString value) {
-        this.orderReferences = value;
-    }    
-    
-    @XmlElement(name = "PTA")
-    public String getPta() {
-        return pta;
-    }
+  @XmlElement(name = "OrderReferences")
+  public ArrayOfString getOrderReferences() {
+    return orderReferences;
+  }
 
-    public void setPta(String value) {
-        this.pta = value;
-    }
+  public void setOrderReferences(ArrayOfString value) {
+    this.orderReferences = value;
+  }
 
-    public String getPtaString() {
-    	LOG.info("-- pta: " + pta);
-        return Common.formatDate(pta, FORMATTERDEFAULT, null, pta);
-    }
+  @XmlElement(name = "PTA")
+  public String getPta() {
+    return pta;
+  }
 
-    @XmlElement(name = "ATA")
-    public String getAta() {
-        return ata;
-    }
+  public void setPta(String value) {
+    this.pta = value;
+  }
 
-    public void setAta(String value) {
-        this.ata = value;
-    }
+  public String getPtaString() {
+    LOG.info("-- pta: " + pta);
+    return Common.formatDate(pta, FORMATTERDEFAULT, null, pta);
+  }
 
-    public String getAtaString() {
-    	if (!StringUtils.isBlank(ata)){
-    		return Common.formatDate(ata, FORMATTERDEFAULT, null, ata);
-    	}else{
-    		return "";
-    	}
-    }
+  @XmlElement(name = "ATA")
+  public String getAta() {
+    return ata;
+  }
 
-    @XmlElement(name = "PTA2")
-    public String getPta2() {
-        return pta2;
-    }
+  public void setAta(String value) {
+    this.ata = value;
+  }
 
-    public void setPta2(String value) {
-        this.pta2 = value;
+  public String getAtaString() {
+    if (!StringUtils.isBlank(ata)) {
+      return Common.formatDate(ata, FORMATTERDEFAULT, null, ata);
+    } else {
+      return "";
     }
+  }
 
-    public String getPta2String() {
-        return Common.formatDate(pta2, null, null, pta2);
-    }
+  @XmlElement(name = "PTA2")
+  public String getPta2() {
+    return pta2;
+  }
 
-    @XmlElement(name = "SiteID")
-    public String getSiteId() {
-        return siteId;
-    }
+  public void setPta2(String value) {
+    this.pta2 = value;
+  }
 
-    public void setSiteId(String value) {
-        this.siteId = value;
-    }
+  public String getPta2String() {
+    return Common.formatDate(pta2, null, null, pta2);
+  }
 
-    @XmlElement(name = "SiteName")
-    public String getSiteName() {
-        return siteName;
-    }
+  @XmlElement(name = "SiteID")
+  public String getSiteId() {
+    return siteId;
+  }
 
-    public void setSiteName(String value) {
-        this.siteName = value;
-    }
+  public void setSiteId(String value) {
+    this.siteId = value;
+  }
 
-    @XmlElement(name = "Address1")
-    public String getAddress1() {
-        return address1;
-    }
+  @XmlElement(name = "SiteName")
+  public String getSiteName() {
+    return siteName;
+  }
 
-    public void setAddress1(String value) {
-        this.address1 = value;
-    }
+  public void setSiteName(String value) {
+    this.siteName = value;
+  }
 
-    @XmlElement(name = "Address2")
-    public String getAddress2() {
-        return address2;
-    }
+  @XmlElement(name = "Address1")
+  public String getAddress1() {
+    return address1;
+  }
 
-    public void setAddress2(String value) {
-        this.address2 = value;
-    }
+  public void setAddress1(String value) {
+    this.address1 = value;
+  }
 
-    @XmlElement(name = "Address3")
-    public String getAddress3() {
-        return address3;
-    }
+  @XmlElement(name = "Address2")
+  public String getAddress2() {
+    return address2;
+  }
 
-    public void setAddress3(String value) {
-        this.address3 = value;
-    }
+  public void setAddress2(String value) {
+    this.address2 = value;
+  }
 
-    @XmlElement(name = "County")
-    public String getCounty() {
-        return county;
-    }
+  @XmlElement(name = "Address3")
+  public String getAddress3() {
+    return address3;
+  }
 
-    public void setCounty(String value) {
-        this.county = value;
-    }
+  public void setAddress3(String value) {
+    this.address3 = value;
+  }
 
-    @XmlElement(name = "PostCode")
-    public String getPostCode() {
-        return postCode;
-    }
+  @XmlElement(name = "County")
+  public String getCounty() {
+    return county;
+  }
 
-    public void setPostCode(String value) {
-        this.postCode = value;
-    }
+  public void setCounty(String value) {
+    this.county = value;
+  }
 
-    @XmlElement(name = "Country")
-    public String getCountry() {
-        return country;
-    }
+  @XmlElement(name = "PostCode")
+  public String getPostCode() {
+    return postCode;
+  }
 
-    public void setCountry(String value) {
-        this.country = value;
-    }
+  public void setPostCode(String value) {
+    this.postCode = value;
+  }
 
-    @XmlElement(name = "ContactName")
-    public String getContactName() {
-        return contactName;
-    }
+  @XmlElement(name = "Country")
+  public String getCountry() {
+    return country;
+  }
 
-    public void setContactName(String value) {
-        this.contactName = value;
-    }
+  public void setCountry(String value) {
+    this.country = value;
+  }
 
-    @XmlElement(name = "ContactNumber")
-    public String getContactNumber() {
-        return contactNumber;
-    }
+  @XmlElement(name = "ContactName")
+  public String getContactName() {
+    return contactName;
+  }
 
-    public void setContactNumber(String value) {
-        this.contactNumber = value;
-    }
+  public void setContactName(String value) {
+    this.contactName = value;
+  }
 
-    @XmlElement(name = "ConsignmentHeaderID")
-    public int getConsignmentHeaderId() {
-        return consignmentHeaderId;
-    }
+  @XmlElement(name = "ContactNumber")
+  public String getContactNumber() {
+    return contactNumber;
+  }
 
-    public void setConsignmentHeaderId(int value) {
-        this.consignmentHeaderId = value;
-    }
+  public void setContactNumber(String value) {
+    this.contactNumber = value;
+  }
+
+  @XmlElement(name = "ConsignmentHeaderID")
+  public int getConsignmentHeaderId() {
+    return consignmentHeaderId;
+  }
+
+  public void setConsignmentHeaderId(int value) {
+    this.consignmentHeaderId = value;
+  }
 
 }

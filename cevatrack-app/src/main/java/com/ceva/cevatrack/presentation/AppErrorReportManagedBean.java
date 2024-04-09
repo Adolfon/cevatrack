@@ -16,25 +16,25 @@ import com.ceva.security.aaf.vo.AAFUserVO;
 @ViewScoped
 public class AppErrorReportManagedBean extends ErrorReportManagedBean implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppErrorReportManagedBean.class);
-    @Inject
-    private AAFUserService userService;
+  private static final Logger LOGGER = LoggerFactory.getLogger(AppErrorReportManagedBean.class);
+  @Inject
+  private AAFUserService userService;
 
-    /**
-     * This method is used to configure the user details in report page by default if user logged in.
-     */
-    public void initUserDetails() {
-        LOGGER.info("In Intialize UserDetails subclass MethodEntry");
-        Subject subject = SecurityUtils.getSubject();
-        if (null != subject && null != subject.getPrincipal()) {
-            AAFUserVO userVo = userService.getUser(subject.getPrincipal().toString());
-            LOGGER.info("After Getting userDetails");
-            reportVo.setLoginId(userVo.getUserPrincipal());
-            reportVo.setEmail(userVo.getEmail());
-            reportVo.setName(userVo.getFirstName() + " " + userVo.getLastName());
-            userLoggedIn = true;
-        }
-        LOGGER.info("initUserDetails Method Exit");
+  /**
+   * This method is used to configure the user details in report page by default if user logged in.
+   */
+  public void initUserDetails() {
+    LOGGER.info("In Intialize UserDetails subclass MethodEntry");
+    Subject subject = SecurityUtils.getSubject();
+    if (null != subject && null != subject.getPrincipal()) {
+      AAFUserVO userVo = userService.getUser(subject.getPrincipal().toString());
+      LOGGER.info("After Getting userDetails");
+      reportVo.setLoginId(userVo.getUserPrincipal());
+      reportVo.setEmail(userVo.getEmail());
+      reportVo.setName(userVo.getFirstName() + " " + userVo.getLastName());
+      userLoggedIn = true;
     }
+    LOGGER.info("initUserDetails Method Exit");
+  }
 
 }

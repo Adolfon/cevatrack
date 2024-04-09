@@ -30,38 +30,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArrayOfDriver", propOrder = { "driver" })
+@XmlType(name = "ArrayOfDriver", propOrder = {"driver"})
 public class ArrayOfDriver {
 
-    @XmlElement(name = "Driver", nillable = true)
-    protected List<Driver> driver;
+  @XmlElement(name = "Driver", nillable = true)
+  protected List<Driver> driver;
 
-    /**
-     * Gets the value of the driver property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
-     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
-     * the driver property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getDriver().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Driver }
-     * 
-     * 
-     */
-    public List<Driver> getDriver() {
-        if (driver == null) {
-            driver = new ArrayList<Driver>();
-        }
-        return this.driver;
+  /**
+   * Gets the value of the driver property.
+   * 
+   * <p>
+   * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+   * modification you make to the returned list will be present inside the JAXB object. This is why
+   * there is not a <CODE>set</CODE> method for the driver property.
+   * 
+   * <p>
+   * For example, to add a new item, do as follows:
+   * 
+   * <pre>
+   * getDriver().add(newItem);
+   * </pre>
+   * 
+   * 
+   * <p>
+   * Objects of the following type(s) are allowed in the list {@link Driver }
+   * 
+   * 
+   */
+  public List<Driver> getDriver() {
+    if (driver == null) {
+      driver = new ArrayList<Driver>();
     }
+    return this.driver;
+  }
 
 }

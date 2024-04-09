@@ -3,7 +3,6 @@ package com.ceva.cevatrack.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -15,770 +14,771 @@ import javax.persistence.Table;
 @Access(AccessType.FIELD)
 @Table(name = "p44_consignments")
 public class Consignment44 implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-     @Id
-     String consignmentreference;
-	 String label1;
-     String label2;
-     String label3;
-     String label4;
-     String consignmentcustomerorderref;
-     short consignmentstatus;
-    // ArrayList<ConsignmentDetail> consignmentDetails;     
-     Date ata;
-     Date atd;
-     String signatory;
-     String signature;
-     Integer journeydropId;
-     Date pta;
-     Date ptd;
-     Date eta;
-     Date etd;
-     Date timewindowstart;
-     Date timewindowend;
-     String siteid;
-     String sitename;
-     String address1;
-     String address2;
-     String address3;
-     String county;
-     String postcode;
-     String country;
-     String contactname;
-     String contactnumber;
-     BigDecimal sitelat;
-     BigDecimal sitelong;
-     String routeid;
-     String journeyalias;
-     Date plannedstarttime;
-     Date actualstarttime;
-     Date podstarttime;
-     //ArrayList<Vehicle> vehicles;
-     //ArrayList<Driver> drivers;
-     Integer sitegeoradius;
-     double durationonsite;
-     Date journeyactualstarttime;
-     short isadhoc;
-     short istranshipment;
-     String clausecode;
-     String parentcode;
-     Integer consignmentheaderid;
-     Integer journeyid;
-     String consignmentheaderinfo1;
-     String consignmentHeaderInfo2;
-     String consignmentHeaderInfo3;
-     String consignmentHeaderInfo4;
-     String consignmentHeaderInfo5;
-     String consignmentHeaderInfo6;
-     String consignmentHeaderInfo7;
-     String consignmentHeaderInfo8;
-     String consignmentHeaderInfo9;
-     String consignmentHeaderInfo10;
-     String consignmentHeaderInfo11;
-     String consignmentHeaderInfo12;
-	
-     
-     
-	public String getConsignmentreference() {
-		return consignmentreference;
-	}
 
+  private static final long serialVersionUID = 1L;
+
+  @Id
+  String consignmentreference;
+  String label1;
+  String label2;
+  String label3;
+  String label4;
+  String consignmentcustomerorderref;
+  short consignmentstatus;
+  // ArrayList<ConsignmentDetail> consignmentDetails;
+  Date ata;
+  Date atd;
+  String signatory;
+  String signature;
+  Integer journeydropId;
+  Date pta;
+  Date ptd;
+  Date eta;
+  Date etd;
+  Date timewindowstart;
+  Date timewindowend;
+  String siteid;
+  String sitename;
+  String address1;
+  String address2;
+  String address3;
+  String county;
+  String postcode;
+  String country;
+  String contactname;
+  String contactnumber;
+  BigDecimal sitelat;
+  BigDecimal sitelong;
+  String routeid;
+  String journeyalias;
+  Date plannedstarttime;
+  Date actualstarttime;
+  Date podstarttime;
+  // ArrayList<Vehicle> vehicles;
+  // ArrayList<Driver> drivers;
+  Integer sitegeoradius;
+  double durationonsite;
+  Date journeyactualstarttime;
+  short isadhoc;
+  short istranshipment;
+  String clausecode;
+  String parentcode;
+  Integer consignmentheaderid;
+  Integer journeyid;
+  String consignmentheaderinfo1;
+  String consignmentHeaderInfo2;
+  String consignmentHeaderInfo3;
+  String consignmentHeaderInfo4;
+  String consignmentHeaderInfo5;
+  String consignmentHeaderInfo6;
+  String consignmentHeaderInfo7;
+  String consignmentHeaderInfo8;
+  String consignmentHeaderInfo9;
+  String consignmentHeaderInfo10;
+  String consignmentHeaderInfo11;
+  String consignmentHeaderInfo12;
 
 
-	public void setConsignmentreference(String consignmentreference) {
-		this.consignmentreference = consignmentreference;
-	}
 
+  public String getConsignmentreference() {
+    return consignmentreference;
+  }
 
 
-	public String getLabel1() {
-		return label1;
-	}
 
+  public void setConsignmentreference(String consignmentreference) {
+    this.consignmentreference = consignmentreference;
+  }
 
 
-	public void setLabel1(String label1) {
-		this.label1 = label1;
-	}
 
+  public String getLabel1() {
+    return label1;
+  }
 
 
-	public String getLabel2() {
-		return label2;
-	}
 
+  public void setLabel1(String label1) {
+    this.label1 = label1;
+  }
 
 
-	public void setLabel2(String label2) {
-		this.label2 = label2;
-	}
 
+  public String getLabel2() {
+    return label2;
+  }
 
 
-	public String getLabel3() {
-		return label3;
-	}
 
+  public void setLabel2(String label2) {
+    this.label2 = label2;
+  }
 
 
-	public void setLabel3(String label3) {
-		this.label3 = label3;
-	}
 
+  public String getLabel3() {
+    return label3;
+  }
 
 
-	public String getLabel4() {
-		return label4;
-	}
 
+  public void setLabel3(String label3) {
+    this.label3 = label3;
+  }
 
 
-	public void setLabel4(String label4) {
-		this.label4 = label4;
-	}
 
+  public String getLabel4() {
+    return label4;
+  }
 
 
-	public String getConsignmentcustomerorderref() {
-		return consignmentcustomerorderref;
-	}
 
+  public void setLabel4(String label4) {
+    this.label4 = label4;
+  }
 
 
-	public void setConsignmentcustomerorderref(String consignmentcustomerorderref) {
-		this.consignmentcustomerorderref = consignmentcustomerorderref;
-	}
 
+  public String getConsignmentcustomerorderref() {
+    return consignmentcustomerorderref;
+  }
 
 
-	public short getConsignmentstatus() {
-		return consignmentstatus;
-	}
 
+  public void setConsignmentcustomerorderref(String consignmentcustomerorderref) {
+    this.consignmentcustomerorderref = consignmentcustomerorderref;
+  }
 
 
-	public void setConsignmentstatus(short consignmentstatus) {
-		this.consignmentstatus = consignmentstatus;
-	}
 
+  public short getConsignmentstatus() {
+    return consignmentstatus;
+  }
 
 
-	public Date getAta() {
-		return ata;
-	}
 
+  public void setConsignmentstatus(short consignmentstatus) {
+    this.consignmentstatus = consignmentstatus;
+  }
 
 
-	public void setAta(Date ata) {
-		this.ata = ata;
-	}
 
+  public Date getAta() {
+    return ata;
+  }
 
 
-	public Date getAtd() {
-		return atd;
-	}
 
+  public void setAta(Date ata) {
+    this.ata = ata;
+  }
 
 
-	public void setAtd(Date atd) {
-		this.atd = atd;
-	}
 
+  public Date getAtd() {
+    return atd;
+  }
 
 
-	public String getSignatory() {
-		return signatory;
-	}
 
+  public void setAtd(Date atd) {
+    this.atd = atd;
+  }
 
 
-	public void setSignatory(String signatory) {
-		this.signatory = signatory;
-	}
 
+  public String getSignatory() {
+    return signatory;
+  }
 
 
-	public String getSignature() {
-		return signature;
-	}
 
+  public void setSignatory(String signatory) {
+    this.signatory = signatory;
+  }
 
 
-	public void setSignature(String signature) {
-		this.signature = signature;
-	}
 
+  public String getSignature() {
+    return signature;
+  }
 
 
-	public Integer getJourneydropId() {
-		return journeydropId;
-	}
 
+  public void setSignature(String signature) {
+    this.signature = signature;
+  }
 
 
-	public void setJourneydropId(Integer journeydropId) {
-		this.journeydropId = journeydropId;
-	}
 
+  public Integer getJourneydropId() {
+    return journeydropId;
+  }
 
 
-	public Date getPta() {
-		return pta;
-	}
 
+  public void setJourneydropId(Integer journeydropId) {
+    this.journeydropId = journeydropId;
+  }
 
 
-	public void setPta(Date pta) {
-		this.pta = pta;
-	}
 
+  public Date getPta() {
+    return pta;
+  }
 
 
-	public Date getPtd() {
-		return ptd;
-	}
 
+  public void setPta(Date pta) {
+    this.pta = pta;
+  }
 
 
-	public void setPtd(Date ptd) {
-		this.ptd = ptd;
-	}
 
+  public Date getPtd() {
+    return ptd;
+  }
 
 
-	public Date getEta() {
-		return eta;
-	}
 
+  public void setPtd(Date ptd) {
+    this.ptd = ptd;
+  }
 
 
-	public void setEta(Date eta) {
-		this.eta = eta;
-	}
 
+  public Date getEta() {
+    return eta;
+  }
 
 
-	public Date getEtd() {
-		return etd;
-	}
 
+  public void setEta(Date eta) {
+    this.eta = eta;
+  }
 
 
-	public void setEtd(Date etd) {
-		this.etd = etd;
-	}
 
+  public Date getEtd() {
+    return etd;
+  }
 
 
-	public Date getTimewindowstart() {
-		return timewindowstart;
-	}
 
+  public void setEtd(Date etd) {
+    this.etd = etd;
+  }
 
 
-	public void setTimewindowstart(Date timewindowstart) {
-		this.timewindowstart = timewindowstart;
-	}
 
+  public Date getTimewindowstart() {
+    return timewindowstart;
+  }
 
 
-	public Date getTimewindowend() {
-		return timewindowend;
-	}
 
+  public void setTimewindowstart(Date timewindowstart) {
+    this.timewindowstart = timewindowstart;
+  }
 
 
-	public void setTimewindowend(Date timewindowend) {
-		this.timewindowend = timewindowend;
-	}
 
+  public Date getTimewindowend() {
+    return timewindowend;
+  }
 
 
-	public String getSiteid() {
-		return siteid;
-	}
 
+  public void setTimewindowend(Date timewindowend) {
+    this.timewindowend = timewindowend;
+  }
 
 
-	public void setSiteid(String siteid) {
-		this.siteid = siteid;
-	}
 
+  public String getSiteid() {
+    return siteid;
+  }
 
 
-	public String getSitename() {
-		return sitename;
-	}
 
+  public void setSiteid(String siteid) {
+    this.siteid = siteid;
+  }
 
 
-	public void setSitename(String sitename) {
-		this.sitename = sitename;
-	}
 
+  public String getSitename() {
+    return sitename;
+  }
 
 
-	public String getAddress1() {
-		return address1;
-	}
 
+  public void setSitename(String sitename) {
+    this.sitename = sitename;
+  }
 
 
-	public void setAddress1(String address1) {
-		this.address1 = address1;
-	}
 
+  public String getAddress1() {
+    return address1;
+  }
 
 
-	public String getAddress2() {
-		return address2;
-	}
 
+  public void setAddress1(String address1) {
+    this.address1 = address1;
+  }
 
 
-	public void setAddress2(String address2) {
-		this.address2 = address2;
-	}
 
+  public String getAddress2() {
+    return address2;
+  }
 
 
-	public String getAddress3() {
-		return address3;
-	}
 
+  public void setAddress2(String address2) {
+    this.address2 = address2;
+  }
 
 
-	public void setAddress3(String address3) {
-		this.address3 = address3;
-	}
 
+  public String getAddress3() {
+    return address3;
+  }
 
 
-	public String getCounty() {
-		return county;
-	}
 
+  public void setAddress3(String address3) {
+    this.address3 = address3;
+  }
 
 
-	public void setCounty(String county) {
-		this.county = county;
-	}
 
+  public String getCounty() {
+    return county;
+  }
 
 
-	public String getPostcode() {
-		return postcode;
-	}
 
+  public void setCounty(String county) {
+    this.county = county;
+  }
 
 
-	public void setPostcode(String postcode) {
-		this.postcode = postcode;
-	}
 
+  public String getPostcode() {
+    return postcode;
+  }
 
 
-	public String getCountry() {
-		return country;
-	}
 
+  public void setPostcode(String postcode) {
+    this.postcode = postcode;
+  }
 
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
 
+  public String getCountry() {
+    return country;
+  }
 
 
-	public String getContactname() {
-		return contactname;
-	}
 
+  public void setCountry(String country) {
+    this.country = country;
+  }
 
 
-	public void setContactname(String contactname) {
-		this.contactname = contactname;
-	}
 
+  public String getContactname() {
+    return contactname;
+  }
 
 
-	public String getContactnumber() {
-		return contactnumber;
-	}
 
+  public void setContactname(String contactname) {
+    this.contactname = contactname;
+  }
 
 
-	public void setContactnumber(String contactnumber) {
-		this.contactnumber = contactnumber;
-	}
 
+  public String getContactnumber() {
+    return contactnumber;
+  }
 
 
-	public BigDecimal getSitelat() {
-		return sitelat;
-	}
 
+  public void setContactnumber(String contactnumber) {
+    this.contactnumber = contactnumber;
+  }
 
 
-	public void setSitelat(BigDecimal sitelat) {
-		this.sitelat = sitelat;
-	}
 
+  public BigDecimal getSitelat() {
+    return sitelat;
+  }
 
 
-	public BigDecimal getSitelong() {
-		return sitelong;
-	}
 
+  public void setSitelat(BigDecimal sitelat) {
+    this.sitelat = sitelat;
+  }
 
 
-	public void setSitelong(BigDecimal sitelong) {
-		this.sitelong = sitelong;
-	}
 
+  public BigDecimal getSitelong() {
+    return sitelong;
+  }
 
 
-	public String getRouteid() {
-		return routeid;
-	}
 
+  public void setSitelong(BigDecimal sitelong) {
+    this.sitelong = sitelong;
+  }
 
 
-	public void setRouteid(String routeid) {
-		this.routeid = routeid;
-	}
 
+  public String getRouteid() {
+    return routeid;
+  }
 
 
-	public String getJourneyalias() {
-		return journeyalias;
-	}
 
+  public void setRouteid(String routeid) {
+    this.routeid = routeid;
+  }
 
 
-	public void setJourneyalias(String journeyalias) {
-		this.journeyalias = journeyalias;
-	}
 
+  public String getJourneyalias() {
+    return journeyalias;
+  }
 
 
-	public Date getPlannedstarttime() {
-		return plannedstarttime;
-	}
 
+  public void setJourneyalias(String journeyalias) {
+    this.journeyalias = journeyalias;
+  }
 
 
-	public void setPlannedstarttime(Date plannedstarttime) {
-		this.plannedstarttime = plannedstarttime;
-	}
 
+  public Date getPlannedstarttime() {
+    return plannedstarttime;
+  }
 
 
-	public Date getActualstarttime() {
-		return actualstarttime;
-	}
 
+  public void setPlannedstarttime(Date plannedstarttime) {
+    this.plannedstarttime = plannedstarttime;
+  }
 
 
-	public void setActualstarttime(Date actualstarttime) {
-		this.actualstarttime = actualstarttime;
-	}
 
+  public Date getActualstarttime() {
+    return actualstarttime;
+  }
 
 
-	public Date getPodstarttime() {
-		return podstarttime;
-	}
 
+  public void setActualstarttime(Date actualstarttime) {
+    this.actualstarttime = actualstarttime;
+  }
 
 
-	public void setPodstarttime(Date podstarttime) {
-		this.podstarttime = podstarttime;
-	}
 
+  public Date getPodstarttime() {
+    return podstarttime;
+  }
 
 
-	public Integer getSitegeoradius() {
-		return sitegeoradius;
-	}
 
+  public void setPodstarttime(Date podstarttime) {
+    this.podstarttime = podstarttime;
+  }
 
 
-	public void setSitegeoradius(Integer sitegeoradius) {
-		this.sitegeoradius = sitegeoradius;
-	}
 
+  public Integer getSitegeoradius() {
+    return sitegeoradius;
+  }
 
 
-	public double getDurationonsite() {
-		return durationonsite;
-	}
 
+  public void setSitegeoradius(Integer sitegeoradius) {
+    this.sitegeoradius = sitegeoradius;
+  }
 
 
-	public void setDurationonsite(double durationonsite) {
-		this.durationonsite = durationonsite;
-	}
 
+  public double getDurationonsite() {
+    return durationonsite;
+  }
 
 
-	public Date getJourneyactualstarttime() {
-		return journeyactualstarttime;
-	}
 
+  public void setDurationonsite(double durationonsite) {
+    this.durationonsite = durationonsite;
+  }
 
 
-	public void setJourneyactualstarttime(Date journeyactualstarttime) {
-		this.journeyactualstarttime = journeyactualstarttime;
-	}
 
+  public Date getJourneyactualstarttime() {
+    return journeyactualstarttime;
+  }
 
 
-	public short getIsadhoc() {
-		return isadhoc;
-	}
 
+  public void setJourneyactualstarttime(Date journeyactualstarttime) {
+    this.journeyactualstarttime = journeyactualstarttime;
+  }
 
 
-	public void setIsadhoc(short isadhoc) {
-		this.isadhoc = isadhoc;
-	}
 
+  public short getIsadhoc() {
+    return isadhoc;
+  }
 
 
-	public short getIstranshipment() {
-		return istranshipment;
-	}
 
+  public void setIsadhoc(short isadhoc) {
+    this.isadhoc = isadhoc;
+  }
 
 
-	public void setIstranshipment(short istranshipment) {
-		this.istranshipment = istranshipment;
-	}
 
+  public short getIstranshipment() {
+    return istranshipment;
+  }
 
 
-	public String getClausecode() {
-		return clausecode;
-	}
 
+  public void setIstranshipment(short istranshipment) {
+    this.istranshipment = istranshipment;
+  }
 
 
-	public void setClausecode(String clausecode) {
-		this.clausecode = clausecode;
-	}
 
+  public String getClausecode() {
+    return clausecode;
+  }
 
 
-	public String getParentcode() {
-		return parentcode;
-	}
 
+  public void setClausecode(String clausecode) {
+    this.clausecode = clausecode;
+  }
 
 
-	public void setParentcode(String parentcode) {
-		this.parentcode = parentcode;
-	}
 
+  public String getParentcode() {
+    return parentcode;
+  }
 
 
-	public Integer getConsignmentheaderid() {
-		return consignmentheaderid;
-	}
 
+  public void setParentcode(String parentcode) {
+    this.parentcode = parentcode;
+  }
 
 
-	public void setConsignmentheaderid(Integer consignmentheaderid) {
-		this.consignmentheaderid = consignmentheaderid;
-	}
 
+  public Integer getConsignmentheaderid() {
+    return consignmentheaderid;
+  }
 
 
-	public Integer getJourneyid() {
-		return journeyid;
-	}
 
+  public void setConsignmentheaderid(Integer consignmentheaderid) {
+    this.consignmentheaderid = consignmentheaderid;
+  }
 
 
-	public void setJourneyid(Integer journeyid) {
-		this.journeyid = journeyid;
-	}
 
+  public Integer getJourneyid() {
+    return journeyid;
+  }
 
 
-	public String getConsignmentheaderinfo1() {
-		return consignmentheaderinfo1;
-	}
 
+  public void setJourneyid(Integer journeyid) {
+    this.journeyid = journeyid;
+  }
 
 
-	public void setConsignmentheaderinfo1(String consignmentheaderinfo1) {
-		this.consignmentheaderinfo1 = consignmentheaderinfo1;
-	}
 
+  public String getConsignmentheaderinfo1() {
+    return consignmentheaderinfo1;
+  }
 
 
-	public String getConsignmentHeaderInfo2() {
-		return consignmentHeaderInfo2;
-	}
 
+  public void setConsignmentheaderinfo1(String consignmentheaderinfo1) {
+    this.consignmentheaderinfo1 = consignmentheaderinfo1;
+  }
 
 
-	public void setConsignmentHeaderInfo2(String consignmentHeaderInfo2) {
-		this.consignmentHeaderInfo2 = consignmentHeaderInfo2;
-	}
 
+  public String getConsignmentHeaderInfo2() {
+    return consignmentHeaderInfo2;
+  }
 
 
-	public String getConsignmentHeaderInfo3() {
-		return consignmentHeaderInfo3;
-	}
 
+  public void setConsignmentHeaderInfo2(String consignmentHeaderInfo2) {
+    this.consignmentHeaderInfo2 = consignmentHeaderInfo2;
+  }
 
 
-	public void setConsignmentHeaderInfo3(String consignmentHeaderInfo3) {
-		this.consignmentHeaderInfo3 = consignmentHeaderInfo3;
-	}
 
+  public String getConsignmentHeaderInfo3() {
+    return consignmentHeaderInfo3;
+  }
 
 
-	public String getConsignmentHeaderInfo4() {
-		return consignmentHeaderInfo4;
-	}
 
+  public void setConsignmentHeaderInfo3(String consignmentHeaderInfo3) {
+    this.consignmentHeaderInfo3 = consignmentHeaderInfo3;
+  }
 
 
-	public void setConsignmentHeaderInfo4(String consignmentHeaderInfo4) {
-		this.consignmentHeaderInfo4 = consignmentHeaderInfo4;
-	}
 
+  public String getConsignmentHeaderInfo4() {
+    return consignmentHeaderInfo4;
+  }
 
 
-	public String getConsignmentHeaderInfo5() {
-		return consignmentHeaderInfo5;
-	}
 
+  public void setConsignmentHeaderInfo4(String consignmentHeaderInfo4) {
+    this.consignmentHeaderInfo4 = consignmentHeaderInfo4;
+  }
 
 
-	public void setConsignmentHeaderInfo5(String consignmentHeaderInfo5) {
-		this.consignmentHeaderInfo5 = consignmentHeaderInfo5;
-	}
 
+  public String getConsignmentHeaderInfo5() {
+    return consignmentHeaderInfo5;
+  }
 
 
-	public String getConsignmentHeaderInfo6() {
-		return consignmentHeaderInfo6;
-	}
 
+  public void setConsignmentHeaderInfo5(String consignmentHeaderInfo5) {
+    this.consignmentHeaderInfo5 = consignmentHeaderInfo5;
+  }
 
 
-	public void setConsignmentHeaderInfo6(String consignmentHeaderInfo6) {
-		this.consignmentHeaderInfo6 = consignmentHeaderInfo6;
-	}
 
+  public String getConsignmentHeaderInfo6() {
+    return consignmentHeaderInfo6;
+  }
 
 
-	public String getConsignmentHeaderInfo7() {
-		return consignmentHeaderInfo7;
-	}
 
+  public void setConsignmentHeaderInfo6(String consignmentHeaderInfo6) {
+    this.consignmentHeaderInfo6 = consignmentHeaderInfo6;
+  }
 
 
-	public void setConsignmentHeaderInfo7(String consignmentHeaderInfo7) {
-		this.consignmentHeaderInfo7 = consignmentHeaderInfo7;
-	}
 
+  public String getConsignmentHeaderInfo7() {
+    return consignmentHeaderInfo7;
+  }
 
 
-	public String getConsignmentHeaderInfo8() {
-		return consignmentHeaderInfo8;
-	}
 
+  public void setConsignmentHeaderInfo7(String consignmentHeaderInfo7) {
+    this.consignmentHeaderInfo7 = consignmentHeaderInfo7;
+  }
 
 
-	public void setConsignmentHeaderInfo8(String consignmentHeaderInfo8) {
-		this.consignmentHeaderInfo8 = consignmentHeaderInfo8;
-	}
 
+  public String getConsignmentHeaderInfo8() {
+    return consignmentHeaderInfo8;
+  }
 
 
-	public String getConsignmentHeaderInfo9() {
-		return consignmentHeaderInfo9;
-	}
 
+  public void setConsignmentHeaderInfo8(String consignmentHeaderInfo8) {
+    this.consignmentHeaderInfo8 = consignmentHeaderInfo8;
+  }
 
 
-	public void setConsignmentHeaderInfo9(String consignmentHeaderInfo9) {
-		this.consignmentHeaderInfo9 = consignmentHeaderInfo9;
-	}
 
+  public String getConsignmentHeaderInfo9() {
+    return consignmentHeaderInfo9;
+  }
 
 
-	public String getConsignmentHeaderInfo10() {
-		return consignmentHeaderInfo10;
-	}
 
+  public void setConsignmentHeaderInfo9(String consignmentHeaderInfo9) {
+    this.consignmentHeaderInfo9 = consignmentHeaderInfo9;
+  }
 
 
-	public void setConsignmentHeaderInfo10(String consignmentHeaderInfo10) {
-		this.consignmentHeaderInfo10 = consignmentHeaderInfo10;
-	}
 
+  public String getConsignmentHeaderInfo10() {
+    return consignmentHeaderInfo10;
+  }
 
 
-	public String getConsignmentHeaderInfo11() {
-		return consignmentHeaderInfo11;
-	}
 
+  public void setConsignmentHeaderInfo10(String consignmentHeaderInfo10) {
+    this.consignmentHeaderInfo10 = consignmentHeaderInfo10;
+  }
 
 
-	public void setConsignmentHeaderInfo11(String consignmentHeaderInfo11) {
-		this.consignmentHeaderInfo11 = consignmentHeaderInfo11;
-	}
 
+  public String getConsignmentHeaderInfo11() {
+    return consignmentHeaderInfo11;
+  }
 
 
-	public String getConsignmentHeaderInfo12() {
-		return consignmentHeaderInfo12;
-	}
 
+  public void setConsignmentHeaderInfo11(String consignmentHeaderInfo11) {
+    this.consignmentHeaderInfo11 = consignmentHeaderInfo11;
+  }
 
 
-	public void setConsignmentHeaderInfo12(String consignmentHeaderInfo12) {
-		this.consignmentHeaderInfo12 = consignmentHeaderInfo12;
-	}
 
+  public String getConsignmentHeaderInfo12() {
+    return consignmentHeaderInfo12;
+  }
 
 
-	@Override
-	public String toString() {
-		return "Consignment44 [consignmentreference=" + consignmentreference + ", label1=" + label1 + ", label2="
-				+ label2 + ", label3=" + label3 + ", label4=" + label4 + ", consignmentcustomerorderref="
-				+ consignmentcustomerorderref + ", consignmentstatus=" + consignmentstatus + 
-				", ata=" + ata + ", atd=" + atd + ", signatory=" + signatory + ", signature="
-				+ signature + ", journeydropId=" + journeydropId + ", pta=" + pta + ", ptd=" + ptd + ", eta=" + eta
-				+ ", etd=" + etd + ", timewindowstart=" + timewindowstart + ", timewindowend=" + timewindowend
-				+ ", siteid=" + siteid + ", sitename=" + sitename + ", address1=" + address1 + ", address2=" + address2
-				+ ", address3=" + address3 + ", county=" + county + ", postcode=" + postcode + ", country=" + country
-				+ ", contactname=" + contactname + ", contactnumber=" + contactnumber + ", sitelat=" + sitelat
-				+ ", sitelong=" + sitelong + ", routeid=" + routeid + ", journeyalias=" + journeyalias
-				+ ", plannedstarttime=" + plannedstarttime + ", actualstarttime=" + actualstarttime + ", podstarttime="
-				+ podstarttime + ", sitegeoradius="
-				+ sitegeoradius + ", durationonsite=" + durationonsite + ", journeyactualstarttime="
-				+ journeyactualstarttime + ", isadhoc=" + isadhoc + ", istranshipment=" + istranshipment
-				+ ", clausecode=" + clausecode + ", parentcode=" + parentcode + ", consignmentheaderid="
-				+ consignmentheaderid + ", journeyid=" + journeyid + ", consignmentheaderinfo1="
-				+ consignmentheaderinfo1 + ", consignmentHeaderInfo2=" + consignmentHeaderInfo2
-				+ ", consignmentHeaderInfo3=" + consignmentHeaderInfo3 + ", consignmentHeaderInfo4="
-				+ consignmentHeaderInfo4 + ", consignmentHeaderInfo5=" + consignmentHeaderInfo5
-				+ ", consignmentHeaderInfo6=" + consignmentHeaderInfo6 + ", consignmentHeaderInfo7="
-				+ consignmentHeaderInfo7 + ", consignmentHeaderInfo8=" + consignmentHeaderInfo8
-				+ ", consignmentHeaderInfo9=" + consignmentHeaderInfo9 + ", consignmentHeaderInfo10="
-				+ consignmentHeaderInfo10 + ", consignmentHeaderInfo11=" + consignmentHeaderInfo11
-				+ ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";
-	}
-    		
+
+  public void setConsignmentHeaderInfo12(String consignmentHeaderInfo12) {
+    this.consignmentHeaderInfo12 = consignmentHeaderInfo12;
+  }
+
+
+
+  @Override
+  public String toString() {
+    return "Consignment44 [consignmentreference=" + consignmentreference + ", label1=" + label1
+        + ", label2=" + label2 + ", label3=" + label3 + ", label4=" + label4
+        + ", consignmentcustomerorderref=" + consignmentcustomerorderref + ", consignmentstatus="
+        + consignmentstatus + ", ata=" + ata + ", atd=" + atd + ", signatory=" + signatory
+        + ", signature=" + signature + ", journeydropId=" + journeydropId + ", pta=" + pta
+        + ", ptd=" + ptd + ", eta=" + eta + ", etd=" + etd + ", timewindowstart=" + timewindowstart
+        + ", timewindowend=" + timewindowend + ", siteid=" + siteid + ", sitename=" + sitename
+        + ", address1=" + address1 + ", address2=" + address2 + ", address3=" + address3
+        + ", county=" + county + ", postcode=" + postcode + ", country=" + country
+        + ", contactname=" + contactname + ", contactnumber=" + contactnumber + ", sitelat="
+        + sitelat + ", sitelong=" + sitelong + ", routeid=" + routeid + ", journeyalias="
+        + journeyalias + ", plannedstarttime=" + plannedstarttime + ", actualstarttime="
+        + actualstarttime + ", podstarttime=" + podstarttime + ", sitegeoradius=" + sitegeoradius
+        + ", durationonsite=" + durationonsite + ", journeyactualstarttime="
+        + journeyactualstarttime + ", isadhoc=" + isadhoc + ", istranshipment=" + istranshipment
+        + ", clausecode=" + clausecode + ", parentcode=" + parentcode + ", consignmentheaderid="
+        + consignmentheaderid + ", journeyid=" + journeyid + ", consignmentheaderinfo1="
+        + consignmentheaderinfo1 + ", consignmentHeaderInfo2=" + consignmentHeaderInfo2
+        + ", consignmentHeaderInfo3=" + consignmentHeaderInfo3 + ", consignmentHeaderInfo4="
+        + consignmentHeaderInfo4 + ", consignmentHeaderInfo5=" + consignmentHeaderInfo5
+        + ", consignmentHeaderInfo6=" + consignmentHeaderInfo6 + ", consignmentHeaderInfo7="
+        + consignmentHeaderInfo7 + ", consignmentHeaderInfo8=" + consignmentHeaderInfo8
+        + ", consignmentHeaderInfo9=" + consignmentHeaderInfo9 + ", consignmentHeaderInfo10="
+        + consignmentHeaderInfo10 + ", consignmentHeaderInfo11=" + consignmentHeaderInfo11
+        + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";
+  }
+
 }

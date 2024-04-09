@@ -11,10 +11,11 @@ import com.ceva.cevatrack.vo.AppUserProfileVO;
  *
  */
 public interface AppUserProfileTransformer extends AbstractEntityTransformer<AppUserProfile> {
-    public AppUserProfileVO transformToVO(AppUserProfile profile);
+  public AppUserProfileVO transformToVO(AppUserProfile profile);
 
-    public AppUserProfile transformToProfile(AppUserProfileVO profileVO);
+  public AppUserProfile transformToProfile(AppUserProfileVO profileVO);
 
-    public AppUserProfile transformExistingToProfile(AppUserProfileVO profileVO, AppUserProfile profile);
+  public AppUserProfile transformExistingToProfile(AppUserProfileVO profileVO,
+      AppUserProfile profile);
 
 }

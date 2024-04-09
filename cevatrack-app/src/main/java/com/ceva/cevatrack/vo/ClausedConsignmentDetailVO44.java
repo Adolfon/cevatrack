@@ -2,68 +2,67 @@
 package com.ceva.cevatrack.vo;
 
 import java.io.Serializable;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-public class ClausedConsignmentDetailVO44 implements Serializable{
+public class ClausedConsignmentDetailVO44 implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	protected String parentCode;
-    protected String parentClauseDescription;
-    protected String clauseCode;
-    protected String clauseDescription;
-    protected int clausedQuantity;
-    protected int consignmentDetailId;
-    
-    public String getParentCode() {
-        return parentCode;
-    }
+  private static final long serialVersionUID = 1L;
+  protected String parentCode;
+  protected String parentClauseDescription;
+  protected String clauseCode;
+  protected String clauseDescription;
+  protected int clausedQuantity;
+  protected int consignmentDetailId;
 
-    public void setParentCode(String value) {
-        this.parentCode = value;
-    }
+  public String getParentCode() {
+    return parentCode;
+  }
 
-    public String getParentClauseDescription() {
-        return parentClauseDescription;
-    }
+  public void setParentCode(String value) {
+    this.parentCode = value;
+  }
 
-    public void setParentClauseDescription(String value) {
-        this.parentClauseDescription = value;
-    }
+  public String getParentClauseDescription() {
+    return parentClauseDescription;
+  }
 
-    public String getClauseCode() {
-        return clauseCode;
-    }
+  public void setParentClauseDescription(String value) {
+    this.parentClauseDescription = value;
+  }
 
-    public void setClauseCode(String value) {
-        this.clauseCode = value;
-    }
+  public String getClauseCode() {
+    return clauseCode;
+  }
 
-    public String getClauseDescription() {
-        return clauseDescription;
-    }
+  public void setClauseCode(String value) {
+    this.clauseCode = value;
+  }
 
-    public void setClauseDescription(String value) {
-        this.clauseDescription = value;
-    }
+  public String getClauseDescription() {
+    return clauseDescription;
+  }
 
-    public int getClausedQuantity() {
-        return clausedQuantity;
-    }
+  public void setClauseDescription(String value) {
+    this.clauseDescription = value;
+  }
 
-    public void setClausedQuantity(int value) {
-        this.clausedQuantity = value;
-    }
+  public int getClausedQuantity() {
+    return clausedQuantity;
+  }
 
-    public int getConsignmentDetailId() {
-        return consignmentDetailId;
-    }
+  public void setClausedQuantity(int value) {
+    this.clausedQuantity = value;
+  }
 
-    public void setConsignmentDetailId(int value) {
-        this.consignmentDetailId = value;
-    }
+  public int getConsignmentDetailId() {
+    return consignmentDetailId;
+  }
+
+  public void setConsignmentDetailId(int value) {
+    this.consignmentDetailId = value;
+  }
 
 }

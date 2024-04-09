@@ -11,28 +11,30 @@ import com.ceva.cevatrack.domain.AbstractEntity;
  * @deprecated Since 3.2. Moved class to common-ejb as
  *             {@link com.ceva.framework.ejb.profile.transformer.AbstractEntityTransformerImpl}
  * @author mohammad.rasheed.
- * @param <T>
- *            attribute
+ * @param <T> attribute
  */
 @Deprecated
-public class AbstractEntityTransformerImpl<T extends AbstractEntity> implements AbstractEntityTransformer<T> {
+public class AbstractEntityTransformerImpl<T extends AbstractEntity>
+    implements AbstractEntityTransformer<T> {
 
-    @Override
-    public void prepareForCreate(T entity) {
-        Subject subject = SecurityUtils.getSubject();
-        String currentUser = subject.getPrincipal() == null ? "Anonymous" : subject.getPrincipal().toString();
+  @Override
+  public void prepareForCreate(T entity) {
+    Subject subject = SecurityUtils.getSubject();
+    String currentUser =
+        subject.getPrincipal() == null ? "Anonymous" : subject.getPrincipal().toString();
 
-        if (entity.getId() == null) {
-            entity.setCreatedBy(currentUser);
-            entity.setCreatedOn(new Date());
-        }
+    if (entity.getId() == null) {
+      entity.setCreatedBy(currentUser);
+      entity.setCreatedOn(new Date());
     }
+  }
 
-    @Override
-    public void prepareForUpdate(T entity) {
-        Subject subject = SecurityUtils.getSubject();
-        String currentUser = subject.getPrincipal() == null ? "Anonymous" : subject.getPrincipal().toString();
-        entity.setUpdatedBy(currentUser);
-        entity.setUpdatedOn(new Date());
-    }
+  @Override
+  public void prepareForUpdate(T entity) {
+    Subject subject = SecurityUtils.getSubject();
+    String currentUser =
+        subject.getPrincipal() == null ? "Anonymous" : subject.getPrincipal().toString();
+    entity.setUpdatedBy(currentUser);
+    entity.setUpdatedOn(new Date());
+  }
 }

@@ -29,32 +29,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "findConsignmentSummariesResult" })
+@XmlType(name = "", propOrder = {"findConsignmentSummariesResult"})
 @XmlRootElement(name = "FindConsignmentSummariesResponse")
 public class FindConsignmentSummariesResponse {
 
-    @XmlElement(name = "FindConsignmentSummariesResult")
-    protected ArrayOfConsignmentSummary findConsignmentSummariesResult;
+  @XmlElement(name = "FindConsignmentSummariesResult")
+  protected ArrayOfConsignmentSummary findConsignmentSummariesResult;
 
-    /**
-     * Gets the value of the findConsignmentSummariesResult property.
-     * 
-     * @return possible object is {@link ArrayOfConsignmentSummary }
-     * 
-     */
-    public ArrayOfConsignmentSummary getFindConsignmentSummariesResult() {
-        return findConsignmentSummariesResult;
-    }
+  /**
+   * Gets the value of the findConsignmentSummariesResult property.
+   * 
+   * @return possible object is {@link ArrayOfConsignmentSummary }
+   * 
+   */
+  public ArrayOfConsignmentSummary getFindConsignmentSummariesResult() {
+    return findConsignmentSummariesResult;
+  }
 
-    /**
-     * Sets the value of the findConsignmentSummariesResult property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfConsignmentSummary }
-     * 
-     */
-    public void setFindConsignmentSummariesResult(ArrayOfConsignmentSummary value) {
-        this.findConsignmentSummariesResult = value;
-    }
+  /**
+   * Sets the value of the findConsignmentSummariesResult property.
+   * 
+   * @param value allowed object is {@link ArrayOfConsignmentSummary }
+   * 
+   */
+  public void setFindConsignmentSummariesResult(ArrayOfConsignmentSummary value) {
+    this.findConsignmentSummariesResult = value;
+  }
 
 }

@@ -7,14 +7,16 @@ import javax.xml.bind.annotation.XmlElement;
  *
  */
 public class GetJourneySummaryForAliasAndDateSoapBody {
-    protected GetJourneySummaryForAliasAndDateResponse getJourneySummaryForAliasAndDateResponse;
+  protected GetJourneySummaryForAliasAndDateResponse getJourneySummaryForAliasAndDateResponse;
 
-    @XmlElement(name = "GetJourneySummaryForAliasAndDateResponse", namespace = "http://microlise.com/TMC")
-    public GetJourneySummaryForAliasAndDateResponse getGetJourneySummaryForAliasAndDateResponse() {
-        return getJourneySummaryForAliasAndDateResponse;
-    }
+  @XmlElement(name = "GetJourneySummaryForAliasAndDateResponse",
+      namespace = "http://microlise.com/TMC")
+  public GetJourneySummaryForAliasAndDateResponse getGetJourneySummaryForAliasAndDateResponse() {
+    return getJourneySummaryForAliasAndDateResponse;
+  }
 
-    public void setGetJourneySummaryForAliasAndDateResponse(GetJourneySummaryForAliasAndDateResponse value) {
-        this.getJourneySummaryForAliasAndDateResponse = value;
-    }
+  public void setGetJourneySummaryForAliasAndDateResponse(
+      GetJourneySummaryForAliasAndDateResponse value) {
+    this.getJourneySummaryForAliasAndDateResponse = value;
+  }
 }

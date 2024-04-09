@@ -22,23 +22,23 @@ import com.ceva.cevatrack.vo.AppUserVO;
 @ViewScoped
 public class AppUserBean implements Serializable {
 
-    /**
-     * serialVersionUID.
-     */
-    private static final long serialVersionUID = 1L;
+  /**
+   * serialVersionUID.
+   */
+  private static final long serialVersionUID = 1L;
 
-    private AppUserVO appUser;
+  private AppUserVO appUser;
 
-    @PostConstruct
-    public void init() {
-        this.appUser = (AppUserVO) SessionManager.getSession().getAttribute("APP_USER");
-    }
+  @PostConstruct
+  public void init() {
+    this.appUser = (AppUserVO) SessionManager.getSession().getAttribute("APP_USER");
+  }
 
-    public AppUserVO getAppUser() {
-        return appUser;
-    }
+  public AppUserVO getAppUser() {
+    return appUser;
+  }
 
-    public void setAppUser(AppUserVO appUser) {
-        this.appUser = appUser;
-    }
+  public void setAppUser(AppUserVO appUser) {
+    this.appUser = appUser;
+  }
 }

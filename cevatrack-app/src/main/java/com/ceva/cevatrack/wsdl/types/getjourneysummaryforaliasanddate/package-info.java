@@ -1,2 +1,4 @@
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetJourneySummaryForAliasAndDate", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(
+    namespace = "http://www.cevalogistics.com/XSD/MicroliseSmartNet/TMC/GetJourneySummaryForAliasAndDate",
+    elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package com.ceva.cevatrack.wsdl.types.getjourneysummaryforaliasanddate;

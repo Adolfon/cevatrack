@@ -29,32 +29,31 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "getJourneySummaryForAliasAndDateResult" })
+@XmlType(name = "", propOrder = {"getJourneySummaryForAliasAndDateResult"})
 @XmlRootElement(name = "GetJourneySummaryForAliasAndDateResponse")
 public class GetJourneySummaryForAliasAndDateResponse {
 
-    @XmlElement(name = "GetJourneySummaryForAliasAndDateResult")
-    protected JourneySummaryResponse getJourneySummaryForAliasAndDateResult;
+  @XmlElement(name = "GetJourneySummaryForAliasAndDateResult")
+  protected JourneySummaryResponse getJourneySummaryForAliasAndDateResult;
 
-    /**
-     * Gets the value of the getJourneySummaryForAliasAndDateResult property.
-     * 
-     * @return possible object is {@link JourneySummaryResponse }
-     * 
-     */
-    public JourneySummaryResponse getGetJourneySummaryForAliasAndDateResult() {
-        return getJourneySummaryForAliasAndDateResult;
-    }
+  /**
+   * Gets the value of the getJourneySummaryForAliasAndDateResult property.
+   * 
+   * @return possible object is {@link JourneySummaryResponse }
+   * 
+   */
+  public JourneySummaryResponse getGetJourneySummaryForAliasAndDateResult() {
+    return getJourneySummaryForAliasAndDateResult;
+  }
 
-    /**
-     * Sets the value of the getJourneySummaryForAliasAndDateResult property.
-     * 
-     * @param value
-     *            allowed object is {@link JourneySummaryResponse }
-     * 
-     */
-    public void setGetJourneySummaryForAliasAndDateResult(JourneySummaryResponse value) {
-        this.getJourneySummaryForAliasAndDateResult = value;
-    }
+  /**
+   * Sets the value of the getJourneySummaryForAliasAndDateResult property.
+   * 
+   * @param value allowed object is {@link JourneySummaryResponse }
+   * 
+   */
+  public void setGetJourneySummaryForAliasAndDateResult(JourneySummaryResponse value) {
+    this.getJourneySummaryForAliasAndDateResult = value;
+  }
 
 }

@@ -46,385 +46,374 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JourneySummary", propOrder = { "actualEndTime", "actualMileage", "actualStartTime", "events",
-        "fuelConsumption", "plannedEndTime", "plannedMileage", "plannedStartTime", "resources", "routeID",
-        "journeyStatus", "podStatus", "trackingStatus", "sites", "vehicles", "journeyID", "journeyAlias" })
+@XmlType(name = "JourneySummary",
+    propOrder = {"actualEndTime", "actualMileage", "actualStartTime", "events", "fuelConsumption",
+        "plannedEndTime", "plannedMileage", "plannedStartTime", "resources", "routeID",
+        "journeyStatus", "podStatus", "trackingStatus", "sites", "vehicles", "journeyID",
+        "journeyAlias"})
 public class JourneySummary {
 
-    @XmlElement(name = "ActualEndTime")
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar actualEndTime;
-    @XmlElement(name = "ActualMileage")
-    protected int actualMileage;
-    @XmlElement(name = "ActualStartTime")
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar actualStartTime;
-    @XmlElement(name = "Events")
-    protected ArrayOfJourneySummarySystemEvent events;
-    @XmlElement(name = "FuelConsumption")
-    protected double fuelConsumption;
-    @XmlElement(name = "PlannedEndTime")
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar plannedEndTime;
-    @XmlElement(name = "PlannedMileage")
-    protected int plannedMileage;
-    @XmlElement(name = "PlannedStartTime")
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar plannedStartTime;
-    @XmlElement(name = "Resources")
-    protected ArrayOfJourneySummaryResource resources;
-    @XmlElement(name = "RouteID")
-    protected String routeID;
-    @XmlElement(name = "JourneyStatus")
-    protected String journeyStatus;
-    @XmlElement(name = "PODStatus")
-    protected String podStatus;
-    @XmlElement(name = "TrackingStatus")
-    protected String trackingStatus;
-    @XmlElement(name = "Sites")
-    protected ArrayOfJourneySummarySite sites;
-    @XmlElement(name = "Vehicles")
-    protected ArrayOfJourneySummaryTrackedVehicle vehicles;
-    @XmlElement(name = "JourneyID")
-    protected int journeyID;
-    @XmlElement(name = "JourneyAlias")
-    protected String journeyAlias;
+  @XmlElement(name = "ActualEndTime")
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar actualEndTime;
+  @XmlElement(name = "ActualMileage")
+  protected int actualMileage;
+  @XmlElement(name = "ActualStartTime")
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar actualStartTime;
+  @XmlElement(name = "Events")
+  protected ArrayOfJourneySummarySystemEvent events;
+  @XmlElement(name = "FuelConsumption")
+  protected double fuelConsumption;
+  @XmlElement(name = "PlannedEndTime")
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar plannedEndTime;
+  @XmlElement(name = "PlannedMileage")
+  protected int plannedMileage;
+  @XmlElement(name = "PlannedStartTime")
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar plannedStartTime;
+  @XmlElement(name = "Resources")
+  protected ArrayOfJourneySummaryResource resources;
+  @XmlElement(name = "RouteID")
+  protected String routeID;
+  @XmlElement(name = "JourneyStatus")
+  protected String journeyStatus;
+  @XmlElement(name = "PODStatus")
+  protected String podStatus;
+  @XmlElement(name = "TrackingStatus")
+  protected String trackingStatus;
+  @XmlElement(name = "Sites")
+  protected ArrayOfJourneySummarySite sites;
+  @XmlElement(name = "Vehicles")
+  protected ArrayOfJourneySummaryTrackedVehicle vehicles;
+  @XmlElement(name = "JourneyID")
+  protected int journeyID;
+  @XmlElement(name = "JourneyAlias")
+  protected String journeyAlias;
 
-    /**
-     * Gets the value of the actualEndTime property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getActualEndTime() {
-        return actualEndTime;
-    }
+  /**
+   * Gets the value of the actualEndTime property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getActualEndTime() {
+    return actualEndTime;
+  }
 
-    /**
-     * Sets the value of the actualEndTime property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setActualEndTime(XMLGregorianCalendar value) {
-        this.actualEndTime = value;
-    }
+  /**
+   * Sets the value of the actualEndTime property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setActualEndTime(XMLGregorianCalendar value) {
+    this.actualEndTime = value;
+  }
 
-    /**
-     * Gets the value of the actualMileage property.
-     * 
-     */
-    public int getActualMileage() {
-        return actualMileage;
-    }
+  /**
+   * Gets the value of the actualMileage property.
+   * 
+   */
+  public int getActualMileage() {
+    return actualMileage;
+  }
 
-    /**
-     * Sets the value of the actualMileage property.
-     * 
-     */
-    public void setActualMileage(int value) {
-        this.actualMileage = value;
-    }
+  /**
+   * Sets the value of the actualMileage property.
+   * 
+   */
+  public void setActualMileage(int value) {
+    this.actualMileage = value;
+  }
 
-    /**
-     * Gets the value of the actualStartTime property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getActualStartTime() {
-        return actualStartTime;
-    }
+  /**
+   * Gets the value of the actualStartTime property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getActualStartTime() {
+    return actualStartTime;
+  }
 
-    /**
-     * Sets the value of the actualStartTime property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setActualStartTime(XMLGregorianCalendar value) {
-        this.actualStartTime = value;
-    }
+  /**
+   * Sets the value of the actualStartTime property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setActualStartTime(XMLGregorianCalendar value) {
+    this.actualStartTime = value;
+  }
 
-    /**
-     * Gets the value of the events property.
-     * 
-     * @return possible object is {@link ArrayOfJourneySummarySystemEvent }
-     * 
-     */
-    public ArrayOfJourneySummarySystemEvent getEvents() {
-        return events;
-    }
+  /**
+   * Gets the value of the events property.
+   * 
+   * @return possible object is {@link ArrayOfJourneySummarySystemEvent }
+   * 
+   */
+  public ArrayOfJourneySummarySystemEvent getEvents() {
+    return events;
+  }
 
-    /**
-     * Sets the value of the events property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfJourneySummarySystemEvent }
-     * 
-     */
-    public void setEvents(ArrayOfJourneySummarySystemEvent value) {
-        this.events = value;
-    }
+  /**
+   * Sets the value of the events property.
+   * 
+   * @param value allowed object is {@link ArrayOfJourneySummarySystemEvent }
+   * 
+   */
+  public void setEvents(ArrayOfJourneySummarySystemEvent value) {
+    this.events = value;
+  }
 
-    /**
-     * Gets the value of the fuelConsumption property.
-     * 
-     */
-    public double getFuelConsumption() {
-        return fuelConsumption;
-    }
+  /**
+   * Gets the value of the fuelConsumption property.
+   * 
+   */
+  public double getFuelConsumption() {
+    return fuelConsumption;
+  }
 
-    /**
-     * Sets the value of the fuelConsumption property.
-     * 
-     */
-    public void setFuelConsumption(double value) {
-        this.fuelConsumption = value;
-    }
+  /**
+   * Sets the value of the fuelConsumption property.
+   * 
+   */
+  public void setFuelConsumption(double value) {
+    this.fuelConsumption = value;
+  }
 
-    /**
-     * Gets the value of the plannedEndTime property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getPlannedEndTime() {
-        return plannedEndTime;
-    }
+  /**
+   * Gets the value of the plannedEndTime property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getPlannedEndTime() {
+    return plannedEndTime;
+  }
 
-    /**
-     * Sets the value of the plannedEndTime property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setPlannedEndTime(XMLGregorianCalendar value) {
-        this.plannedEndTime = value;
-    }
+  /**
+   * Sets the value of the plannedEndTime property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setPlannedEndTime(XMLGregorianCalendar value) {
+    this.plannedEndTime = value;
+  }
 
-    /**
-     * Gets the value of the plannedMileage property.
-     * 
-     */
-    public int getPlannedMileage() {
-        return plannedMileage;
-    }
+  /**
+   * Gets the value of the plannedMileage property.
+   * 
+   */
+  public int getPlannedMileage() {
+    return plannedMileage;
+  }
 
-    /**
-     * Sets the value of the plannedMileage property.
-     * 
-     */
-    public void setPlannedMileage(int value) {
-        this.plannedMileage = value;
-    }
+  /**
+   * Sets the value of the plannedMileage property.
+   * 
+   */
+  public void setPlannedMileage(int value) {
+    this.plannedMileage = value;
+  }
 
-    /**
-     * Gets the value of the plannedStartTime property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getPlannedStartTime() {
-        return plannedStartTime;
-    }
+  /**
+   * Gets the value of the plannedStartTime property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getPlannedStartTime() {
+    return plannedStartTime;
+  }
 
-    /**
-     * Sets the value of the plannedStartTime property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setPlannedStartTime(XMLGregorianCalendar value) {
-        this.plannedStartTime = value;
-    }
+  /**
+   * Sets the value of the plannedStartTime property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setPlannedStartTime(XMLGregorianCalendar value) {
+    this.plannedStartTime = value;
+  }
 
-    /**
-     * Gets the value of the resources property.
-     * 
-     * @return possible object is {@link ArrayOfJourneySummaryResource }
-     * 
-     */
-    public ArrayOfJourneySummaryResource getResources() {
-        return resources;
-    }
+  /**
+   * Gets the value of the resources property.
+   * 
+   * @return possible object is {@link ArrayOfJourneySummaryResource }
+   * 
+   */
+  public ArrayOfJourneySummaryResource getResources() {
+    return resources;
+  }
 
-    /**
-     * Sets the value of the resources property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfJourneySummaryResource }
-     * 
-     */
-    public void setResources(ArrayOfJourneySummaryResource value) {
-        this.resources = value;
-    }
+  /**
+   * Sets the value of the resources property.
+   * 
+   * @param value allowed object is {@link ArrayOfJourneySummaryResource }
+   * 
+   */
+  public void setResources(ArrayOfJourneySummaryResource value) {
+    this.resources = value;
+  }
 
-    /**
-     * Gets the value of the routeID property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getRouteID() {
-        return routeID;
-    }
+  /**
+   * Gets the value of the routeID property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getRouteID() {
+    return routeID;
+  }
 
-    /**
-     * Sets the value of the routeID property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setRouteID(String value) {
-        this.routeID = value;
-    }
+  /**
+   * Sets the value of the routeID property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setRouteID(String value) {
+    this.routeID = value;
+  }
 
-    /**
-     * Gets the value of the journeyStatus property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getJourneyStatus() {
-        return journeyStatus;
-    }
+  /**
+   * Gets the value of the journeyStatus property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getJourneyStatus() {
+    return journeyStatus;
+  }
 
-    /**
-     * Sets the value of the journeyStatus property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setJourneyStatus(String value) {
-        this.journeyStatus = value;
-    }
+  /**
+   * Sets the value of the journeyStatus property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setJourneyStatus(String value) {
+    this.journeyStatus = value;
+  }
 
-    /**
-     * Gets the value of the podStatus property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getPODStatus() {
-        return podStatus;
-    }
+  /**
+   * Gets the value of the podStatus property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getPODStatus() {
+    return podStatus;
+  }
 
-    /**
-     * Sets the value of the podStatus property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setPODStatus(String value) {
-        this.podStatus = value;
-    }
+  /**
+   * Sets the value of the podStatus property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setPODStatus(String value) {
+    this.podStatus = value;
+  }
 
-    /**
-     * Gets the value of the trackingStatus property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getTrackingStatus() {
-        return trackingStatus;
-    }
+  /**
+   * Gets the value of the trackingStatus property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getTrackingStatus() {
+    return trackingStatus;
+  }
 
-    /**
-     * Sets the value of the trackingStatus property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setTrackingStatus(String value) {
-        this.trackingStatus = value;
-    }
+  /**
+   * Sets the value of the trackingStatus property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setTrackingStatus(String value) {
+    this.trackingStatus = value;
+  }
 
-    /**
-     * Gets the value of the sites property.
-     * 
-     * @return possible object is {@link ArrayOfJourneySummarySite }
-     * 
-     */
-    public ArrayOfJourneySummarySite getSites() {
-        return sites;
-    }
+  /**
+   * Gets the value of the sites property.
+   * 
+   * @return possible object is {@link ArrayOfJourneySummarySite }
+   * 
+   */
+  public ArrayOfJourneySummarySite getSites() {
+    return sites;
+  }
 
-    /**
-     * Sets the value of the sites property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfJourneySummarySite }
-     * 
-     */
-    public void setSites(ArrayOfJourneySummarySite value) {
-        this.sites = value;
-    }
+  /**
+   * Sets the value of the sites property.
+   * 
+   * @param value allowed object is {@link ArrayOfJourneySummarySite }
+   * 
+   */
+  public void setSites(ArrayOfJourneySummarySite value) {
+    this.sites = value;
+  }
 
-    /**
-     * Gets the value of the vehicles property.
-     * 
-     * @return possible object is {@link ArrayOfJourneySummaryTrackedVehicle }
-     * 
-     */
-    public ArrayOfJourneySummaryTrackedVehicle getVehicles() {
-        return vehicles;
-    }
+  /**
+   * Gets the value of the vehicles property.
+   * 
+   * @return possible object is {@link ArrayOfJourneySummaryTrackedVehicle }
+   * 
+   */
+  public ArrayOfJourneySummaryTrackedVehicle getVehicles() {
+    return vehicles;
+  }
 
-    /**
-     * Sets the value of the vehicles property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfJourneySummaryTrackedVehicle }
-     * 
-     */
-    public void setVehicles(ArrayOfJourneySummaryTrackedVehicle value) {
-        this.vehicles = value;
-    }
+  /**
+   * Sets the value of the vehicles property.
+   * 
+   * @param value allowed object is {@link ArrayOfJourneySummaryTrackedVehicle }
+   * 
+   */
+  public void setVehicles(ArrayOfJourneySummaryTrackedVehicle value) {
+    this.vehicles = value;
+  }
 
-    /**
-     * Gets the value of the journeyID property.
-     * 
-     */
-    public int getJourneyID() {
-        return journeyID;
-    }
+  /**
+   * Gets the value of the journeyID property.
+   * 
+   */
+  public int getJourneyID() {
+    return journeyID;
+  }
 
-    /**
-     * Sets the value of the journeyID property.
-     * 
-     */
-    public void setJourneyID(int value) {
-        this.journeyID = value;
-    }
+  /**
+   * Sets the value of the journeyID property.
+   * 
+   */
+  public void setJourneyID(int value) {
+    this.journeyID = value;
+  }
 
-    /**
-     * Gets the value of the journeyAlias property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getJourneyAlias() {
-        return journeyAlias;
-    }
+  /**
+   * Gets the value of the journeyAlias property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getJourneyAlias() {
+    return journeyAlias;
+  }
 
-    /**
-     * Sets the value of the journeyAlias property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setJourneyAlias(String value) {
-        this.journeyAlias = value;
-    }
+  /**
+   * Sets the value of the journeyAlias property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setJourneyAlias(String value) {
+    this.journeyAlias = value;
+  }
 
 }

@@ -11,15 +11,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Envelope")
 public class FindConsignmentSummariesSoapEnvelope {
 
-    protected FindConsignmentSummariesSoapBody findConsignmentSummariesSoapBody;
+  protected FindConsignmentSummariesSoapBody findConsignmentSummariesSoapBody;
 
-    // @XmlElement(name = "Body", namespace = "http://schemas.xmlsoap.org/soap/envelope/")
-    @XmlElement(name = "Body")
-    public FindConsignmentSummariesSoapBody getFindConsignmentSummariesSoapBody() {
-        return findConsignmentSummariesSoapBody;
-    }
+  // @XmlElement(name = "Body", namespace = "http://schemas.xmlsoap.org/soap/envelope/")
+  @XmlElement(name = "Body")
+  public FindConsignmentSummariesSoapBody getFindConsignmentSummariesSoapBody() {
+    return findConsignmentSummariesSoapBody;
+  }
 
-    public void setFindConsignmentSummariesSoapBody(FindConsignmentSummariesSoapBody value) {
-        this.findConsignmentSummariesSoapBody = value;
-    }
+  public void setFindConsignmentSummariesSoapBody(FindConsignmentSummariesSoapBody value) {
+    this.findConsignmentSummariesSoapBody = value;
+  }
 }

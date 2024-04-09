@@ -14,31 +14,32 @@ import com.ceva.cevatrack.vo.AppUserVO;
  *
  */
 @Singleton(name = "com.ceva.cevatrack.transformer.UserTransformerImpl")
-public class UserTransformerImpl extends AbstractEntityTransformerImpl<User> implements UserTransformer {
+public class UserTransformerImpl extends AbstractEntityTransformerImpl<User>
+    implements UserTransformer {
 
-    @Override
-    public AppUserVO transformToVO(User user) {
-        return new AppUserVO();
-    }
+  @Override
+  public AppUserVO transformToVO(User user) {
+    return new AppUserVO();
+  }
 
-    @Override
-    public List<AppUserVO> transformToVO(List<User> users) {
-        return users.stream().map(u -> transformToVO(u)).collect(Collectors.toList());
-    }
+  @Override
+  public List<AppUserVO> transformToVO(List<User> users) {
+    return users.stream().map(u -> transformToVO(u)).collect(Collectors.toList());
+  }
 
-    /**
-     * Transform. {@link AppUserVO} to {@link User}
-     */
-    public User transformToUser(AppUserVO vo) {
-        User user = new User();
-        user.setLogin(vo.getAAFUser().getUserPrincipal());
-        return user;
-    }
+  /**
+   * Transform. {@link AppUserVO} to {@link User}
+   */
+  public User transformToUser(AppUserVO vo) {
+    User user = new User();
+    user.setLogin(vo.getAAFUser().getUserPrincipal());
+    return user;
+  }
 
-    @Override
-    public void convertToUser(AppUserVO userVo, User user) {
-        // TODO Auto-generated method stub
+  @Override
+  public void convertToUser(AppUserVO userVo, User user) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
 }

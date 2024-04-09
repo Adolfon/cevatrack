@@ -28,31 +28,30 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JourneySummarySiteDeplay", propOrder = { "plannedDelays" })
+@XmlType(name = "JourneySummarySiteDeplay", propOrder = {"plannedDelays"})
 public class JourneySummarySiteDeplay {
 
-    @XmlElement(name = "PlannedDelays")
-    protected ArrayOfPlannedDelay plannedDelays;
+  @XmlElement(name = "PlannedDelays")
+  protected ArrayOfPlannedDelay plannedDelays;
 
-    /**
-     * Gets the value of the plannedDelays property.
-     * 
-     * @return possible object is {@link ArrayOfPlannedDelay }
-     * 
-     */
-    public ArrayOfPlannedDelay getPlannedDelays() {
-        return plannedDelays;
-    }
+  /**
+   * Gets the value of the plannedDelays property.
+   * 
+   * @return possible object is {@link ArrayOfPlannedDelay }
+   * 
+   */
+  public ArrayOfPlannedDelay getPlannedDelays() {
+    return plannedDelays;
+  }
 
-    /**
-     * Sets the value of the plannedDelays property.
-     * 
-     * @param value
-     *            allowed object is {@link ArrayOfPlannedDelay }
-     * 
-     */
-    public void setPlannedDelays(ArrayOfPlannedDelay value) {
-        this.plannedDelays = value;
-    }
+  /**
+   * Sets the value of the plannedDelays property.
+   * 
+   * @param value allowed object is {@link ArrayOfPlannedDelay }
+   * 
+   */
+  public void setPlannedDelays(ArrayOfPlannedDelay value) {
+    this.plannedDelays = value;
+  }
 
 }

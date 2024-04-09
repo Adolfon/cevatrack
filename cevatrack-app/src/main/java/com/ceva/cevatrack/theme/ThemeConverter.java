@@ -30,31 +30,32 @@ import javax.faces.convert.FacesConverter;
 @FacesConverter("theme")
 public class ThemeConverter implements Converter {
 
-    /**
-     * getAsObject.
-     */
-    public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-        if (value != null && value.trim().length() > 0) {
-            try {
-                ThemeBean themeBean = (ThemeBean) fc.getExternalContext().getApplicationMap().get("themeBean");
-                return themeBean.getThemes().get(Integer.parseInt(value));
-            } catch (NumberFormatException e) {
-                throw new ConverterException(
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
-            }
-        } else {
-            return null;
-        }
+  /**
+   * getAsObject.
+   */
+  public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
+    if (value != null && value.trim().length() > 0) {
+      try {
+        ThemeBean themeBean =
+            (ThemeBean) fc.getExternalContext().getApplicationMap().get("themeBean");
+        return themeBean.getThemes().get(Integer.parseInt(value));
+      } catch (NumberFormatException e) {
+        throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Conversion Error", "Not a valid theme."));
+      }
+    } else {
+      return null;
     }
+  }
 
-    /**
-     * getAsString.
-     */
-    public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
-            return String.valueOf(((Theme) object).getId());
-        } else {
-            return null;
-        }
+  /**
+   * getAsString.
+   */
+  public String getAsString(FacesContext fc, UIComponent uic, Object object) {
+    if (object != null) {
+      return String.valueOf(((Theme) object).getId());
+    } else {
+      return null;
     }
+  }
 }

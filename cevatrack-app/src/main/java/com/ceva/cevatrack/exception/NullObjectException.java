@@ -8,16 +8,16 @@ package com.ceva.cevatrack.exception;
  */
 public class NullObjectException extends Exception {
 
+  /**
+   * Default Constructor.
+   */
+  public NullObjectException() {
     /**
-     * Default Constructor.
+     * Zero Parameter Constructor
      */
-    public NullObjectException() {
-        /**
-         * Zero Parameter Constructor
-         */
-    }
+  }
 
-    public NullObjectException(String message) {
-        super(message);
-    }
+  public NullObjectException(String message) {
+    super(message);
+  }
 }

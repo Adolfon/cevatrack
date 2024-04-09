@@ -30,38 +30,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArrayOfJourneySummarySystemEvent", propOrder = { "journeySummarySystemEvent" })
+@XmlType(name = "ArrayOfJourneySummarySystemEvent", propOrder = {"journeySummarySystemEvent"})
 public class ArrayOfJourneySummarySystemEvent {
 
-    @XmlElement(name = "JourneySummarySystemEvent", nillable = true)
-    protected List<JourneySummarySystemEvent> journeySummarySystemEvent;
+  @XmlElement(name = "JourneySummarySystemEvent", nillable = true)
+  protected List<JourneySummarySystemEvent> journeySummarySystemEvent;
 
-    /**
-     * Gets the value of the journeySummarySystemEvent property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
-     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
-     * the journeySummarySystemEvent property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getJourneySummarySystemEvent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link JourneySummarySystemEvent }
-     * 
-     * 
-     */
-    public List<JourneySummarySystemEvent> getJourneySummarySystemEvent() {
-        if (journeySummarySystemEvent == null) {
-            journeySummarySystemEvent = new ArrayList<JourneySummarySystemEvent>();
-        }
-        return this.journeySummarySystemEvent;
+  /**
+   * Gets the value of the journeySummarySystemEvent property.
+   * 
+   * <p>
+   * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+   * modification you make to the returned list will be present inside the JAXB object. This is why
+   * there is not a <CODE>set</CODE> method for the journeySummarySystemEvent property.
+   * 
+   * <p>
+   * For example, to add a new item, do as follows:
+   * 
+   * <pre>
+   * getJourneySummarySystemEvent().add(newItem);
+   * </pre>
+   * 
+   * 
+   * <p>
+   * Objects of the following type(s) are allowed in the list {@link JourneySummarySystemEvent }
+   * 
+   * 
+   */
+  public List<JourneySummarySystemEvent> getJourneySummarySystemEvent() {
+    if (journeySummarySystemEvent == null) {
+      journeySummarySystemEvent = new ArrayList<JourneySummarySystemEvent>();
     }
+    return this.journeySummarySystemEvent;
+  }
 
 }

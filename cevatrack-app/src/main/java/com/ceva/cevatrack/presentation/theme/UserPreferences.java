@@ -37,111 +37,111 @@ import com.ceva.framework.ejb.service.security.UserInfo;
 @SessionScoped
 public class UserPreferences implements Serializable {
 
-    @Inject
-    private UserProfileService profileService;
+  @Inject
+  private UserProfileService profileService;
 
-    @Inject
-    @Any
-    protected UserInfo userInfoImpl;
+  @Inject
+  @Any
+  protected UserInfo userInfoImpl;
 
-    @Inject
-    @ConfigProperty(key = "user.default.menu.mode", defaultValue = "layout-menu-horizontal")
-    protected String userDefaultMenuMode;
+  @Inject
+  @ConfigProperty(key = "user.default.menu.mode", defaultValue = "layout-menu-horizontal")
+  protected String userDefaultMenuMode;
 
-    @Inject
-    @ConfigProperty(key = "user.default.theme", defaultValue = "cjf")
-    protected String userDefaultTheme;
+  @Inject
+  @ConfigProperty(key = "user.default.theme", defaultValue = "cjf")
+  protected String userDefaultTheme;
 
-    private String menuMode;
+  private String menuMode;
 
-    private String theme;
+  private String theme;
 
-    private String layout;
+  private String layout;
 
-    private boolean orientationRtl;
+  private boolean orientationRtl;
 
-    /**
-     * Get application theme.
-     */
-    public String getTheme() {
-        if (SecurityUtils.getSubject().isAuthenticated()) {
-            UserProfileVo profileVo = getUserProfileVo();
-            if (null != profileVo.getUserProfileId() && StringUtils.isNotEmpty(profileVo.getTheme())) {
-                theme = profileVo.getTheme();
-            } else {
-                theme = userDefaultTheme;
-            }
-        } else {
-            theme = userDefaultTheme;
-        }
-        return theme;
+  /**
+   * Get application theme.
+   */
+  public String getTheme() {
+    if (SecurityUtils.getSubject().isAuthenticated()) {
+      UserProfileVo profileVo = getUserProfileVo();
+      if (null != profileVo.getUserProfileId() && StringUtils.isNotEmpty(profileVo.getTheme())) {
+        theme = profileVo.getTheme();
+      } else {
+        theme = userDefaultTheme;
+      }
+    } else {
+      theme = userDefaultTheme;
     }
+    return theme;
+  }
 
-    /**
-     * Set application theme.
-     */
-    public void setTheme(String theme) {
-        UserProfileVo profileVo = getUserProfileVo();
-        profileVo.setTheme(theme);
-        profileVo = profileService.updateProfile(profileVo);
-        this.theme = theme;
-        this.layout = theme.split("-")[0];
-    }
+  /**
+   * Set application theme.
+   */
+  public void setTheme(String theme) {
+    UserProfileVo profileVo = getUserProfileVo();
+    profileVo.setTheme(theme);
+    profileVo = profileService.updateProfile(profileVo);
+    this.theme = theme;
+    this.layout = theme.split("-")[0];
+  }
 
-    /**
-     * Get application layout.
-     */
-    public String getLayout() {
-        String themeFromDB = getTheme();
-        layout = themeFromDB.split("-")[0];
-        return layout;
-    }
+  /**
+   * Get application layout.
+   */
+  public String getLayout() {
+    String themeFromDB = getTheme();
+    layout = themeFromDB.split("-")[0];
+    return layout;
+  }
 
-    public void setLayout(String layout) {
-        this.layout = layout;
-    }
+  public void setLayout(String layout) {
+    this.layout = layout;
+  }
 
-    /**
-     * Get application Menu mode.
-     */
-    public String getMenuMode() {
-        if (SecurityUtils.getSubject().isAuthenticated()) {
-            UserProfileVo profileVo = getUserProfileVo();
-            if (null != profileVo.getUserProfileId() && StringUtils.isNotEmpty(profileVo.getMenuMode())) {
-                menuMode = profileVo.getMenuMode();
-            } else {
-                menuMode = userDefaultMenuMode;
-            }
-        } else {
-            menuMode = userDefaultMenuMode;
-        }
-        return menuMode;
+  /**
+   * Get application Menu mode.
+   */
+  public String getMenuMode() {
+    if (SecurityUtils.getSubject().isAuthenticated()) {
+      UserProfileVo profileVo = getUserProfileVo();
+      if (null != profileVo.getUserProfileId() && StringUtils.isNotEmpty(profileVo.getMenuMode())) {
+        menuMode = profileVo.getMenuMode();
+      } else {
+        menuMode = userDefaultMenuMode;
+      }
+    } else {
+      menuMode = userDefaultMenuMode;
     }
+    return menuMode;
+  }
 
-    /**
-     * Set application Menu mode.
-     */
-    public void setMenuMode(String menuMode) {
-        UserProfileVo profileVo = getUserProfileVo();
-        profileVo.setMenuMode(menuMode);
-        profileVo = profileService.updateProfile(profileVo);
-        this.menuMode = menuMode;
-    }
+  /**
+   * Set application Menu mode.
+   */
+  public void setMenuMode(String menuMode) {
+    UserProfileVo profileVo = getUserProfileVo();
+    profileVo.setMenuMode(menuMode);
+    profileVo = profileService.updateProfile(profileVo);
+    this.menuMode = menuMode;
+  }
 
-    public boolean isOrientationRtl() {
-        return orientationRtl;
-    }
+  public boolean isOrientationRtl() {
+    return orientationRtl;
+  }
 
-    public void setOrientationRtl(boolean orientationRtl) {
-        this.orientationRtl = orientationRtl;
-    }
+  public void setOrientationRtl(boolean orientationRtl) {
+    this.orientationRtl = orientationRtl;
+  }
 
-    /**
-     * Get user Profile Vo.
-     */
-    public UserProfileVo getUserProfileVo() {
-        Map<String, String> userDetails = userInfoImpl.getUserInfo();
-        String userPrincipal = userDetails.get("UserPrincipal");
-        return profileService.findUserByUserPrincipal(userPrincipal);
-    }
+  /**
+   * Get user Profile Vo.
+   */
+  public UserProfileVo getUserProfileVo() {
+    Map<String, String> userDetails = userInfoImpl.getUserInfo();
+    String userPrincipal = userDetails.get("UserPrincipal");
+    return profileService.findUserByUserPrincipal(userPrincipal);
+  }
 }

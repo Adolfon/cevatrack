@@ -22,24 +22,26 @@ import io.swagger.annotations.SwaggerDefinition;
  * BuildInfo REST resource.
  */
 @Api(value = "BuildInfo")
-@SwaggerDefinition(info = @Info(description = "BuildInfo as Util services for application info", version = "2.0.0-SNAPSHOT", title = "BuildInfo REST Service", contact = @Contact(name = "Ceva", email = "cjf@ceva.com")))
+@SwaggerDefinition(info = @Info(description = "BuildInfo as Util services for application info",
+    version = "2.0.0-SNAPSHOT", title = "BuildInfo REST Service",
+    contact = @Contact(name = "Ceva", email = "cjf@ceva.com")))
 @Path("/v1/buildInfo")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public interface BuildInfo {
 
-    /**
-     * Get application build information.
-     *
-     * @param request
-     *            servlet request context
-     * @return Attributes of info
-     * @throws IOException
-     *             when un-able to read file
-     */
-    @GET
-    @ApiOperation(value = "Get application build information", response = Attributes.class, responseContainer = "Attributes")
-    @ApiResponses(value = { @ApiResponse(code = 204, message = "unable to read the file /META-INF/MANIFEST.MF") })
-    public Response getApplicationInfo(@Context HttpServletRequest request) throws IOException;
+  /**
+   * Get application build information.
+   *
+   * @param request servlet request context
+   * @return Attributes of info
+   * @throws IOException when un-able to read file
+   */
+  @GET
+  @ApiOperation(value = "Get application build information", response = Attributes.class,
+      responseContainer = "Attributes")
+  @ApiResponses(
+      value = {@ApiResponse(code = 204, message = "unable to read the file /META-INF/MANIFEST.MF")})
+  public Response getApplicationInfo(@Context HttpServletRequest request) throws IOException;
 
 }

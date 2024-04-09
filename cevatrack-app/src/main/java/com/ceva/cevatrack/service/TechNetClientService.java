@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface TechNetClientService {
 
-    public List<SmartNetClientVO> searchTechNetClients();
+  public List<SmartNetClientVO> searchTechNetClients();
 
-    public SmartNetClientVO getTechNetClient(String clientCode);
+  public SmartNetClientVO getTechNetClient(String clientCode);
 
-	List<SmartNetClientVO> searchTechNetClientsForLink();
+  List<SmartNetClientVO> searchTechNetClientsForLink();
 
 }

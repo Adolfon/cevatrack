@@ -14,32 +14,31 @@ import javax.persistence.Persistence;
 @Alternative
 public class TestEntityManagerProducer {
 
-    private static String PERSISTENCE_UNIT_NAME = "templateTestPU";
-    private EntityManager entityManager;
-    private EntityManagerFactory emf;
+  private static String PERSISTENCE_UNIT_NAME = "templateTestPU";
+  private EntityManager entityManager;
+  private EntityManagerFactory emf;
 
-    @PostConstruct
-    public void initDB() {
-        emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-    }
+  @PostConstruct
+  public void initDB() {
+    emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+  }
 
-    @Produces
-    @RequestScoped
-    public EntityManager produceEntityManager() {
-        entityManager = emf.createEntityManager();
-        return entityManager;
-    }
+  @Produces
+  @RequestScoped
+  public EntityManager produceEntityManager() {
+    entityManager = emf.createEntityManager();
+    return entityManager;
+  }
 
-    /**
-     * closes the entity manage.
-     * 
-     * @param entityManager
-     *            class
-     */
-    public void closeEntityManager(@Disposes EntityManager entityManager) {
-        if (entityManager != null && entityManager.isOpen()) {
-            entityManager.close();
-        }
+  /**
+   * closes the entity manage.
+   * 
+   * @param entityManager class
+   */
+  public void closeEntityManager(@Disposes EntityManager entityManager) {
+    if (entityManager != null && entityManager.isOpen()) {
+      entityManager.close();
     }
+  }
 
 }

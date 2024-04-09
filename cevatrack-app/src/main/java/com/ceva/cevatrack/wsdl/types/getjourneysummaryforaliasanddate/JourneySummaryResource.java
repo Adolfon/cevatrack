@@ -30,77 +30,75 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JourneySummaryResource", propOrder = { "resourceInfo", "resourceName", "resourceType" })
+@XmlType(name = "JourneySummaryResource",
+    propOrder = {"resourceInfo", "resourceName", "resourceType"})
 public class JourneySummaryResource {
 
-    @XmlElement(name = "ResourceInfo")
-    protected String resourceInfo;
-    @XmlElement(name = "ResourceName")
-    protected String resourceName;
-    @XmlElement(name = "ResourceType")
-    protected String resourceType;
+  @XmlElement(name = "ResourceInfo")
+  protected String resourceInfo;
+  @XmlElement(name = "ResourceName")
+  protected String resourceName;
+  @XmlElement(name = "ResourceType")
+  protected String resourceType;
 
-    /**
-     * Gets the value of the resourceInfo property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getResourceInfo() {
-        return resourceInfo;
-    }
+  /**
+   * Gets the value of the resourceInfo property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getResourceInfo() {
+    return resourceInfo;
+  }
 
-    /**
-     * Sets the value of the resourceInfo property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setResourceInfo(String value) {
-        this.resourceInfo = value;
-    }
+  /**
+   * Sets the value of the resourceInfo property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setResourceInfo(String value) {
+    this.resourceInfo = value;
+  }
 
-    /**
-     * Gets the value of the resourceName property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getResourceName() {
-        return resourceName;
-    }
+  /**
+   * Gets the value of the resourceName property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getResourceName() {
+    return resourceName;
+  }
 
-    /**
-     * Sets the value of the resourceName property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setResourceName(String value) {
-        this.resourceName = value;
-    }
+  /**
+   * Sets the value of the resourceName property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setResourceName(String value) {
+    this.resourceName = value;
+  }
 
-    /**
-     * Gets the value of the resourceType property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getResourceType() {
-        return resourceType;
-    }
+  /**
+   * Gets the value of the resourceType property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getResourceType() {
+    return resourceType;
+  }
 
-    /**
-     * Sets the value of the resourceType property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setResourceType(String value) {
-        this.resourceType = value;
-    }
+  /**
+   * Sets the value of the resourceType property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setResourceType(String value) {
+    this.resourceType = value;
+  }
 
 }

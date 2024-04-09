@@ -11,7 +11,7 @@ import javax.inject.Qualifier;
 
 @Qualifier
 @Retention(RUNTIME)
-@Target({ FIELD, METHOD, PARAMETER, TYPE })
+@Target({FIELD, METHOD, PARAMETER, TYPE})
 public @interface Update {
 
 }

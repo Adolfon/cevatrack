@@ -37,195 +37,188 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConsignmentFilter", propOrder = { "consignmentReference", "orderReference", "earliestDeliveryDate",
-        "latestDeliveryDate", "siteID", "siteName", "siteAddress", "sitePostCode" })
+@XmlType(name = "ConsignmentFilter",
+    propOrder = {"consignmentReference", "orderReference", "earliestDeliveryDate",
+        "latestDeliveryDate", "siteID", "siteName", "siteAddress", "sitePostCode"})
 public class ConsignmentFilter {
 
-    @XmlElement(name = "ConsignmentReference")
-    protected String consignmentReference;
-    @XmlElement(name = "OrderReference")
-    protected String orderReference;
-    @XmlElement(name = "EarliestDeliveryDate", required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar earliestDeliveryDate;
-    @XmlElement(name = "LatestDeliveryDate", required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar latestDeliveryDate;
-    @XmlElement(name = "SiteID")
-    protected String siteID;
-    @XmlElement(name = "SiteName")
-    protected String siteName;
-    @XmlElement(name = "SiteAddress")
-    protected String siteAddress;
-    @XmlElement(name = "SitePostCode")
-    protected String sitePostCode;
+  @XmlElement(name = "ConsignmentReference")
+  protected String consignmentReference;
+  @XmlElement(name = "OrderReference")
+  protected String orderReference;
+  @XmlElement(name = "EarliestDeliveryDate", required = true)
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar earliestDeliveryDate;
+  @XmlElement(name = "LatestDeliveryDate", required = true)
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar latestDeliveryDate;
+  @XmlElement(name = "SiteID")
+  protected String siteID;
+  @XmlElement(name = "SiteName")
+  protected String siteName;
+  @XmlElement(name = "SiteAddress")
+  protected String siteAddress;
+  @XmlElement(name = "SitePostCode")
+  protected String sitePostCode;
 
-    /**
-     * Gets the value of the consignmentReference property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getConsignmentReference() {
-        return consignmentReference;
-    }
+  /**
+   * Gets the value of the consignmentReference property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getConsignmentReference() {
+    return consignmentReference;
+  }
 
-    /**
-     * Sets the value of the consignmentReference property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setConsignmentReference(String value) {
-        this.consignmentReference = value;
-    }
+  /**
+   * Sets the value of the consignmentReference property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setConsignmentReference(String value) {
+    this.consignmentReference = value;
+  }
 
-    /**
-     * Gets the value of the orderReference property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getOrderReference() {
-        return orderReference;
-    }
+  /**
+   * Gets the value of the orderReference property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getOrderReference() {
+    return orderReference;
+  }
 
-    /**
-     * Sets the value of the orderReference property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setOrderReference(String value) {
-        this.orderReference = value;
-    }
+  /**
+   * Sets the value of the orderReference property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setOrderReference(String value) {
+    this.orderReference = value;
+  }
 
-    /**
-     * Gets the value of the earliestDeliveryDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getEarliestDeliveryDate() {
-        return earliestDeliveryDate;
-    }
+  /**
+   * Gets the value of the earliestDeliveryDate property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getEarliestDeliveryDate() {
+    return earliestDeliveryDate;
+  }
 
-    /**
-     * Sets the value of the earliestDeliveryDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setEarliestDeliveryDate(XMLGregorianCalendar value) {
-        this.earliestDeliveryDate = value;
-    }
+  /**
+   * Sets the value of the earliestDeliveryDate property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setEarliestDeliveryDate(XMLGregorianCalendar value) {
+    this.earliestDeliveryDate = value;
+  }
 
-    /**
-     * Gets the value of the latestDeliveryDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getLatestDeliveryDate() {
-        return latestDeliveryDate;
-    }
+  /**
+   * Gets the value of the latestDeliveryDate property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getLatestDeliveryDate() {
+    return latestDeliveryDate;
+  }
 
-    /**
-     * Sets the value of the latestDeliveryDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setLatestDeliveryDate(XMLGregorianCalendar value) {
-        this.latestDeliveryDate = value;
-    }
+  /**
+   * Sets the value of the latestDeliveryDate property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setLatestDeliveryDate(XMLGregorianCalendar value) {
+    this.latestDeliveryDate = value;
+  }
 
-    /**
-     * Gets the value of the siteID property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSiteID() {
-        return siteID;
-    }
+  /**
+   * Gets the value of the siteID property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getSiteID() {
+    return siteID;
+  }
 
-    /**
-     * Sets the value of the siteID property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setSiteID(String value) {
-        this.siteID = value;
-    }
+  /**
+   * Sets the value of the siteID property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setSiteID(String value) {
+    this.siteID = value;
+  }
 
-    /**
-     * Gets the value of the siteName property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSiteName() {
-        return siteName;
-    }
+  /**
+   * Gets the value of the siteName property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getSiteName() {
+    return siteName;
+  }
 
-    /**
-     * Sets the value of the siteName property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setSiteName(String value) {
-        this.siteName = value;
-    }
+  /**
+   * Sets the value of the siteName property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setSiteName(String value) {
+    this.siteName = value;
+  }
 
-    /**
-     * Gets the value of the siteAddress property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSiteAddress() {
-        return siteAddress;
-    }
+  /**
+   * Gets the value of the siteAddress property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getSiteAddress() {
+    return siteAddress;
+  }
 
-    /**
-     * Sets the value of the siteAddress property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setSiteAddress(String value) {
-        this.siteAddress = value;
-    }
+  /**
+   * Sets the value of the siteAddress property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setSiteAddress(String value) {
+    this.siteAddress = value;
+  }
 
-    /**
-     * Gets the value of the sitePostCode property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getSitePostCode() {
-        return sitePostCode;
-    }
+  /**
+   * Gets the value of the sitePostCode property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getSitePostCode() {
+    return sitePostCode;
+  }
 
-    /**
-     * Sets the value of the sitePostCode property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setSitePostCode(String value) {
-        this.sitePostCode = value;
-    }
+  /**
+   * Sets the value of the sitePostCode property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setSitePostCode(String value) {
+    this.sitePostCode = value;
+  }
 
 }

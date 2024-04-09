@@ -9,35 +9,35 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class JourneySummaryTrackedVehicle {
 
-    protected String displayName;
-    protected double endOdometer;
-    protected double startOdometer;
+  protected String displayName;
+  protected double endOdometer;
+  protected double startOdometer;
 
-    @XmlElement(name = "DisplayName")
-    public String getDisplayName() {
-        return displayName;
-    }
+  @XmlElement(name = "DisplayName")
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    public void setDisplayName(String value) {
-        this.displayName = value;
-    }
+  public void setDisplayName(String value) {
+    this.displayName = value;
+  }
 
-    @XmlElement(name = "EndOdometer")
-    public double getEndOdometer() {
-        return endOdometer;
-    }
+  @XmlElement(name = "EndOdometer")
+  public double getEndOdometer() {
+    return endOdometer;
+  }
 
-    public void setEndOdometer(double value) {
-        this.endOdometer = value;
-    }
+  public void setEndOdometer(double value) {
+    this.endOdometer = value;
+  }
 
-    @XmlElement(name = "StartOdometer")
-    public double getStartOdometer() {
-        return startOdometer;
-    }
+  @XmlElement(name = "StartOdometer")
+  public double getStartOdometer() {
+    return startOdometer;
+  }
 
-    public void setStartOdometer(double value) {
-        this.startOdometer = value;
-    }
+  public void setStartOdometer(double value) {
+    this.startOdometer = value;
+  }
 
 }

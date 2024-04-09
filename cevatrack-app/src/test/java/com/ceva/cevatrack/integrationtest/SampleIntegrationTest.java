@@ -5,12 +5,12 @@ import org.junit.Assert;
 
 public class SampleIntegrationTest {
 
-    /**
-     * tests SampleIntegrationTest.
-     */
-    @Test
-    public void test() {
-    	Assert.assertTrue(true);        
-    }
+  /**
+   * tests SampleIntegrationTest.
+   */
+  @Test
+  public void test() {
+    Assert.assertTrue(true);
+  }
 
 }

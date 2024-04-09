@@ -10,10 +10,11 @@ import org.apache.deltaspike.data.api.Repository;
  *
  */
 @Repository(forEntity = SmartNetClient.class)
-public abstract class SmartNetClientRepository extends AbstractFullEntityRepository<SmartNetClient, Long> {
+public abstract class SmartNetClientRepository
+    extends AbstractFullEntityRepository<SmartNetClient, Long> {
 
-    public abstract Optional<SmartNetClient> findByName(String name);
+  public abstract Optional<SmartNetClient> findByName(String name);
 
-    public abstract Optional<SmartNetClient> findByInstance(String instance);
+  public abstract Optional<SmartNetClient> findByInstance(String instance);
 
 }

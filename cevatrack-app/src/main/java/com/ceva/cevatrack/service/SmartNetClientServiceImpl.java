@@ -22,31 +22,32 @@ import org.apache.shiro.subject.Subject;
 @Stateless(name = "com.ceva.cevatrack.service.SmartNetClientServiceImpl")
 public class SmartNetClientServiceImpl implements SmartNetClientService {
 
-    @Inject
-    private SmartNetClientRepository smartNetClientRepository;
+  @Inject
+  private SmartNetClientRepository smartNetClientRepository;
 
-    @Inject
-    private SmartNetClientTransformer smartNetClientTransformer;
+  @Inject
+  private SmartNetClientTransformer smartNetClientTransformer;
 
-    private static final String PERM = "sn_client:view:";
-    private static final String PERM_GLOBAL = "sn_client:view";
+  private static final String PERM = "sn_client:view:";
+  private static final String PERM_GLOBAL = "sn_client:view";
 
-    @Override
-    public List<SmartNetClientVO> searchSmartNetClient() {
-        Subject currentUser = SecurityUtils.getSubject();
-        List<SmartNetClient> matchingSmartNetClients = smartNetClientRepository.findAll();
-        if (currentUser.isPermitted(PERM_GLOBAL)) {
-            return smartNetClientTransformer.transformToVO(matchingSmartNetClients);
-        }
-        List<SmartNetClient> filteredSmartNetClients = matchingSmartNetClients.stream()
-                .filter(client -> currentUser.isPermitted(PERM + client.getAafInstance())).collect(Collectors.toList());
-        return smartNetClientTransformer.transformToVO(filteredSmartNetClients);
+  @Override
+  public List<SmartNetClientVO> searchSmartNetClient() {
+    Subject currentUser = SecurityUtils.getSubject();
+    List<SmartNetClient> matchingSmartNetClients = smartNetClientRepository.findAll();
+    if (currentUser.isPermitted(PERM_GLOBAL)) {
+      return smartNetClientTransformer.transformToVO(matchingSmartNetClients);
     }
+    List<SmartNetClient> filteredSmartNetClients = matchingSmartNetClients.stream()
+        .filter(client -> currentUser.isPermitted(PERM + client.getAafInstance()))
+        .collect(Collectors.toList());
+    return smartNetClientTransformer.transformToVO(filteredSmartNetClients);
+  }
 
-    @Override
-    public SmartNetClientVO getSmartNetClient(String prefix) {
-        return searchSmartNetClient().stream().filter(client -> prefix.equals(client.getPrefixes())).findAny()
-                .orElse(null);
-    }
+  @Override
+  public SmartNetClientVO getSmartNetClient(String prefix) {
+    return searchSmartNetClient().stream().filter(client -> prefix.equals(client.getPrefixes()))
+        .findAny().orElse(null);
+  }
 
 }

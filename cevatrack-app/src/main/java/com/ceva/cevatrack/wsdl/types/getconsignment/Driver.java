@@ -31,95 +31,92 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Driver", propOrder = { "displayName", "fullName", "contactNumber", "journeyID" })
+@XmlType(name = "Driver", propOrder = {"displayName", "fullName", "contactNumber", "journeyID"})
 public class Driver {
 
-    @XmlElement(name = "DisplayName")
-    protected String displayName;
-    @XmlElement(name = "FullName")
-    protected String fullName;
-    @XmlElement(name = "ContactNumber")
-    protected String contactNumber;
-    @XmlElement(name = "JourneyID")
-    protected int journeyID;
+  @XmlElement(name = "DisplayName")
+  protected String displayName;
+  @XmlElement(name = "FullName")
+  protected String fullName;
+  @XmlElement(name = "ContactNumber")
+  protected String contactNumber;
+  @XmlElement(name = "JourneyID")
+  protected int journeyID;
 
-    /**
-     * Gets the value of the displayName property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
+  /**
+   * Gets the value of the displayName property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    /**
-     * Sets the value of the displayName property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setDisplayName(String value) {
-        this.displayName = value;
-    }
+  /**
+   * Sets the value of the displayName property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setDisplayName(String value) {
+    this.displayName = value;
+  }
 
-    /**
-     * Gets the value of the fullName property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getFullName() {
-        return fullName;
-    }
+  /**
+   * Gets the value of the fullName property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getFullName() {
+    return fullName;
+  }
 
-    /**
-     * Sets the value of the fullName property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setFullName(String value) {
-        this.fullName = value;
-    }
+  /**
+   * Sets the value of the fullName property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setFullName(String value) {
+    this.fullName = value;
+  }
 
-    /**
-     * Gets the value of the contactNumber property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getContactNumber() {
-        return contactNumber;
-    }
+  /**
+   * Gets the value of the contactNumber property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getContactNumber() {
+    return contactNumber;
+  }
 
-    /**
-     * Sets the value of the contactNumber property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setContactNumber(String value) {
-        this.contactNumber = value;
-    }
+  /**
+   * Sets the value of the contactNumber property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setContactNumber(String value) {
+    this.contactNumber = value;
+  }
 
-    /**
-     * Gets the value of the journeyID property.
-     * 
-     */
-    public int getJourneyID() {
-        return journeyID;
-    }
+  /**
+   * Gets the value of the journeyID property.
+   * 
+   */
+  public int getJourneyID() {
+    return journeyID;
+  }
 
-    /**
-     * Sets the value of the journeyID property.
-     * 
-     */
-    public void setJourneyID(int value) {
-        this.journeyID = value;
-    }
+  /**
+   * Sets the value of the journeyID property.
+   * 
+   */
+  public void setJourneyID(int value) {
+    this.journeyID = value;
+  }
 
 }

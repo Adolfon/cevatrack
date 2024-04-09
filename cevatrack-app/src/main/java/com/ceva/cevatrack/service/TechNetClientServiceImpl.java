@@ -18,37 +18,38 @@ import org.apache.shiro.subject.Subject;
 @Stateless(name = "com.ceva.cevatrack.service.TechNetClientServiceImpl")
 public class TechNetClientServiceImpl implements TechNetClientService {
 
-    @Inject
-    private TechNetClientRepository techNetClientRepository;
+  @Inject
+  private TechNetClientRepository techNetClientRepository;
 
-    @Inject
-    private TechNetClientTransformer techNetClientTransformer;
+  @Inject
+  private TechNetClientTransformer techNetClientTransformer;
 
-    private static final String PERM = "tn_client:view:";
-    private static final String PERM_GLOBAL = "tn_client:view";
+  private static final String PERM = "tn_client:view:";
+  private static final String PERM_GLOBAL = "tn_client:view";
 
 
-    @Override
-    public List<SmartNetClientVO> searchTechNetClients() {
-        Subject currentUser = SecurityUtils.getSubject();
-        List<TechNetClient> matchingSmartNetClients = techNetClientRepository.findAll();
-        if (currentUser.isPermitted(PERM_GLOBAL)) {
-            return techNetClientTransformer.transformToVO(matchingSmartNetClients);
-        }
-        List<TechNetClient> filteredSmartNetClients = matchingSmartNetClients.stream()
-                .filter(client -> currentUser.isPermitted(PERM + client.getAafInstance())).collect(Collectors.toList());
-        return techNetClientTransformer.transformToVO(filteredSmartNetClients);
+  @Override
+  public List<SmartNetClientVO> searchTechNetClients() {
+    Subject currentUser = SecurityUtils.getSubject();
+    List<TechNetClient> matchingSmartNetClients = techNetClientRepository.findAll();
+    if (currentUser.isPermitted(PERM_GLOBAL)) {
+      return techNetClientTransformer.transformToVO(matchingSmartNetClients);
     }
+    List<TechNetClient> filteredSmartNetClients = matchingSmartNetClients.stream()
+        .filter(client -> currentUser.isPermitted(PERM + client.getAafInstance()))
+        .collect(Collectors.toList());
+    return techNetClientTransformer.transformToVO(filteredSmartNetClients);
+  }
 
-    @Override
-    public SmartNetClientVO getTechNetClient(String prefix) {
-        return searchTechNetClients().stream().filter(client -> prefix.equals(client.getPrefixes())).findAny()
-                .orElse(null);
-    }
-    
-    public List<SmartNetClientVO> searchTechNetClientsForLink() {        
-        List<TechNetClient> matchingSmartNetClients = techNetClientRepository.findAll();        
-        return techNetClientTransformer.transformToVO(matchingSmartNetClients);
-    }
+  @Override
+  public SmartNetClientVO getTechNetClient(String prefix) {
+    return searchTechNetClients().stream().filter(client -> prefix.equals(client.getPrefixes()))
+        .findAny().orElse(null);
+  }
+
+  public List<SmartNetClientVO> searchTechNetClientsForLink() {
+    List<TechNetClient> matchingSmartNetClients = techNetClientRepository.findAll();
+    return techNetClientTransformer.transformToVO(matchingSmartNetClients);
+  }
 
 }

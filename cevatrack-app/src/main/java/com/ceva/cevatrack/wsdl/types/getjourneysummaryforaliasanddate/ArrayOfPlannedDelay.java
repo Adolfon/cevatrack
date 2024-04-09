@@ -30,38 +30,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ArrayOfPlannedDelay", propOrder = { "plannedDelay" })
+@XmlType(name = "ArrayOfPlannedDelay", propOrder = {"plannedDelay"})
 public class ArrayOfPlannedDelay {
 
-    @XmlElement(name = "PlannedDelay", nillable = true)
-    protected List<PlannedDelay> plannedDelay;
+  @XmlElement(name = "PlannedDelay", nillable = true)
+  protected List<PlannedDelay> plannedDelay;
 
-    /**
-     * Gets the value of the plannedDelay property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
-     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
-     * the plannedDelay property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * 
-     * <pre>
-     * getPlannedDelay().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link PlannedDelay }
-     * 
-     * 
-     */
-    public List<PlannedDelay> getPlannedDelay() {
-        if (plannedDelay == null) {
-            plannedDelay = new ArrayList<PlannedDelay>();
-        }
-        return this.plannedDelay;
+  /**
+   * Gets the value of the plannedDelay property.
+   * 
+   * <p>
+   * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+   * modification you make to the returned list will be present inside the JAXB object. This is why
+   * there is not a <CODE>set</CODE> method for the plannedDelay property.
+   * 
+   * <p>
+   * For example, to add a new item, do as follows:
+   * 
+   * <pre>
+   * getPlannedDelay().add(newItem);
+   * </pre>
+   * 
+   * 
+   * <p>
+   * Objects of the following type(s) are allowed in the list {@link PlannedDelay }
+   * 
+   * 
+   */
+  public List<PlannedDelay> getPlannedDelay() {
+    if (plannedDelay == null) {
+      plannedDelay = new ArrayList<PlannedDelay>();
     }
+    return this.plannedDelay;
+  }
 
 }

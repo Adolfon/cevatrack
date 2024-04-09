@@ -30,67 +30,67 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JourneySummaryTrackedVehicle", propOrder = { "displayName", "endOdometer", "startOdometer" })
+@XmlType(name = "JourneySummaryTrackedVehicle",
+    propOrder = {"displayName", "endOdometer", "startOdometer"})
 public class JourneySummaryTrackedVehicle {
 
-    @XmlElement(name = "DisplayName")
-    protected String displayName;
-    @XmlElement(name = "EndOdometer")
-    protected double endOdometer;
-    @XmlElement(name = "StartOdometer")
-    protected double startOdometer;
+  @XmlElement(name = "DisplayName")
+  protected String displayName;
+  @XmlElement(name = "EndOdometer")
+  protected double endOdometer;
+  @XmlElement(name = "StartOdometer")
+  protected double startOdometer;
 
-    /**
-     * Gets the value of the displayName property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
+  /**
+   * Gets the value of the displayName property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    /**
-     * Sets the value of the displayName property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setDisplayName(String value) {
-        this.displayName = value;
-    }
+  /**
+   * Sets the value of the displayName property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setDisplayName(String value) {
+    this.displayName = value;
+  }
 
-    /**
-     * Gets the value of the endOdometer property.
-     * 
-     */
-    public double getEndOdometer() {
-        return endOdometer;
-    }
+  /**
+   * Gets the value of the endOdometer property.
+   * 
+   */
+  public double getEndOdometer() {
+    return endOdometer;
+  }
 
-    /**
-     * Sets the value of the endOdometer property.
-     * 
-     */
-    public void setEndOdometer(double value) {
-        this.endOdometer = value;
-    }
+  /**
+   * Sets the value of the endOdometer property.
+   * 
+   */
+  public void setEndOdometer(double value) {
+    this.endOdometer = value;
+  }
 
-    /**
-     * Gets the value of the startOdometer property.
-     * 
-     */
-    public double getStartOdometer() {
-        return startOdometer;
-    }
+  /**
+   * Gets the value of the startOdometer property.
+   * 
+   */
+  public double getStartOdometer() {
+    return startOdometer;
+  }
 
-    /**
-     * Sets the value of the startOdometer property.
-     * 
-     */
-    public void setStartOdometer(double value) {
-        this.startOdometer = value;
-    }
+  /**
+   * Sets the value of the startOdometer property.
+   * 
+   */
+  public void setStartOdometer(double value) {
+    this.startOdometer = value;
+  }
 
 }

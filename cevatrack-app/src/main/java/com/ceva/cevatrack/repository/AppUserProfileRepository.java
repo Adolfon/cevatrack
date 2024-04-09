@@ -12,8 +12,9 @@ import com.ceva.cevatrack.domain.AppUserProfile;
  *
  */
 @Repository(forEntity = AppUserProfile.class)
-public abstract class AppUserProfileRepository extends AbstractFullEntityRepository<AppUserProfile, Long> {
+public abstract class AppUserProfileRepository
+    extends AbstractFullEntityRepository<AppUserProfile, Long> {
 
-    public abstract Optional<AppUserProfile> findByUserProfileId(Long userProfileId);
+  public abstract Optional<AppUserProfile> findByUserProfileId(Long userProfileId);
 
 }

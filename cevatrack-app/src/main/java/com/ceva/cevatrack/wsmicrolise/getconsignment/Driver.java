@@ -9,52 +9,52 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class Driver {
 
-    protected String displayName;
-    protected String fullName;
-    protected String contactNumber;
-    protected int journeyId;
+  protected String displayName;
+  protected String fullName;
+  protected String contactNumber;
+  protected int journeyId;
 
-    @XmlElement(name = "DisplayName")
-    public String getDisplayName() {
-        return displayName;
-    }
+  @XmlElement(name = "DisplayName")
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    public void setDisplayName(String value) {
-        this.displayName = value;
-    }
+  public void setDisplayName(String value) {
+    this.displayName = value;
+  }
 
-    @XmlElement(name = "FullName")
-    public String getFullName() {
-        return fullName;
-    }
+  @XmlElement(name = "FullName")
+  public String getFullName() {
+    return fullName;
+  }
 
-    public void setFullName(String value) {
-        this.fullName = value;
-    }
+  public void setFullName(String value) {
+    this.fullName = value;
+  }
 
-    @XmlElement(name = "ContactNumber")
-    public String getContactNumber() {
-        return contactNumber;
-    }
+  @XmlElement(name = "ContactNumber")
+  public String getContactNumber() {
+    return contactNumber;
+  }
 
-    public void setContactNumber(String value) {
-        this.contactNumber = value;
-    }
+  public void setContactNumber(String value) {
+    this.contactNumber = value;
+  }
 
-    @XmlElement(name = "JourneyID")
-    public int getJourneyId() {
-        return journeyId;
-    }
+  @XmlElement(name = "JourneyID")
+  public int getJourneyId() {
+    return journeyId;
+  }
 
-    public void setJourneyId(int value) {
-        this.journeyId = value;
-    }
+  public void setJourneyId(int value) {
+    this.journeyId = value;
+  }
 
-	@Override
-	public String toString() {
-		return "Driver [displayName=" + displayName + ", fullName=" + fullName + ", contactNumber=" + contactNumber
-				+ ", journeyId=" + journeyId + "]";
-	}
-    
+  @Override
+  public String toString() {
+    return "Driver [displayName=" + displayName + ", fullName=" + fullName + ", contactNumber="
+        + contactNumber + ", journeyId=" + journeyId + "]";
+  }
+
 
 }

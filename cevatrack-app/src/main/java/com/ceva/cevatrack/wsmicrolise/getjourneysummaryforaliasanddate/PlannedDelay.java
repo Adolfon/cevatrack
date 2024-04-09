@@ -9,35 +9,35 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class PlannedDelay {
 
-    protected int duration;
-    protected String type;
-    protected String position;
+  protected int duration;
+  protected String type;
+  protected String position;
 
-    @XmlElement(name = "Duration")
-    public int getDuration() {
-        return duration;
-    }
+  @XmlElement(name = "Duration")
+  public int getDuration() {
+    return duration;
+  }
 
-    public void setDuration(int value) {
-        this.duration = value;
-    }
+  public void setDuration(int value) {
+    this.duration = value;
+  }
 
-    @XmlElement(name = "Type")
-    public String getType() {
-        return type;
-    }
+  @XmlElement(name = "Type")
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String value) {
-        this.type = value;
-    }
+  public void setType(String value) {
+    this.type = value;
+  }
 
-    @XmlElement(name = "Position")
-    public String getPosition() {
-        return position;
-    }
+  @XmlElement(name = "Position")
+  public String getPosition() {
+    return position;
+  }
 
-    public void setPosition(String value) {
-        this.position = value;
-    }
+  public void setPosition(String value) {
+    this.position = value;
+  }
 
 }

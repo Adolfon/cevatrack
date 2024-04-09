@@ -14,6 +14,6 @@ import com.ceva.cevatrack.domain.User;
 @Repository(forEntity = User.class)
 public abstract class UserRepository extends AbstractFullEntityRepository<User, Long> {
 
-    public abstract Optional<User> findByLogin(String login);
+  public abstract Optional<User> findByLogin(String login);
 
 }

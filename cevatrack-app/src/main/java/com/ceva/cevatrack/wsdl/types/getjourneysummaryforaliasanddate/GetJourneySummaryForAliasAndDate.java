@@ -34,99 +34,95 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "journeyAlias", "startDate", "user", "pass" })
+@XmlType(name = "", propOrder = {"journeyAlias", "startDate", "user", "pass"})
 @XmlRootElement(name = "GetJourneySummaryForAliasAndDate")
 public class GetJourneySummaryForAliasAndDate {
 
-    protected String journeyAlias;
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar startDate;
-    protected String user;
-    protected String pass;
+  protected String journeyAlias;
+  @XmlElement(required = true)
+  @XmlSchemaType(name = "dateTime")
+  protected XMLGregorianCalendar startDate;
+  protected String user;
+  protected String pass;
 
-    /**
-     * Gets the value of the journeyAlias property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getJourneyAlias() {
-        return journeyAlias;
-    }
+  /**
+   * Gets the value of the journeyAlias property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getJourneyAlias() {
+    return journeyAlias;
+  }
 
-    /**
-     * Sets the value of the journeyAlias property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setJourneyAlias(String value) {
-        this.journeyAlias = value;
-    }
+  /**
+   * Sets the value of the journeyAlias property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setJourneyAlias(String value) {
+    this.journeyAlias = value;
+  }
 
-    /**
-     * Gets the value of the startDate property.
-     * 
-     * @return possible object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public XMLGregorianCalendar getStartDate() {
-        return startDate;
-    }
+  /**
+   * Gets the value of the startDate property.
+   * 
+   * @return possible object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public XMLGregorianCalendar getStartDate() {
+    return startDate;
+  }
 
-    /**
-     * Sets the value of the startDate property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
-     */
-    public void setStartDate(XMLGregorianCalendar value) {
-        this.startDate = value;
-    }
+  /**
+   * Sets the value of the startDate property.
+   * 
+   * @param value allowed object is {@link XMLGregorianCalendar }
+   * 
+   */
+  public void setStartDate(XMLGregorianCalendar value) {
+    this.startDate = value;
+  }
 
-    /**
-     * Gets the value of the user property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getUser() {
-        return user;
-    }
+  /**
+   * Gets the value of the user property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getUser() {
+    return user;
+  }
 
-    /**
-     * Sets the value of the user property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setUser(String value) {
-        this.user = value;
-    }
+  /**
+   * Sets the value of the user property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setUser(String value) {
+    this.user = value;
+  }
 
-    /**
-     * Gets the value of the pass property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getPass() {
-        return pass;
-    }
+  /**
+   * Gets the value of the pass property.
+   * 
+   * @return possible object is {@link String }
+   * 
+   */
+  public String getPass() {
+    return pass;
+  }
 
-    /**
-     * Sets the value of the pass property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setPass(String value) {
-        this.pass = value;
-    }
+  /**
+   * Sets the value of the pass property.
+   * 
+   * @param value allowed object is {@link String }
+   * 
+   */
+  public void setPass(String value) {
+    this.pass = value;
+  }
 
 }

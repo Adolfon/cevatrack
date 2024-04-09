@@ -11,107 +11,107 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * AbstractEntity.
  * 
- * @deprecated Since 3.2. Moved class to common-ejb as {@link com.ceva.framework.domain.AbstractEntity}
+ * @deprecated Since 3.2. Moved class to common-ejb as
+ *             {@link com.ceva.framework.domain.AbstractEntity}
  * @author mohammad.rasheed.
- * @param <PK>
- *            This describes AbstractEntity.
+ * @param <PK> This describes AbstractEntity.
  *
  */
 @Deprecated
 @MappedSuperclass
 public abstract class AbstractEntity<P extends Serializable> implements Serializable {
 
-    @Version
-    @Column(name = "version", nullable = false)
-    private Short version;
+  @Version
+  @Column(name = "version", nullable = false)
+  private Short version;
 
-    /**
-     * use java time api.
-     */
-    @Column(name = "created_on", nullable = false)
-    private Date createdOn;
+  /**
+   * use java time api.
+   */
+  @Column(name = "created_on", nullable = false)
+  private Date createdOn;
 
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
+  @Column(name = "created_by", nullable = false)
+  private String createdBy;
 
-    @Column(name = "updated_on")
-    private Date updatedOn;
+  @Column(name = "updated_on")
+  private Date updatedOn;
 
-    @Column(name = "updated_by")
-    private String updatedBy;
+  @Column(name = "updated_by")
+  private String updatedBy;
 
-    @Transient
-    public boolean isNew() {
-        return null == getId();
+  @Transient
+  public boolean isNew() {
+    return null == getId();
+  }
+
+  public abstract P getId();
+
+  @Override
+  public String toString() {
+    return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 31).append(getId()).toHashCode();
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (this.getId() == null) {
+      return false;
     }
 
-    public abstract P getId();
-
-    @Override
-    public String toString() {
-        return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
+    if (obj instanceof AbstractEntity && obj.getClass().equals(getClass())) {
+      return this.getId().equals(((AbstractEntity) obj).getId());
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 31).append(getId()).toHashCode();
-    }
+    return false;
+  }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (this.getId() == null) {
-            return false;
-        }
+  public Short getVersion() {
+    return version;
+  }
 
-        if (obj instanceof AbstractEntity && obj.getClass().equals(getClass())) {
-            return this.getId().equals(((AbstractEntity) obj).getId());
-        }
+  public void setVersion(Short version) {
+    this.version = version;
+  }
 
-        return false;
-    }
+  public Date getCreatedOn() {
+    return createdOn;
+  }
 
-    public Short getVersion() {
-        return version;
-    }
+  public void setCreatedOn(Date createdOn) {
+    this.createdOn = createdOn;
+  }
 
-    public void setVersion(Short version) {
-        this.version = version;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public Date getCreatedOn() {
-        return createdOn;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
+  public Date getUpdatedOn() {
+    return updatedOn;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setUpdatedOn(Date updatedOn) {
+    this.updatedOn = updatedOn;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
 
-    public Date getUpdatedOn() {
-        return updatedOn;
-    }
-
-    public void setUpdatedOn(Date updatedOn) {
-        this.updatedOn = updatedOn;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
 
 }
