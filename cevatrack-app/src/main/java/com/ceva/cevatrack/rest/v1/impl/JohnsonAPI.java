@@ -156,8 +156,10 @@ public class JohnsonAPI implements Serializable{
 	    		if (user.getIsLocked() || !user.getIsActive()){
 	    			return 4;
 	    		}
-	    		if (user.getIncorrectLoginAttempts() > 4){
+	    		if (user.getIncorrectLoginAttempts() != null && user.getIncorrectLoginAttempts() > 4){
 	    			return 4;
+	    		}else if (user.getIncorrectLoginAttempts() == null){
+	    			user.setIncorrectLoginAttempts(0);
 	    		}
 	    		if (comparePlainTextToEncrypted(pass,user.getPassword())){
 	    			resetNumberAttemptUser(userName);

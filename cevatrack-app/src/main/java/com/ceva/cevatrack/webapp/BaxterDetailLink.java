@@ -128,7 +128,7 @@ public class BaxterDetailLink implements Serializable {
         client = lbean.getClient();
         place_loc = lbean.getMl_site_lat() + ", " + lbean.getMl_site_long();
         LOGGER.info(" -- Data retrieved from data base, client: " + client + " ,consignment ref: " + consingmentString + " ,location: " + place_loc);
-        if (!client.equalsIgnoreCase("BAXTER")){
+        if (!client.equalsIgnoreCase("BAXTER") || !client.equalsIgnoreCase("VTVLTD")) { //  VTVLTD
         	LOGGER.warn(" --  client error --, linkParameter: " + linkParameter + ",linkBean: " + lbean);
         	goToError("Not enough information error");
         	return;

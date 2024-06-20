@@ -412,7 +412,7 @@ public class ConsignmentListManager {
             if (network.equalsIgnoreCase("HealthLink") || network.equalsIgnoreCase(ApplicationGlobalConfig.TechNetLink) 
             		|| network.equalsIgnoreCase(ApplicationGlobalConfig.BaxterLink)){
             	// HEALTH NETWORK FOR NUTRICIA LINK VALIDATES FOR NOW ONLY THROUGH DATABASE LINK same as Technet link
-            	LOGGER.info(" -- HealthLink or TechNetLink detected --");
+            	LOGGER.info(" -- HealthLink, BaxterLink or TechNetLink detected --");
                 return consignment;
             }
         	LOGGER.info(" -- Going to secure the subject for network: " + network + " --");
