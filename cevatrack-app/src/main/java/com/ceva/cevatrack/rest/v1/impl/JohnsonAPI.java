@@ -293,7 +293,7 @@ public class JohnsonAPI implements Serializable{
 				LOGGER.info(" ----------- We are in the Development environment and its DB configuration!!");//OK
 				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://iahlvlpgdb002:5432/cevatrack_responsive");	
 				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "cevatrack_responsive");				
+				properties.put("openjpa.ConnectionPassword", "Cevatrack_responsive@2024");		
 			}
 			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-TEST")){
 				LOGGER.info(" ----------- We are in the TEST environment and its DB configuration!!");//OK
