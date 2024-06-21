@@ -128,8 +128,10 @@ public class BaxterDetailLink implements Serializable {
         client = lbean.getClient();
         place_loc = lbean.getMl_site_lat() + ", " + lbean.getMl_site_long();
         LOGGER.info(" -- Data retrieved from data base, client: " + client + " ,consignment ref: " + consingmentString + " ,location: " + place_loc);
-        if (!client.equalsIgnoreCase("BAXTER") || !client.equalsIgnoreCase("VTVLTD")) { //  VTVLTD
-        	LOGGER.warn(" --  client error --, linkParameter: " + linkParameter + ",linkBean: " + lbean);
+        if (client != null && client.equalsIgnoreCase("BAXTER") || client != null && client.equalsIgnoreCase("VTVLTD")) { //  VTVLTD
+        	LOGGER.info(" -- Client is Baxter or VTVLTD, OK");
+        }else{
+        	LOGGER.warn(" --  client error --, linkParameter: " + linkParameter + ",linkBean: " + lbean + ", client: " + client);
         	goToError("Not enough information error");
         	return;
         }
@@ -150,8 +152,12 @@ public class BaxterDetailLink implements Serializable {
         	return;
         }    
         LOGGER.info(" -- Consingment recovered details: " + consignment);
-        this.feedBack_URL = linkService.getURL_rate_link("BAXTER");    
+        this.feedBack_URL = linkService.getURL_rate_link(client.toUpperCase());    
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
+        if (this.feedBack_URL == null || this.feedBack_URL.equals("")){
+        	LOGGER.warn("-- nothing recovered on database for the URL link, setting to a value: 'http://www.cevalogistics.com/en'");
+        	this.feedBack_URL = "http://www.cevalogistics.com/en";
+        }
         modifyConsignmentVisitWindow(consignment);
         for(ConsignmentDetail con: consignment.getConsignmentDetails()){
         	LOGGER.info("\n --Details: " + con);

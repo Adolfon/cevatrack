@@ -31,7 +31,12 @@ public class LinkServiceImpl implements LinkService{
 	public String getURL_rate_link(String client) {
 		LOG.info("-- Retrieving the URL for rate us..");
 		//LOG.info(" -- Retrieved URLs: " + mcr.searchById(client) + " ,custom: " + mcr.searchRecordByClient(client));
-		return mcr.searchRecordByClient(client).getFeedback_link();
+		String result = mcr.searchRecordByClient(client).getFeedback_link();
+		if (result == null || result.equals("")){
+			LOG.warn("-- Client feedback URL was null, trying to recover 'default' url link..");
+			result = mcr.searchRecordByClient("default").getFeedback_link();
+		}		
+		return result;
 	}    
 
 }
