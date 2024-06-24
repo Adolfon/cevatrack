@@ -83,6 +83,10 @@ public class Common {
     	LocalDateTime ldt;
         if (fromXml.equals("0001-01-01T00:00:00")) {
         	LOG.info("-- Returning blankString: " + blankString);
+        	if (blankString == null){
+        		LOG.info("-- BlankString is null, returning empty string '' ");
+        		return "";
+        	}
             return blankString;
         } else {
             if (formatter == null) {

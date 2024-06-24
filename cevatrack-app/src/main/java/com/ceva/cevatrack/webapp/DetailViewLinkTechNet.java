@@ -166,12 +166,20 @@ public class DetailViewLinkTechNet implements Serializable {
         LOGGER.info("Client for the feedback link is: " + client);
         this.feedBack_URL = linkService.getURL_rate_link(client);   
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
-        modifyConsignmentVisitWindow(consignment);
-        for(ConsignmentDetail con: consignment.getConsignmentDetails()){
-        	LOGGER.info("\n --Details: " + con);
-        	LOGGER.info(" \n============================================== ");
-        	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
-        }                
+        modifyConsignmentVisitWindow(consignment);                
+         try{
+        	if (consignment != null){
+		        for(ConsignmentDetail con: consignment.getConsignmentDetails()){
+		        	LOGGER.info("\n --Details: " + con);
+		        	LOGGER.info(" \n============================================== ");
+		        	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
+		        }  
+        	}else{
+        		LOGGER.warn(" -- Consignment was null");
+        	}
+        }catch(Exception e){
+        	LOGGER.warn(" -- Exception where painting the log for consignment details " );
+        }                        
         String vlong = null, vlat = null;
         for (Vehicle v: consignment.getVehicles()){
         	if (v.getLastContactLong() != 0.0f){
