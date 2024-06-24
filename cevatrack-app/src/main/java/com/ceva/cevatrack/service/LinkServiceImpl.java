@@ -29,13 +29,17 @@ public class LinkServiceImpl implements LinkService{
 
 	@Override
 	public String getURL_rate_link(String client) {
-		LOG.info("-- Retrieving the URL for rate us..");
+		LOG.info("-- Retrieving the URL for rate us, for client: " + client );
 		//LOG.info(" -- Retrieved URLs: " + mcr.searchById(client) + " ,custom: " + mcr.searchRecordByClient(client));
 		String result = mcr.searchRecordByClient(client).getFeedback_link();
 		if (result == null || result.equals("")){
 			LOG.warn("-- Client feedback URL was null, trying to recover 'default' url link..");
 			result = mcr.searchRecordByClient("default").getFeedback_link();
-		}		
+		}	
+		if (result == null || result.equals("")){
+			LOG.warn("-- Client feedback URL was null for 'default' too, setting 'default' on code..");
+			result = "https://www.cevalogistics.com/en";
+		}
 		return result;
 	}    
 
