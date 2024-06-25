@@ -703,9 +703,18 @@ public class Consignment {
 				+ ", consignmentHeaderInfo7=" + consignmentHeaderInfo7 + ", consignmentHeaderInfo8="
 				+ consignmentHeaderInfo8 + ", consignmentHeaderInfo9=" + consignmentHeaderInfo9
 				+ ", consignmentHeaderInfo10=" + consignmentHeaderInfo10 + ", consignmentHeaderInfo11="
-				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";				
-		String v2 = "\nVehicles: " + vehicles.stream().map(Object::toString).collect(Collectors.joining(","));
-		String v3 = "\nDrivers: " + drivers.stream().map(Object::toString).collect(Collectors.joining(","));
+				+ consignmentHeaderInfo11 + ", consignmentHeaderInfo12=" + consignmentHeaderInfo12 + "]";	
+		String v2,v3;
+		if (vehicles != null){
+			v2 = "\nVehicles: " + vehicles.stream().map(Object::toString).collect(Collectors.joining(","));
+		}else{
+			v2 = "";
+		}
+		if (drivers != null){
+			v3 = "\nDrivers: " + drivers.stream().map(Object::toString).collect(Collectors.joining(","));
+		}else{
+			v3 = "";
+		}		
 		return v1 + v2 + v3;		
 	}
 

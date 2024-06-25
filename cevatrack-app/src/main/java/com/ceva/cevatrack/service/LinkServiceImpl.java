@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.LinkBean;
+import com.ceva.cevatrack.domain.MailerClient;
 import com.ceva.cevatrack.repository.LinkServiceRepository;
 import com.ceva.cevatrack.repository.MailClientRepository;
 
@@ -30,17 +31,34 @@ public class LinkServiceImpl implements LinkService{
 	@Override
 	public String getURL_rate_link(String client) {
 		LOG.info("-- Retrieving the URL for rate us, for client: " + client );
-		//LOG.info(" -- Retrieved URLs: " + mcr.searchById(client) + " ,custom: " + mcr.searchRecordByClient(client));
-		String result = mcr.searchRecordByClient(client).getFeedback_link();
-		if (result == null || result.equals("")){
-			LOG.warn("-- Client feedback URL was null, trying to recover 'default' url link..");
-			result = mcr.searchRecordByClient("default").getFeedback_link();
-		}	
-		if (result == null || result.equals("")){
-			LOG.warn("-- Client feedback URL was null for 'default' too, setting 'default' on code..");
-			result = "https://www.cevalogistics.com/en";
+		MailerClient result = mcr.searchRecordByClient(client);
+		String feedBackLink;
+		if (result == null){
+			feedBackLink = "";
+		}else{
+			feedBackLink = result.getFeedback_link();
 		}
-		return result;
+		if (feedBackLink == null || feedBackLink.equals("")){
+			LOG.warn("-- Client feedback URL was null, trying to recover 'default' url link..");
+			result = mcr.searchRecordByClient("default");
+		}	
+		if (result == null){
+			feedBackLink = null;
+		}else{
+			feedBackLink = result.getFeedback_link();
+		}
+		/*
+		if (result == null){
+			feedBackLink = "";
+		}else{
+			feedBackLink = result.getFeedback_link();
+		}
+		if (feedBackLink == null || feedBackLink.equals("")){
+			LOG.warn("-- Client feedback URL was null for 'default' too, setting 'default' on code..");
+			feedBackLink = "https://www.cevalogistics.com/en";
+		} 
+		*/
+		return feedBackLink;
 	}    
 
 }

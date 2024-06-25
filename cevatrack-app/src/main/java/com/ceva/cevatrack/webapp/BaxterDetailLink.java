@@ -152,7 +152,12 @@ public class BaxterDetailLink implements Serializable {
         	return;
         }    
         LOGGER.info(" -- Consingment recovered details: " + consignment);
-        this.feedBack_URL = linkService.getURL_rate_link(client.toUpperCase());    
+        this.feedBack_URL = linkService.getURL_rate_link(client.toUpperCase()); 
+        if (this.feedBack_URL == null){
+        	LOGGER.error("-- Client configuration not available");
+        	goToError("Sorry, A configuration for the requested client does not exist");
+        	return;
+        }
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         if (this.feedBack_URL == null || this.feedBack_URL.equals("")){
         	LOGGER.warn("-- nothing recovered on database for the URL link, setting to a value: 'http://www.cevalogistics.com/en'");

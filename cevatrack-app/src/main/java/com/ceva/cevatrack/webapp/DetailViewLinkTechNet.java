@@ -164,7 +164,12 @@ public class DetailViewLinkTechNet implements Serializable {
         	client = "default";
         }        
         LOGGER.info("Client for the feedback link is: " + client);
-        this.feedBack_URL = linkService.getURL_rate_link(client);   
+        this.feedBack_URL = linkService.getURL_rate_link(client); 
+        if (this.feedBack_URL == null){
+        	LOGGER.error("-- Client configuration not available");
+        	goToError("Sorry, A configuration for the requested client does not exist");
+        	return;
+        }
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         modifyConsignmentVisitWindow(consignment);                
          try{
