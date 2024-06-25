@@ -153,21 +153,37 @@ public class DetailViewLink implements Serializable {
         this.feedBack_URL = linkService.getURL_rate_link("NUTRIC");    
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         modifyConsignmentVisitWindow(consignment);
-        for(ConsignmentDetail con: consignment.getConsignmentDetails()){
-        	LOGGER.info("\n --Details: " + con);
-        	LOGGER.info(" \n============================================== ");
-        	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
-        }                
-        String vlong = null, vlat = null;
-        for (Vehicle v: consignment.getVehicles()){
-        	if (v.getLastContactLong() != 0.0f){
-        		vlong = String.valueOf(v.getLastContactLong());
+        
+        LOGGER.info("Check");
+        try{
+        	if (consignment != null && consignment.getConsignmentDetails() != null){
+		        for(ConsignmentDetail con: consignment.getConsignmentDetails()){
+		        	LOGGER.info("\n --Details: " + con);
+		        	LOGGER.info(" \n============================================== ");
+		        	LOGGER.info(" Detail ref: " + con.getDetailRef() + "Customer detail ref: " + con.getCustomerDetailRef());
+		        }   
+        	}else{
+        		LOGGER.warn("--Consignment was null..");
         	}
-        	if (v.getLastContactLat() != 0.0f){
-        		vlat = String.valueOf(v.getLastContactLat());
-        	}
+        }catch (Exception e){
+        	LOGGER.error("--Exception..", e);
         }
-        if (!consignment.getStatusString().equalsIgnoreCase("To be delivered") ||  
+        LOGGER.info("Check");                              
+        String vlong = null, vlat = null;        
+        if (consignment!= null && consignment.getVehicles() != null){
+        	LOGGER.info("-- Number of vehicles: " + consignment.getVehicles().size());
+	        for (Vehicle v: consignment.getVehicles()){
+	        	if (v.getLastContactLong() != 0.0f){
+	        		vlong = String.valueOf(v.getLastContactLong());
+	        	}
+	        	if (v.getLastContactLat() != 0.0f){
+	        		vlat = String.valueOf(v.getLastContactLat());
+	        	}
+	        }
+        }else{
+        	LOGGER.warn("-- Vehicles was null");
+        }       
+        if (consignment.getStatusString() != null && !consignment.getStatusString().equalsIgnoreCase("To be delivered") ||  
         		lbean.getMl_site_lat() == null || lbean.getMl_site_long() == null
         		|| "".equals(lbean.getMl_site_lat()) || "".equals(lbean.getMl_site_long())
         				|| vlong == null || vlat == null || vlong.equals("") || vlat.equals("")){
@@ -178,7 +194,7 @@ public class DetailViewLink implements Serializable {
         	this.showMap = true;
         }
         vehicule_loc = vlat + " ," + vlong;
-        LOGGER.info(" -- Number of vehicules was: " + consignment.getVehicles().size() + " ,consignment recovered successfully, vehicule location is: " + vehicule_loc);
+        LOGGER.info(" -- Vehicle location: " + vehicule_loc);
     }
 
     private void modifyConsignmentVisitWindow(Consignment consignment2) {

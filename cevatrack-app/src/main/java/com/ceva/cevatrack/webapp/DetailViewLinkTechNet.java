@@ -168,7 +168,7 @@ public class DetailViewLinkTechNet implements Serializable {
         LOGGER.info(" -- Feedback link recovered: " + this.feedBack_URL);
         modifyConsignmentVisitWindow(consignment);                
          try{
-        	if (consignment != null){
+        	if (consignment != null && consignment.getConsignmentDetails() != null){
 		        for(ConsignmentDetail con: consignment.getConsignmentDetails()){
 		        	LOGGER.info("\n --Details: " + con);
 		        	LOGGER.info(" \n============================================== ");
@@ -178,18 +178,23 @@ public class DetailViewLinkTechNet implements Serializable {
         		LOGGER.warn(" -- Consignment was null");
         	}
         }catch(Exception e){
-        	LOGGER.warn(" -- Exception where painting the log for consignment details " );
+        	LOGGER.warn(" -- Exception where painting the log for consignment details ", e );
         }                        
-        String vlong = null, vlat = null;
-        for (Vehicle v: consignment.getVehicles()){
-        	if (v.getLastContactLong() != 0.0f){
-        		vlong = String.valueOf(v.getLastContactLong());
-        	}
-        	if (v.getLastContactLat() != 0.0f){
-        		vlat = String.valueOf(v.getLastContactLat());
-        	}
-        }
-        if (!consignment.getStatusString().equalsIgnoreCase("To be delivered") ||  
+        String vlong = null, vlat = null;        
+        if (consignment!= null && consignment.getVehicles() != null){
+        	LOGGER.info("-- Number of vehicles: " + consignment.getVehicles().size());
+	        for (Vehicle v: consignment.getVehicles()){
+	        	if (v.getLastContactLong() != 0.0f){
+	        		vlong = String.valueOf(v.getLastContactLong());
+	        	}
+	        	if (v.getLastContactLat() != 0.0f){
+	        		vlat = String.valueOf(v.getLastContactLat());
+	        	}
+	        }
+        }else{
+        	LOGGER.warn("-- Vehicles was null");
+        }                        
+        if (consignment.getStatusString() != null && !consignment.getStatusString().equalsIgnoreCase("To be delivered") ||  
         		lbean.getMl_site_lat() == null || lbean.getMl_site_long() == null
         		|| "".equals(lbean.getMl_site_lat()) || "".equals(lbean.getMl_site_long())
         				|| vlong == null || vlat == null || vlong.equals("") || vlat.equals("")){
@@ -200,7 +205,7 @@ public class DetailViewLinkTechNet implements Serializable {
         	this.showMap = true;
         }
         vehicule_loc = vlat + " ," + vlong;
-        LOGGER.info(" -- Number of vehicules was: " + consignment.getVehicles().size() + " ,consignment recovered successfully, vehicule location is: " + vehicule_loc);
+        LOGGER.info(" -- Vehicule location is: " + vehicule_loc);
     }
 
     private boolean isTechNetClient(String client2) {
