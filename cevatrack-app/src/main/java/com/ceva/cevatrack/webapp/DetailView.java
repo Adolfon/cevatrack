@@ -169,8 +169,15 @@ public class DetailView implements Serializable, CommonApp {
                 this.consignment.setConsignmentReference(consignmentReference);
                 LOGGER.info("--Setted consignmentReference value to: " + this.consignmentReference);
             }
-            LOGGER.info(" -- Final content, vehicles: " + consignment.getVehicles().size() + ", drivers: " + consignment.getDrivers().size() + 
-            		", cons details: " + consignment.getConsignmentDetails().size());
+            if (consignment.getVehicles()!= null){
+            	LOGGER.info(" -- Final content, vehicles: " + consignment.getVehicles().size());
+            }
+            if (consignment.getDrivers() != null){
+            	LOGGER.info("-- Drivers size: " + consignment.getDrivers().size());
+            }
+            if ( consignment.getConsignmentDetails() != null){
+            	LOGGER.info("-- Cons details size: " + consignment.getConsignmentDetails().size());
+            }
             if (network.equalsIgnoreCase("technet")){
             	LOGGER.info("-- Looking on Technet network for associated consignment reference photos");
             	retrieve_microlise_photos(consignmentReference);
