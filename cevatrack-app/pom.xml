@@ -26,6 +26,13 @@
 
 	<dependencies>
 		<dependency>
+		    <groupId>com.ceva.security</groupId>
+		    <artifactId>aaf-ejb</artifactId>
+		    <version>3.3.1</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/src/main/resources/aaf-ejb-3.3.1.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>harmony-theme</artifactId>
 			<version>1.0.3</version>
@@ -186,11 +193,21 @@
 		        <artifactId>maven-war-plugin</artifactId>
 		        <version>3.2.2</version>
 		        <configuration>
+		        <webResources> 
+		            <resource> 
+		              <directory>${project.basedir}/src/main/resources</directory> 
+		              	<includes>
+		              		<include>**/*.jar</include>
+		              	</includes>
+		              <targetPath>WEB-INF/lib</targetPath> 
+		            </resource> 
+		          </webResources>
 		          <!--
 		            Excluding this file as per conflict with the persistence.xml
 		          -->
 		          <packagingExcludes>
-		            WEB-INF/lib/cjf-common-ejb-1.10.0.jar		            
+		            WEB-INF/lib/cjf-common-ejb-1.10.0.jar,
+					WEB-INF/lib/aaf-ejb-3.3.0.jar		            	            
 		          </packagingExcludes>
 		        </configuration>
 		      </plugin>
