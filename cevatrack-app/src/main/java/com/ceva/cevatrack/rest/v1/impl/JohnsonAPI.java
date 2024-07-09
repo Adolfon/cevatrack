@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.PasswordMatcher;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.subject.Subject;
@@ -94,7 +95,7 @@ public class JohnsonAPI implements Serializable{
 		}
 		this.id = id;	
 				
-		int response_auth = authenticateUser(headers);
+		int response_auth = authenticateUser(headers);//
 		
 		switch (response_auth){		
 			case -3:
@@ -118,7 +119,7 @@ public class JohnsonAPI implements Serializable{
 				
 		}		
 		
-		int resultDB = createEntityManager();		
+		int resultDB = createEntityManager();//carefull open before for auth?	
 		
 		if (resultDB == -1){
 			return Response.status(500).entity("Data base was not accessible").build();
@@ -140,6 +141,9 @@ public class JohnsonAPI implements Serializable{
 	 */
     private int validateUser(String userName, String pass) {
     	LOGGER.info(" --- validateUser method, user: " + userName + " ,pass: " + pass);
+    	if (userName == null || "".equals(userName) || pass == null || "".equals(pass)){
+    		return 2;
+    	}
     	if (entityManager!= null && entityManager.isOpen()){
     		entityManager.clear();
     		LOGGER.info(" -- cache cleared..");
@@ -161,11 +165,11 @@ public class JohnsonAPI implements Serializable{
 	    		}else if (user.getIncorrectLoginAttempts() == null){
 	    			user.setIncorrectLoginAttempts(0);
 	    		}
-	    		if (comparePlainTextToEncrypted(pass,user.getPassword())){
+	    		if (pass_validation(user.getPassword(), pass)){
 	    			resetNumberAttemptUser(userName);
 	    			return 0;
 	    		}else{
-	    			LOGGER.info("--Wrong password for user: " + user.getUserPrincipal());
+	    			LOGGER.warn("--Wrong password for user: " + user.getUserPrincipal());
 	    			addNumberAttemptUser(user.getUserPrincipal());
 	    			return 2;
 	    		}
@@ -359,7 +363,7 @@ public class JohnsonAPI implements Serializable{
 			final String username = tokens[0];
 			final String password = tokens[1];
 			LOGGER.info(" user in the Basic Auth: " + username + " ,password: " + password); //OK
-			int firstCheck = validateUser(username, password);
+			int firstCheck = validateUser(username, password);//
 			LOGGER.info(" -- firstCheckUser method returned: " + firstCheck);
 			this.userppal = username;
 			return firstCheck; //results 0 (OK), 4(more than 3 attempts) and 2(Bad usr/psw combo)			
@@ -484,6 +488,19 @@ public class JohnsonAPI implements Serializable{
 	 * @param toCompare is the encrypted DB password
 	 * @return true if matches the plain encrypted password with the DB encrypted one
 	 */
+	private boolean comparePlainTextToEncrypted_old(String plainText, String toCompare) {
+		DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
+		JdbcRealm realm = (JdbcRealm) securityManager.getRealms().stream().filter((r) -> {
+			return r instanceof JdbcRealm;
+		}).findFirst().get();
+		PasswordMatcher passwordMatcher = (PasswordMatcher) realm.getCredentialsMatcher();
+		if (passwordMatcher.getPasswordService().passwordsMatch(plainText, toCompare)){
+			LOGGER.info(" -- They do match using the service --");
+			return true;
+		}		
+		return false;
+	}
+	
 	private boolean comparePlainTextToEncrypted(String plainText, String toCompare) {
 		DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
 		JdbcRealm realm = (JdbcRealm) securityManager.getRealms().stream().filter((r) -> {
@@ -494,6 +511,32 @@ public class JohnsonAPI implements Serializable{
 			LOGGER.info(" -- They do match using the service --");
 			return true;
 		}		
+		return false;
+	}
+	//TODO validate the user permissions (Johnson)
+	private boolean pass_validation(String pass_encoded, String pass_text){ 
+		LOGGER.info("-- pass text: " + pass_text + "\n pass encoded: " + pass_encoded);
+		String[] mcf = pass_encoded.split("\\$");
+		int iteration_count = Integer.parseInt(mcf[3]);
+		String b64_salt = mcf[4];
+		String b64_hash = mcf[5];
+		byte[] salt = Base64.getDecoder().decode(b64_salt.getBytes());
+		try {			
+			String hash = new Sha256Hash(pass_text, salt, iteration_count).toBase64();;
+		    LOGGER.info("Original MCF hash: " + b64_hash);
+			LOGGER.info("Created hash: " + hash);
+			LOGGER.info("-- Password: " + pass_text);
+
+		  if (hash.equals(b64_hash)) {
+		      LOGGER.info("Success! Both hashes match!");
+		      return true;
+		  } else {
+		      LOGGER.warn("--- Passwords do not match");
+		      return false;
+		  }
+		} catch (Exception e) {
+		      LOGGER.error("-- Exception", e);
+		}
 		return false;
 	}
 

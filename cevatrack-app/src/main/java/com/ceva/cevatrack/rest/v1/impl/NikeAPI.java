@@ -52,6 +52,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.PasswordMatcher;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.subject.Subject;
@@ -93,6 +94,7 @@ public class NikeAPI implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String id;
 	String userppal = null; 
+	AAFUser4Nike userA = null;
 	private final static int DPD_DELIVERED_CODE = 1;
 	private final static int DPD_DELIVERED_IMAGE_COPY_AVAILABLE_CODE = 65; //has the same time as delivered event
 	private final static int DPD_OUT_FOR_DELIVER_CODE = 15;
@@ -242,7 +244,6 @@ public class NikeAPI implements Serializable{
     @Path("/getPackListNumberInfo/{id}")
     public Response getPackListNumberInfo(@PathParam("id") String id, @Context HttpHeaders headers, @Context HttpServletRequest req){ //throws JSONException{
 		LOGGER.info(" -- Starting getPackListNumberInfo REST method..");
-		
 		//ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 //		Map<String, String[]> parameters = req.getParameterMap();//nothing
 //		
@@ -316,6 +317,9 @@ public class NikeAPI implements Serializable{
 	 */
     private int firstCheckUser(String userName) {
     	LOGGER.info(" --- First user security checks..");
+    	if (userName == null || "".equals(userName)){
+    		return 2;
+    	}
     	if (entityManager!= null && entityManager.isOpen()){
     		entityManager.clear();
     		LOGGER.info(" -- cache cleared..");
@@ -326,8 +330,12 @@ public class NikeAPI implements Serializable{
 	    		user = (AAFUser4Nike) entityManager.createQuery("SELECT us FROM AAFUser4Nike us WHERE us.userPrincipal = ?1").
 						setParameter(1, userName).getSingleResult();
 	    		LOGGER.info(" -- the user recovered was: " + user);
-	    		if (user == null){
+	    		if (user == null || user.getPassword() == null || "".equals(user.getPassword())){
 	    			return 2;
+	    		}else{
+	    			LOGGER.info("-- Setting this user pass");
+		    		this.userA = new AAFUser4Nike();	 
+		    		this.userA.setPassword(user.getPassword());		    		
 	    		}
 	    		if (user.getIsLocked() || !user.getIsActive()){
 	    			return 4;
@@ -655,7 +663,7 @@ public class NikeAPI implements Serializable{
 			}		
 			if (firstCheck == 2){
 				return 2; //Bad user/pass combination
-			}
+			}		
 			//LOGGER.info(" -- encrypting password: " + "Holaquetal123!" + ", result: " + encryptUsingShiroConfig("Holaquetal123!"));
 			result = doShiroLogin(username, password);
 			this.userppal = username;
@@ -678,8 +686,11 @@ public class NikeAPI implements Serializable{
     }
     
     //Be aware that the user authentication is done through the cevatrackPU
-    private int doShiroLogin(String userName, String password){
+    private int doShiroLogin_old(String userName, String password){
     	LOGGER.info(" -- Doing shiro login..");
+    	if (password == null || "".equals(password)){
+    		return 2;
+    	}
     	int result = -1;
 		try {
 				UsernamePasswordToken token = new UsernamePasswordToken(userName, password);			
@@ -723,6 +734,65 @@ public class NikeAPI implements Serializable{
 		}
 		return result;
 	}
+  //Be aware that the user authentication is done through the cevatrackPU
+    private int doShiroLogin(String userName, String password){
+    	LOGGER.info(" -- Doing shiro login..");
+    	if (password == null || "".equals(password)){
+    		return 2;
+    	}
+    	int result = -1;
+		try {				
+			if (pass_validation(userA.getPassword(), password)){
+				result = 0;
+			}else{
+				LOGGER.warn("-- Launching AuthenticationException as wrong user/pass combination.." );
+				throw new AuthenticationException("Launching Auth Exception, pass: " + password + " is wrong");
+			}
+		        
+		} catch (UnknownAccountException var11) {
+			LOGGER.warn("-- catching the UnknownAccountException error messages: " + var11.getMessage(), var11);	
+			result = 1;
+		} catch (AuthenticationException var12) {
+			LOGGER.warn(" -- catching the AuthenticationException error messages: " + var12.getMessage(), var12); // TODO filter the authentication error log
+			result = 2;
+			addNumberAttemptUser(userName);
+//			if (!var12.getMessage().contains("LDAP naming error")){ //Not interested in LDAP error atm
+				//LOGGER.warn(var12.getMessage(), var12);
+			//}
+		}	
+		if (result == 0){
+			resetNumberAttemptUser(userName);			
+		}
+		return result;
+	}
+    
+  //TODO validate the user permissions (Johnson)
+  	private boolean pass_validation(String pass_encoded, String pass_text){ 
+  		LOGGER.info("-- pass text: " + pass_text + "\n pass encoded: " + pass_encoded);
+  		String[] mcf = pass_encoded.split("\\$");
+  		int iteration_count = Integer.parseInt(mcf[3]);
+  		String b64_salt = mcf[4];
+  		String b64_hash = mcf[5];
+  		byte[] salt = Base64.getDecoder().decode(b64_salt.getBytes());
+  		try {			
+  			String hash = new Sha256Hash(pass_text, salt, iteration_count).toBase64();;
+  		    LOGGER.info("Original MCF hash: " + b64_hash);
+  			LOGGER.info("Created hash: " + hash);
+  			LOGGER.info("-- Password: " + pass_text);
+
+  		  if (hash.equals(b64_hash)) {
+  		      LOGGER.info("Success! Both hashes match!");
+  		      return true;
+  		  } else {
+  		      LOGGER.warn("--- Passwords do not match");
+  		      return false;
+  		  }
+  		} catch (Exception e) {
+  		      LOGGER.error("-- Exception", e);
+  		}
+  		return false;
+  	}
+  	
     //@Transactional
     private void addNumberAttemptUser(String userName) {	
     	LOGGER.info(" -- Adding an icorrret number of attempt to the user: " + userName);
