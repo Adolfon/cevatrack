@@ -140,13 +140,18 @@ public class JohnsonAPI implements Serializable{
 	 * check if the client is Active and put the user inactive after n login attempts
 	 */
     private int validateUser(String userName, String pass) {
-    	LOGGER.info(" --- validateUser method, user: " + userName + " ,pass: " + pass);
+    	LOGGER.info(" --- validateUser method, user: " + userName + " ,pass: " + pass);//Hasta aqui before 500 
     	if (userName == null || "".equals(userName) || pass == null || "".equals(pass)){
     		return 2;
     	}
-    	if (entityManager!= null && entityManager.isOpen()){
-    		entityManager.clear();
-    		LOGGER.info(" -- cache cleared..");
+    	try{
+	    	if (entityManager!= null && entityManager.isOpen()){
+	    		LOGGER.info("EM is open..");
+	    		entityManager.clear();
+	    		LOGGER.info(" -- cache cleared..");
+	    	}
+    	}catch (Exception e){
+    		LOGGER.error("-- Error managing the entity manager ", e);
     	}
     	if ( 0 == createEntityManager()){
 			AAFUser4Nike user = null;
@@ -262,18 +267,25 @@ public class JohnsonAPI implements Serializable{
 	}
 	
 	private int createEntityManager() {
-		if (this.entityManager != null && entityManager.isOpen()){
-			if (NUMBER_TIMES_CONNECTION_USED < ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION){
-				LOGGER.warn(" -- The entity manager was already created..");
-				NUMBER_TIMES_CONNECTION_USED ++;
-				LOGGER.info(" -- Times that the connection has been re-used is: " + NUMBER_TIMES_CONNECTION_USED
-						+ ", the limit is: " + ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION);
-				return 0;
-			}else{
-				//Close entity manager (clean resources)
-				entityManager.clear(); // it cleans the cache, forcing new queries
-				entityManager.close();
+		try{
+			if (this.entityManager != null && entityManager.isOpen()){
+				if (NUMBER_TIMES_CONNECTION_USED < ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION){
+					LOGGER.warn(" -- The entity manager was already created..");
+					NUMBER_TIMES_CONNECTION_USED ++;
+					LOGGER.info(" -- Times that the connection has been re-used is: " + NUMBER_TIMES_CONNECTION_USED
+							+ ", the limit is: " + ApplicationGlobalConfig.MAX_NUMBER_TIMES_REUSING_CONNECTION);
+					return 0;
+				}else{
+					//Close entity manager (clean resources)
+					LOGGER.info("-- Regenerating connection...");
+					entityManager.clear(); // it cleans the cache, forcing new queries
+					LOGGER.info("-- Regeneration step 1 ");
+					entityManager.close();
+					LOGGER.info("-- Regeneration step 2 ");
+				}
 			}
+		}catch (Exception e){
+			LOGGER.error("-- Problems managing the EM ", e);
 		}
 		NUMBER_TIMES_CONNECTION_USED = 0;
 		LOGGER.info(" -- Number of times connection reused reached the limit, setting to 0 now: " + NUMBER_TIMES_CONNECTION_USED);
@@ -313,6 +325,7 @@ public class JohnsonAPI implements Serializable{
 			}
 			
 			emfact = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
+			LOGGER.info("emfact ok so far..");
 			
 		}else{
 			LOGGER.error(" System properties get('environment.code') is null ..");
