@@ -31,9 +31,10 @@ public class ApplicationGlobalConfig {
 	public final static String IMG_TEST_PROXY_USR_PSW = "Technet:CEVA";
 	public final static String IMG_PROD_PROXY_URL = "euixvlprx002.logistics.corp";
 	public final static String IMG_PROD_PROXY_PORT = "3128";
-	public final static String IMG_PROD_PROXY_USR_PSW = "Technet:CEVA";	
-	public final static int MAX_NUMBER_TIMES_REUSING_CONNECTION = 2500;
+	public final static String IMG_PROD_PROXY_USR_PSW = "Technet:CEVA";		
 	public final static long MIN_DATE_CALENDAR = 90L;
+	public final static int MAX_NUMBER_INCORRECT_PASSWORD_LOGIN = 5;
+	
 	// REsult = OK = {
 //	   "shipped": "2022-01-28T10:31:00",
 //	   "ATA": "Return in progress"

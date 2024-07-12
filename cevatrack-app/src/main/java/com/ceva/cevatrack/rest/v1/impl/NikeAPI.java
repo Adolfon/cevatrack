@@ -613,7 +613,7 @@ public class NikeAPI implements Serializable{
 				try{
 					entityManager = emfact.createEntityManager();
 				}catch (Exception e){
-					LOGGER.error(" --- It was not possible to create the entity manager..");
+					LOGGER.error(" --- It was not possible to create the entity manager.." + e.getCause() + ", " + e.getMessage(), e);
 					return -1;
 				}
 				LOGGER.info(" entityManager created manually..");						
