@@ -825,14 +825,19 @@ public class NikeAPI implements Serializable{
     private void resetNumberAttemptUser(String userName) {	
     	LOGGER.info(" -- Resetting the number of attempts to the user: " + userName);
 		if (0 == createEntityManager()){
-			entityManager.getTransaction().begin();
-			entityManager.createQuery("UPDATE AAFUser4Nike us SET us.incorrectLoginAttempts = ?1 WHERE us.userPrincipal = ?2").
-					setParameter(1, 0).
-					setParameter(2, this.userppal).executeUpdate();
-			//entityManager.persist(AAFUser4Nike);
-			entityManager.flush();
-			entityManager.getTransaction().commit();
-			entityManager.clear();
+			try{
+				entityManager.getTransaction().begin();
+				entityManager.createQuery("UPDATE AAFUser4Nike us SET us.incorrectLoginAttempts = ?1 WHERE us.userPrincipal = ?2").
+						setParameter(1, 0).
+						setParameter(2, this.userppal).executeUpdate();
+				//entityManager.persist(AAFUser4Nike);
+				entityManager.flush();
+				entityManager.getTransaction().commit();
+				entityManager.clear();
+			}catch (Exception e){
+				LOGGER.error("-- Error trying to reset attempts, " + e.getMessage() + ", cause: " + e.getCause(), e);				
+				return;
+			}
 			LOGGER.info(" -- Number of incorrect attempts reseted to 0 ");    		
 		}else{
 			LOGGER.error(" -- Entitiy manager was not created successfully..");
