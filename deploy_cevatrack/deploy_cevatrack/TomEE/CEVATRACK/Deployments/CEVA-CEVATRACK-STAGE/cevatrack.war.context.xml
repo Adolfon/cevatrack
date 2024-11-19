@@ -1,12 +1,12 @@
 <Parameter name="environment.properties" value="/ds1/tomee/vtop/deploy_cevatrack/properties/CEVA-CEVATRACK-STAGE/environment.properties" />
 <Parameter name="shiroConfigLocations" value="file:/ds1/tomee/vtop/deploy_cevatrack/properties/CEVA-CEVATRACK-STAGE/shiro.ini"  override="false"/>
 <Parameter name="google.apikey" value="AIzaSyBG_nHwW92gG04j98TxXZUR9X8ygHJYHKI" override="false"/>
-<Parameter name="microlise.usernamepassword.direct.prod" value="CEVACRMWEBSVC:@wSX67Yhn" override="false"/>
+<Parameter name="microlise.usernamepassword.direct.prod" value="CEVACRMWEBSVC:WfjDY4fMCLgBK" override="false"/>
 <Parameter name="microlise.usernamepassword.direct.uat" value="CEVACRMUATWEBSVC:W3Q8BgpXwM" override="false"/>
 <Parameter name="microlise.url.direct.prod" value="https://ws6.microlise.com/CEVA_CRM_WEBSERVICE/TMCWebService.asmx" override="false"/>
 <Parameter name="microlise.url.direct.uat" value="https://ws6.microlise.com/CEVA_CRM_UAT_WEBSERVICE/TMCWebService.asmx" override="false"/>
 <Parameter name="microlise.url.tibco.uat" value="https://eai-gw-eu.cevalogistics.com/MicroliseSmartNet" override="false"/>
-<Parameter name="microlise.url.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseSmartNet" override="false"/>
+<Parameter name="microlise.url.tibco.prod" value="https://live.microlise.com/CEVA_CRM/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name="microlise.body.getconsignment.direct.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name="microlise.body.getconsignment.direct.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name="microlise.body.findconsignmentsummaries.direct.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;consignmentFilter xmlns=&quot;http://microlise.com/TMC&quot;&gt;&lt;EarliestDeliveryDate xmlns=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate xmlns=&quot;http://microlise.com/webservices/TMC/&quot;&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
@@ -15,9 +15,9 @@
 <Parameter name="microlise.soapapaction.getconsignment.direct.uat" value="http://microlise.com/TMC/GetConsignment" override="false"/>
 <Parameter name="microlise.soapapaction.findconsignmentsummaries.direct.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <Parameter name="microlise.soapapaction.findconsignmentsummaries.direct.uat" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
-<Parameter name="microlise.soapapaction.getconsignment.tibco.prod" value="GetConsignment" override="false"/>
+<Parameter name="microlise.soapapaction.getconsignment.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>
 <Parameter name="microlise.soapapaction.getconsignment.tibco.uat" value="GetConsignment" override="false"/>
-<Parameter name="microlise.soapapaction.findconsignmentsummaries.tibco.prod" value="findConsignmentSummaries" override="false"/>
+<Parameter name="microlise.soapapaction.findconsignmentsummaries.tibco.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <Parameter name="microlise.soapapaction.findconsignmentsummaries.tibco.uat" value="findConsignmentSummaries" override="false"/>
 <Parameter name="microlise.proxyserver.direct.uat" value="euixvlprx002.logistics.corp" override="false"/>
 <Parameter name="microlise.proxyport.direct.uat" value="3128" override="false"/>
@@ -35,7 +35,7 @@
 <Parameter name="microlise.soapapaction.findconsignmentsummaries.technetdirect.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <Parameter name="microlise.proxyserver.technetdirect.prod" value="euixvlprx002.logistics.corp" override="false"/>
 <Parameter name="microlise.proxyport.technetdirect.prod" value="3128" override="false"/>
-<Parameter name="microlise.usernamepassword.technetdirect.prod" value="Technet:CEVA" override="false"/>
+<Parameter name="microlise.usernamepassword.technetdirect.prod" value="Technet:8BEDNSHbgCj2P" override="false"/>
 <!-- parameters for technet web -->
 <!-- <Parameter name ="microlise.proxyserver.technetweb.tibco.uat" value="10.235.52.11" override="false"/>
 <Parameter name ="microlise.proxyport.technetweb.tibco.uat" value="3128" override="false"/> -->	
@@ -46,52 +46,69 @@
 <Parameter name ="microlise.soapapaction.getconsignment.technetweb.tibco.uat" value="GetConsignment" override="false"/>	
 <Parameter name ="microlise.soapapaction.findconsignmentsummaries.technetweb.tibco.uat" value="FindConsignmentSummaries" override="false"/>
 <!-- new parameters for technet web PROD-->
-<Parameter name ="microlise.url.technetweb.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseTechNET" override="false"/>
+<Parameter name ="microlise.url.technetweb.tibco.prod" value="https://live.microlise.com/CEVA_TechNET/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.technetweb.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-TechNET-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.getconsignment.technetweb.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-TechNET-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
-<Parameter name ="microlise.soapapaction.getconsignment.technetweb.tibco.prod" value="GetConsignment" override="false"/>	
-<Parameter name ="microlise.soapapaction.findconsignmentsummaries.technetweb.tibco.prod" value="FindConsignmentSummaries" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.technetweb.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>	
+<Parameter name ="microlise.soapapaction.findconsignmentsummaries.technetweb.tibco.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <!-- ================================= AUTOMOTIVE CONFIGURATION ===============================================  -->
 <Parameter name ="microlise.url.automotive_web.tibco.uat" value="https://eai-gw-eu.cevalogistics.com/MicroliseCCAM" override="false"/>
-<Parameter name ="microlise.url.automotive_web.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseCCAM" override="false"/>
+<Parameter name ="microlise.url.automotive_web.tibco.prod" value="https://live.microlise.com/CEVA_CCAM/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.automotive_web.tibco.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-CCAM-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.automotive_web.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-CCAM-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.getconsignment.automotive_web.tibco.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-CCAM-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.getconsignment.automotive_web.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-CCAM-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.soapapaction.findconsignmentsummaries.automotive_web.tibco.uat" value="FindConsignmentSummaries" override="false"/>
-<Parameter name ="microlise.soapapaction.findconsignmentsummaries.automotive_web.tibco.prod" value="FindConsignmentSummaries" override="false"/>
+<Parameter name ="microlise.soapapaction.findconsignmentsummaries.automotive_web.tibco.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <Parameter name ="microlise.soapapaction.getconsignment.automotive_web.tibco.uat" value="GetConsignment" override="false"/>
-<Parameter name ="microlise.soapapaction.getconsignment.automotive_web.tibco.prod" value="GetConsignment" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.automotive_web.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>
 <!-- ================================= AUTOMOTIVE CONFIGURATION ===============================================  -->
 <!-- ================================= HEALTH LINK CONFIGURATION ===============================================  -->
 <Parameter name ="microlise.url.health_link.tibco.uat" value="https://eai-gw-eu.cevalogistics.com/MicroliseHealthcareMedicine" override="false"/>
-<Parameter name ="microlise.url.health_link.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseHealthcareMedicine" override="false"/>
+<Parameter name ="microlise.url.health_link.tibco.prod" value="https://live.microlise.com/CEVA_Nutricia/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name ="microlise.body.getconsignment.health_link.tibco.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.getconsignment.health_link.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.soapapaction.getconsignment.health_link.tibco.uat" value="GetConsignment" override="false"/>
-<Parameter name ="microlise.soapapaction.getconsignment.health_link.tibco.prod" value="GetConsignment" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.health_link.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>
 <Parameter name ="microlise.soapapaction.findconsignmentsummaries.health_link.tibco.uat" value="FindConsignmentSummaries" override="false"/>
-<Parameter name ="microlise.soapapaction.findconsignmentsummaries.health_link.tibco.prod" value="FindConsignmentSummaries" override="false"/>
+<Parameter name ="microlise.soapapaction.findconsignmentsummaries.health_link.tibco.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.health_link.tibco.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.health_link.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <!-- ================================= HEALTH CARE WEB CONFIGURATION ===============================================  -->
 <Parameter name ="microlise.url.healthcare_web.tibco.uat" value="https://eai-gw-eu.cevalogistics.com/MicroliseHealthcareMedicine" override="false"/>
-<Parameter name ="microlise.url.healthcare_web.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseHealthcareMedicine" override="false"/>
+<Parameter name ="microlise.url.healthcare_web.tibco.prod" value="https://live.microlise.com/CEVA_Nutricia/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name ="microlise.body.getconsignment.healthcare_web.tibco.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.getconsignment.healthcare_web.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.soapapaction.getconsignment.healthcare_web.tibco.uat" value="GetConsignment" override="false"/>
-<Parameter name ="microlise.soapapaction.getconsignment.healthcare_web.tibco.prod" value="GetConsignment" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.healthcare_web.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>
 <Parameter name="microlise.soapapaction.findconsignmentsummaries.healthcare_web.tibco.uat" value="FindConsignmentSummaries" override="false"/>
-<Parameter name="microlise.soapapaction.findconsignmentsummaries.healthcare_web.tibco.prod" value="FindConsignmentSummaries" override="false"/>
+<Parameter name="microlise.soapapaction.findconsignmentsummaries.healthcare_web.tibco.prod" value="http://microlise.com/TMC/FindConsignmentSummaries" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.healthcare_web.tibco.uat" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <Parameter name ="microlise.body.findconsignmentsummaries.healthcare_web.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;FindConsignmentSummaries xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareMedicine-EMEA/TMC/FindConsignmentSummaries&quot;&gt;&lt;consignmentFilter&gt;&lt;EarliestDeliveryDate&gt;&lt;![CDATA[#EARLIEST#]]&gt;&lt;/EarliestDeliveryDate&gt;&lt;LatestDeliveryDate&gt;&lt;![CDATA[#LATESTDATE#]]&gt;&lt;/LatestDeliveryDate&gt;&lt;/consignmentFilter&gt;&lt;/FindConsignmentSummaries&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
 <!-- ================================= TECHNET LINK CONFIGURATION ===============================================  -->
-<Parameter name ="microlise.url.technet_link.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseTechNET" override="false"/>
+<Parameter name ="microlise.url.technet_link.tibco.prod" value="https://live.microlise.com/CEVA_TechNET/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name ="microlise.body.getconsignment.technet_link.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-TechNET-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
-<Parameter name ="microlise.soapapaction.getconsignment.technet_link.tibco.prod" value="GetConsignment" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.technet_link.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>
 <!-- ================================= BAXTER LINK CONFIGURATION ===============================================  -->
-<Parameter name ="microlise.url.baxter_link.tibco.prod" value="https://eai-gw.keu.logistics.corp/MicroliseHealthcareEquipment" override="false"/>
+<Parameter name ="microlise.url.baxter_link.tibco.prod" value="https://live.microlise.com/CEVA_Baxter/TMCWebService/TMCWebService.asmx" override="false"/>
 <Parameter name ="microlise.body.getconsignment.baxter_link.tibco.prod" value="&lt;soap:Envelope xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soap:Body&gt;&lt;GetConsignment xmlns=&quot;http://www.cevalogistics.com/XSD/Microlise-HealthcareEquipment-EMEA/TMC/GetConsignment&quot;&gt;&lt;ConsignmentRef&gt;&lt;![CDATA[#CONREF#]]&gt;&lt;/ConsignmentRef&gt;&lt;/GetConsignment&gt;&lt;/soap:Body&gt;&lt;/soap:Envelope&gt;" override="false"/>
-<Parameter name ="microlise.soapapaction.getconsignment.baxter_link.tibco.prod" value="GetConsignment" override="false"/>
+<Parameter name ="microlise.soapapaction.getconsignment.baxter_link.tibco.prod" value="http://microlise.com/TMC/GetConsignment" override="false"/>
+<!--  ========================================================================================== -->
+<!-- SmarNet tibco -->
+<Parameter name="microlise.usernamepassword.tibco.prod" value="CEVACRMWEBSVC:WfjDY4fMCLgBK" override="false"/>
+<!-- TechNet link tibco -->
+<Parameter name="microlise.usernamepassword.technet_link.tibco.prod" value="Technet:8BEDNSHbgCj2P" override="false"/>
+<!-- TechNet web tibco -->
+<Parameter name="microlise.usernamepassword.technetweb.tibco.prod" value="Technet:8BEDNSHbgCj2P" override="false"/>
+<!-- AutoMobile tibco -->
+<Parameter name="microlise.usernamepassword.automotive_web.tibco.prod" value="cevaccamwebsvc:kH9THj39y5PwJ" override="false"/>
+<!-- Notricia tibco -->
+<Parameter name="microlise.usernamepassword.health_link.tibco.prod" value="CEVANUTRICIAWEBSVC:Az5TGAte6DUcL" override="false"/>
+<!-- HealthCare web tibco -->
+<Parameter name="microlise.usernamepassword.healthcare_web.tibco.prod" value="CEVANUTRICIAWEBSVC:Az5TGAte6DUcL" override="false"/>
+<!-- Baxter link web tibco -->
+<Parameter name="microlise.usernamepassword.baxter_link.tibco.prod" value="CEVABAXTERWEBSVC:G0OWdR3HK5ZB0km7" override="false"/>
+
+
 
 
