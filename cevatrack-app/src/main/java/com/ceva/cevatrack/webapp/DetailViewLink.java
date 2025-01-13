@@ -99,31 +99,47 @@ public class DetailViewLink implements Serializable {
 
 	@PostConstruct
     public void init() {
-        LOGGER.info("-- I am in the init function of DetailViewLink");
+        LOGGER.info("-- I am in the init function of DetailViewLink (Nutricia)");
         Object obj = FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         LOGGER.info(" -- Session obj: " + obj);
         place_loc = "";
         vehicule_loc = "";
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap(); 
         String linkParameter = params.get("t");
-        LOGGER.info("-- Link parameter retrieved: " + linkParameter );
-        if (linkParameter == null){
+        String order_num_param = params.get("p0");
+        String client_ref_param = params.get("p1");
+        LOGGER.info("-- parameters retrieved: " + linkParameter + ", " + order_num_param + ", " + client_ref_param );
+        if (linkParameter == null && (order_num_param == null || client_ref_param == null)){
+        	LOGGER.info("-- Parameter combination missing.." + linkParameter + ", " 
+        	+ order_num_param + ", " + client_ref_param);
         	goToError("Parameter missing");
         	return;
         }           
+        LOGGER.info("-- Parameteres okay..");
         client = "Nutricia"; //Nutricia from "Health care medicine" network  
         if (linkService == null){
         	LOGGER.error(" -- linkService EJB not available (null) --");
         	goToError("There was a technical problem. \n Please contact support. \nSorry for the inconvenience");
         	return;
         }
-        LinkBean lbean = linkService.getLinkBeanById(linkParameter);        
+        LOGGER.info("--data base service ok..");
+        LinkBean lbean = null;
+        if (linkParameter != null && !linkParameter.trim().isEmpty() && !linkParameter.equals("null")){
+        	LOGGER.info("-- linkParameter: " + linkParameter + ", " + linkParameter.equals("null"));
+        	lbean = linkService.getLinkBeanById(linkParameter);
+        }else{
+        	//LOGGER.info("-- linkParameter-2: " + linkParameter + ", " + (linkParameter != null && linkParameter.equals("null")));
+        	LOGGER.info(" -- Formatting clients ref preceding 'S', "
+        			+ "not sure about 8 vs 10 number (initial 00) (test pending): " + "S" + client_ref_param);
+        	lbean = linkService.getLinkBeanBy2Refs(order_num_param, "S" + client_ref_param);
+        }
         LOGGER.info("lbean recovered: " + lbean);
         if (lbean == null){
         	LOGGER.warn(" -- Not found on database --");
         	goToError("Authentication error");
         	return;
-        }        
+        }   
+        LOGGER.info("-- data base data queried..");
         String consingmentString = lbean.getMl_order_ref();
         client = lbean.getClient();
         place_loc = lbean.getMl_site_lat() + ", " + lbean.getMl_site_long();
@@ -132,7 +148,7 @@ public class DetailViewLink implements Serializable {
         	LOGGER.warn(" --  client error --, linkParameter: " + linkParameter + ",linkBean: " + lbean);
         	goToError("Not enough information error");
         	return;
-        }
+        }        
         //Dedicated view for the link and special permission for retrieving consignment.
         this.network = "HealthLink";     
         LOGGER.info("the network value is: " + network);                         

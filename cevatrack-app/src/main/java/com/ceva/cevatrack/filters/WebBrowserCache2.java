@@ -33,9 +33,15 @@ public class WebBrowserCache2 implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(true);
         String param = request.getParameter("t");
+        String order_num_param = request.getParameter("p0");
+        String client_ref_param = request.getParameter("p1");
         log.info(" -- Session created from filter --" + session + " ,req URL: " + request.getRequestURL().toString() +
         		"\n response: " + response.getHeaderNames() + " ,URI: " + request.getRequestURI() + " ,paramagter: " + param);        
-        response.sendRedirect("cLS.xhtml?t=" + param);
+        if (order_num_param == null && client_ref_param == null){
+        	response.sendRedirect("cLS.xhtml?t=" + param);
+        }else{
+        	response.sendRedirect("cLS.xhtml?t=" + param + "&p0=" + order_num_param + "&p1=" + client_ref_param);
+        }
         //chain.doFilter(req, res);
     }
 

@@ -21,7 +21,9 @@ public class LinkBean implements Serializable {
 
     @Id
     private String ml_order_ref;
+    private String order_number;
     private String client;
+    private String client_ref;    
     private String access_token;
     private String loc_name;
     private String loc_addr1;
@@ -101,9 +103,22 @@ public class LinkBean implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "LinkBean [ml_order_ref=" + ml_order_ref + ", client=" + client + ", access_token=" + access_token
-				+ ", loc_name=" + loc_name + ", loc_addr1=" + loc_addr1 + ", loc_addr2=" + loc_addr2 + ", loc_addr3="
-				+ loc_addr3 + ", loc_addr4=" + loc_addr4 + ", loc_postcode=" + loc_postcode + ", ml_site_lat="
-				+ ml_site_lat + ", ml_site_long=" + ml_site_long + "]";
+		return "LinkBean [ml_order_ref=" + ml_order_ref + ", client=" + client 
+				+ ", client_ref= " + client_ref + ", access_token=" + access_token
+				+ ", loc_name=" + loc_name + ", loc_addr1=" + loc_addr1 + ", loc_addr2=" 
+				+ loc_addr2 + ", loc_addr3="+ loc_addr3 + ", loc_addr4=" + loc_addr4 + ", loc_postcode=" 
+				+ loc_postcode + ", ml_site_lat="+ ml_site_lat + ", ml_site_long=" + ml_site_long + "]";
+	}
+	public String getClient_ref() {
+		return client_ref;
+	}
+	public void setClient_ref(String client_ref) {
+		this.client_ref = client_ref;
+	}
+	public String getOrder_number() {
+		return order_number;
+	}
+	public void setOrder_number(String order_number) {
+		this.order_number = order_number;
 	}
 }

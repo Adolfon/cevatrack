@@ -46,5 +46,20 @@ import com.ceva.cevatrack.domain.LinkBean;
           return null;
         }
       }
+    
+    public LinkBean searchRecordByOrderOrRef(String order_ref, String client_ref) {
+    	LOG.info(" -- searchRecordByOrderOrRef method --");
+    	LinkBean linkb = null;
+        try {
+          linkb = (LinkBean) entityManager().createQuery("SELECT lb FROM LinkBean lb WHERE (lb.client_ref = :p) OR (lb.order_number = :c)")
+        		  .setParameter("p", client_ref)
+        		  	.setParameter("c", order_ref)
+        		  		.getSingleResult();
+          LOG.info(" -- Result any of both parameters query: " + linkb);
+        }catch (Exception e) {
+        	LOG.error(" -- Result any of both parameters query: " + linkb, e);
+        }       
+        return linkb;
+      }
 	
 }

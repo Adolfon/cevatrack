@@ -24,8 +24,13 @@ public class LinkServiceImpl implements LinkService{
 
 	public LinkBean getLinkBeanById(String link) {
 		LOG.info(" -- At EJB, linkRepo is: " + linkRepo + ", link: " + link);
-		LOG.info(" -- by the delta method: " + linkRepo.findBy(link));//OK
+		//LOG.info(" -- by the delta method: " + linkRepo.findBy(link));//OK
 		return linkRepo.searchRecordByLink(link);
+	}
+	
+	public LinkBean getLinkBeanBy2Refs(String order_ref, String client_ref) {
+		LOG.info(" -- EJB, getLinkBeanBy2Refs, order_ref: " + order_ref + ", client ref " + client_ref);		
+		return linkRepo.searchRecordByOrderOrRef(order_ref, client_ref);
 	}
 
 	@Override
