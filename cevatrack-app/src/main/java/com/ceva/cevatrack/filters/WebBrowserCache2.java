@@ -36,7 +36,7 @@ public class WebBrowserCache2 implements Filter {
         String order_num_param = request.getParameter("p0");
         String client_ref_param = request.getParameter("p1");
         log.info(" -- Session created from filter --" + session + " ,req URL: " + request.getRequestURL().toString() +
-        		"\n response: " + response.getHeaderNames() + " ,URI: " + request.getRequestURI() + " ,paramagter: " + param);        
+        		"\n response: " + response.getHeaderNames() + " ,URI: " + request.getRequestURI() + " ,paramater: " + param);        
         if (order_num_param == null && client_ref_param == null){
         	response.sendRedirect("cLS.xhtml?t=" + param);
         }else{

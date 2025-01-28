@@ -136,7 +136,7 @@ public class DetailViewLink implements Serializable {
         LOGGER.info("lbean recovered: " + lbean);
         if (lbean == null){
         	LOGGER.warn(" -- Not found on database --");
-        	goToError("Authentication error");
+        	goToError("Waiting for delivery information");
         	return;
         }   
         LOGGER.info("-- data base data queried..");

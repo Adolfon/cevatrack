@@ -1473,4 +1473,7 @@ INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, cr
 --changeset adolfo.cano:001-cjf-template-db-076 failOnError:true splitStatements:false logicalFilePath:001-template.sql
  UPDATE automotive_client SET aaf_instance = 'JAGLR' WHERE prefixes = 'JAGLR';
  
+ --changeset adolfo.cano:001-cjf-template-db-077 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('Merrithew','MERRI','MERRITHEW.png','MERRI',now(),'SYSTEM',now(),'SYSTEM',1); 
   
