@@ -1,0 +1,290 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:shiro="http://shiro.apache.org/tags"	
+	template="app-template_consignmentLink.xhtml">
+	
+	<ui:define name="content">
+		<p:growl />
+		<div id="special_map_container" class="ceva-welcome-page">
+			<div class="ceva-panel-welcome-page"></div>
+			<div id="welcomePage" class="ceva-text-welcome-page">
+			  <ui:fragment rendered="#{beanJLRLink.showMap}">							
+				<div id="map" style="width: 100%; height: 600px;text-align:center;">
+					<h:graphicImage id="map_image_view" style="padding-bottom:10px;" value="http://maps.googleapis.com/maps/api/staticmap?size=600x600&amp;maptype=roadmap&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Van_Icon2.png|#{beanJLRLink.vehicule_loc}&amp;markers=icon:http://services.cevalogistics.com/cevatrack/resources/images/Location_Map_Icon.png|#{beanJLRLink.place_loc}&amp;style=feature:poi|visibility:off&amp;key=#{beanJLRLink.apiKey}"/>
+					 	<!--  <img id= "map_image_view" src="http://maps.googleapis.com/maps/api/staticmap?center=#{beanJLRLink.vehicule_loc}&amp;zoom=13&amp;size=600x600&amp;maptype=roadmap&amp;markers=color:blue%7Clabel:VehiculeGPS#{beanJLRLink.vehicule_loc}&amp;markers=color:green%7Clabel:Place#{beanJLRLink.place_loc}&amp;key=AIzaSyCQalgzQEH3zeLOh3JIuM6bv7-uKWgeWHU"/>-->
+				</div>
+			  </ui:fragment>							  
+			<ui:insert name="map_responsive" />
+				<h:form id="form">				  
+					<p:growl id="growl" showDetail="true" />
+					
+			<p:panel id="toggleable-header" header="Consignment #{beanJLRLink.consignment.consignmentReference}" toggleable="true" widgetVar="accordian_header" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	          <div class="ui-g">
+		         <div class="ui-g-12 ui-md-4 ui-lg-3">
+		              <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+		                <div class="panel-heading">Reference</div>
+		                <div class="panel-body">#{beanJLRLink.consignment.consignmentReference}</div>
+		              </div>
+	             </div>		           		           
+                <div class="ui-g-12 ui-md-3 ui-lg-2">
+		              <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+		                <div class="panel-heading">Status</div>
+		                <div class="panel-body">#{beanJLRLink.consignment.statusString}</div>
+		              </div>
+	            </div>
+	            <ui:fragment rendered="#{beanJLRLink.consignment.statusString != 'To be delivered' and not empty beanJLRLink.feedBack_URL}">
+		            <div class="ui-g-12 ui-md-4 ui-lg-3">
+			              <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+			                <div class="panel-heading">How did we do?</div>
+			                <div class="panel-body">
+			                	Click <a target="_blank" href="#{beanJLRLink.feedBack_URL}"><b><u> here </u></b></a> to rate our service</div>
+			              </div>
+		             </div>	  
+	            </ui:fragment>            
+            </div>
+          </p:panel>          		  
+		  
+		  <ui:fragment rendered="#{(! empty beanJLRLink.consignment.ataString and beanJLRLink.consignment.statusString != 'To be delivered') or 
+		  	(! empty beanJLRLink.consignment.etaString and beanJLRLink.consignment.statusString == 'To be delivered') or 		  	 
+		  	(! empty beanJLRLink.windowStart and ! empty beanJLRLink.windowEnd and beanJLRLink.consignment.statusString == 'To be delivered')
+		  		or (beanJLRLink.consignment.siteGeoRadius != 0) or (! empty beanJLRLink.consignment.journeyActualStartTimeString)}">		  			  			
+	          <p:panel id="toggleable-timings" header="Visit Details" toggleable="true" widgetVar="accordian_timings" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	            <div class="ui-g">
+	             <ui:fragment rendered="#{! empty beanJLRLink.consignment.ataString or (not empty beanJLRLink.consignment.etaString) and (beanJLRLink.consignment.statusString != 'To be delivered')}">
+	              <div class="ui-g-12 ui-md-4 ui-lg-3">
+		              <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+		                <div class="panel-heading">Arrival</div>
+		                <div class="panel-body">                 
+		                  <ui:fragment rendered="#{(not empty beanJLRLink.consignment.etaString) and (beanJLRLink.consignment.statusString != 'To be delivered')}">
+		                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+		                      <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+		                        <div class="panel-heading">Estimated</div>
+		                        <div class="panel-body">#{beanJLRLink.consignment.etaString}</div>
+		                      </div>
+		                    </div>
+		                  </ui:fragment>
+		                  <ui:fragment rendered="#{! empty beanJLRLink.consignment.ataString}">
+		                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+		                      <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+		                        <div class="panel-heading">Actual</div>
+		                        <div class="panel-body">#{beanJLRLink.consignment.ataString}</div>
+		                      </div>
+		                    </div>
+		                  </ui:fragment>
+		                </div>
+		              </div>
+	              	</div>                                                
+	             </ui:fragment>
+	             <ui:fragment rendered="#{beanJLRLink.consignment.statusString == 'To be delivered' }">	 
+	               <ui:fragment rendered="#{! empty beanJLRLink.windowStart and ! empty beanJLRLink.windowEnd}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Window</div>
+	                    <div class="panel-body">
+	                      <div class="ui-g-12 ui-md-6 ui-lg-6">
+	                        <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                          <div class="panel-heading">Start</div>
+	                          <div class="panel-body">#{beanJLRLink.windowStart}</div>
+	                        </div>
+	                      </div>
+	                      <div class="ui-g-12 ui-md-6 ui-lg-6 panel-default">
+	                        <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                          <div class="panel-heading">End</div>
+	                          <div class="panel-body">#{beanJLRLink.windowEnd}</div>
+	                        </div>
+	                      </div>
+	                    </div>
+	                  </div>
+	                </div>
+	     			</ui:fragment>
+	             </ui:fragment>
+	              
+	              <ui:fragment rendered="#{beanJLRLink.consignment.siteGeoRadius != 0}">
+	                <div class="ui-g-12 ui-md-2 ui-lg-1">
+	                  <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Geo Radius</div>
+	                    <div class="panel-body">#{beanJLRLink.consignment.siteGeoRadius}</div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	              <ui:fragment rendered="#{! empty beanJLRLink.consignment.journeyActualStartTimeString}">
+	                <div class="ui-g-12 ui-md-2 ui-lg-2">
+	                  <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">At Site</div>
+	                    <div class="panel-body">#{beanJLRLink.consignment.journeyActualStartTimeString}</div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	            </div>
+	          </p:panel>
+          </ui:fragment> 
+          
+          <ui:fragment id="fragmentSignatory" rendered="#{beanJLRLink.consignment.signatory.length() + beanJLRLink.consignment.signatory.length() > 0}">
+	          <p:panel id="toggleable-pod" header="Signature" toggleable="true" widgetVar="accordian_pod" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+	            <div class="ui-g">
+	               
+	              <ui:fragment rendered="#{! empty beanJLRLink.consignment.signatory}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Signatory</div>
+	                    <div class="panel-body">#{beanJLRLink.consignment.signatory}</div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	              <ui:fragment rendered="#{beanJLRLink.consignment.signature.length() > 0}">
+	                <div class="ui-g-12 ui-md-4 ui-lg-3">
+	                  <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+	                    <div class="panel-heading">Signature</div>
+	                    <div class="panel-body">
+	                      <img class="signatureimg" src="data:image/png;base64, #{beanJLRLink.consignment.signature}" />
+	                    </div>
+	                  </div>
+	                </div>
+	              </ui:fragment>
+	
+	            </div>
+	          </p:panel>
+          </ui:fragment>
+
+          <ui:fragment id="fragmentVehicles" rendered="#{beanJLRLink.consignment.vehicles.size() gt 0}">
+            <p:panel id="toggleable-vehicles" header="Vehicles" toggleable="true" widgetVar="accordian_vehicles" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+              <c:forEach var="veh" items="#{beanJLRLink.consignment.vehicles}">
+		            <div class="ui-g">
+		               
+		              <div class="ui-g-12 ui-md-12 ui-lg-12">
+		                <div class="panel field-panel panel-#{beanJLRLink.consignment.statusCssClass}">
+		                  <div class="panel-heading">Vehicle: #{veh.displayName}</div>		                  
+		                </div>
+		              </div>
+		            </div>
+              </c:forEach>
+	          </p:panel>
+	        </ui:fragment>         
+          
+          
+          <ui:fragment id="fragmentConsignment" rendered="#{beanJLRLink.consignment.consignmentDetails.size() gt 0}">
+	          <p:panel id="toggleable-contents" header="Contents" toggleable="true" widgetVar="accordian_contents" closable="false" toggleSpeed="200" closeSpeed="200" style="margin-bottom:20px">
+              <c:forEach var="item" items="#{beanJLRLink.consignment.consignmentDetails}">
+			   <ui:fragment rendered="#{not empty item.customerDetailRef}">
+                <div class="ui-g">                  
+                  <div class="ui-g-12 ui-md-12 ui-lg-12">
+                    <div class="panel field-panel panel-#{item.statusCssClass}">
+                      <div class="panel-heading">Item: #{item.detailRef}</div>
+                      <div class="panel-body">
+                        <ui:fragment rendered="#{not empty item.customerDetailRef}">
+                          <div class="ui-g-12 ui-md-4 ui-lg-3">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Reference</div>
+                              <div class="panel-body">#{item.customerDetailRef}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{! empty item.parentRef}">
+                          <div class="ui-g-12 ui-md-4 ui-lg-3">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Part of</div>
+                              <div class="panel-body">#{item.parentRef}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{! empty item.description}">
+                          <div class="ui-g-12 ui-md-6 ui-lg-6">
+                            <div class="panel field-panel panel-#{item.statusCssClass}">
+                              <div class="panel-heading">Description</div>
+                              <div class="panel-body">#{item.description}</div>
+                            </div>
+                          </div>
+                        </ui:fragment>
+                        <div class="ui-g-12 ui-md-3 ui-lg-2">
+                          <div class="panel field-panel panel-#{item.statusCssClass}">
+                            <div class="panel-heading">Status</div>
+                            <div class="panel-body">#{item.statusString}</div>
+                          </div>
+                        </div>
+					              <div class="ui-g-12 ui-md-4 ui-lg-4">
+					                <div class="panel field-panel panel-#{item.statusCssClass}">
+					                  <div class="panel-heading">Quantities</div>
+					                  <div class="panel-body">
+					                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+					                      <div class="panel field-panel panel-#{item.statusCssClass}">
+					                        <div class="panel-heading">Planned</div>
+					                        <div class="panel-body">#{item.plannedQuantity}</div>
+					                      </div>
+					                    </div>
+					                    <ui:fragment rendered="#{item.actualQuantity gt 0}">
+						                    <div class="ui-g-12 ui-md-6 ui-lg-6">
+						                      <div class="panel field-panel panel-#{item.statusCssClass}">
+						                        <div class="panel-heading">Actual</div>
+						                        <div class="panel-body">#{item.actualQuantity}</div>
+						                      </div>
+						                    </div>
+					                    </ui:fragment>
+					                  </div>
+					                </div>
+					              </div>
+					              
+                        
+                        
+                        <c:forEach var="cld" items="#{item.clauseDetails}">
+				                   
+				                  <div class="ui-g-12 ui-md-12 ui-lg-12">
+				                    <div class="panel field-panel panel-#{item.statusCssClass}">
+				                      <div class="panel-heading">Clause</div>
+				                      <div class="panel-body">
+				                        <div class="ui-g-12 ui-md-3 ui-lg-1">
+				                          <div class="panel field-panel panel-#{item.statusCssClass}">
+				                            <div class="panel-heading">Code</div>
+				                            <div class="panel-body">#{cld.clauseCode}</div>
+				                          </div>
+				                        </div>
+				                        <div class="ui-g-12 ui-md-8 ui-lg-5">
+                                  <div class="panel field-panel panel-#{item.statusCssClass}">
+                                    <div class="panel-heading">Description</div>
+                                    <div class="panel-body">#{cld.clauseDescription}</div>
+                                  </div>
+                                </div>
+                                <ui:fragment rendered="#{! empty cld.parentCode}">
+	                                <div class="ui-g-12 ui-md-8 ui-lg-1">
+	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
+	                                    <div class="panel-heading">Parent Code</div>
+	                                    <div class="panel-body">#{cld.parentCode}</div>
+	                                  </div>
+	                                </div>
+                                </ui:fragment>
+                                <ui:fragment rendered="#{! empty cld.parentClauseDescription}">
+	                                <div class="ui-g-12 ui-md-8 ui-lg-5">
+	                                  <div class="panel field-panel panel-#{item.statusCssClass}">
+	                                    <div class="panel-heading">Parent Description</div>
+	                                    <div class="panel-body">#{cld.parentClauseDescription}</div>
+	                                  </div>
+	                                </div>
+                                </ui:fragment>
+			                          <div class="ui-g-12 ui-md-4 ui-lg-2">
+			                            <div class="panel field-panel panel-#{item.statusCssClass}">
+			                              <div class="panel-heading">Claused Quantity</div>
+			                              <div class="panel-body">#{cld.clausedQuantity}</div>
+			                            </div>
+			                          </div>
+				                      </div>
+				                    </div>
+				                  </div>
+					              </c:forEach>                                      
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </ui:fragment>
+              </c:forEach>
+	          </p:panel>
+          </ui:fragment>
+		</h:form>
+	</div>
+   </div>
+ </ui:define>
+ 
+</ui:composition>

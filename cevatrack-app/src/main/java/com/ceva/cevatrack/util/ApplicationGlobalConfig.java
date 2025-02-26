@@ -7,8 +7,10 @@ public class ApplicationGlobalConfig {
 	public final static String GoogleMapsAPIKey3 = "AIzaSyDYp5dH4HBJkSIU6-vjTHHTZ9grWdNerp4";//For Baxter
 	public final static String TechNetLink = "TechNetLink";//For TechNET
 	public final static String BaxterLink = "BaxterLink";
+	public final static String JLRLink = "JLRLink";//For TechNET
 	public final static String TechNetLink_environment_prod = "technet_link.tibco.prod";//For TechNET
 	public final static String Baxter_environment_prod = "baxter_link.tibco.prod";
+	public final static String JLRLink_environment_prod = "automotive_web.tibco.prod";
 	/* SEB */
 	public final static String secret = "Private"; //update also seb.xhtml link fragment
 	/*DPD*/
