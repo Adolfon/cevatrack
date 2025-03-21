@@ -32,6 +32,7 @@ import com.ceva.cevatrack.vo.SmartNetClientVO;
 import com.ceva.cevatrack.wsmicrolise.Common;
 import com.ceva.cevatrack.wsmicrolise.WSMicroliseImage;
 import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
+import com.ceva.cevatrack.wsmicrolise.getconsignment.ConsignmentDetail;
 
 /**
  * @author alexandru.castravet
@@ -182,6 +183,11 @@ public class DetailView implements Serializable, CommonApp {
             	LOGGER.info("-- Looking on Technet network for associated consignment reference photos");
             	retrieve_microlise_photos(consignmentReference);
             }
+            if (network.equalsIgnoreCase("Automotive")){
+            	LOGGER.info(" -- Retrieving JLR images from data base --");
+            	retrieve_microlise_photos_from_data_base(consignment.getJourneyId(), consignment.getJourneyDropId(),
+            			consignmentReference);            	
+            }
         } catch (Exception e) {
             LOGGER.error("-- Problem retrieving consignments detail.. " + " \n trace: \n" + ExceptionUtils.getFullStackTrace(e), e.getStackTrace());
             // this message works fine
@@ -192,7 +198,43 @@ public class DetailView implements Serializable, CommonApp {
         }
     }
 
-    private void retrieve_microlise_photos(String consignmentReference) {
+    /*
+     * journey_id is part of PK on jlr_consignment_image table = load_id
+     * journey_drop_id is part of PK on jlr_consignment_image table = journey_drop_id
+     */
+    private void retrieve_microlise_photos_from_data_base(int journey_id, int journey_drop_id,
+    		String consignmentReference) {
+    	LOG.info("--retrieving auto photos, params journet_id: " + journey_id + ", j_dropid: " + journey_drop_id + 
+    			", consRef: " + consignmentReference);
+    	//Read tables, sepparetly as they need a repository by table
+    	ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>)
+    			mpsService.getJLRPhotoRefs(String.valueOf(consignmentReference), String.valueOf(journey_id));
+    	if (beansP != null){
+    		LOG.info("-- Recovered photos: " + beansP.size());
+    	}else{
+    		LOG.warn("-- There are no photos for reference: " + consignmentReference + ",nor loadId: " + journey_id);
+    		return;
+    	}
+    	MicrolisePhotoVO beanp = null;
+    	LOG.info(" -- Orders beans recovered: " + beansP.size());  
+    	WSMicroliseImage ws = new WSMicroliseImage(true);
+    	this.photos = new ArrayList<>();
+    	for (MicrolisePhotoVO photo:beansP){
+    		LOG.info("photo bean recovered: " + photo.toString());
+    		byte[] ressPhoto = WSMicroliseImage.callWS(photo.getActivity_image_no());
+    		beanp = new MicrolisePhotoVO();
+    		beanp.setActivity_image_no(photo.getActivity_image_no());
+    		beanp.setActivity_name(photo.getActivity_name());
+    		beanp.setPhoto(ressPhoto);
+    		if (ressPhoto != null && ressPhoto.length != 0){
+    			photos.add(beanp);
+    		}else{
+    			LOG.error("-- Photo was not retreived, null..");
+    		}
+    	}    			
+	}
+
+	private void retrieve_microlise_photos(String consignmentReference) {
     	this.photos = new ArrayList<>();
     	//ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>) mpsService.getPhotoRef("RICOHT/230629/11");
     	ArrayList<MicrolisePhotoVO> beansP = (ArrayList<MicrolisePhotoVO>) mpsService.getPhotoRef(consignmentReference);
@@ -200,6 +242,7 @@ public class DetailView implements Serializable, CommonApp {
     		LOG.info("-- Recovered photos: " + beansP.size());
     	}else{
     		LOG.warn("-- There are no photos for reference: " + consignmentReference);
+    		return;
     	}
     	MicrolisePhotoVO beanp = null;
     	LOG.info(" -- Orders beans recovered: " + beansP.size());  
@@ -216,8 +259,7 @@ public class DetailView implements Serializable, CommonApp {
     		}else{
     			LOG.error("-- Photo was not retreived, null..");
     		}
-    	}    	
-		
+    	}    			
 	}
 
 	public void changePoll() {

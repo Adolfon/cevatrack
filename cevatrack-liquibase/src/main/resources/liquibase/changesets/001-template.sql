@@ -1476,4 +1476,53 @@ INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, cr
  --changeset adolfo.cano:001-cjf-template-db-077 failOnError:true splitStatements:false logicalFilePath:001-template.sql
  INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('Merrithew','MERRI','MERRITHEW.png','MERRI',now(),'SYSTEM',now(),'SYSTEM',1); 
+
+ --changeset adolfo.cano:001-cjf-template-db-078 failOnError:true splitStatements:false logicalFilePath:001-template.sql
+ CREATE TABLE IF NOT EXISTS jlr_consignment_image (
+	load_id text NOT NULL,
+	journey_drop_id text NOT NULL,
+	image_no text NOT NULL,
+	is_proof bool NULL,
+	is_clause bool NULL,
+	journey_alias text NULL,
+	call_sequence text NULL,
+	actual_call_sequence text NULL,
+	site_name text NULL,
+	site_info_1 text NULL,
+	site_info_2 text NULL,
+	clause text NULL,
+	description text NULL,
+	ata timestamptz NULL,
+	atd timestamptz NULL,
+	created_timestamp timestamptz NULL,
+	updated_timestamp timestamptz NULL,
+	CONSTRAINT jlr_consignment_image_pk PRIMARY KEY (load_id,journey_drop_id,image_no)
+);
+ CREATE TABLE IF NOT EXISTS jlr_line_image (
+	order_number text NOT NULL,
+	detail_no text NOT NULL,
+	image_no text NOT NULL,
+	journey_alias text NULL,
+	load_id text NULL,
+	journey_drop_id text NULL,
+	call_sequence text NULL,
+	actual_call_sequence text NULL,
+	site_name text NULL,
+	site_info_1 text NULL,
+	site_info_2 text NULL,
+	clause text NULL,
+	description text NULL,
+	clean text NULL,
+	planned_qty int4 NULL,
+	actual_qty int4 NULL,
+	claused_qty int4 NULL,
+	qty_precision int4 NULL,
+	ata timestamptz NULL,
+	atd timestamptz NULL,
+	created_timestamp timestamptz NULL,
+	updated_timestamp timestamptz NULL,
+	CONSTRAINT jlr_line_image_pk PRIMARY KEY (order_number,detail_no,image_no)
+);
+
+
   

@@ -45,8 +45,56 @@ public class WSMicroliseImage {
 		initEnvironment();
 	}
 	
+	public WSMicroliseImage(boolean env){
+		Log.info("-- Creating object for JLR");
+		initEnvironmentJLR();
+	}
+	
+	private void initEnvironmentJLR() {		
+		Properties systemProps = System.getProperties();			
+		if (systemProps.get("environment.code") != null){
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
+				Log.info(" ----------- We are in the Production environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.JLR_IMG_PROD_USER;
+				psw = ApplicationGlobalConfig.JLR_IMG_PROD_PWS;
+				url_env = ApplicationGlobalConfig.JLR_IMG_PROD_URI;		
+				hasProxy = true;
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
+				//this.environment = "LOCAL";
+			}
+			
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("LOCAL")){	
+				Log.info(" ----------- We INDEED are in the LOCAL environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.JLR_IMG_TEST_USER;
+				psw = ApplicationGlobalConfig.JLR_IMG_TEST_PWS;
+				url_env = ApplicationGlobalConfig.JLR_IMG_TEST_URI;	
+				hasProxy = false;
+			}				
+			
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-DEVL")){
+				Log.info(" ----------- We INDEED are in the DEVELOPMENT environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.JLR_IMG_TEST_USER;
+				psw = ApplicationGlobalConfig.JLR_IMG_TEST_PWS;
+				url_env = ApplicationGlobalConfig.JLR_IMG_TEST_URI;
+				hasProxy = true;
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.DEV_PROXY_1, ApplicationGlobalConfig.DEV_PROXY_PORT));
+			}
+			
+			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-TEST")){
+				Log.info(" ----------- We INDEED are in the TEST environment --> " + systemProps.get("environment.code"));//OK
+				user = ApplicationGlobalConfig.JLR_IMG_TEST_USER;
+				psw = ApplicationGlobalConfig.JLR_IMG_TEST_PWS;
+				url_env = ApplicationGlobalConfig.JLR_IMG_TEST_URI;
+				hasProxy = true;
+				proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ApplicationGlobalConfig.GDC_PROXY, ApplicationGlobalConfig.GDC_PROXY_PORT));
+			}
+						
+		}
+		
+	}
+
 	public static void initEnvironment(){
-		Properties systemProps = System.getProperties();		
+		Properties systemProps = System.getProperties();			
 		if (systemProps.get("environment.code") != null){
 			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
 				Log.info(" ----------- We are in the Production environment --> " + systemProps.get("environment.code"));//OK

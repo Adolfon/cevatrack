@@ -8,5 +8,5 @@ public interface MicrolisePhotoService {
 
     public String getPhotoRef(String order, String ativity);
     public List<MicrolisePhotoVO> getPhotoRef(String order);
-
+    public List<MicrolisePhotoVO> getJLRPhotoRefs(String order,String loadId);
 }

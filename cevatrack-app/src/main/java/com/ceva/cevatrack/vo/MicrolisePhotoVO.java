@@ -2,7 +2,9 @@ package com.ceva.cevatrack.vo;
 
 public class MicrolisePhotoVO {
 	
-	    private String order_number;
+	    private String order_number; // It is the consignment reference
+	    
+	    private String load_id; // It is Journey_id in the getDetails
 	   
 	    private String activity_name;
 	    
@@ -42,13 +44,19 @@ public class MicrolisePhotoVO {
 			this.photo = photo;
 		}
 
+		public String getLoad_id() {
+			return load_id;
+		}
+
+		public void setLoad_id(String load_id) {
+			this.load_id = load_id;
+		}
+
 		@Override
 		public String toString() {
-			return "MicrolisePhotoVO [order_number=" + order_number + ", activity_name=" + activity_name
-					+ ", activity_image_no=" + activity_image_no + "]";
+			return "MicrolisePhotoVO [order_number=" + order_number + ", load_id=" + load_id + ", activity_name="
+					+ activity_name + ", activity_image_no=" + activity_image_no + "]";
 		}
-		
-		
 
 }
 
