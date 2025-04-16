@@ -28,8 +28,8 @@ public class ApplicationGlobalConfig {
 	public final static String IMG_PROD_USER ="Technet";
 	public final static String IMG_PROD_PWS ="8BEDNSHbgCj2P";
 	public final static String IMG_PROD_URI ="https://live.microlise.com/CEVA_TechNET/TMCWEBSERVICE/GetImage.ashx?username=image&id=";
-	public final static String JLR_IMG_PROD_URI ="https://LIVE.microlise.com/CEVA_CCAM/TMCWebService/TMCWebService.asmx";
-	public final static String JLR_IMG_PROD_USER ="CEVACCAMWEBSVC";
+	public final static String JLR_IMG_PROD_URI ="https://live.microlise.com/CEVA_CCAM/TMCWEBSERVICE/GetImage.ashx?username=image&id=";
+	public final static String JLR_IMG_PROD_USER ="cevaccamwebsvc";
 	public final static String JLR_IMG_PROD_PWS ="kH9THj39y5PwJ";
 	public final static String JLR_IMG_TEST_URI ="https://uat.microlise.com/CEVA_CCAM/TMCWEBSERVICE/GetImage.ashx?username=image&id=";
 	public final static String JLR_IMG_TEST_USER ="CCAMUATWEBSVC";
