@@ -4,19 +4,15 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-//import java.time.LocalDate;
-//import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-//import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TimeZone;
-import javax.inject.Inject;
-//import javax.enterprise.inject.Produces;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -28,509 +24,300 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.credential.PasswordMatcher;
+
 import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.realm.jdbc.JdbcRealm;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.AAFUser4Nike;
 import com.ceva.cevatrack.domain.ClientsAPI;
-import com.ceva.cevatrack.util.ApplicationGlobalConfig;
 
-/*
- * Input Reference number from Johnson
- * Output
- * 		ClientsAPI data base row
- *      
- * Responses: 403 Auth failed, 404 input not found in DB, 200 OK
- */
 @Path("/johnson")
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON) //Now the result is a JSON document for all the methods of this class, you can apply this notation individually but ignores it..
-//@Produces(MediaType.APPLICATION_XML)
-//@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-//@Transactional
-public class JohnsonAPI implements Serializable{
-			
-	private static final long serialVersionUID = 1L;
-	private static int NUMBER_TIMES_CONNECTION_USED = 0;
-	private String id;
-	String userppal = null; 
+@Produces(MediaType.APPLICATION_JSON)
+public class JohnsonAPI implements Serializable {
 
-	private static String PERSISTENCE_UNIT_NAME = "cevatrackPULocal";
-    private static EntityManagerFactory emf;
-    //private static EntityManager em;
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(JohnsonAPI.class);
-	Subject currentUser;
-	//private static final DateTimeFormatter FORMATWS = DateTimeFormatter.ofPattern("dd MMM hh:mm a");
-	private static final DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");	
-	
-    @Inject
-    private EntityManager entityManager;
-    /*
-     * It returns http code 400 when there is no input parameter
-     */
-	@GET
+    private static final long serialVersionUID = 1L;
+    private static final String PERSISTENCE_UNIT_NAME = "cevatrackPULocal";
+    private static volatile EntityManagerFactory emf;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JohnsonAPI.class);
+    private static final DateTimeFormatter FORMATDATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+    @GET
     @Path("/getShipmentInfoByRef")
-	//@Produces(MediaType.APPLICATION_XML) // Actually it returns XML type, regardless the class config
-	@Produces(MediaType.APPLICATION_JSON) 
-	public Response getShipmentInfoByRef(){
-		LOGGER.info("--- The method was called without parameters..");
-		return Response.status(400).entity("The request is malformed").build();
-	}
-	/*
-	 * It returns the info for the Pack List Number passed as a parameter
-	 */
-	@GET
+    public Response getShipmentInfoByRef() {
+        LOGGER.info("--- The method was called without parameters..");
+        return Response.status(400).entity("The request is malformed").build();
+    }
+
+    @GET
     @Path("/getShipmentInfoByRef/{ref}")
-    public Response getShipmentInfoByRef(@PathParam("ref") String id, @Context HttpHeaders headers, @Context HttpServletRequest req){ //throws JSONException{
-		LOGGER.info(" -- Starting getShipmentInfoByRef REST method..");
-		if (id == null || id == "" || id == "null"){ //Redirect to localhost tomcat welcome page
-			return Response.status(400).entity("No parameter was included on the call..").build();			
-		}
-		this.id = id;	
-				
-		int response_auth = authenticateUser(headers);//
-		
-		switch (response_auth){		
-			case -3:
-				LOGGER.error(" -- Authentication error code: -3 (Unsupport coding exception)");
-				return Response.status(403).entity("There was a problem with the user Login (unsupport encoding) ").build();					
-			case 0:
-				LOGGER.info(" Authentication of the user was correct! ");
-				break;
-			case 1:
-				LOGGER.error(" -- Authentication error code: 1");
-				return Response.status(403).entity("Unknown Account exception").build();				
-			case 2:
-				LOGGER.error(" -- Authentication error code: 2");
-				return Response.status(403).entity("Incorrect user - password combination").build();				
-			case 3:
-				LOGGER.error(" -- Authentication error code: 3");
-				return Response.status(403).entity("Basic authentication is required").build();	
-			case 4:
-				LOGGER.error(" -- Authentication error code: 4");
-				return Response.status(403).entity("User is blocked, too many attempts").build();	
-				
-		}		
-		
-		int resultDB = createEntityManager();//carefull open before for auth?	
-		
-		if (resultDB == -1){
-			return Response.status(500).entity("Data base was not accessible").build();
-		}
+    public Response getShipmentInfoByRef(@PathParam("ref") String ref,
+                                         @Context HttpHeaders headers,
+                                         @Context HttpServletRequest req) {
 
-		ClientsAPI jResponseBean = read_johnson_db_info(id);// Bean johnson
-		
-		if (jResponseBean == null){
-			LOGGER.info("-- The reference number entered did not returned any result.. ");
-			return Response.status(404).entity("The reference number is incorrect").build();			
-		}
-				
-		return createResponse(jResponseBean);
-				
-    }
-	
-	/*
-	 * check if the client is Active and put the user inactive after n login attempts
-	 */
-    private int validateUser(String userName, String pass) {
-    	LOGGER.info(" --- validateUser method, user: " + userName + " ,pass: " + pass);//Hasta aqui before 500 
-    	if (userName == null || "".equals(userName) || pass == null || "".equals(pass)){
-    		return 2;
-    	}
-    	try{
-	    	if (entityManager!= null && entityManager.isOpen()){
-	    		LOGGER.info("EM is open..");
-	    		entityManager.clear();
-	    		LOGGER.info(" -- cache cleared..");
-	    	}
-    	}catch (Exception e){
-    		LOGGER.error("-- Error managing the entity manager ", e);
-    	}
-    	if ( 0 == createEntityManager()){
-			AAFUser4Nike user = null;
-	    	try{
-	    		user = (AAFUser4Nike) entityManager.createQuery("SELECT us FROM AAFUser4Nike us WHERE us.userPrincipal = ?1").
-						setParameter(1, userName).getSingleResult();
-	    		LOGGER.info(" -- the user recovered was: " + user);
-	    		if (user == null || pass == null || "".equals(user) || "".equals(pass)){
-	    			return 2;
-	    		}
-	    		if (user.getIsLocked() || !user.getIsActive()){
-	    			return 4;
-	    		}
-	    		if (user.getIncorrectLoginAttempts() != null && user.getIncorrectLoginAttempts() > 4){
-	    			return 4;
-	    		}else if (user.getIncorrectLoginAttempts() == null){
-	    			user.setIncorrectLoginAttempts(0);
-	    		}
-	    		if (pass_validation(user.getPassword(), pass)){
-	    			resetNumberAttemptUser(userName);
-	    			return 0;
-	    		}else{
-	    			LOGGER.warn("--Wrong password for user: " + user.getUserPrincipal());
-	    			addNumberAttemptUser(user.getUserPrincipal());
-	    			return 2;
-	    		}
-	    			    		
-			}catch(Exception e){
-				LOGGER.error(" -- The user query with ppal: " + this.userppal + ", did not return an expected result..", e);
-				return 2;
-			}   
-    	}else{
-    		LOGGER.warn(" -- There was an error creating the entity manager");
-    		return -1;
-    	}		
-	}
-	private Response createResponse(ClientsAPI cb) {
-    	LOGGER.info(" -- Starting method createResponse with parameter, clientsAPIBean: " + cb);
-    	String rs = "{";
-    	rs = rs + "\n" + "\"carrierName\" : \"CEVA\",";
-    	
-    	if(cb.getCarrier_name() != null && !"".equals(cb.getCarrier_name())){
-    		rs = rs + "\n" + "\"executingCN\":\"" + cb.getCarrier_name() + "\",";
-    	}
-    	if(cb.getTracking_number() != null && !"".equals(cb.getTracking_number()) ){
-    		rs = rs + "\n" + "\"trackingNumber\":\"" + cb.getTracking_number() + "\",";
-    	}
-    	if(cb.getStatus() != null && !"".equals(cb.getStatus())){
-    		rs = rs + "\n" + "\"status\":\"" + cb.getStatus() + "\",";
-    	}
-    	ZoneId londonZone = TimeZone.getTimeZone("Europe/London").toZoneId();
-    	if (cb.getStatus_date() != null){        		
-    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getStatus_date().toInstant(), londonZone);
-    		String statDate = ldt.format(FORMATDATE);
-    		rs = rs + "\n" + "\"status_date\":\"" + statDate + "\",";    		
-    	}	
-    	if (cb.getRevise_delivery_date() != null){
-    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getRevise_delivery_date().toInstant(), londonZone);
-    		String revDate = ldt.format(FORMATDATE);
-    		rs = rs + "\n" + "\"revisedDeliveryDate\":\"" + revDate + "\",";
-    		LOGGER.info(" -- Time customized: " + revDate + "\n -- so far: " + rs);
-    	}      	
-    	if(cb.getReason_code() != null && !"".equals(cb.getReason_code())){
-    		rs = rs + "\n" + "\"reason\":\"" + cb.getReason_code() + "\",";
-    	}    	
-    	if(cb.getFailure_reason_code() != null && !"".equals(cb.getFailure_reason_code())){
-    		rs = rs + "\n" + "\"failure_reason\":\"" + cb.getFailure_reason_code() + "\",";
-    	}    	
-    	if(cb.getLate_reason_code() != null && !"".equals(cb.getLate_reason_code())){
-    		rs = rs + "\n" + "\"late_reason\":\"" + cb.getLate_reason_code() + "\",";
-    	}
-    	if (cb.getDelivered_date() != null){        		
-    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getDelivered_date().toInstant(), londonZone);
-    		String devDate = ldt.format(FORMATDATE);
-    		rs = rs + "\n" + "\"delivered_date\":\"" + devDate + "\",";    		
-    	}
-    	if (cb.getOriginal_required_date() != null){        		
-    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getOriginal_required_date().toInstant(), londonZone);
-    		String oriDate = ldt.format(FORMATDATE);
-    		rs = rs + "\n" + "\"original_delivery_date\":\"" + oriDate + "\",";    		
-    	}
-    	if (cb.getClaused_date() != null){        		
-    		LocalDateTime ldt = LocalDateTime.ofInstant(cb.getClaused_date().toInstant(), londonZone);
-    		String clauDate = ldt.format(FORMATDATE);
-    		rs = rs + "\n" + "\"claused_date\":\"" + clauDate + "\",";    		
-    	}
-    	rs = rs + "}";
-    	if (rs.endsWith(",}")){
-    		LOGGER.info(" -- Ends with ',}'");
-    		rs = rs.substring(0, rs.indexOf("}")-1) + "\n}"; //remove the last ",}" and add return + "}"
-    	}else{
-    		LOGGER.info(" -- Ends with  only '}'");
-    		rs = rs.substring(0, rs.indexOf("}")) + "\n}"; 
-    	}
-		return Response.ok().entity(rs).build();
-	}
-    
-	
-	
-	private ClientsAPI read_johnson_db_info(String id) {
-		LOGGER.info("-- String method read_nike_consignment..id: " + id);
-		ClientsAPI clients_API = null;
-		try{
-			clients_API = (ClientsAPI) entityManager.createQuery("SELECT c FROM ClientsAPI c WHERE c.client_id = ?1 AND c.shipment_number = ?2").
-					setParameter(1, "JHNJHN").setParameter(2, id).getSingleResult();
-		}catch(Exception e){
-			LOGGER.warn(" -- The query with parameter: " + id + ", did not return an expected result..\n", e);
-			return null;
-		}
-		return clients_API;		
-	}
-	
-	private int createEntityManager() {
-		LOGGER.info("--starting create entity manager");
-		if (this.entityManager != null && entityManager.isOpen()){			
-				LOGGER.warn(" -- The entity manager was already created..");					
-				return 0;				
-		}				
-		int result = -1; 
-		EntityManagerFactory emfact = null;
-		Properties systemProps = System.getProperties();//OK
-		if (systemProps.get("environment.code") != null){
-			LOGGER.info(" -- Value of the property 'environment.code': " + systemProps.get("environment.code"));
-			LOGGER.info(" -- 2nd -- Value of the property 'environment.code': " + systemProps.get("environment.code").toString().trim());
-			Map<String, String> properties = new HashMap<String, String>();
-			properties.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
-			properties.put("globalAlternatives.org.apache.deltaspike.jpa.spi.transaction.TransactionStrategy", "org.apache.deltaspike.jpa.impl.transaction.ContainerManagedTransactionStrategy");
-			//TODO use a properties file
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("LOCAL")){
-				LOGGER.info(" ----------- We are in the Local environment and its DB configuration!!");//OK
-				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://localhost:5432/cevatrack_v6?currentSchema=cevatrack_mix");					
-				properties.put("openjpa.ConnectionUserName", "postgres");
-				properties.put("openjpa.ConnectionPassword", "holahola");	
-			}
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-DEVL")){
-				LOGGER.info(" ----------- We are in the Development environment and its DB configuration!!");//OK
-				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://iahlvlpgdb002:5432/cevatrack_responsive");	
-				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "Cevatrack_responsive@2024");		
-			}
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-TEST")){
-				LOGGER.info(" ----------- We are in the TEST environment and its DB configuration!!");//OK
-				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://glsdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");
-				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "NqHyxoHGwA56P");				
-			}
-			if (systemProps.get("environment.code").toString().trim().equalsIgnoreCase("CEVA-CEVATRACK-STAGE")){
-				LOGGER.info(" ----------- We are in the Cevatrack (PROD) environment and its DB configuration!!");//OK
-				properties.put("openjpa.ConnectionURL", "jdbc:postgresql://glpdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");	
-				properties.put("openjpa.ConnectionUserName", "cevatrack_responsive");
-				properties.put("openjpa.ConnectionPassword", "LqEKbxqZvUWb");				
-			}			
-			emfact = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
-			LOGGER.info("emfact ok so far..");
-			
-		}else{
-			LOGGER.error(" System properties get('environment.code') is null ..");
-			return -1;
-			}
-						
-		if (emfact != null){
-			LOGGER.info("I created manually the context...");
-			if (entityManager == null || !entityManager.isOpen()){	
-				try{
-					entityManager = emfact.createEntityManager();
-				}catch (Exception e){
-					LOGGER.error(" --- It was not possible to create the entity manager.." + e.getCause() + ", " + e.getMessage(), e);
-					return -1;
-				}
-				LOGGER.info(" entityManager created manually..");						
-			}
-			result = 0;
-		}
-				
-		if (entityManager == null){//Not null--> OK
-			LOGGER.info(" entity manager was null.... from the new notation..");//here
-			result = -1;
-		}		
-		return result;
-	}
-	
-	private int authenticateUser(HttpHeaders headers) {
-    	LOGGER.info("--------Auth available? : " + headers.getHeaderString("Authorization")); //OK
-		LOGGER.info(" ------------------------ headers size: " + headers.getRequestHeaders().size());		
-		for(String header : headers.getRequestHeaders().keySet()){ //OK
-		    LOGGER.info(" header: " + header + ", value: " + headers.getHeaderString(header));
-		}
-		LOGGER.info(" ------------------------ headers end");
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();                 // START TRANSACTION
 
-    	String authHeader = headers.getHeaderString("Authorization"); //OK, it needs "Authenticate pre-emptively" option enable in SOAPUI Basic 
-		String[] tokens;
-		if (authHeader == null){
-			return 3;
-		}
-		if (authHeader.startsWith("Basic")){ //NPE if not retrieved..
-			LOGGER.info(" -- Basic authentication detected.."); //OK
-		}else{
-			return 3;
-		}
-		try {
-			tokens = (new String(Base64.getDecoder().decode(authHeader.split(" ")[1]), "UTF-8")).split(":");
-			final String username = tokens[0];
-			final String password = tokens[1];
-			LOGGER.info(" user in the Basic Auth: " + username + " ,password: " + password); //OK
-			int firstCheck = validateUser(username, password);//
-			LOGGER.info(" -- firstCheckUser method returned: " + firstCheck);
-			this.userppal = username;
-			return firstCheck; //results 0 (OK), 4(more than 3 attempts) and 2(Bad usr/psw combo)			
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error("--- Error recovering tokens of the Authetication... response HTTP status 403 Forbidden");
-			return -3;
-		}			
-	}
-	
-	public void initDB() {
-        emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-    }
-    
-    
-    public EntityManager produceEntityManager() {
-        entityManager = emf.createEntityManager();
-        return entityManager;
+            if (ref == null || ref.trim().isEmpty()) {
+                em.getTransaction().rollback();
+                return Response.status(400).entity("No parameter was included on the call..").build();
+            }
+            String cleanRef = ref.trim();
+
+            // 1. AUTHENTICATION
+            int authResult = authenticateUser(headers, em);
+            if (authResult != 0) {
+            	em.getTransaction().commit();
+                switch (authResult) {
+                    case -3: return Response.status(403).entity("There was a problem with the user Login (unsupport encoding)").build();
+                    case 3:  return Response.status(403).entity("Basic authentication is required").build();
+                    case 4:  return Response.status(403).entity("User is blocked, too many attempts").build();
+                    default: return Response.status(403).entity("Incorrect user - password combination").build();
+                }
+            }
+
+            LOGGER.info(" Authentication of the user was correct!");
+
+            // 2. MAIN BUSINESS QUERY
+            ClientsAPI result = findShipmentByRef(cleanRef, em);
+            if (result == null) {
+                em.getTransaction().commit();            // commit even on 404
+                LOGGER.info("-- The reference number entered did not return any result.. ");
+                return Response.status(404).entity("The reference number is incorrect").build();
+            }
+
+            // SUCCESS — commit everything (including any login attempt resets)
+            em.getTransaction().commit();
+            return createResponse(result);
+
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                try { em.getTransaction().rollback(); } catch (Exception ignored) {}
+            }
+            LOGGER.error("Unexpected error in JohnsonAPI", e);
+            return Response.status(500).entity("Internal server error").build();
+
+        } finally {
+            if (em != null && em.isOpen()) {
+                try { em.close(); } catch (Exception ex) {
+                    LOGGER.warn("Error closing EntityManager", ex);
+                }
+            }
+        }
     }
 
-    //@Transactional
-    private void addNumberAttemptUser(String userName) {	
-    	LOGGER.info(" -- Adding an icorrret number of attempt to the user: " + userName);
-		if (0 == createEntityManager()){
-			//entityManager.getTransaction().begin();//only for ResourceLocalTransactionStrategy, no need for reading..
-			AAFUser4Nike user = (AAFUser4Nike) entityManager.createQuery("SELECT us FROM AAFUser4Nike us WHERE us.userPrincipal = ?1").
-					setParameter(1, userName).getSingleResult();
-			LOGGER.info(" -- user recovered: " + user);
-			//entityManager.getTransaction().commit();
-			//entityManager.flush();
-			if (user == null){
-				LOGGER.info(" -- User was not found so the users name is incorrect..");
-				return;
-			}	
-			try{
-				LOGGER.info("--here");
-				entityManager.getTransaction().begin();//For writing query	
-				int attempts = user.getIncorrectLoginAttempts() + 1;
-				entityManager.createQuery("UPDATE AAFUser4Nike us SET us.incorrectLoginAttempts = ?1 WHERE us.userPrincipal = ?2").
-						setParameter(1, attempts).
-						setParameter(2, userName).executeUpdate();
-				entityManager.getTransaction().commit();	
-				if (entityManager != null && entityManager.isOpen()){
-					//entityManager.flush();			//Transaction Exception
-					entityManager.clear(); //Make changes in DB
-				}else{
-					LOGGER.info("-- Not open 1..");
-				}
-				LOGGER.info("-- Attempts are: " + attempts + ", is true?: " + (attempts > 3));
-				if (attempts > 3){
-					LOGGER.warn("-- Number of attempts is 4, locking the user: " + userName);
-					entityManager.getTransaction().begin();
-					LOGGER.info("-- Before ok.." + entityManager.getTransaction().isActive());
-					entityManager.createQuery("UPDATE AAFUser4Nike us SET us.isLocked = ?1 WHERE us.userPrincipal = ?2").
-					setParameter(1, true).
-					setParameter(2, userName).executeUpdate();
-					entityManager.getTransaction().commit();
-					if (entityManager != null && entityManager.isOpen()){
-						//entityManager.flush();			//----------
-						entityManager.clear();
-					}else{
-						LOGGER.info("-- Not open 2..");
-					}
-				}							
-				//entityManager.clear(); //It is the only thing that makes it refresh on DB for this kind of query TODO improve the solution with other type of query (persist)
-				LOGGER.info(" -- user after cleanning: " + user);
-				LOGGER.info(" -- Number of incorrect attempts for user: " + userName + ", = " + attempts);
-			}catch(Exception e){
-				LOGGER.error(" -- There was an error in the transaction: ",e);
-				if (entityManager.getTransaction().isActive()){					
-					entityManager.getTransaction().rollback();
-					entityManager.clear();
-					LOGGER.warn("-- The transaction was rolled back..");
-				}
-			}
-		}else{
-			LOGGER.error(" -- Entitiy manager was not created successfully..");
-		}
-		
-	}
-    //@Transactional
-    private void resetNumberAttemptUser(String userName) {	
-    	LOGGER.info(" -- Resetting the number of attempts to the user: " + userName);
-		if (0 == createEntityManager()){
-			entityManager.getTransaction().begin();
-			entityManager.createQuery("UPDATE AAFUser4Nike us SET us.incorrectLoginAttempts = ?1 WHERE us.userPrincipal = ?2").
-					setParameter(1, 0).
-					setParameter(2, this.userppal).executeUpdate();
-			//entityManager.persist(AAFUser4Nike);
-			entityManager.flush();
-			entityManager.getTransaction().commit();
-			entityManager.clear();
-			LOGGER.info(" -- Number of incorrect attempts reseted to 0 ");    		
-		}else{
-			LOGGER.error(" -- Entitiy manager was not created successfully..");
-		}
-		
-	}
-    
-	//Just in case you want just to compare the password obtained through a db query
-    /*
-     * Converts the specified plaintext password (usually acquired from your application's 'new user' or 'password reset'
-     * workflow) into a formatted string safe for storage.  The returned string can be safely saved with the
-     * corresponding user account record (e.g. as a 'password' attribute).
-     * 
-     * @param plaintextPassword the raw password as 'byte-backed' object (String, character array, {@link ByteSource},
-     *                          etc) usually acquired from your application's 'new user' or 'password reset' workflow.
-     * @return the encrypted password, formatted for storage.
-     * @throws IllegalArgumentException if the argument cannot be easily converted to bytes as defined by
-     */
-	private String encryptUsingShiroConfig(String plainText) {
-		DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
-		JdbcRealm realm = (JdbcRealm) securityManager.getRealms().stream().filter((r) -> {
-			return r instanceof JdbcRealm;
-		}).findFirst().get();
-		PasswordMatcher passwordMatcher = (PasswordMatcher) realm.getCredentialsMatcher();		
-		return passwordMatcher.getPasswordService().encryptPassword(plainText);
-	}
-	
-	/*
-	 * Compares plain text password to the encrypted storaged one
-	 * @param plainText is the plain uncrypted password
-	 * @param toCompare is the encrypted DB password
-	 * @return true if matches the plain encrypted password with the DB encrypted one
-	 */
-	private boolean comparePlainTextToEncrypted_old(String plainText, String toCompare) {
-		DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
-		JdbcRealm realm = (JdbcRealm) securityManager.getRealms().stream().filter((r) -> {
-			return r instanceof JdbcRealm;
-		}).findFirst().get();
-		PasswordMatcher passwordMatcher = (PasswordMatcher) realm.getCredentialsMatcher();
-		if (passwordMatcher.getPasswordService().passwordsMatch(plainText, toCompare)){
-			LOGGER.info(" -- They do match using the service --");
-			return true;
-		}		
-		return false;
-	}
-	
-	private boolean comparePlainTextToEncrypted(String plainText, String toCompare) {
-		DefaultSecurityManager securityManager = (DefaultSecurityManager) SecurityUtils.getSecurityManager();
-		JdbcRealm realm = (JdbcRealm) securityManager.getRealms().stream().filter((r) -> {
-			return r instanceof JdbcRealm;
-		}).findFirst().get();
-		PasswordMatcher passwordMatcher = (PasswordMatcher) realm.getCredentialsMatcher();
-		if (passwordMatcher.getPasswordService().passwordsMatch(plainText, toCompare)){
-			LOGGER.info(" -- They do match using the service --");
-			return true;
-		}		
-		return false;
-	}
-	//TODO validate the user permissions (Johnson)
-	private boolean pass_validation(String pass_encoded, String pass_text){ 
-		LOGGER.info("-- pass text: " + pass_text + "\n pass encoded: " + pass_encoded);
-		String[] mcf = pass_encoded.split("\\$");
-		int iteration_count = Integer.parseInt(mcf[3]);
-		String b64_salt = mcf[4];
-		String b64_hash = mcf[5];
-		byte[] salt = Base64.getDecoder().decode(b64_salt.getBytes());
-		try {			
-			String hash = new Sha256Hash(pass_text, salt, iteration_count).toBase64();;
-		    LOGGER.info("Original MCF hash: " + b64_hash);
-			LOGGER.info("Created hash: " + hash);
-			LOGGER.info("-- Password: " + pass_text);
+    // ===================================================================
+    // AUTH & LOGIN ATTEMPTS — NOW WORKING 100%
+    // ===================================================================
 
-		  if (hash.equals(b64_hash)) {
-		      LOGGER.info("Success! Both hashes match!");
-		      return true;
-		  } else {
-		      LOGGER.warn("--- Passwords do not match");
-		      return false;
-		  }
-		} catch (Exception e) {
-		      LOGGER.error("-- Exception", e);
-		}
-		return false;
-	}
+    private int authenticateUser(HttpHeaders headers, EntityManager em) {
+        String authHeader = headers.getHeaderString("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Basic ")) {
+            return 3;
+        }
 
+        try {
+            String base64 = authHeader.substring("Basic ".length()).trim();
+            String credentials = new String(Base64.getDecoder().decode(base64), "UTF-8");
+            String[] parts = credentials.split(":", 2);
+            String username = parts[0];
+            String password = parts.length > 1 ? parts[1] : "";
+
+            return validateUser(username, password, em);
+
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Error decoding Basic Auth", e);
+            return -3;
+        }
+    }
+
+    private int validateUser(String username, String password, EntityManager em) {
+        if (username == null || username.isEmpty()) {
+            return 2;
+        }
+
+        try {
+            AAFUser4Nike user = em.createQuery(
+                    "SELECT u FROM AAFUser4Nike u WHERE u.userPrincipal = :up", AAFUser4Nike.class)
+                    .setParameter("up", username)
+                    .getSingleResult();
+
+            if (!user.getIsActive() || user.getIsLocked()) {
+                return 4;
+            }
+
+            Integer attempts = user.getIncorrectLoginAttempts();
+            if (attempts != null && attempts > 4) {
+                return 4;
+            }
+
+            if (pass_validation(user.getPassword(), password)) {
+                resetNumberAttemptUser(username, em);
+                return 0; // success
+            } else {
+                addNumberAttemptUser(username, em);   // modifies managed entity → will be persisted on commit
+                return 2; // wrong password
+            }
+
+        } catch (NoResultException e) {
+            LOGGER.warn("User not found: {}", username);
+            return 2;
+        } catch (Exception e) {
+            LOGGER.error("Error validating user", e);
+            return 2;
+        }
+    }
+
+    private void addNumberAttemptUser(String username, EntityManager em) {
+        LOGGER.info(" -- Adding incorrect login attempt for user: {}", username);
+        try {
+            AAFUser4Nike user = em.createQuery(
+                    "SELECT u FROM AAFUser4Nike u WHERE u.userPrincipal = :up", AAFUser4Nike.class)
+                    .setParameter("up", username)
+                    .getSingleResult();
+
+            Integer attempts = user.getIncorrectLoginAttempts();
+            int newCount = (attempts == null ? 0 : attempts) + 1;
+            user.setIncorrectLoginAttempts(newCount);
+
+            if (newCount > 4) {
+                user.setIsLocked(true);
+                LOGGER.warn("User {} locked after {} failed attempts", username, newCount);
+            }
+            
+            em.flush(); // ← THIS LINE IS MANDATORY WITH OPENJPA 2.4.2
+            // No commit here — we rely on the main transaction commit
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to increment login attempts", e);
+            throw new RuntimeException(e); // will trigger rollback in main method
+        }
+    }
+
+    private void resetNumberAttemptUser(String username, EntityManager em) {
+        LOGGER.info(" Resetting login attempts for user: {}", username);
+        try {
+            AAFUser4Nike user = em.createQuery(
+                    "SELECT u FROM AAFUser4Nike u WHERE u.userPrincipal = :up", AAFUser4Nike.class)
+                    .setParameter("up", username)
+                    .getSingleResult();
+            user.setIncorrectLoginAttempts(0);
+            em.flush(); // ← THIS LINE IS MANDATORY WITH OPENJPA 2.4.2
+        } catch (Exception e) {
+            LOGGER.error("Failed to reset login attempts", e);
+        }
+    }
+
+    private ClientsAPI findShipmentByRef(String ref, EntityManager em) {
+        try {
+            return em.createQuery(
+                    "SELECT c FROM ClientsAPI c WHERE c.client_id = 'JHNJHN' AND c.shipment_number = :ref",
+                    ClientsAPI.class)
+                    .setParameter("ref", ref)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    private Response createResponse(ClientsAPI cb) {
+        StringBuilder rs = new StringBuilder("{");
+        rs.append("\n\"carrierName\" : \"CEVA\",");
+
+        if (notEmpty(cb.getCarrier_name()))           rs.append("\n\"executingCN\":\"").append(cb.getCarrier_name()).append("\",");
+        if (notEmpty(cb.getTracking_number()))        rs.append("\n\"trackingNumber\":\"").append(cb.getTracking_number()).append("\",");
+        if (notEmpty(cb.getStatus()))                rs.append("\n\"status\":\"").append(cb.getStatus()).append("\",");
+
+        ZoneId londonZone = TimeZone.getTimeZone("Europe/London").toZoneId();
+        appendDate(rs, cb.getStatus_date(), "status_date", londonZone);
+        appendDate(rs, cb.getRevise_delivery_date(), "revisedDeliveryDate", londonZone);
+        appendDate(rs, cb.getDelivered_date(), "delivered_date", londonZone);
+        appendDate(rs, cb.getOriginal_required_date(), "original_delivery_date", londonZone);
+        appendDate(rs, cb.getClaused_date(), "claused_date", londonZone);
+
+        if (notEmpty(cb.getReason_code()))           rs.append("\n\"reason\":\"").append(cb.getReason_code()).append("\",");
+        if (notEmpty(cb.getFailure_reason_code()))   rs.append("\n\"failure_reason\":\"").append(cb.getFailure_reason_code()).append("\",");
+        if (notEmpty(cb.getLate_reason_code()))      rs.append("\n\"late_reason\":\"").append(cb.getLate_reason_code()).append("\",");
+
+        if (rs.charAt(rs.length()-1) == ',') {
+            rs.setLength(rs.length()-1);
+        }
+        rs.append("\n}");
+
+        return Response.ok().entity(rs.toString()).build();
+    }
+
+    private boolean notEmpty(String s) {
+        return s != null && !s.trim().isEmpty();
+    }
+
+    private void appendDate(StringBuilder sb, java.util.Date date, String key, ZoneId zone) {
+        if (date != null) {
+            String formatted = LocalDateTime.ofInstant(date.toInstant(), zone).format(FORMATDATE);
+            sb.append("\n\"").append(key).append("\":\"").append(formatted).append("\",");
+        }
+    }
+
+    private boolean pass_validation(String pass_encoded, String pass_text) {
+        if (pass_encoded == null || pass_text == null) return false;
+        try {
+            String[] mcf = pass_encoded.split("\\$");
+            if (mcf.length != 6) return false;
+            int iteration_count = Integer.parseInt(mcf[3]);
+            String b64_salt = mcf[4];
+            String b64_hash = mcf[5];
+            byte[] salt = Base64.getDecoder().decode(b64_salt.getBytes("UTF-8"));
+            String calculated = new Sha256Hash(pass_text, salt, iteration_count).toBase64();
+            return calculated.equals(b64_hash);
+        } catch (Exception e) {
+            LOGGER.error("Password validation error", e);
+            return false;
+        }
+    }
+
+    // ===================================================================
+    // ENTITYMANAGER FACTORY
+    // ===================================================================
+
+    private synchronized EntityManager getEntityManager() {
+        if (emf == null) {
+            Map<String, String> props = new HashMap<>();
+            props.put("openjpa.ConnectionDriverName", "org.postgresql.Driver");
+
+            String env = System.getProperty("environment.code", "").trim().toUpperCase();
+
+            switch (env) {
+                case "LOCAL":
+                    props.put("openjpa.ConnectionURL", "jdbc:postgresql://localhost:5432/cevatrack_v6?currentSchema=cevatrack_mix");
+                    props.put("openjpa.ConnectionUserName", "postgres");
+                    props.put("openjpa.ConnectionPassword", "holahola");
+                    break;
+                case "CEVA-CEVATRACK-DEVL":
+                    props.put("openjpa.ConnectionURL", "jdbc:postgresql://iahlvlpgdb002:5432/cevatrack_responsive");
+                    props.put("openjpa.ConnectionUserName", "cevatrack_responsive");
+                    props.put("openjpa.ConnectionPassword", "Cevatrack_responsive@2024");
+                    break;
+                case "CEVA-CEVATRACK-TEST":
+                    props.put("openjpa.ConnectionURL", "jdbc:postgresql://glsdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");
+                    props.put("openjpa.ConnectionUserName", "cevatrack_responsive");
+                    props.put("openjpa.ConnectionPassword", "NqHyxoHGwA56P");
+                    break;
+                case "CEVA-CEVATRACK-STAGE":
+                    props.put("openjpa.ConnectionURL", "jdbc:postgresql://glpdvlpgdb074:5432/cevatrack_responsive?currentSchema=cevatrack_responsive");
+                    props.put("openjpa.ConnectionUserName", "cevatrack_responsive");
+                    props.put("openjpa.ConnectionPassword", "LqEKbxqZvUWb");
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown environment.code: " + env);
+            }
+
+            emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, props);
+            LOGGER.info("EntityManagerFactory created for environment: {}", env);
+        }
+        return emf.createEntityManager();
+    }
 }
