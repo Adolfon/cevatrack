@@ -51,6 +51,7 @@
 
 				<p:dataTable id="tableStateDT" var="con"					
 					tableStyleClass=""
+					style="margin-bottom: 7%;"
 					rowStyleClass="#{dtConsignmentView.getStatusCssClass(con.consignmentStatus)} respborder"
 					value="#{dtConsignmentView.consignments}"
 					widgetVar="consignmentsTable" rows="50" paginator="true"
@@ -127,7 +128,7 @@
 						<h:outputText value="#{con.statusString}" />
 					</p:column>
 
-					<f:facet name="footer">#{dtConsignmentView.message}</f:facet>
+					<f:facet style="margin-bottom: 7%;" name="footer">#{dtConsignmentView.message}</f:facet>
 				</p:dataTable>
 			</h:form>
 			

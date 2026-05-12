@@ -1,14 +1,23 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui">
 
-    <div class="layout-footer" style="padding: 4px; position:absolute; bottom:0px; height:40px; left:0px; right:0px; overflow:hidden;z-index:999;">
-        <h:link outcome="#{environmentInfoBean.logoLinkPage}" styleClass="logo-container" style="float:left;" >
-            <p:graphicImage name="/images/CEVA_logo.png" library="cjf-base"  style="height: 28px;"/>
+    <div class="layout-footer" style="padding: 4px; position:fixed; bottom:0px; height:40px; left:0px; right:0px; overflow:hidden;z-index:999;">
         
-        </h:link>
-        
-         <!-- 	<p:commandLink class="version" id="lnk_buildInfo" oncomplete="PF('BuildInfoDlgVar').show();" process="@this"><b>Version : <h:outputText value="#{buildInfoBean.version}"  styleClass="footer_text"/></b>
-			</p:commandLink>
-       <ui:include src="buildInfo.xhtml"></ui:include> -->		        
+        <!-- <h:link outcome="#{environmentInfoBean.logoLinkPage}" styleClass="logo-container" style="float:left;" >
+            <p:graphicImage name="/images/CEVA_logo.png" library="cjf-base"  style="height: 28px;"/>        
+        </h:link>  -->
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 3px; position: absolute; left: 50%; transform: translateX(-50%);">
+	        <p:link
+						value="Digital Accessibility Statement"
+						href="resources/pdf/DigitalAccessibilityStatement.pdf"
+						target="_blank" style="margin-right: 18px; 
+								            color: #ffffff; 
+								            font-size: 11px; 
+								            text-decoration: underline; 
+								            vertical-align: middle;"/>	  
+	        	<p:commandLink class="version" id="lnk_buildInfo" oncomplete="PF('BuildInfoDlgVar').show();" process="@this"><b><h:outputText value="#{buildInfoBean.version}"  styleClass="footer_text"/></b>
+				</p:commandLink>
+	       <!-- NOt found in localhost deployment <ui:include src="buildInfo.xhtml"></ui:include>-->
+       </div> 	        
     </div>
 </ui:composition>
