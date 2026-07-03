@@ -425,10 +425,6 @@ public class NikeAPI implements Serializable{
 						"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 			}
 			LOGGER.info(" -- The recovered result from the WS: " + resultWS.toString());
-			if(!currentUser.isPermitted("sn_site:view:" + resultWS.getSiteId())){
-				LOGGER.warn(" -- The current user does not have permission for viewing the site: " + resultWS.getSiteId());
-				return Response.status(403).entity("User does not have permission for site: " + resultWS.getSiteId()).build();
-			}
 			LOGGER.info("Dates  pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
 			LOGGER.info("Dates  String pta, eta, ata: " + resultWS.getPtaString() + ", " + resultWS.getEtaString() + ", " + resultWS.getAtaString());
 			LOGGER.info("Dates pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
