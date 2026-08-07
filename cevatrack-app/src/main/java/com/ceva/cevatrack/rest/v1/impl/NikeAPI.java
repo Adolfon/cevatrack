@@ -425,7 +425,7 @@ public class NikeAPI implements Serializable{
 						"\", \"Microlise\": \"" + responseBean.getSent_to_ml() + "\"}").build();
 			}
 			LOGGER.info(" -- The recovered result from the WS: " + resultWS.toString());
-			LOGGER.info("Dates  pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
+			// NPE--- LOGGER.info("Dates  pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
 			LOGGER.info("Dates  String pta, eta, ata: " + resultWS.getPtaString() + ", " + resultWS.getEtaString() + ", " + resultWS.getAtaString());
 			LOGGER.info("Dates pta, eta, ata: " + resultWS.getPta() + ", " + resultWS.getEta() + ", " + resultWS.getAta());
 			
