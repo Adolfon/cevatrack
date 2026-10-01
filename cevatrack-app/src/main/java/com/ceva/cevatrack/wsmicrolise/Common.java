@@ -162,7 +162,7 @@ public class Common {
         case 78:
             return "To be delivered";
         case 82:
-            return "Refused";
+            return "Failed";
         case 88:
             return "Claused";
         default:
