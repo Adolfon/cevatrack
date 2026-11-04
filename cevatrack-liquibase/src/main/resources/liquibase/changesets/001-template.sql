@@ -1529,4 +1529,10 @@ INSERT INTO smartnet_client (name, prefixes, image, aaf_instance, created_on, cr
  INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
   VALUES ('BSH','BSH100','Bsh.png','bsh100',now(),'SYSTEM',now(),'SYSTEM',1);
   
+    
+--changeset adolfo.cano:001-cjf-template-db-080 failOnError:false splitStatements:false logicalFilePath:001-template.sql
+ INSERT INTO technet_client (name, prefixes, image, aaf_instance, created_on, created_by, updated_on, updated_by, version) 
+  VALUES ('TOMRA','TOMRA','tomra.png','TOMRA',now(),'SYSTEM',now(),'SYSTEM',1);
+
+
   
