@@ -14,7 +14,7 @@
 					rendered="#{SN_VISIBLE}"/>
 				<p:menuitem value="TechNet" url="/clients.xhtml?network=technet" 
 					rendered="#{TN_VISIBLE}"/>
-				<p:menuitem value="CRM" rendered="#{TN_VISIBLE}" outcome="crmView" icon="fa fa-table"/>	
+				<p:menuitem value="CRM" rendered="#{homeBean.seb_view}" outcome="crmView" icon="fa fa-table"/>	
 				<p:menuitem value="Automotive" url="/clients.xhtml?network=automotive" 
 					rendered="#{AM_VISIBLE}"/>
 				<p:menuitem value="Healthcare" url="/clients.xhtml?network=healthcare" 

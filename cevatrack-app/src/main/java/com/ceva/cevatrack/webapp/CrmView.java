@@ -1,327 +1,180 @@
 package com.ceva.cevatrack.webapp;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ceva.cevatrack.domain.CrmStatus78;
 import com.ceva.cevatrack.repository.CrmStatus78Repository;
-import com.ceva.cevatrack.webapp.DatedConsignmentList;
-import com.ceva.cevatrack.wsmicrolise.findconsignmentsummaries.ConsignmentSummary;
-import com.ceva.cevatrack.wsmicrolise.getconsignment.ClausedConsignmentDetail;
-import com.ceva.cevatrack.wsmicrolise.getconsignment.Consignment;
-import com.ceva.cevatrack.wsmicrolise.getconsignment.ConsignmentDetail;
 
 /**
- * Application-scoped bean that:
- *  - Serves the CRM view (date window, ordered by ATA descending)
- *  - Runs a background refresh every REFRESH_INTERVAL_HOURS
- *  - Calls ConsignmentListManager.getConsignmentSummaries / getConsignmentDetail
- *  - Filters status 78 ("to be delivered")
- *  - Maps line-level details into crm_status78
- *  - Purges data older than RETENTION_DAYS
+ * View-scoped bean for the CRM page.
+ * Date selectors only filter existing database data (ATA window).
+ * Background refresh lives in CrmScheduler.
  *
  * Java 8 + existing JSF @ManagedBean style used in the project.
  */
 @ManagedBean(name = "crmView")
-@ApplicationScoped
+@ViewScoped
 public class CrmView implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(CrmView.class);
 
-    // -------------------------------------------------------------------------
-    // Global configuration (change here or later move to application.properties)
-    // -------------------------------------------------------------------------
-    public static final String DEFAULT_NETWORK = "technet";
-    public static final int REFRESH_INTERVAL_HOURS = 4;
-    public static final int RETENTION_DAYS = 10;
-    public static final int STATUS_TO_DELIVER = 78;
+    public static final int REFRESH_INTERVAL_HOURS = CrmScheduler.REFRESH_INTERVAL_HOURS;
+    public static final int RETENTION_DAYS = CrmScheduler.RETENTION_DAYS;
     public static final int DEFAULT_WINDOW_HOURS = 48;
-
-    private static final String[] DATE_PATTERNS = {
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss",
-            "dd/MM/yy HH:mm",
-            "dd/MM/yyyy HH:mm",
-            "yyyy-MM-dd HH:mm"
-    };
 
     @Inject
     private CrmStatus78Repository repository;
 
-    @ManagedProperty(value = "#{consignmentListManager}")
-    private ConsignmentListManager consignmentListManager;
+    @ManagedProperty(value = "#{crmScheduler}")
+    private CrmScheduler crmScheduler;
 
     private Date fromDate;
     private Date toDate;
     private List<CrmStatus78> rows;
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
-    // -------------------------------------------------------------------------
-    // Lifecycle
-    // -------------------------------------------------------------------------
+    /**
+     * Timezone used for display and date filtering.
+     * Defaults to the server JVM timezone.
+     * Later you can set this from the user profile or from the browser.
+     */
+    private TimeZone userTimeZone = TimeZone.getDefault();
 
     @PostConstruct
     public void init() {
         initDefaultWindow();
         loadData();
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                refreshFromWebService();
-            }
-        }, 0, REFRESH_INTERVAL_HOURS, TimeUnit.HOURS);
-        LOG.info("CRM status-78 scheduler started (every {} h, network={})", REFRESH_INTERVAL_HOURS, DEFAULT_NETWORK);
     }
 
     private void initDefaultWindow() {
+        Date now = new Date();
+        toDate = snapToInterval(now);
         Calendar cal = Calendar.getInstance();
-        toDate = cal.getTime();
+        cal.setTime(toDate);
         cal.add(Calendar.HOUR_OF_DAY, -DEFAULT_WINDOW_HOURS);
         fromDate = cal.getTime();
+
+        Date min = getMinSelectableDate();
+        if (fromDate.before(min)) {
+            fromDate = min;
+        }
     }
 
-    // -------------------------------------------------------------------------
-    // View actions
-    // -------------------------------------------------------------------------
+    private Date snapToInterval(Date d) {
+        if (d == null) {
+            return null;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int snappedHour = (hour / REFRESH_INTERVAL_HOURS) * REFRESH_INTERVAL_HOURS;
+        cal.set(Calendar.HOUR_OF_DAY, snappedHour);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
 
+    /** Earliest selectable From = now - RETENTION_DAYS, snapped to the interval. */
+    public Date getMinSelectableDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, -RETENTION_DAYS);
+        return snapToInterval(cal.getTime());
+    }
+
+    /** Latest selectable To = current time snapped to the interval. */
+    public Date getMaxSelectableDate() {
+        return snapToInterval(new Date());
+    }
+
+    /**
+     * Earliest selectable To = From + 1 minute.
+     * Falls back to minSelectableDate if From is not set.
+     */
+    public Date getMinToDate() {
+        if (fromDate == null) {
+            return getMinSelectableDate();
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fromDate);
+        cal.add(Calendar.MINUTE, 1);
+        return cal.getTime();
+    }
+
+    /**
+     * Filters the database by Actual Arrival Time (ATA) using the submitted From/To.
+     * No web-service call.
+     */
     public void loadData() {
         if (fromDate == null || toDate == null) {
             initDefaultWindow();
         }
+
+        Date min = getMinSelectableDate();
+        Date max = getMaxSelectableDate();
+        if (fromDate.before(min)) {
+            fromDate = min;
+        }
+        if (toDate.after(max)) {
+            toDate = max;
+        }
+        if (fromDate.after(toDate)) {
+            fromDate = toDate;
+        }
+
+        LOG.info("CRM view filter – ATA from {} to {}", fromDate, toDate);
         rows = repository.findByDateWindow(fromDate, toDate);
+        LOG.info("CRM view filter – returned {} rows", rows != null ? rows.size() : 0);
     }
 
-    public void onDateSelect() {
-        if (fromDate != null && toDate != null) {
-            long maxMillis = 10L * 24 * 60 * 60 * 1000;
-            if (toDate.getTime() - fromDate.getTime() > maxMillis) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(toDate);
-                cal.add(Calendar.DAY_OF_YEAR, -10);
-                fromDate = cal.getTime();
-            }
+    public boolean isTableEmpty() {
+        try {
+            return repository.countAll() == 0L;
+        } catch (Exception e) {
+            LOG.warn("Could not check if CRM table is empty", e);
+            return true;
+        }
+    }
+
+    /** Populate / Re-try button – starts day-by-day load in background. */
+    public void populateIfEmpty() {
+        if (crmScheduler != null) {
+            crmScheduler.startFullRetentionAsync();
+            LOG.info("Populate started in background");
         }
         loadData();
     }
 
-    // -------------------------------------------------------------------------
-    // Background refresh – real integration with ConsignmentListManager
-    // -------------------------------------------------------------------------
-
-    private void refreshFromWebService() {
-        try {
-            LOG.info("Starting CRM status-78 refresh for network {}", DEFAULT_NETWORK);
-
-            String fromYyyymmdd = formatYyyymmdd(addDays(new Date(), -RETENTION_DAYS));
-            String toYyyymmdd = formatYyyymmdd(new Date());
-
-            if (consignmentListManager == null) {
-                LOG.warn("consignmentListManager is null – cannot refresh");
-                return;
-            }
-
-            // 1. Call existing getConsignmentSummaries
-            DatedConsignmentList datedList = consignmentListManager.getConsignmentSummaries(
-                    fromYyyymmdd, toYyyymmdd, true, false, DEFAULT_NETWORK, null);
-
-            if (datedList == null || datedList.getConsignmentSummaries() == null) {
-                LOG.info("No summaries returned for {} – {}", fromYyyymmdd, toYyyymmdd);
-                purgeOld();
-                return;
-            }
-
-            int processed = 0;
-            int upserted = 0;
-
-            // 2. Filter status 78 and process each
-            for (ConsignmentSummary summary : datedList.getConsignmentSummaries()) {
-                if (summary == null) {
-                    continue;
-                }
-                if (summary.getConsignmentStatus() != STATUS_TO_DELIVER) {
-                    continue;
-                }
-                processed++;
-
-                String ref = summary.getConsignmentReference();
-                if (StringUtils.isBlank(ref)) {
-                    continue;
-                }
-
-                try {
-                    // 3. Get full detail
-                    Consignment detail = consignmentListManager.getConsignmentDetail(ref, DEFAULT_NETWORK);
-                    if (detail == null) {
-                        continue;
-                    }
-
-                    // 4. Map line-level details
-                    List<CrmStatus78> entities = mapToEntities(detail, summary);
-                    for (CrmStatus78 entity : entities) {
-                        repository.saveOrUpdate(entity);
-                        upserted++;
-                    }
-                } catch (Exception ex) {
-                    LOG.warn("Failed to process consignment {}: {}", ref, ex.getMessage());
-                }
-            }
-
-            LOG.info("CRM refresh finished – summaries status 78 processed: {}, rows upserted: {}", processed, upserted);
-
-            // 5. Purge older than retention
-            purgeOld();
-
-        } catch (Exception e) {
-            LOG.error("Error during CRM status-78 refresh", e);
-        }
-    }
-
-    private void purgeOld() {
-        try {
-            Date cutoff = addDays(new Date(), -RETENTION_DAYS);
-            int deleted = repository.deleteOlderThan(cutoff);
-            LOG.info("Purged {} old CRM records", Integer.valueOf(deleted));
-        } catch (Exception e) {
-            LOG.error("Error during purge", e);
-        }
-    }
-
     /**
-     * Maps a Consignment (header + lines) into one or more CrmStatus78 rows.
-     * Prefers line-level fields; falls back to header when needed.
+     * True when the table is empty OR a previous load was interrupted.
+     * Used to show the Populate / Re-try button.
      */
-    private List<CrmStatus78> mapToEntities(Consignment detail, ConsignmentSummary summary) {
-        List<CrmStatus78> result = new ArrayList<CrmStatus78>();
-        Date now = new Date();
-
-        String siteId = firstNonBlank(detail.getSiteId(), summary != null ? summary.getSiteId() : null);
-        String siteName = firstNonBlank(detail.getSiteName(), summary != null ? summary.getSiteName() : null);
-        String routeCode = detail.getJourneyAlias();
-        Date ata = parseDate(firstNonBlank(detail.getAta(), summary != null ? summary.getAta() : null));
-        Date atd = parseDate(detail.getAtd());
-        String orderReference = detail.getConsignmentCustomerOrderRef();
-        String scannedHeader = detail.getConsignmentHeaderInfo1();
-        String clauseHeader = detail.getClauseCode();
-
-        List<ConsignmentDetail> lines = detail.getConsignmentDetails();
-        if (lines == null || lines.isEmpty()) {
-            // header-only fallback
-            CrmStatus78 e = baseEntity(siteId, siteName, routeCode, ata, atd, orderReference, now);
-            e.setOrderLineRef(detail.getConsignmentReference());
-            e.setStatus(detail.getConsignmentStatus() != 0 ? Integer.valueOf(detail.getConsignmentStatus()) : null);
-            e.setScanned(scannedHeader);
-            e.setClauseReason(clauseHeader);
-            result.add(e);
-            return result;
-        }
-
-        for (ConsignmentDetail line : lines) {
-            if (line == null) {
-                continue;
-            }
-            CrmStatus78 e = baseEntity(siteId, siteName, routeCode, ata, atd, orderReference, now);
-            e.setOrderLineRef(line.getDetailRef());
-            e.setPlannedQty(Integer.valueOf(line.getPlannedQuantity()));
-            e.setActualQty(Integer.valueOf(line.getActualQuantity()));
-            e.setStatus(line.getStatus() != 0 ? Integer.valueOf(line.getStatus()) : Integer.valueOf(detail.getConsignmentStatus()));
-            e.setScanned(firstNonBlank(line.getInfo1(), scannedHeader));
-            e.setClauseReason(extractClauseReason(line, clauseHeader));
-            result.add(e);
-        }
-        return result;
+    public boolean isShowPopulateButton() {
+        return isTableEmpty() || (crmScheduler != null && crmScheduler.isLoadIncomplete());
     }
 
-    private CrmStatus78 baseEntity(String siteId, String siteName, String routeCode,
-                                   Date ata, Date atd, String orderReference, Date now) {
-        CrmStatus78 e = new CrmStatus78();
-        e.setSiteId(siteId);
-        e.setSiteName(siteName);
-        e.setRouteCode(routeCode);
-        e.setAta(ata);
-        e.setAtd(atd);
-        e.setOrderReference(orderReference);
-        e.setNetwork(DEFAULT_NETWORK);
-        e.setLastUpdated(now);
-        e.setLastWsCall(now);
-        e.setCreatedAt(now);
-        return e;
-    }
-
-    private String extractClauseReason(ConsignmentDetail line, String fallback) {
-        if (line.getClauseDetails() != null && !line.getClauseDetails().isEmpty()) {
-            ClausedConsignmentDetail cd = line.getClauseDetails().get(0);
-            if (cd != null && StringUtils.isNotBlank(cd.getClauseDescription())) {
-                return cd.getClauseDescription();
-            }
+    /** Button label: "Re-try" if a previous load was interrupted, otherwise "Populate". */
+    public String getPopulateButtonLabel() {
+        if (crmScheduler != null && crmScheduler.isLoadIncomplete()) {
+            return "Re-try";
         }
-        return fallback;
+        return "Populate";
     }
 
-    private String firstNonBlank(String a, String b) {
-        if (StringUtils.isNotBlank(a)) {
-            return a;
-        }
-        return b;
-    }
-
-    private Date parseDate(String value) {
-        if (StringUtils.isBlank(value)) {
-            return null;
-        }
-        for (int i = 0; i < DATE_PATTERNS.length; i++) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERNS[i]);
-                sdf.setLenient(false);
-                return sdf.parse(value.trim());
-            } catch (ParseException ignored) {
-                // try next pattern
-            }
-        }
-        LOG.debug("Could not parse date: {}", value);
-        return null;
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-    private String formatYyyymmdd(Date d) {
-        if (d == null) {
-            return "";
-        }
-        return new SimpleDateFormat("yyyyMMdd").format(d);
-    }
-
-    private Date addDays(Date d, int days) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(d);
-        c.add(Calendar.DAY_OF_YEAR, days);
-        return c.getTime();
-    }
-
-    // -------------------------------------------------------------------------
-    // Getters / Setters for the XHTML
-    // -------------------------------------------------------------------------
+    // ----- getters / setters -----
 
     public Date getFromDate() {
         return fromDate;
@@ -347,11 +200,25 @@ public class CrmView implements Serializable {
         this.rows = rows;
     }
 
-    public ConsignmentListManager getConsignmentListManager() {
-        return consignmentListManager;
+    public CrmScheduler getCrmScheduler() {
+        return crmScheduler;
     }
 
-    public void setConsignmentListManager(ConsignmentListManager consignmentListManager) {
-        this.consignmentListManager = consignmentListManager;
+    public void setCrmScheduler(CrmScheduler crmScheduler) {
+        this.crmScheduler = crmScheduler;
+    }
+
+    public TimeZone getUserTimeZone() {
+        return userTimeZone;
+    }
+
+    public void setUserTimeZone(TimeZone userTimeZone) {
+        if (userTimeZone != null) {
+            this.userTimeZone = userTimeZone;
+        }
+    }
+
+    public String getUserTimeZoneId() {
+        return userTimeZone != null ? userTimeZone.getID() : TimeZone.getDefault().getID();
     }
 }

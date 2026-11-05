@@ -1,7 +1,7 @@
 package com.ceva.cevatrack.repository;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -31,18 +31,39 @@ public abstract class CrmStatus78Repository extends AbstractFullEntityRepository
             if (from == null || to == null) {
                 return new ArrayList<CrmStatus78>();
             }
+            // Format as wall-clock strings and cast in SQL so OpenJPA/Postgres
+            // does not apply a timezone offset to the parameters.
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String fromStr = sdf.format(from);
+            String toStr = sdf.format(to);
+            LOG.info("CRM date filter – ATA from {} to {}", fromStr, toStr);
+
             List<CrmStatus78> result = entityManager()
-                    .createQuery("SELECT c FROM CrmStatus78 c "
-                            + "WHERE c.ata >= :from AND c.ata <= :to "
-                            + "ORDER BY c.ata DESC, c.atd DESC")
-                    .setParameter("from", from)
-                    .setParameter("to", to)
+                    .createNativeQuery(
+                            "SELECT * FROM crm_status78 "
+                            + "WHERE ata >= CAST(:from AS TIMESTAMP) "
+                            + "AND ata <= CAST(:to AS TIMESTAMP) "
+                            + "ORDER BY ata DESC, atd DESC",
+                            CrmStatus78.class)
+                    .setParameter("from", fromStr)
+                    .setParameter("to", toStr)
                     .getResultList();
-            // Copy to a regular ArrayList – OpenJPA ResultList is read-only
             return new ArrayList<CrmStatus78>(result);
         } catch (Exception e) {
             LOG.error("Error querying CRM status78 by date window", e);
             return new ArrayList<CrmStatus78>();
+        }
+    }
+
+    public long countAll() {
+        try {
+            Long count = entityManager()
+                    .createQuery("SELECT COUNT(c) FROM CrmStatus78 c", Long.class)
+                    .getSingleResult();
+            return count != null ? count.longValue() : 0L;
+        } catch (Exception e) {
+            LOG.error("Error counting CRM status78 records", e);
+            return 0L;
         }
     }
 

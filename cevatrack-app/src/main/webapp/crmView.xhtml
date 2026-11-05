@@ -22,23 +22,31 @@
 
                     <p:panel header="CRM - To be delivered (Status 78)" style="margin-bottom:10px;">
 
-                        <!-- Date window + Refresh + Excel icon on the same row -->
-                        <p:panelGrid columns="7" style="margin-bottom:10px;" columnClasses="ui-grid-col-1,ui-grid-col-2,ui-grid-col-1,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-3">
+                        <!--
+                            Date selectors only filter existing database data (no live web-service call).
+                            From cannot go earlier than RETENTION_DAYS ago (snapped to REFRESH_INTERVAL_HOURS).
+                            To cannot go later than the current time snapped to REFRESH_INTERVAL_HOURS.
+                            Refresh button applies the filter against the database.
+                        -->
+                        <p:panelGrid columns="8" style="margin-bottom:10px;">
                             <h:outputText value="From:"/>
-                            <p:calendar value="#{crmView.fromDate}" pattern="yyyy-MM-dd HH:mm"
+                            <p:calendar id="fromCal" value="#{crmView.fromDate}" pattern="yyyy-MM-dd HH:mm"
                                         showButtonPanel="true" navigator="true"
-                                        maxdate="#{crmView.toDate}">
-                                <p:ajax event="dateSelect" listener="#{crmView.onDateSelect}" update="crmTable"/>
+                                        timeZone="#{crmView.userTimeZoneId}"
+                                        mindate="#{crmView.minSelectableDate}"
+                                        maxdate="#{crmView.maxSelectableDate}">
+                                <p:ajax event="dateSelect" update="toCal" process="@this"/>
                             </p:calendar>
 
                             <h:outputText value="To:"/>
-                            <p:calendar value="#{crmView.toDate}" pattern="yyyy-MM-dd HH:mm"
+                            <p:calendar id="toCal" value="#{crmView.toDate}" pattern="yyyy-MM-dd HH:mm"
                                         showButtonPanel="true" navigator="true"
-                                        mindate="#{crmView.fromDate}">
-                                <p:ajax event="dateSelect" listener="#{crmView.onDateSelect}" update="crmTable"/>
-                            </p:calendar>
+                                        timeZone="#{crmView.userTimeZoneId}"
+                                        mindate="#{crmView.minToDate}"
+                                        maxdate="#{crmView.maxSelectableDate}"/>
 
-                            <p:commandButton value="Refresh" action="#{crmView.loadData}" update="crmTable" icon="ui-icon-refresh"/>
+                            <p:commandButton value="Refresh" action="#{crmView.loadData}"
+                                             process="@form" update="crmTable" icon="ui-icon-refresh"/>
 
                             <!-- Excel icon immediately to the right of Refresh -->
                             <h:commandLink style="margin-left:8px;">
@@ -47,7 +55,12 @@
                                 <p:dataExporter type="xls" target="crmTable" fileName="CRM_Report"/>
                             </h:commandLink>
 
-                            <h:outputText value=""/>
+                            <!-- Populate / Re-try button – visible when table is empty or load was interrupted -->
+                            <p:commandButton value="#{crmView.populateButtonLabel}" action="#{crmView.populateIfEmpty}"
+                                             update="@form" icon="ui-icon-disk"
+                                             style="margin-left:8px;"
+                                             rendered="#{crmView.showPopulateButton}"
+                                             title="Load day by day (resumes if interrupted)"/>
                         </p:panelGrid>
 
                         <p:dataTable id="crmTable" value="#{crmView.rows}" var="row"
@@ -72,13 +85,13 @@
 
                             <p:column headerText="Actual Arrival Time" sortBy="#{row.ata}">
                                 <h:outputText value="#{row.ata}">
-                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{crmView.userTimeZoneId}"/>
                                 </h:outputText>
                             </p:column>
 
                             <p:column headerText="Actual Depature Time" sortBy="#{row.atd}">
                                 <h:outputText value="#{row.atd}">
-                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" timeZone="#{crmView.userTimeZoneId}"/>
                                 </h:outputText>
                             </p:column>
 
