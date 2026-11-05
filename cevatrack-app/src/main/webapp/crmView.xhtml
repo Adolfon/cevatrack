@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:aaf="http://xmlns.jcp.org/jsf/composite/aaf">
+
+<ui:composition template="app-template.xhtml">
+
+    <!-- Same title + favicon as the other CEVATRACK views -->
+    <ui:define name="title">
+        <title><h:outputText value="CEVATRACK"/></title>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="ceva-welcome-page">
+            <div id="welcomePage" class="ceva-text-welcome-page">
+
+                <h:form id="crmForm">
+
+                    <p:panel header="CRM - To be delivered (Status 78)" style="margin-bottom:10px;">
+
+                        <!-- Date window + Refresh + Excel icon on the same row -->
+                        <p:panelGrid columns="7" style="margin-bottom:10px;" columnClasses="ui-grid-col-1,ui-grid-col-2,ui-grid-col-1,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-3">
+                            <h:outputText value="From:"/>
+                            <p:calendar value="#{crmView.fromDate}" pattern="yyyy-MM-dd HH:mm"
+                                        showButtonPanel="true" navigator="true"
+                                        maxdate="#{crmView.toDate}">
+                                <p:ajax event="dateSelect" listener="#{crmView.onDateSelect}" update="crmTable"/>
+                            </p:calendar>
+
+                            <h:outputText value="To:"/>
+                            <p:calendar value="#{crmView.toDate}" pattern="yyyy-MM-dd HH:mm"
+                                        showButtonPanel="true" navigator="true"
+                                        mindate="#{crmView.fromDate}">
+                                <p:ajax event="dateSelect" listener="#{crmView.onDateSelect}" update="crmTable"/>
+                            </p:calendar>
+
+                            <p:commandButton value="Refresh" action="#{crmView.loadData}" update="crmTable" icon="ui-icon-refresh"/>
+
+                            <!-- Excel icon immediately to the right of Refresh -->
+                            <h:commandLink style="margin-left:8px;">
+                                <p:graphicImage value="resources/images/Excel-icon.png" width="28" height="28"
+                                                alt="Export to Excel" title="Export to Excel"/>
+                                <p:dataExporter type="xls" target="crmTable" fileName="CRM_Report"/>
+                            </h:commandLink>
+
+                            <h:outputText value=""/>
+                        </p:panelGrid>
+
+                        <p:dataTable id="crmTable" value="#{crmView.rows}" var="row"
+                                     widgetVar="crmTable" paginator="true" rows="25"
+                                     rowsPerPageTemplate="10,25,50,100"
+                                     sortBy="#{row.ata}" sortOrder="descending"
+                                     emptyMessage="No records for the selected date window"
+                                     scrollable="true" scrollHeight="450"
+                                     style="width:100%; margin-bottom: 7%;">
+
+                            <p:column headerText="Site ID" sortBy="#{row.siteId}" filterBy="#{row.siteId}" filterMatchMode="contains">
+                                <h:outputText value="#{row.siteId}"/>
+                            </p:column>
+
+                            <p:column headerText="Site Name" sortBy="#{row.siteName}" filterBy="#{row.siteName}" filterMatchMode="contains">
+                                <h:outputText value="#{row.siteName}"/>
+                            </p:column>
+
+                            <p:column headerText="Route Code" sortBy="#{row.routeCode}" filterBy="#{row.routeCode}" filterMatchMode="contains">
+                                <h:outputText value="#{row.routeCode}"/>
+                            </p:column>
+
+                            <p:column headerText="Actual Arrival Time" sortBy="#{row.ata}">
+                                <h:outputText value="#{row.ata}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Actual Depature Time" sortBy="#{row.atd}">
+                                <h:outputText value="#{row.atd}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Order Reference" sortBy="#{row.orderReference}" filterBy="#{row.orderReference}" filterMatchMode="contains">
+                                <h:outputText value="#{row.orderReference}"/>
+                            </p:column>
+
+                            <p:column headerText="Order Line Ref" sortBy="#{row.orderLineRef}" filterBy="#{row.orderLineRef}" filterMatchMode="contains">
+                                <h:outputText value="#{row.orderLineRef}"/>
+                            </p:column>
+
+                            <p:column headerText="Planned QTY" sortBy="#{row.plannedQty}">
+                                <h:outputText value="#{row.plannedQty}"/>
+                            </p:column>
+
+                            <p:column headerText="Actual QTY" sortBy="#{row.actualQty}">
+                                <h:outputText value="#{row.actualQty}"/>
+                            </p:column>
+
+                            <p:column headerText="Status" sortBy="#{row.status}">
+                                <h:outputText value="#{row.statusLabel}"/>
+                            </p:column>
+
+                            <p:column headerText="Scanned">
+                                <h:outputText value="#{row.scanned}"/>
+                            </p:column>
+
+                            <p:column headerText="Clause Reason" filterBy="#{row.clauseReason}" filterMatchMode="contains">
+                                <h:outputText value="#{row.clauseReason}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:panel>
+
+                </h:form>
+
+            </div>
+        </div>
+    </ui:define>
+
+    <ui:define name="footer">
+        <ui:include src="/cjf-extension/footer.xhtml"/>
+    </ui:define>
+
+</ui:composition>
+</html>
